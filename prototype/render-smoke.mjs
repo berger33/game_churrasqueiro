@@ -92,6 +92,52 @@ globalThis.document = {
   fonts: { ready: Promise.resolve(), load: () => Promise.resolve() },
   body: { appendChild: () => {} }
 };
+// ── WebAudio stub ───────────────────────────────────────────────────────────
+// Without this the audio layer takes its "no AudioContext" early return and the
+// cue code never executes. The stub records which cues were scheduled.
+const audioNodes = { osc: 0, bufSrc: 0, gain: 0, filter: 0, started: 0, stopped: 0 };
+function param(v = 0) {
+  return {
+    value: v,
+    setValueAtTime: () => {},
+    exponentialRampToValueAtTime: () => {},
+    linearRampToValueAtTime: () => {},
+    setTargetAtTime: () => {}
+  };
+}
+class FakeAudioContext {
+  constructor() {
+    this.currentTime = 0;
+    this.sampleRate = 44100;
+    this.state = 'running';
+    this.destination = { connect: () => {} };
+  }
+  resume() { return Promise.resolve(); }
+  createGain() { audioNodes.gain++; return { gain: param(1), connect: () => {}, disconnect: () => {} }; }
+  createOscillator() {
+    audioNodes.osc++;
+    return {
+      type: 'sine', frequency: param(440), detune: param(0),
+      connect: () => {}, start: () => { audioNodes.started++; }, stop: () => { audioNodes.stopped++; }
+    };
+  }
+  createBufferSource() {
+    audioNodes.bufSrc++;
+    return {
+      buffer: null, loop: false, playbackRate: param(1),
+      connect: () => {}, start: () => { audioNodes.started++; }, stop: () => { audioNodes.stopped++; }
+    };
+  }
+  createBiquadFilter() {
+    audioNodes.filter++;
+    return { type: 'lowpass', frequency: param(1000), Q: param(1), gain: param(0), connect: () => {} };
+  }
+  createBuffer(ch, len, rate) {
+    const data = new Float32Array(len);
+    return { length: len, sampleRate: rate, numberOfChannels: ch, getChannelData: () => data };
+  }
+}
+globalThis.AudioContext = FakeAudioContext;
 globalThis.window = globalThis;
 globalThis.devicePixelRatio = 1;
 globalThis.location = { search: '', href: 'http://localhost/' };
@@ -152,6 +198,15 @@ async function main() {
   const afterInit = { ops, calls: new Map(calls) };
   if (afterInit.ops === 0) throw new Error('nothing drawn after 30 frames');
 
+  // The prototype now opens on the title screen: the first tap starts the turn.
+  // Before this it jumped straight into gameplay, so 'title' was dead code.
+  const opsBeforeTitle = ops;
+  pointer('pointerdown', 210, 500);
+  await pump(4);
+  pointer('pointerup', 210, 500);
+  await pump(30);
+  if (ops === opsBeforeTitle) throw new Error('title screen drew nothing');
+
   // Drag from the bench (bottom) up onto the grill, then tap to flip.
   pointer('pointerdown', 60, 660);
   await pump(4);
@@ -181,6 +236,13 @@ async function main() {
   console.log(`[render-smoke] gradient calls: linear=${calls.get('createLinearGradient') ?? 0} radial=${calls.get('createRadialGradient') ?? 0}`);
   console.log(`[render-smoke] text drawn: fillText=${calls.get('fillText') ?? 0} strokeText=${calls.get('strokeText') ?? 0}`);
   console.log(`[render-smoke] frames rendered, render loop never stalled`);
+  if (audioNodes.started === 0) {
+    throw new Error('audio layer scheduled no nodes — cue code never executed');
+  }
+  console.log(
+    `[render-smoke] audio: osc=${audioNodes.osc} noise=${audioNodes.bufSrc} ` +
+    `filter=${audioNodes.filter} gain=${audioNodes.gain} started=${audioNodes.started}`
+  );
 }
 
 main().catch((err) => {
