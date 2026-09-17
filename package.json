@@ -1,0 +1,33 @@
+{
+  "name": "churrasco-mestre-da-brasa",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CHURRASCO! O Mestre da Brasa — mobile BBQ cooking/management game. Studio tooling, data tables, reference simulation and design-verification prototype.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "validate": "node --experimental-strip-types tools/studio/validate-data.ts",
+    "check-l10n": "node --experimental-strip-types tools/studio/check-l10n.ts",
+    "sim": "node --experimental-strip-types tools/studio/run-sim.ts",
+    "gen-levels": "node --experimental-strip-types tools/studio/gen-levels.ts",
+    "gen-vectors": "node --experimental-strip-types tools/studio/gen-vectors.ts",
+    "gen-csharp-types": "node tools/studio/gen-csharp-types.mjs",
+    "check-csharp-types": "node tools/studio/gen-csharp-types.mjs --check",
+    "check-vectors": "node --experimental-strip-types tools/studio/gen-vectors.ts --check",
+    "balance-report": "node --experimental-strip-types tools/studio/balance-report.ts",
+    "sync-data": "node tools/studio/sync-data.mjs",
+    "verify-data-sync": "node tools/studio/sync-data.mjs --check",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "proto": "node prototype/dev-server.mjs",
+    "sim:long": "LONG_HORIZON=1500 node --experimental-strip-types tools/studio/run-sim.ts"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.8"
+  }
+}
