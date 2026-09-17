@@ -10,6 +10,9 @@
   },
   "scripts": {
     "validate": "node --experimental-strip-types tools/studio/validate-data.ts",
+    "gen-schemas": "node tools/studio/gen-schemas.mjs",
+    "check-schema": "node tools/studio/check-schemas.mjs",
+    "verify-schemas": "node tools/studio/gen-schemas.mjs --check",
     "check-l10n": "node --experimental-strip-types tools/studio/check-l10n.ts",
     "sim": "node --experimental-strip-types tools/studio/run-sim.ts",
     "gen-levels": "node --experimental-strip-types tools/studio/gen-levels.ts",
@@ -28,6 +31,8 @@
     "sim:long": "LONG_HORIZON=1500 node --experimental-strip-types tools/studio/run-sim.ts"
   },
   "devDependencies": {
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
     "esbuild": "^0.28.2",
     "typescript": "^5.6.3",
     "vitest": "^2.1.8"
