@@ -14,13 +14,11 @@ import { overallDoneness, evenness, stageOf, type FoodRuntime } from '../../tool
 import { TurnSimulation, type CustomerRuntime } from '../../tools/sim-core/src/turn.ts';
 import type { GameDatabase, Ingredient, RawDataBundle } from '../../tools/sim-core/src/types.ts';
 import { createL10n, type L10n, type L10nTable } from '../../tools/sim-core/src/l10n.ts';
-
-// ── Palette (docs/04-ART_STYLE.md) ──────────────────────────────────────────
-const C = {
-  carvao: '#1C1512', cinza: '#3A2E28', madeira: '#7A4A2A', madeiraClara: '#B98A55',
-  creme: '#F4E7D3', offwhite: '#FBF5EC', brasa: '#E0561F', chama: '#F2A63B',
-  vermelho: '#A32E1C', verde: '#6FA84A', ambar: '#E8B23C', telha: '#C0442E', ouro: '#E7C24A'
-};
+import {
+  C, DISPLAY, UI, avatar, checkIcon, clamp01, clockIcon, coinIcon, ease, flameIcon,
+  font, hex, mix, outlinedText, panel, pill, roundRectPath, shade, starIcon
+} from './theme.ts';
+import { drawFood as drawFoodArt, drawFoodIcon } from './foods.ts';
 
 const W = 420;
 const H = 780;
@@ -72,6 +70,12 @@ class Game {
 
   private benchScroll = 0;
   private unlocked: Ingredient[] = [];
+  /** Cached backdrop — the static layers never change, so they are drawn once. */
+  private bgCache: HTMLCanvasElement | null = null;
+  /** Monotonic clock in seconds, for idle animation. */
+  private now = 0;
+  /** Seconds since the result screen appeared, for its staggered entrance. */
+  private resultT = 0;
 
   async init(canvas: HTMLCanvasElement): Promise<void> {
     const raw = await this.loadData();
@@ -159,6 +163,8 @@ class Game {
 
   // ── Update ────────────────────────────────────────────────────────────────
   private update(dt: number): void {
+    this.now += dt;
+    if (this.screen === 'result') this.resultT += dt;
     if (this.screen !== 'play') {
       this.updateEffects(dt);
       return;
@@ -188,7 +194,7 @@ class Game {
       } else if (ev.type === 'left') {
         this.float(W / 2, 150, this.l10n.t('ui.feedback.customerLeft'), C.telha, 16);
       } else if (ev.type === 'combo' && ev.milestone) {
-        this.float(W / 2, 300, `🔥 ${this.l10n.t('ui.feedback.comboMilestone', { n: ev.combo })}`, C.brasa, 34);
+        this.float(W / 2, 300, this.l10n.t('ui.feedback.comboMilestone', { n: ev.combo }), C.brasa, 34);
         this.flash = 0.6;
       } else if (ev.type === 'charcoal_low') {
         this.banner(this.l10n.t('ui.hud.charcoal.low'));
@@ -212,6 +218,7 @@ class Game {
       perfect: r.counters.perfectCooks, burned: r.counters.burnedFood, combo: r.counters.bestCombo
     };
     this.screen = 'result';
+    this.resultT = 0;
   }
 
   private updateEffects(dt: number): void {
@@ -472,18 +479,61 @@ class Game {
   }
 
   // ── Draw ──────────────────────────────────────────────────────────────────
+  /**
+   * Backyard at golden hour (docs/04-ART_STYLE.md §1): a warm sky gradient, a
+   * soft light pool behind the grill, and a vignette to focus the centre.
+   * Cached — it never changes frame to frame.
+   */
+  private drawBackdrop(ctx: CanvasRenderingContext2D): void {
+    if (!this.bgCache) {
+      const off = document.createElement('canvas');
+      off.width = W;
+      off.height = H;
+      const c = off.getContext('2d')!;
+
+      const sky = c.createLinearGradient(0, 0, 0, H);
+      sky.addColorStop(0, '#3B2418');
+      sky.addColorStop(0.32, '#2C1B12');
+      sky.addColorStop(0.68, '#20140D');
+      sky.addColorStop(1, '#150D08');
+      c.fillStyle = sky;
+      c.fillRect(0, 0, W, H);
+
+      // warm light pool behind the grill (key light, R4)
+      const pool = c.createRadialGradient(W / 2, 380, 20, W / 2, 380, 340);
+      pool.addColorStop(0, 'rgba(224,86,31,0.20)');
+      pool.addColorStop(0.5, 'rgba(224,86,31,0.07)');
+      pool.addColorStop(1, 'rgba(224,86,31,0)');
+      c.fillStyle = pool;
+      c.fillRect(0, 0, W, H);
+
+      // fence silhouettes — depth without detail (R2)
+      c.fillStyle = 'rgba(12,8,6,0.5)';
+      for (let i = 0; i < 7; i++) {
+        const bx = -10 + i * 64;
+        c.fillRect(bx, 96, 46, 96);
+      }
+      c.fillStyle = 'rgba(12,8,6,0.34)';
+      c.fillRect(0, 92, W, 10);
+      c.fillRect(0, 150, W, 8);
+
+      // vignette
+      const vig = c.createRadialGradient(W / 2, H * 0.46, H * 0.26, W / 2, H * 0.5, H * 0.78);
+      vig.addColorStop(0, 'rgba(0,0,0,0)');
+      vig.addColorStop(1, 'rgba(0,0,0,0.55)');
+      c.fillStyle = vig;
+      c.fillRect(0, 0, W, H);
+
+      this.bgCache = off;
+    }
+    ctx.drawImage(this.bgCache, 0, 0);
+  }
+
   private draw(canvas: HTMLCanvasElement): void {
     const ctx = canvas.getContext('2d')!;
     ctx.save();
     ctx.clearRect(0, 0, W, H);
-
-    // Backyard backdrop
-    const bg = ctx.createLinearGradient(0, 0, 0, H);
-    bg.addColorStop(0, '#2A1D16');
-    bg.addColorStop(0.55, '#20160F');
-    bg.addColorStop(1, '#150E0A');
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
+    this.drawBackdrop(ctx);
 
     if (this.screen === 'result') this.drawResult(ctx);
     else this.drawPlay(ctx);
@@ -492,48 +542,143 @@ class Game {
   }
 
   private drawPlay(ctx: CanvasRenderingContext2D): void {
-    this.drawHud(ctx);
     this.drawOrders(ctx);
     this.drawGrill(ctx);
     this.drawBench(ctx);
     this.drawParticles(ctx);
+    this.drawHud(ctx);
     this.drawFloats(ctx);
     if (this.drag) this.drawDragged(ctx);
     if (this.bannerLife > 0) this.drawBanner(ctx);
     if (this.flash > 0) {
-      ctx.fillStyle = `rgba(255, 200, 120, ${this.flash * 0.18})`;
+      const f = ctx.createRadialGradient(W / 2, H * 0.45, 40, W / 2, H * 0.45, W);
+      f.addColorStop(0, `rgba(255,206,128,${this.flash * 0.26})`);
+      f.addColorStop(1, 'rgba(255,206,128,0)');
+      ctx.fillStyle = f;
       ctx.fillRect(0, 0, W, H);
     }
   }
 
   private drawHud(ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = 'rgba(0,0,0,.35)';
-    this.roundRect(ctx, 8, 8, W - 16, 30, 10);
-    ctx.fill();
+    const sim = this.sim;
+    const loc = this.l10n.locale;
 
-    ctx.font = '600 15px system-ui';
+    // A single raised strip so the stats read as one object, not floating text.
+    panel(ctx, -20, -14, W + 40, 58, {
+      r: 0,
+      top: 'rgba(38,26,20,0.96)',
+      bottom: 'rgba(20,14,10,0.96)',
+      border: 'none',
+      shadow: 12,
+      innerGlow: false
+    });
+    const edge = ctx.createLinearGradient(0, 42, 0, 46);
+    edge.addColorStop(0, 'rgba(224,86,31,0.6)');
+    edge.addColorStop(1, 'rgba(224,86,31,0)');
+    ctx.fillStyle = edge;
+    ctx.fillRect(0, 42, W, 4);
+
     ctx.textBaseline = 'middle';
-    ctx.fillStyle = C.ouro;
+
+    // Coins
+    coinIcon(ctx, 26, 22, 9);
+    ctx.font = font(16, 800, DISPLAY);
     ctx.textAlign = 'left';
-    ctx.fillText(`🪙 ${this.coins.toLocaleString(this.l10n.locale)}`, 18, 23);
+    ctx.fillStyle = C.ouro;
+    ctx.fillText(this.coins.toLocaleString(loc), 40, 23);
 
-    ctx.fillStyle = C.creme;
-    ctx.textAlign = 'center';
-    const left = Math.max(0, this.sim.timeLeft);
-    ctx.fillText(`${Math.floor(left / 60)}:${String(Math.floor(left % 60)).padStart(2, '0')}`, W / 2, 23);
+    // XP
+    ctx.font = font(11, 600, UI);
+    ctx.fillStyle = 'rgba(244,231,211,0.55)';
+    ctx.fillText(`${this.l10n.t('ui.result.xp')} ${this.xp.toLocaleString(loc)}`, 40, 37);
 
-    ctx.textAlign = 'right';
-    if (this.sim.combo > 1) {
-      const pulse = 1 + this.comboPulse * 0.25;
+    // Turn timer: a draining ring that shifts amber, then red.
+    const left = Math.max(0, sim.timeLeft);
+    const frac = sim.timeLimit > 0 ? clamp01(left / sim.timeLimit) : 0;
+    const urgent = frac < 0.25;
+    ctx.save();
+    ctx.translate(W / 2, 22);
+    ctx.strokeStyle = 'rgba(255,255,255,0.13)';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(0, 0, 13, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.strokeStyle = urgent ? C.vermelho : frac < 0.5 ? C.ambar : C.brasa;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.arc(0, 0, 13, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * frac);
+    ctx.stroke();
+    ctx.restore();
+    outlinedText(
+      ctx,
+      `${Math.floor(left / 60)}:${String(Math.floor(left % 60)).padStart(2, '0')}`,
+      W / 2, 23, urgent ? C.vermelho : C.creme, 13, { outline: 2 }
+    );
+
+    // Combo chip — pops on increment rather than pulsing forever.
+    if (sim.combo > 1) {
+      const pop = 1 + this.comboPulse * 0.3;
       ctx.save();
-      ctx.translate(W - 20, 23);
-      ctx.scale(pulse, pulse);
-      ctx.fillStyle = this.sim.combo >= 5 ? C.brasa : C.chama;
-      ctx.fillText(`🔥 ×${this.sim.combo}`, 0, 0);
+      ctx.translate(W - 56, 22);
+      ctx.scale(pop, pop);
+      pill(ctx, -34, -11, 68, 22, 'rgba(224,86,31,0.28)', { border: C.brasa });
+      flameIcon(ctx, -20, 0, 7, sim.combo >= 5);
+      ctx.font = font(13, 800, DISPLAY);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = C.chama;
+      ctx.fillText(`×${sim.combo}`, 6, 1);
       ctx.restore();
     } else {
-      ctx.fillStyle = '#6d5c50';
-      ctx.fillText(`${this.l10n.t('ui.result.xp')} ${this.xp}`, W - 20, 23);
+      starIcon(ctx, W - 74, 22, 7, { filled: true });
+      ctx.font = font(13, 800, DISPLAY);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = C.ouro;
+      ctx.fillText(String(sim.counters.perfectCooks), W - 50, 23);
+    }
+
+    // Charcoal gauge. `charcoalT` is progress through the current load, so the
+    // bar shows what is LEFT; it pulses red under the low-fuel threshold.
+    const g = sim.grill;
+    const remaining = clamp01(1 - g.charcoalT);
+    const refilling = g.refilling > 0;
+    const low = remaining < 0.3;
+    const bx = 14, by = 52, bw = W - 28, bh = 9;
+
+    roundRectPath(ctx, bx, by, bw, bh, bh / 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.fill();
+    roundRectPath(ctx, bx + 1, by + 1, bw - 2, bh - 2, (bh - 2) / 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.05)';
+    ctx.fill();
+
+    const fw = (bw - 2) * remaining;
+    if (fw > 1) {
+      roundRectPath(ctx, bx + 1, by + 1, fw, bh - 2, (bh - 2) / 2);
+      const fill = ctx.createLinearGradient(bx, 0, bx + fw, 0);
+      if (low) {
+        const p = 0.5 + Math.sin(this.now * 9) * 0.3;
+        fill.addColorStop(0, C.vermelho);
+        fill.addColorStop(1, mix(hex(C.vermelho), hex(C.ambar), p));
+      } else {
+        fill.addColorStop(0, C.brasa);
+        fill.addColorStop(1, C.chama);
+      }
+      ctx.fillStyle = fill;
+      ctx.fill();
+    }
+    roundRectPath(ctx, bx + 0.5, by + 0.5, bw - 1, bh - 1, (bh - 1) / 2);
+    ctx.strokeStyle = 'rgba(244,231,211,0.16)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.font = font(10, 700, UI);
+    ctx.textAlign = 'left';
+    ctx.fillStyle = low ? C.vermelho : 'rgba(244,231,211,0.6)';
+    ctx.fillText(this.l10n.t('ui.hud.charcoal'), bx, 74);
+    if (refilling) {
+      ctx.textAlign = 'right';
+      ctx.fillStyle = C.ambar;
+      ctx.fillText(`${g.refilling.toFixed(1)}s`, bx + bw, 74);
     }
   }
 
@@ -541,38 +686,72 @@ class Game {
     const waiting = this.sim.customers.filter((c) => c.state === 'waiting');
     waiting.forEach((c, i) => {
       const r = this.orderCardRect(i);
-      const pct = c.patienceLeft / c.patienceTotal;
+      const pct = clamp01(c.patienceLeft / c.patienceTotal);
       const barColor = pct > 0.5 ? C.verde : pct > 0.25 ? C.ambar : C.telha;
+      const vip = c.def.isVip;
 
-      ctx.fillStyle = 'rgba(28,21,18,.92)';
-      this.roundRect(ctx, r.x, r.y, r.w, r.h, 12);
-      ctx.fill();
-      ctx.strokeStyle = c.def.isVip ? C.ouro : 'rgba(244,231,211,.16)';
-      ctx.lineWidth = c.def.isVip ? 2 : 1;
-      this.roundRect(ctx, r.x, r.y, r.w, r.h, 12);
-      ctx.stroke();
+      // Card. VIP gets a gold rim and a slightly warmer body.
+      panel(ctx, r.x, r.y, r.w, r.h, {
+        r: 12,
+        top: vip ? 'rgba(62,48,28,0.97)' : 'rgba(44,32,25,0.95)',
+        bottom: vip ? 'rgba(34,26,16,0.97)' : 'rgba(22,15,11,0.95)',
+        border: vip ? C.ouro : 'rgba(244,231,211,0.14)',
+        borderWidth: vip ? 2 : 1,
+        shadow: 9,
+        innerGlow: false
+      });
 
-      // patience ring/bar
-      ctx.fillStyle = 'rgba(0,0,0,.45)';
-      this.roundRect(ctx, r.x + 8, r.y + r.h - 10, r.w - 16, 5, 2.5);
-      ctx.fill();
-      ctx.fillStyle = barColor;
-      this.roundRect(ctx, r.x + 8, r.y + r.h - 10, (r.w - 16) * Math.max(0, pct), 5, 2.5);
-      ctx.fill();
+      // Avatar disc on the left — a readable face beats a name in a list.
+      const ax = r.x + 21, ay = r.y + 20;
+      avatar(ctx, ax, ay, 13, vip ? C.ouro : C.telha, 'rgba(244,231,211,0.34)');
+      if (vip) starIcon(ctx, ax + 10, ay - 10, 5.5, { filled: true });
 
+      // Name
+      ctx.font = font(11, 700, UI);
       ctx.textAlign = 'left';
-      ctx.font = '600 11px system-ui';
-      ctx.fillStyle = c.def.isVip ? C.ouro : C.madeiraClara;
-      ctx.fillText(c.def.isVip ? `⭐ ${this.l10n.t(c.def.nameKey)}` : this.l10n.t(c.def.nameKey), r.x + 10, r.y + 13);
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = vip ? C.ouro : C.madeiraClara;
+      const name = this.l10n.t(c.def.nameKey);
+      ctx.fillText(name.length > 16 ? name.slice(0, 15) + '…' : name, r.x + 40, r.y + 13);
 
-      ctx.font = '600 12px system-ui';
-      let x = r.x + 10;
+      // Ordered items as small silhouettes, ticked when fulfilled.
+      let ix = r.x + 42;
       for (const line of c.lines) {
         const done = line.fulfilledBy.length > 0;
-        ctx.fillStyle = done ? C.verde : C.creme;
-        const label = done ? '✓' : this.emojiFor(line.ingredientId);
-        ctx.fillText(label, x, r.y + 32);
-        x += 20;
+        const ing = this.db.ingredientById.get(line.ingredientId);
+        ctx.save();
+        if (done) ctx.globalAlpha = 0.42;
+        if (ing) drawFoodIcon(ctx, ing, ix + 9, r.y + 30, 20);
+        else {
+          roundRectPath(ctx, ix, r.y + 23, 18, 14, 5);
+          ctx.fillStyle = C.cinza;
+          ctx.fill();
+        }
+        ctx.restore();
+        if (done) checkIcon(ctx, ix + 9, r.y + 30, 8, C.verde);
+        ix += 24;
+      }
+
+      // Patience bar in a recessed track.
+      const bx = r.x + 8, by = r.y + r.h - 11, bw = r.w - 16, bh = 5;
+      roundRectPath(ctx, bx, by, bw, bh, bh / 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.55)';
+      ctx.fill();
+      if (pct > 0) {
+        roundRectPath(ctx, bx, by, Math.max(bh, bw * pct), bh, bh / 2);
+        ctx.fillStyle = barColor;
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.28)';
+        roundRectPath(ctx, bx, by, Math.max(bh, bw * pct), bh * 0.45, bh * 0.22);
+        ctx.fill();
+      }
+      // Urgency pulse when the customer is about to walk.
+      if (pct < 0.25) {
+        const a = 0.12 + Math.sin(this.now * 10) * 0.1;
+        roundRectPath(ctx, r.x, r.y, r.w, r.h, 12);
+        ctx.strokeStyle = `rgba(163,46,28,${Math.max(0, a + 0.2)})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
       }
     });
   }
@@ -580,60 +759,112 @@ class Game {
   private drawGrill(ctx: CanvasRenderingContext2D): void {
     const n = this.zoneCount();
     const h = (GRILL_BOTTOM - GRILL_TOP) / n;
+    const bodyX = 20, bodyW = W - 40;
+    const bodyY = GRILL_TOP - 20, bodyH = GRILL_BOTTOM - GRILL_TOP + 40;
 
-    // Body
-    ctx.fillStyle = C.cinza;
-    this.roundRect(ctx, 20, GRILL_TOP - 18, W - 40, GRILL_BOTTOM - GRILL_TOP + 36, 18);
+    // ── Body: brushed metal over a dark firebox, with a cast-iron rim. ──
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.6)';
+    ctx.shadowBlur = 18;
+    ctx.shadowOffsetY = 6;
+    roundRectPath(ctx, bodyX, bodyY, bodyW, bodyH, 18);
+    const body = ctx.createLinearGradient(bodyX, 0, bodyX + bodyW, 0);
+    body.addColorStop(0, '#3E3A38');
+    body.addColorStop(0.16, '#5E5854');
+    body.addColorStop(0.5, '#4A4441');
+    body.addColorStop(0.86, '#565050');
+    body.addColorStop(1, '#322E2C');
+    ctx.fillStyle = body;
     ctx.fill();
-    ctx.strokeStyle = 'rgba(0,0,0,.5)';
+    ctx.restore();
+
+    // Rim highlight along the top, shadow along the bottom.
+    roundRectPath(ctx, bodyX, bodyY, bodyW, bodyH, 18);
+    ctx.clip();
+    const rim = ctx.createLinearGradient(0, bodyY, 0, bodyY + 14);
+    rim.addColorStop(0, 'rgba(255,236,206,0.30)');
+    rim.addColorStop(1, 'rgba(255,236,206,0)');
+    ctx.fillStyle = rim;
+    ctx.fillRect(bodyX, bodyY, bodyW, 14);
+    const foot = ctx.createLinearGradient(0, bodyY + bodyH - 18, 0, bodyY + bodyH);
+    foot.addColorStop(0, 'rgba(0,0,0,0)');
+    foot.addColorStop(1, 'rgba(0,0,0,0.55)');
+    ctx.fillStyle = foot;
+    ctx.fillRect(bodyX, bodyY + bodyH - 18, bodyW, 18);
+    ctx.restore();
+
+    ctx.strokeStyle = 'rgba(12,8,6,0.7)';
     ctx.lineWidth = 2;
-    this.roundRect(ctx, 20, GRILL_TOP - 18, W - 40, GRILL_BOTTOM - GRILL_TOP + 36, 18);
+    roundRectPath(ctx, bodyX + 1, bodyY + 1, bodyW - 2, bodyH - 2, 18);
     ctx.stroke();
 
     const efficiency = this.sim.grill.charcoalEfficiency;
+
     for (let z = 0; z < n; z++) {
       const y = GRILL_TOP + h * z;
       const zone = this.db.grill.zones[z]!;
       const heat = zone.heatMultiplier * efficiency;
+      const zx = 34, zw = W - 68;
 
-      const g = ctx.createLinearGradient(0, y, 0, y + h);
-      const a = Math.min(0.85, 0.22 + heat * 0.4);
-      g.addColorStop(0, `rgba(224,86,31,${a * 0.5})`);
-      g.addColorStop(0.5, `rgba(224,86,31,${a})`);
-      g.addColorStop(1, `rgba(120,40,16,${a * 0.7})`);
-      ctx.fillStyle = g;
-      ctx.fillRect(34, y + 2, W - 68, h - 4);
+      // Firebox: dark pit, glowing brighter with heat.
+      const pit = ctx.createLinearGradient(0, y, 0, y + h);
+      const a = Math.min(0.9, 0.24 + heat * 0.42);
+      pit.addColorStop(0, `rgba(196,62,20,${a})`);
+      pit.addColorStop(0.45, `rgba(224,86,31,${a})`);
+      pit.addColorStop(1, `rgba(96,30,12,${a * 0.85})`);
+      roundRectPath(ctx, zx, y + 2, zw, h - 4, 8);
+      ctx.fillStyle = pit;
+      ctx.fill();
 
-      // grate
-      ctx.strokeStyle = `rgba(20,14,10,${0.55 + heat * 0.15})`;
-      ctx.lineWidth = 3;
-      for (let gx = 44; gx < W - 44; gx += 16) {
+      // Coals — deterministic per zone so they do not flicker every frame.
+      ctx.save();
+      roundRectPath(ctx, zx, y + 2, zw, h - 4, 8);
+      ctx.clip();
+      const seed = z * 97;
+      for (let k = 0; k < 22; k++) {
+        const fx = ((seed + k * 37) % 100) / 100;
+        const fy = ((seed + k * 61) % 100) / 100;
+        const cx = zx + 6 + fx * (zw - 12);
+        const cy = y + 6 + fy * (h - 12);
+        const rr = 2.5 + ((k * 13) % 4);
+        // breathing: each coal pulses on its own offset
+        const pulse = 0.55 + 0.45 * Math.sin(this.now * (1.6 + (k % 5) * 0.35) + k);
+        const g = ctx.createRadialGradient(cx, cy, 0.5, cx, cy, rr * 3.1);
+        g.addColorStop(0, `rgba(255,226,150,${0.55 * pulse * (0.5 + heat * 0.4)})`);
+        g.addColorStop(0.35, `rgba(236,116,34,${0.42 * pulse})`);
+        g.addColorStop(1, 'rgba(120,34,10,0)');
+        ctx.fillStyle = g;
         ctx.beginPath();
-        ctx.moveTo(gx, y + 6);
-        ctx.lineTo(gx, y + h - 6);
-        ctx.stroke();
+        ctx.arc(cx, cy, rr * 3.1, 0, Math.PI * 2);
+        ctx.fill();
+        // the coal itself
+        ctx.fillStyle = `rgba(40,22,16,${0.55 + 0.25 * (1 - pulse)})`;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, rr, rr * 0.72, k * 0.7, 0, Math.PI * 2);
+        ctx.fill();
       }
+      ctx.restore();
 
-      ctx.font = '600 10px system-ui';
-      ctx.textAlign = 'left';
-      ctx.fillStyle = 'rgba(244,231,211,.55)';
-      ctx.fillText('🔥'.repeat(zone.embers), 40, y + h - 10);
+      // Grate: bars with a warm top edge so they read as metal, not lines.
+      const barW = 3.2;
+      for (let gx = zx + 8; gx < zx + zw - 6; gx += 15) {
+        ctx.fillStyle = `rgba(16,11,8,${0.62 + heat * 0.12})`;
+        ctx.fillRect(gx, y + 5, barW, h - 10);
+        ctx.fillStyle = `rgba(255,196,132,${0.16 + heat * 0.12})`;
+        ctx.fillRect(gx, y + 5, 1, h - 10);
+      }
+      // two cross rails
+      ctx.fillStyle = 'rgba(16,11,8,0.5)';
+      ctx.fillRect(zx + 4, y + h * 0.3, zw - 8, 2);
+      ctx.fillRect(zx + 4, y + h * 0.7, zw - 8, 2);
+
+      // Heat label — flame pips instead of emoji.
+      for (let e = 0; e < zone.embers; e++) {
+        flameIcon(ctx, zx + 8 + e * 11, y + h - 9, 4.5, heat > 0.9);
+      }
     }
 
-    // charcoal bar
-    const fuel = 1 - this.sim.grill.charcoalT;
-    ctx.fillStyle = 'rgba(0,0,0,.5)';
-    this.roundRect(ctx, 40, GRILL_BOTTOM + 8, W - 80, 8, 4);
-    ctx.fill();
-    ctx.fillStyle = fuel < this.db.grill.charcoal.lowWarningThreshold ? C.telha : C.brasa;
-    this.roundRect(ctx, 40, GRILL_BOTTOM + 8, (W - 80) * fuel, 8, 4);
-    ctx.fill();
-    ctx.font = '600 10px system-ui';
-    ctx.textAlign = 'center';
-    ctx.fillStyle = 'rgba(244,231,211,.5)';
-    ctx.fillText(this.sim.grill.refilling > 0 ? this.l10n.t('ui.hud.charcoal.refilling') : `${this.l10n.t('ui.hud.charcoal')} — ${this.l10n.t('ui.hud.charcoal.refill')}`, W / 2, GRILL_BOTTOM + 28);
-
-    // food
+    // Food on the grill (dragged item is drawn on top by drawDragged).
     for (const f of this.sim.foods) {
       if (!f.onGrill || f.served) continue;
       if (this.drag?.food === f) continue;
@@ -642,88 +873,48 @@ class Game {
     }
   }
 
+  /**
+   * Delegates the silhouette to `foods.ts` and layers the readable state on top:
+   * stage label, evenness warning, and the smoke the cook reads for timing.
+   */
   private drawFood(ctx: CanvasRenderingContext2D, f: FoodRuntime, x: number, y: number, scale: number): void {
     const d = overallDoneness(f);
-    const art = f.ingredient.art;
-    const raw = this.hex(art.rawColor);
-    const cooked = this.hex(art.cookedColor);
-    const burn = this.hex(art.burnColor);
+    const ing = f.ingredient;
 
-    let col: string;
-    if (d < 0.75) col = this.mix(raw, cooked, Math.min(1, d / 0.75));
-    else col = this.mix(cooked, burn, Math.min(1, (d - 0.75) / 0.5));
+    drawFoodArt(ctx, ing, x, y, {
+      doneness: d,
+      burned: f.burned,
+      scale,
+      glow: f.onGrill ? 1 : 0.35
+    });
 
-    const w = f.ingredient.sides >= 4 ? 46 : 54;
-    const hh = f.ingredient.sides >= 4 ? 16 : 24;
-
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.scale(scale, scale);
-
-    // heat glow underneath
-    const glow = ctx.createRadialGradient(0, hh * 0.6, 2, 0, hh * 0.6, w * 0.8);
-    glow.addColorStop(0, 'rgba(224,86,31,.45)');
-    glow.addColorStop(1, 'rgba(224,86,31,0)');
-    ctx.fillStyle = glow;
-    ctx.fillRect(-w, -hh, w * 2, hh * 2.4);
-
-    // body
-    ctx.fillStyle = col;
-    this.roundRect(ctx, -w / 2, -hh / 2, w, hh, hh / 2);
-    ctx.fill();
-
-    // fat cap
-    if (art.fatCap) {
-      ctx.fillStyle = this.mix(this.hex('#F0E2C8'), col, Math.min(1, d * 0.8));
-      this.roundRect(ctx, -w / 2, -hh / 2, w, hh * 0.3, hh * 0.15);
-      ctx.fill();
-    }
-
-    // grill marks — alpha tracks browning
-    const marks = Math.max(0, Math.min(1, (d - 0.25) / 0.5));
-    if (marks > 0) {
-      ctx.strokeStyle = `rgba(30,16,10,${0.25 + marks * 0.55})`;
-      ctx.lineWidth = 3;
-      for (let i = -1; i <= 1; i++) {
-        ctx.beginPath();
-        ctx.moveTo(i * 13 - 4, -hh / 2 + 2);
-        ctx.lineTo(i * 13 + 4, hh / 2 - 2);
-        ctx.stroke();
-      }
-    }
-
-    // sheen
-    if (art.fatSheen && d > 0.3) {
-      const sh = ctx.createLinearGradient(-w / 2, -hh / 2, w / 2, hh / 2);
-      sh.addColorStop(0, `rgba(255,255,255,${0.05 + d * 0.16})`);
-      sh.addColorStop(0.5, 'rgba(255,255,255,0)');
-      ctx.fillStyle = sh;
-      this.roundRect(ctx, -w / 2, -hh / 2, w, hh, hh / 2);
-      ctx.fill();
-    }
-
-    // smoke while cooking hot
+    // Smoke while cooking — the timing cue players learn in seconds.
     if (d > 0.35 && Math.random() < 0.06) {
+      const hh = ing.sides >= 4 ? 17 : 25;
+      const w = ing.sides >= 4 ? 44 : 54;
       this.particles.push({
-        x: x + (Math.random() - 0.5) * w * 0.6, y: y - hh,
+        x: x + (Math.random() - 0.5) * w * 0.6, y: y - hh * scale,
         vx: (Math.random() - 0.5) * 6, vy: -22 - Math.random() * 14,
         life: 0, max: 0.9 + Math.random() * 0.5, size: 4 + Math.random() * 4,
         color: d > 1 ? 'rgba(60,60,60,.5)' : 'rgba(220,210,200,.28)', kind: 'smoke'
       });
     }
 
-    ctx.restore();
-
-    // stage label
+    // Stage label + evenness warning.
     const stage = String(stageOf(this.db, f));
     const even = evenness(f);
-    ctx.font = '700 9px system-ui';
-    ctx.textAlign = 'center';
-    ctx.fillStyle = f.burned ? C.telha : even < 0.6 ? C.ambar : 'rgba(244,231,211,.75)';
-    ctx.fillText(this.stageLabel(f, stage).toUpperCase(), x, y + hh / 2 + 12);
+    const hh = (ing.sides >= 4 ? 17 : 25) * scale;
+    outlinedText(
+      ctx, this.stageLabel(f, stage).toUpperCase(),
+      x, y + hh / 2 + 12,
+      f.burned ? C.telha : even < 0.6 ? C.ambar : 'rgba(244,231,211,0.78)',
+      9, { weight: 700, family: UI, outline: 2.5 }
+    );
     if (even < 0.6 && !f.burned) {
-      ctx.fillStyle = C.ambar;
-      ctx.fillText(this.l10n.t('ui.feedback.flipHint'), x, y + hh / 2 + 22);
+      outlinedText(
+        ctx, this.l10n.t('ui.feedback.flipHint'),
+        x, y + hh / 2 + 22, C.ambar, 8, { weight: 600, family: UI, outline: 2.5 }
+      );
     }
   }
 
@@ -741,54 +932,107 @@ class Game {
   }
 
   private drawBench(ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = 'rgba(58,46,40,.55)';
-    this.roundRect(ctx, 8, BENCH_TOP - 16, W - 16, H - BENCH_TOP + 8, 14);
-    ctx.fill();
-    ctx.font = '600 10px system-ui';
-    ctx.textAlign = 'left';
-    ctx.fillStyle = 'rgba(244,231,211,.45)';
-    ctx.fillText(this.l10n.t('ui.hud.bench'), 18, BENCH_TOP - 5);
+    // Wooden bench top: a slab with a lit edge and visible grain.
+    const by = BENCH_TOP - 20, bh = H - by + 10;
+    panel(ctx, 6, by, W - 12, bh, {
+      r: 14,
+      top: 'rgba(122,74,42,0.96)',
+      bottom: 'rgba(58,34,19,0.96)',
+      border: 'rgba(255,214,160,0.16)',
+      shadow: 14,
+      innerGlow: true
+    });
+    ctx.save();
+    roundRectPath(ctx, 6, by, W - 12, bh, 14);
+    ctx.clip();
+    ctx.strokeStyle = 'rgba(48,26,13,0.30)';
+    ctx.lineWidth = 1.4;
+    for (let k = 0; k < 9; k++) {
+      const gy = by + 12 + k * 17;
+      ctx.beginPath();
+      ctx.moveTo(8, gy);
+      ctx.bezierCurveTo(W * 0.35, gy + 2.5, W * 0.62, gy - 2.5, W - 8, gy);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    outlinedText(
+      ctx, this.l10n.t('ui.hud.bench'),
+      18, by + 9, 'rgba(244,231,211,0.62)', 10,
+      { weight: 700, family: UI, align: 'left', outline: 2 }
+    );
 
     this.unlocked.forEach((ing, i) => {
       const r = this.benchItemRect(i);
       if (r.y + r.h > H) return;
-      ctx.fillStyle = 'rgba(28,21,18,.8)';
-      this.roundRect(ctx, r.x, r.y, r.w, r.h, 10);
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(244,231,211,.12)';
-      ctx.lineWidth = 1;
-      this.roundRect(ctx, r.x, r.y, r.w, r.h, 10);
-      ctx.stroke();
+      const isDragging = this.drag !== null && this.drag.food.ingredient.id === ing.id;
 
-      ctx.font = '22px system-ui';
-      ctx.textAlign = 'center';
-      ctx.fillText(this.emojiFor(ing.id), r.x + r.w / 2, r.y + 26);
-      ctx.font = '600 9px system-ui';
-      ctx.fillStyle = C.creme;
-      ctx.fillText(this.l10n.t(ing.nameKey).slice(0, 14), r.x + r.w / 2, r.y + 46);
+      panel(ctx, r.x, r.y, r.w, r.h, {
+        r: 10,
+        top: 'rgba(46,33,26,0.94)',
+        bottom: 'rgba(24,17,12,0.94)',
+        border: 'rgba(244,231,211,0.14)',
+        shadow: 6,
+        shadowAlpha: 0.35,
+        innerGlow: false
+      });
+
+      if (isDragging) {
+        roundRectPath(ctx, r.x, r.y, r.w, r.h, 10);
+        ctx.strokeStyle = 'rgba(224,86,31,0.5)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+
+      // Silhouette, then name, then value with a real coin.
+      drawFoodIcon(ctx, ing, r.x + r.w / 2, r.y + 24, 30);
+
+      const label = this.l10n.t(ing.nameKey);
+      outlinedText(
+        ctx, label.length > 13 ? label.slice(0, 12) + '…' : label,
+        r.x + r.w / 2, r.y + 46, C.creme, 9,
+        { weight: 700, family: UI, outline: 2 }
+      );
+      coinIcon(ctx, r.x + r.w / 2 - 13, r.y + 59, 5.5);
+      ctx.font = font(10, 700, UI);
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
       ctx.fillStyle = C.ouro;
-      ctx.fillText(`🪙 ${ing.value}`, r.x + r.w / 2, r.y + 58);
+      ctx.fillText(String(ing.value), r.x + r.w / 2 - 5, r.y + 59);
     });
   }
 
   private drawDragged(ctx: CanvasRenderingContext2D): void {
     const d = this.drag!;
-    ctx.save();
-    ctx.globalAlpha = 0.92;
-    this.drawFood(ctx, d.food, d.x, d.y, 1.15);
-    ctx.restore();
+    const overGrill = d.y > GRILL_TOP && d.y < GRILL_BOTTOM;
 
-    if (d.y > GRILL_TOP && d.y < GRILL_BOTTOM) {
+    // Highlight the target zone BEFORE the drop, so the drop is never a guess.
+    if (overGrill) {
       const z = this.zoneAt(d.y);
       if (z >= 0) {
-        const h = (GRILL_BOTTOM - GRILL_TOP) / this.zoneCount();
+        const zh = (GRILL_BOTTOM - GRILL_TOP) / this.zoneCount();
+        const zy = GRILL_TOP + zh * z;
+        roundRectPath(ctx, 34, zy + 2, W - 68, zh - 4, 8);
+        ctx.fillStyle = 'rgba(242,166,59,0.14)';
+        ctx.fill();
+        ctx.save();
+        ctx.setLineDash([7, 5]);
+        ctx.lineDashOffset = -this.now * 22;
         ctx.strokeStyle = C.chama;
         ctx.lineWidth = 2;
-        ctx.setLineDash([6, 5]);
-        ctx.strokeRect(34, GRILL_TOP + h * z + 2, W - 68, h - 4);
-        ctx.setLineDash([]);
+        roundRectPath(ctx, 34, zy + 2, W - 68, zh - 4, 8);
+        ctx.stroke();
+        ctx.restore();
       }
     }
+
+    // Lift the item: slight scale-up, soft shadow beneath the finger.
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.5)';
+    ctx.shadowBlur = 14;
+    ctx.shadowOffsetY = 8;
+    this.drawFood(ctx, d.food, d.x, d.y, 1.18);
+    ctx.restore();
   }
 
   private drawParticles(ctx: CanvasRenderingContext2D): void {
@@ -814,109 +1058,150 @@ class Game {
   private drawFloats(ctx: CanvasRenderingContext2D): void {
     for (const f of this.floats) {
       const t = f.life / 1.1;
+      // rise with ease-out so the number settles rather than drifts linearly
+      const rise = ease.outCubic(clamp01(t)) * 26;
       ctx.globalAlpha = Math.max(0, 1 - t * t);
-      ctx.font = `800 ${f.size}px system-ui`;
-      ctx.textAlign = 'center';
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = 'rgba(0,0,0,.6)';
-      ctx.strokeText(f.text, f.x, f.y);
-      ctx.fillStyle = f.color;
-      ctx.fillText(f.text, f.x, f.y);
+      outlinedText(
+        ctx, f.text, f.x, f.y - rise, f.color, f.size,
+        { weight: 800, family: DISPLAY, outline: 4, shadow: 3 }
+      );
     }
     ctx.globalAlpha = 1;
   }
 
   private drawBanner(ctx: CanvasRenderingContext2D): void {
-    const a = Math.min(1, this.bannerLife);
-    ctx.globalAlpha = a;
-    ctx.fillStyle = 'rgba(0,0,0,.7)';
-    this.roundRect(ctx, W / 2 - 130, 96, 260, 32, 16);
-    ctx.fill();
-    ctx.font = '700 14px system-ui';
-    ctx.textAlign = 'center';
-    ctx.fillStyle = C.creme;
-    ctx.fillText(this.bannerText, W / 2, 113);
+    // slides in with a back-out overshoot, then fades
+    const life = clamp01(this.bannerLife);
+    const t = clamp01((0.6 - life) / 0.6);
+    const slide = (1 - ease.outBack(clamp01(t * 2.4))) * 40;
+    ctx.globalAlpha = Math.min(1, life * 3);
+    const w = 280, x = W / 2 - w / 2, y = 92 - slide;
+    panel(ctx, x, y, w, 38, {
+      r: 19,
+      top: 'rgba(224,86,31,0.95)',
+      bottom: 'rgba(163,46,28,0.95)',
+      border: 'rgba(255,226,180,0.4)',
+      shadow: 12
+    });
+    outlinedText(ctx, this.bannerText, W / 2, y + 20, C.offwhite, 15, { outline: 2 });
     ctx.globalAlpha = 1;
   }
 
   private drawResult(ctx: CanvasRenderingContext2D): void {
     const r = this.lastResult!;
-    ctx.fillStyle = 'rgba(0,0,0,.72)';
+    const t = this.resultT;
+
+    // Dim + blur-like scrim.
+    ctx.fillStyle = 'rgba(8,5,4,0.78)';
     ctx.fillRect(0, 0, W, H);
 
-    ctx.textAlign = 'center';
-    ctx.font = '800 34px system-ui';
-    ctx.fillStyle = C.creme;
-    ctx.fillText(this.l10n.t('ui.result.title'), W / 2, 190);
-
-    ctx.font = '40px system-ui';
-    ctx.fillText('★'.repeat(r.stars) + '☆'.repeat(3 - r.stars), W / 2, 250);
-
-    const rows: [string, string][] = [
-      [this.l10n.t('ui.result.coins'), `+${r.coins.toLocaleString(this.l10n.locale)}`],
-      [this.l10n.t('ui.result.perfect'), String(r.perfect)],
-      [this.l10n.t('ui.result.burned'), String(r.burned)],
-      [this.l10n.t('ui.result.bestCombo'), `×${r.combo}`],
-      [this.l10n.t('ui.result.xp'), `+${r.xp}`]
-    ];
-    ctx.font = '600 17px system-ui';
-    rows.forEach(([k, v], i) => {
-      const y = 310 + i * 34;
-      ctx.textAlign = 'left';
-      ctx.fillStyle = 'rgba(244,231,211,.65)';
-      ctx.fillText(k, 90, y);
-      ctx.textAlign = 'right';
-      ctx.fillStyle = k === this.l10n.t('ui.result.burned') && r.burned > 0 ? C.telha : C.ouro;
-      ctx.fillText(v, W - 90, y);
+    // Card slides up with an overshoot.
+    const enter = ease.outBack(clamp01(t / 0.45));
+    const cw = 320, cx = W / 2 - cw / 2;
+    const cy = 130 + (1 - enter) * 70;
+    const ch = 356;
+    panel(ctx, cx, cy, cw, ch, {
+      r: 20,
+      top: 'rgba(48,34,26,0.98)',
+      bottom: 'rgba(22,15,11,0.98)',
+      border: 'rgba(255,214,160,0.22)',
+      borderWidth: 1.5,
+      shadow: 26,
+      shadowAlpha: 0.6
     });
 
-    ctx.textAlign = 'center';
-    ctx.fillStyle = C.brasa;
-    this.roundRect(ctx, W / 2 - 110, 520, 220, 54, 27);
-    ctx.fill();
-    ctx.font = '800 18px system-ui';
-    ctx.fillStyle = C.creme;
-    ctx.fillText(this.l10n.t('ui.action.next'), W / 2, 549);
+    outlinedText(
+      ctx, this.l10n.t('ui.result.title'),
+      W / 2, cy + 40, C.creme, 30, { outline: 3, shadow: 4 }
+    );
 
-    ctx.font = '500 12px system-ui';
-    ctx.fillStyle = 'rgba(244,231,211,.5)';
-    ctx.fillText(`${this.l10n.t('ui.result.bestCombo')}: ×${this.bestComboEver} · ${this.totalCoins.toLocaleString(this.l10n.locale)} ${this.l10n.t('currency.coins').toLowerCase()}`, W / 2, 610);
+    // Stars pop in one at a time — earned, not displayed.
+    for (let i = 0; i < 3; i++) {
+      const st = clamp01((t - 0.35 - i * 0.18) / 0.28);
+      if (st <= 0) continue;
+      const sc = ease.outBack(st);
+      const earned = i < r.stars;
+      ctx.save();
+      ctx.translate(W / 2 + (i - 1) * 52, cy + 96);
+      ctx.scale(sc, sc);
+      starIcon(ctx, 0, 0, 20, { filled: earned });
+      ctx.restore();
+    }
+
+    // Stat rows, staggered.
+    const rows: [string, string, string][] = [
+      [this.l10n.t('ui.result.coins'), `+${r.coins.toLocaleString(this.l10n.locale)}`, C.ouro],
+      [this.l10n.t('ui.result.perfect'), String(r.perfect), C.chama],
+      [this.l10n.t('ui.result.burned'), String(r.burned), r.burned > 0 ? C.telha : 'rgba(244,231,211,0.45)'],
+      [this.l10n.t('ui.result.bestCombo'), `×${r.combo}`, C.brasa],
+      [this.l10n.t('ui.result.xp'), `+${r.xp.toLocaleString(this.l10n.locale)}`, C.creme]
+    ];
+    rows.forEach(([k, v, col], i) => {
+      const st = clamp01((t - 0.75 - i * 0.08) / 0.25);
+      if (st <= 0) return;
+      const y = cy + 158 + i * 30;
+      const slide = (1 - ease.outCubic(st)) * 18;
+      ctx.globalAlpha = st;
+      ctx.font = font(14, 600, UI);
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = 'rgba(244,231,211,0.62)';
+      ctx.fillText(k, cx + 30 - slide, y);
+      ctx.textAlign = 'right';
+      ctx.fillStyle = col;
+      ctx.font = font(15, 800, DISPLAY);
+      ctx.fillText(v, cx + cw - 30 + slide, y);
+      ctx.globalAlpha = 1;
+    });
+
+    // Primary button — breathes gently so the thumb finds it.
+    const btnT = clamp01((t - 1.25) / 0.3);
+    if (btnT > 0) {
+      const breathe = 1 + Math.sin(this.now * 2.4) * 0.012;
+      const bw = 220 * breathe, bh = 54 * breathe;
+      const bx = W / 2 - bw / 2, byy = cy + ch + 26;
+      ctx.save();
+      ctx.globalAlpha = btnT;
+      ctx.shadowColor = 'rgba(224,86,31,0.45)';
+      ctx.shadowBlur = 20;
+      ctx.shadowOffsetY = 5;
+      const bg = ctx.createLinearGradient(0, byy, 0, byy + bh);
+      bg.addColorStop(0, '#F0712F');
+      bg.addColorStop(1, C.vermelho);
+      roundRectPath(ctx, bx, byy, bw, bh, bh / 2);
+      ctx.fillStyle = bg;
+      ctx.fill();
+      ctx.restore();
+      roundRectPath(ctx, bx + 1, byy + 1, bw - 2, bh * 0.5, bh * 0.25);
+      ctx.fillStyle = 'rgba(255,236,206,0.18)';
+      ctx.fill();
+      outlinedText(
+        ctx, this.l10n.t('ui.action.next'),
+        W / 2, byy + bh / 2 + 1, C.offwhite, 18, { outline: 2 }
+      );
+    }
+
+    // Lifetime footer.
+    if (t > 1.4) {
+      ctx.globalAlpha = clamp01((t - 1.4) / 0.4);
+      ctx.font = font(12, 600, UI);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = 'rgba(244,231,211,0.48)';
+      ctx.fillText(
+        `${this.l10n.t('ui.result.bestCombo')}: ×${this.bestComboEver}  ·  ` +
+        `${this.totalCoins.toLocaleString(this.l10n.locale)} ${this.l10n.t('currency.coins').toLowerCase()}`,
+        W / 2, cy + ch + 108
+      );
+      ctx.globalAlpha = 1;
+    }
   }
 
-  // ── Utils ─────────────────────────────────────────────────────────────────
-  private roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number): void {
-    const rr = Math.min(r, w / 2, h / 2);
-    ctx.beginPath();
-    ctx.moveTo(x + rr, y);
-    ctx.arcTo(x + w, y, x + w, y + h, rr);
-    ctx.arcTo(x + w, y + h, x, y + h, rr);
-    ctx.arcTo(x, y + h, x, y, rr);
-    ctx.arcTo(x, y, x + w, y, rr);
-    ctx.closePath();
-  }
-
-  private hex(h: string): [number, number, number] {
-    const s = h.replace('#', '');
-    return [parseInt(s.slice(0, 2), 16), parseInt(s.slice(2, 4), 16), parseInt(s.slice(4, 6), 16)];
-  }
-  private mix(a: [number, number, number], b: [number, number, number], t: number): string {
-    const k = Math.max(0, Math.min(1, t));
-    const r = Math.round(a[0] + (b[0] - a[0]) * k);
-    const g = Math.round(a[1] + (b[1] - a[1]) * k);
-    const bl = Math.round(a[2] + (b[2] - a[2]) * k);
-    return `rgb(${r},${g},${bl})`;
-  }
-  private emojiFor(id: string): string {
-    const map: Record<string, string> = {
-      linguica_toscana: '🌭', pao_de_alho: '🥖', queijo_coalho: '🧀', coracao_frango: '🍢',
-      frango_coxa: '🍗', asinha_frango: '🍗', espetinho_frango: '🍢', espetinho_misto: '🍡',
-      legumes_grelhados: '🥗', fraldinha: '🥩', contra_file: '🥩', maminha: '🥩',
-      picanha: '🥩', costela: '🍖', cupim: '🍖', vinagrete: '🥣'
-    };
-    return map[id] ?? '🍽️';
-  }
 }
 
+// ── Bootstrap ───────────────────────────────────────────────────────────────
+// Without this the `Game` class is never instantiated and the bundler tree-shakes
+// the whole module away. If startup fails we draw the reason on the canvas rather
+// than leaving a blank screen with the error only in the console.
 const canvas = document.getElementById('c') as HTMLCanvasElement;
 const game = new Game();
 game.init(canvas).catch((err) => {
