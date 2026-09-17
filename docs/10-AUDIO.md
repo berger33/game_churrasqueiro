@@ -72,6 +72,41 @@ non-essential voice is stolen. Sizzle is **never** stolen — it is gameplay inf
 
 ## 6. Status
 
-No audio is recorded yet. The asset list above is the specification; the prototype uses
-WebAudio-synthesised placeholders so the *rhythm* of the feedback can be evaluated, and every
-placeholder is listed in [18-STATUS.md](18-STATUS.md) as not shippable (§82).
+**No audio is recorded yet.** The asset list in §3 is the specification.
+
+The prototype now carries WebAudio-synthesised placeholders so the *rhythm* of the feedback
+can be evaluated before any recording budget is spent — implemented in
+`prototype/src/audio.ts`. Every placeholder is **not shippable** (§82) and keeps the id from
+§3, so swapping in a recording is a one-line change per cue.
+
+What is wired, and where:
+
+| Cue | Fired by |
+|---|---|
+| `sfx_flip` | tap on a grill item — 4 variants, never the same twice in a row (§2) |
+| `sfx_place` | drop onto a zone, and charcoal refill |
+| `sfx_serve` | a customer's order completes |
+| `sfx_perfect` / `sfx_good` | serve quality, from the simulation's own event |
+| `sfx_burned` | the `burned` event |
+| `sfx_coin` | each serve — pitch climbs through a run, resets after 1.2 s (§3) |
+| `sfx_order_in` / `sfx_vip_arrive` | customer spawn, split on `isVip` |
+| `sfx_combo_*` | combo milestone, tier picked from the combo count |
+| `sfx_charcoal_low` | the `charcoal_low` event |
+| `sfx_level_up` | turn end |
+| `sfx_ui_tap` / `sfx_ui_error` | bench pickup; grill full, customer walked, title start |
+| `sfx_grill_sizzle_loop` + `sfx_charcoal_crackle_loop` | continuous bed over the whole turn |
+
+The sizzle bed is the §2 behaviour, not just a loop: its gain and low-pass cutoff track
+`hottestZoneHeat × charcoalEfficiency × grillLoad`, so a dying fire audibly calms down and a
+loaded grill sizzles harder than an empty one at the same temperature.
+
+**Direction compliance (§1):** every cue is built from low-passed noise beds and warm triangle
+tones. There is no percussion layer and no carnival shorthand — the identity is held by the
+sizzle and the crackle, not by instrumentation.
+
+**Browser constraint:** the `AudioContext` is created lazily on the first `pointerdown`, because
+browsers block audio until a user gesture. Constructing it at load would leave the game silent.
+
+**Verified by** `npm run check-render`, which stubs `AudioContext` and asserts the cue code
+actually schedules nodes — without the stub the layer would take its "no WebAudio" early return
+and silently execute nothing.
