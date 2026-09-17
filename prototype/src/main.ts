@@ -19,6 +19,7 @@ import {
   font, hex, mix, outlinedText, panel, pill, roundRectPath, shade, starIcon
 } from './theme.ts';
 import { drawFood as drawFoodArt, drawFoodIcon } from './foods.ts';
+import { audio } from './audio.ts';
 
 const W = 420;
 const H = 780;
@@ -76,6 +77,8 @@ class Game {
   private now = 0;
   /** Seconds since the result screen appeared, for its staggered entrance. */
   private resultT = 0;
+  /** Continuous grill bed, started on the first unlocked gesture. */
+  private sizzleBed: { setIntensity(v: number): void; stop(): void } | null = null;
 
   async init(canvas: HTMLCanvasElement): Promise<void> {
     const raw = await this.loadData();
@@ -89,7 +92,11 @@ class Game {
 
     this.resize(canvas);
     this.bindInput(canvas);
-    this.requestNextLevel();
+    // Start on the title screen. Previously init() called requestNextLevel()
+    // immediately, which set screen='play' before any input could arrive — so the
+    // 'title' state was declared, branched on in the input handler, and never
+    // actually rendered. It is reachable now.
+    this.screen = 'title';
 
     let last = performance.now();
     let acc = 0;
@@ -174,6 +181,20 @@ class Game {
     this.sim.tick(dt);
     this.reactToEvents(before);
 
+    // The grill bed tracks fire strength, so a dying fire audibly calms down
+    // (docs/10-AUDIO.md §2). Intensity = hottest zone heat × charcoal efficiency.
+    if (this.sizzleBed) {
+      const zones = this.sim.grill.zones;
+      let hottest = 0;
+      for (const z of zones) if (z.heat > hottest) hottest = z.heat;
+      const load = zones.reduce((n, z) => n + z.items.length, 0);
+      const cap = Math.max(1, zones.length * this.sim.grill.stats.slotsPerZone);
+      // A loaded grill sizzles harder than an empty one at the same temperature.
+      this.sizzleBed.setIntensity(
+        clamp01((hottest / 1.3) * this.sim.grill.charcoalEfficiency * (0.55 + 0.45 * (load / cap)))
+      );
+    }
+
     if (this.sim.finished) this.finishTurn();
     this.updateEffects(dt);
   }
@@ -187,23 +208,36 @@ class Game {
         this.ring(p.x, p.y);
         this.comboPulse = 1;
         this.flash = 0.35;
+        audio.play('perfect');
+      } else if (ev.type === 'serve') {
+        // Quality is audible: a soft blip for good, the bright sting only for
+        // perfect (handled above), so the ear learns the distinction.
+        if (ev.quality === 'good') audio.play('good');
+        audio.play('coin');
+      } else if (ev.type === 'spawn') {
+        audio.play(ev.customer.def.isVip ? 'vipArrive' : 'orderIn');
       } else if (ev.type === 'burned') {
         const p = this.foodScreenPos(ev.food);
         this.float(p.x, p.y - 16, this.l10n.t('ui.quality.burned'), C.telha, 22);
         this.burst(p.x, p.y, 10, '#4a4a4a', 'smoke');
+        audio.play('burned');
       } else if (ev.type === 'left') {
         this.float(W / 2, 150, this.l10n.t('ui.feedback.customerLeft'), C.telha, 16);
+        audio.play('uiError');
       } else if (ev.type === 'combo' && ev.milestone) {
         this.float(W / 2, 300, this.l10n.t('ui.feedback.comboMilestone', { n: ev.combo }), C.brasa, 34);
         this.flash = 0.6;
+        audio.play('combo', { combo: ev.combo });
       } else if (ev.type === 'charcoal_low') {
         this.banner(this.l10n.t('ui.hud.charcoal.low'));
+        audio.play('charcoalLow');
       }
     }
     this.sim.events.length = 0;
 
     if (this.sim.counters.customersServed > before.customersServed) {
       this.burst(W - 40, 60, 8, C.ouro, 'coin');
+      audio.play('serve');
     }
   }
 
@@ -219,6 +253,10 @@ class Game {
     };
     this.screen = 'result';
     this.resultT = 0;
+    // The grill is out of play, so the bed stops rather than running under the
+    // result screen. It restarts on the next turn's first gesture.
+    if (this.sizzleBed) { this.sizzleBed.stop(); this.sizzleBed = null; }
+    audio.play('levelUp');
   }
 
   private updateEffects(dt: number): void {
@@ -307,9 +345,14 @@ class Game {
       const p = toLocal(e);
       this.pointer = { ...p, down: true };
       canvas.setPointerCapture(e.pointerId);
+      // Browsers block audio until a user gesture, so the engine is unlocked here
+      // rather than at construction.
+      audio.unlock();
+      if (!this.sizzleBed) this.sizzleBed = audio.startSizzleBed();
 
       if (this.screen === 'title') {
-        this.screen = 'play';
+        audio.play('uiTap');
+        this.requestNextLevel();
         return;
       }
       if (this.screen === 'result') {
@@ -324,6 +367,7 @@ class Game {
         if (p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h) {
           const food = this.sim.takeFromStock(this.unlocked[i]!);
           this.drag = { food, fromBench: true, x: p.x, y: p.y, startX: p.x, startY: p.y, moved: false, startTime: performance.now() };
+          audio.play('uiTap');
           return;
         }
       }
@@ -340,7 +384,10 @@ class Game {
 
       // Charcoal bar → refill
       if (p.y > GRILL_BOTTOM + 6 && p.y < GRILL_BOTTOM + 30) {
-        if (this.sim.refillCharcoal()) this.banner(this.l10n.t('ui.hud.charcoal'));
+        if (this.sim.refillCharcoal()) {
+          this.banner(this.l10n.t('ui.hud.charcoal'));
+          audio.play('place');
+        }
       }
     });
 
@@ -367,6 +414,7 @@ class Game {
           const pos = this.foodScreenPos(d.food);
           this.burst(pos.x, pos.y + 10, 6, C.chama, 'spark');
           this.float(pos.x, pos.y - 22, this.l10n.t('ui.feedback.flip'), C.creme, 15);
+          audio.play('flip');
         }
         return;
       }
@@ -392,7 +440,11 @@ class Game {
         const z = this.zoneAt(d.y);
         if (z >= 0) {
           const ok = d.fromBench ? this.sim.place(d.food, z) : this.sim.move(d.food, z);
-          if (!ok) this.float(d.x, d.y, this.l10n.t('ui.quality.grillFull'), C.telha, 14);
+          if (ok) audio.play('place');
+          else {
+            this.float(d.x, d.y, this.l10n.t('ui.quality.grillFull'), C.telha, 14);
+            audio.play('uiError');
+          }
         }
         return;
       }
@@ -535,7 +587,8 @@ class Game {
     ctx.clearRect(0, 0, W, H);
     this.drawBackdrop(ctx);
 
-    if (this.screen === 'result') this.drawResult(ctx);
+    if (this.screen === 'title') this.drawTitle(ctx);
+    else if (this.screen === 'result') this.drawResult(ctx);
     else this.drawPlay(ctx);
 
     ctx.restore();
@@ -557,6 +610,148 @@ class Game {
       ctx.fillStyle = f;
       ctx.fillRect(0, 0, W, H);
     }
+  }
+
+  /**
+   * Title screen. This used to be a declared-but-unreachable state: init() jumped
+   * straight into a turn, so the game opened mid-gameplay with no identity. It now
+   * opens on the product name, per docs/05-UX_FLOW.
+   *
+   * All strings come from the locale table (§56) — nothing is hardcoded.
+   */
+  private drawTitle(ctx: CanvasRenderingContext2D): void {
+    // Slow-drifting embers give the screen life without a particle budget.
+    for (let i = 0; i < 14; i++) {
+      const t = this.now * (0.12 + (i % 5) * 0.035) + i * 1.7;
+      const x = ((i * 61) % W) + Math.sin(t * 1.3) * 16;
+      const y = H - ((t * 46) % (H + 60));
+      const a = 0.10 + 0.3 * Math.abs(Math.sin(t * 2));
+      const r = 1.2 + ((i * 7) % 3) * 0.6;
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r * 5);
+      g.addColorStop(0, `rgba(242,166,59,${a})`);
+      g.addColorStop(1, 'rgba(224,86,31,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, r * 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Title lockup.
+    outlinedText(ctx, this.l10n.t('ui.app.title'), W / 2, 196, C.offwhite, 52, {
+      outline: 7, shadow: 12
+    });
+    outlinedText(ctx, this.l10n.t('ui.app.subtitle'), W / 2, 240, C.chama, 21, {
+      weight: 700, outline: 4, shadow: 6
+    });
+
+    // A lit grill as the hero mark — coals breathing, matching the gameplay look.
+    const gx = W / 2 - 92, gy = 300, gw = 184, gh = 118;
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.6)';
+    ctx.shadowBlur = 22;
+    ctx.shadowOffsetY = 8;
+    roundRectPath(ctx, gx, gy, gw, gh, 16);
+    const body = ctx.createLinearGradient(gx, 0, gx + gw, 0);
+    body.addColorStop(0, '#3E3A38');
+    body.addColorStop(0.2, '#5E5854');
+    body.addColorStop(0.55, '#4A4441');
+    body.addColorStop(1, '#322E2C');
+    ctx.fillStyle = body;
+    ctx.fill();
+    ctx.restore();
+
+    roundRectPath(ctx, gx, gy, gw, gh, 16);
+    ctx.clip();
+    const pit = ctx.createLinearGradient(0, gy + 14, 0, gy + gh);
+    pit.addColorStop(0, 'rgba(196,62,20,0.85)');
+    pit.addColorStop(0.5, 'rgba(224,86,31,0.9)');
+    pit.addColorStop(1, 'rgba(96,30,12,0.8)');
+    ctx.fillStyle = pit;
+    ctx.fillRect(gx + 10, gy + 16, gw - 20, gh - 26);
+
+    for (let k = 0; k < 16; k++) {
+      const fx = ((k * 41) % 100) / 100;
+      const fy = ((k * 67) % 100) / 100;
+      const cx = gx + 16 + fx * (gw - 32);
+      const cy = gy + 24 + fy * (gh - 44);
+      const pulse = 0.55 + 0.45 * Math.sin(this.now * (1.5 + (k % 4) * 0.4) + k);
+      const rr = 2.4 + (k % 3);
+      const g2 = ctx.createRadialGradient(cx, cy, 0.5, cx, cy, rr * 3.4);
+      g2.addColorStop(0, `rgba(255,226,150,${0.6 * pulse})`);
+      g2.addColorStop(0.4, `rgba(236,116,34,${0.42 * pulse})`);
+      g2.addColorStop(1, 'rgba(120,34,10,0)');
+      ctx.fillStyle = g2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rr * 3.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = `rgba(40,22,16,${0.5 + 0.3 * (1 - pulse)})`;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, rr, rr * 0.7, k * 0.6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // grate over the coals
+    ctx.fillStyle = 'rgba(16,11,8,0.6)';
+    for (let bx = gx + 16; bx < gx + gw - 12; bx += 16) ctx.fillRect(bx, gy + 18, 3.2, gh - 30);
+    ctx.restore();
+
+    // rim light
+    roundRectPath(ctx, gx + 1, gy + 1, gw - 2, gh - 2, 16);
+    ctx.strokeStyle = 'rgba(255,214,160,0.22)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Signature foods on the grill, drawn with the real silhouettes.
+    const hero = ['picanha', 'linguica_toscana', 'espetinho_frango'];
+    hero.forEach((id, i) => {
+      const ing = this.db.ingredientById.get(id);
+      if (!ing) return;
+      drawFoodArt(ctx, ing, W / 2 - 52 + i * 52, gy + gh * 0.46, {
+        doneness: 0.78, burned: false, scale: 0.78, glow: 1
+      });
+    });
+
+    // Play button — the same breathing treatment as the result screen's CTA.
+    const breathe = 1 + Math.sin(this.now * 2.2) * 0.015;
+    const bw = 232 * breathe, bh = 62 * breathe;
+    const bx = W / 2 - bw / 2, by = 470;
+    ctx.save();
+    ctx.shadowColor = 'rgba(224,86,31,0.5)';
+    ctx.shadowBlur = 24;
+    ctx.shadowOffsetY = 6;
+    const bg = ctx.createLinearGradient(0, by, 0, by + bh);
+    bg.addColorStop(0, '#F0712F');
+    bg.addColorStop(1, C.vermelho);
+    roundRectPath(ctx, bx, by, bw, bh, bh / 2);
+    ctx.fillStyle = bg;
+    ctx.fill();
+    ctx.restore();
+    roundRectPath(ctx, bx + 1, by + 1, bw - 2, bh * 0.5, bh * 0.25);
+    ctx.fillStyle = 'rgba(255,236,206,0.2)';
+    ctx.fill();
+    outlinedText(ctx, this.l10n.t('ui.action.play'), W / 2, by + bh / 2 + 1, C.offwhite, 24, {
+      outline: 3
+    });
+
+    // Tap-to-start, fading in and out so it does not compete with the button.
+    const pulse = 0.35 + 0.35 * Math.sin(this.now * 2.2);
+    ctx.globalAlpha = pulse;
+    outlinedText(ctx, this.l10n.t('ui.title.tapToStart'), W / 2, 566, C.creme, 13, {
+      weight: 600, family: UI, outline: 2
+    });
+    ctx.globalAlpha = 1;
+
+    // Control hint, wrapped to two lines so it never overflows the 420 px stage.
+    ctx.font = font(11, 600, UI);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(244,231,211,0.5)';
+    const hint = this.l10n.t('ui.title.hint');
+    const parts = hint.split('·');
+    parts.forEach((seg, i) => {
+      const line = seg.trim();
+      if (line) ctx.fillText(line, W / 2, 632 + i * 17);
+    });
   }
 
   private drawHud(ctx: CanvasRenderingContext2D): void {
