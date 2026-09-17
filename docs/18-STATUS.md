@@ -17,6 +17,8 @@ Every claim below was produced by a command run in this checkout.
 | Unit tests | `npx vitest run` | **135 passed / 0 failed** (8 files) |
 | Localisation | `npm run check-l10n` | **OK** — 340 keys referenced by data, all translated in pt-BR (469 keys total); en-US / es-419 are declared 10.7 % stubs that fall back to pt-BR |
 | Data integrity | `npm run validate` | **OK** — 20 tables, 16 ingredients, 11 customers, 7 restaurants, 27 upgrade tracks, 58 achievements, 37 collection entries, 47 analytics events, 60 authored levels |
+| Data contracts | `npm run check-schema` | **OK** — 20/20 tables valid against `shared/schema`, and every contract rejects a broken copy of itself |
+| Contract drift | `npm run verify-schemas` | **OK** — 20 schemas in step with `shared/data` |
 | Short-horizon economy | `npm run sim` | **all 15 balance targets met** |
 | Long-horizon economy | `npm run sim:long` (1500 turns) | **all 15 balance targets met** — see §3 |
 | Economy report | `HORIZON=1500 npm run balance-report` | reaches **level 80**; income growth L5→L70 **×13.10** vs cost growth **×29.28** → costs outpace income, so purchases stay meaningful |
@@ -150,6 +152,31 @@ while `collection.json` ships **37**, making the achievement unreachable.
 fails the build if any achievement's goal exceeds the content that ships.
 Verified by re-introducing the bug: `npm run validate` reported
 `collection_all_mvp: goal 40 exceeds the 37 entries that ship — achievement is unreachable`.
+
+### 18 dangling `$schema` references
+
+Every table in `shared/data` declared a `$schema` field pointing at
+`schema/<name>.schema.json`, and **none of those files existed**. Editors, CI and
+any external consumer got a contract that resolved to nothing — the reference
+looked like a guarantee and delivered none.
+
+**Fixed.** `shared/schema/` now holds all 20 contracts, generated from the real
+tables by `tools/studio/gen-schemas.mjs`, and `npm run check-schema` validates
+every table by resolving its declared `$schema` rather than assuming the filename
+pairing — so a table pointing at the wrong schema is caught instead of silently
+checked against something else.
+
+Deriving rather than hand-writing mattered: three hand-written assumptions were
+wrong before the generator's first clean run. `stageOverrides` is
+`{id, max, nameKey}` not `{stage, max, labelKey}`; `costela` and `cupim` are grill
+items with `flipNeeded: false` **by design** (low-and-slow cuts you never flip),
+so "grill implies flipNeeded" is false; and `vinagrete` is a prep item whose
+`sideCookSec`/`heatRate`/`burnRate` are legitimately `0`.
+
+`check-schema` also runs a **negative pass** — each contract is fed a broken copy
+of its own table (a required field deleted, an unknown top-level key added) and
+must reject it. Verified the guard has teeth by neutering
+`ingredients.schema.json`: the check failed and exited 1. Restored, exit 0.
 
 ---
 

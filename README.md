@@ -39,8 +39,11 @@ The Unity client ports the same rules (`Assets/Scripts/Sim/`). Parity is checked
 ```bash
 npm install
 
-npm run validate          # schema + referential integrity of every data table
+npm run validate          # referential + semantic integrity of every data table
+npm run check-schema      # every table against its JSON Schema contract (+ negative pass)
 npm test                  # full automated QA suite (vitest)
+npm run check-art         # all 16 ingredient silhouettes x 8 doneness levels render
+npm run check-render      # drive the real prototype bundle through a full turn
 npm run gen-levels        # regenerate the authored turn list
 npm run sim               # economy simulation + balance guardrails (exits non-zero on breach)
 LONG_HORIZON=1500 npm run sim   # multi-month pacing projection
