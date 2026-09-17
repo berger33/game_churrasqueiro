@@ -78,7 +78,7 @@ leak in place and had to be re-derived — see §3.
 | Unity localisation (load `shared/l10n`, resolve `*Key`) | **Not yet written** | The TS resolver (`tools/sim-core/src/l10n.ts`) is tested; the C# port is not. |
 | `Packages/manifest.json`, `ProjectSettings/` | **Not yet written** | Needs the Unity Editor to generate authoritative values. |
 | Golden-vector parity (TS ↔ C#) | **Not yet written** | Blocked on a C# compiler. |
-| Final art, audio assets, VFX | **Not present** | The prototype uses procedural canvas drawing and no sound. Placeholder-only, as allowed for a design-verification prototype — none of it ships. |
+| Final art assets, recorded audio, VFX | **Not present** | The prototype renders procedurally on canvas and synthesises its feedback with WebAudio (`prototype/src/audio.ts`). Both are placeholders, as allowed for a design-verification prototype — none of it ships (§82). See `10-AUDIO.md` §6 for which cues are wired. |
 | Firebase / AdMob / IAP live integration | **Config only** | Requires real project credentials and a signed build. IDs are `REPLACE_IN_SECURE_CONFIG`; only Google **test** units are wired. |
 
 **The C# code has never been compiled.** Treat it as a specification-shaped draft
