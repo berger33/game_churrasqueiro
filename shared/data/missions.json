@@ -1,0 +1,35 @@
+{
+  "$schema": "schema/missions.schema.json",
+  "version": 2,
+  "daily": {
+    "count": 3,
+    "resetHourLocal": 4,
+    "completionBonus": { "coins": 500, "embers": 2 },
+    "rerollCost": { "currency": "embers", "amount": 5, "freePerDay": 1 },
+    "pool": [
+      { "id": "d_serve_20", "nameKey": "mission.d_serve_20", "stat": "customersServed", "goal": 20, "reward": { "coins": 400 } },
+      { "id": "d_perfect_10", "nameKey": "mission.d_perfect_10", "stat": "perfectCooks", "goal": 10, "reward": { "coins": 450, "embers": 1 } },
+      { "id": "d_linguica_15", "nameKey": "mission.d_linguica_15", "stat": "food.linguica_toscana.served", "goal": 15, "reward": { "coins": 350 } },
+      { "id": "d_coins_5k", "nameKey": "mission.d_coins_5k", "stat": "coinsEarnedSession", "goal": 5000, "reward": { "coins": 600 } },
+      { "id": "d_combo_10", "nameKey": "mission.d_combo_10", "stat": "bestComboToday", "goal": 10, "reward": { "coins": 500, "embers": 1 } },
+      { "id": "d_turns_3", "nameKey": "mission.d_turns_3", "stat": "turnsPlayed", "goal": 3, "reward": { "coins": 300 } },
+      { "id": "d_no_burn", "nameKey": "mission.d_no_burn", "stat": "flawlessTurns", "goal": 2, "reward": { "coins": 550 } },
+      { "id": "d_picanha_5", "nameKey": "mission.d_picanha_5", "stat": "food.picanha.perfect", "goal": 5, "reward": { "coins": 650, "embers": 1 }, "requiresIngredient": "picanha" },
+      { "id": "d_skewer_12", "nameKey": "mission.d_skewer_12", "stat": "category.skewer.served", "goal": 12, "reward": { "coins": 380 } },
+      { "id": "d_tips_2k", "nameKey": "mission.d_tips_2k", "stat": "tipsEarnedSession", "goal": 2000, "reward": { "coins": 420 } }
+    ]
+  },
+  "weekly": {
+    "count": 3,
+    "resetDayOfWeek": "monday",
+    "completionBonus": { "coins": 5000, "embers": 20 },
+    "pool": [
+      { "id": "w_serve_300", "nameKey": "mission.w_serve_300", "stat": "customersServed", "goal": 300, "reward": { "coins": 3000, "embers": 8 } },
+      { "id": "w_perfect_150", "nameKey": "mission.w_perfect_150", "stat": "perfectCooks", "goal": 150, "reward": { "coins": 3500, "embers": 10 } },
+      { "id": "w_event_1", "nameKey": "mission.w_event_1", "stat": "eventsCompleted", "goal": 1, "reward": { "coins": 2500, "embers": 6 } },
+      { "id": "w_coins_60k", "nameKey": "mission.w_coins_60k", "stat": "coinsEarnedSession", "goal": 60000, "reward": { "coins": 4000, "embers": 12 } },
+      { "id": "w_combo_20", "nameKey": "mission.w_combo_20", "stat": "bestComboToday", "goal": 20, "reward": { "coins": 3200, "embers": 8 } },
+      { "id": "w_upgrades_3", "nameKey": "mission.w_upgrades_3", "stat": "upgradesPurchased", "goal": 3, "reward": { "coins": 2800, "embers": 6 } }
+    ]
+  }
+}

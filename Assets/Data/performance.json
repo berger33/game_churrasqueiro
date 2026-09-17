@@ -1,0 +1,81 @@
+{
+  "$schema": "schema/performance.schema.json",
+  "_comment": "Performance budget & quality tiers (spec §64-§65). Auto-detection samples the first 3 seconds of gameplay.",
+  "version": 2,
+  "budget": {
+    "targetFpsHigh": 60,
+    "targetFpsMedium": 60,
+    "targetFpsLow": 30,
+    "maxDrawCallsHigh": 180,
+    "maxDrawCallsMedium": 120,
+    "maxDrawCallsLow": 70,
+    "maxTrisPerFrame": 250000,
+    "maxGcAllocPerFrameBytes": 1024,
+    "maxSceneLoadMs": 1500,
+    "maxColdStartToInteractiveMs": 3500,
+    "maxTextureMemoryMB": 180,
+    "maxApkSizeMB": 120,
+    "maxAabBaseSizeMB": 90
+  },
+  "qualityLevels": [
+    {
+      "id": "LOW",
+      "resolutionScale": 0.75,
+      "shadows": "off",
+      "shadowDistance": 0,
+      "particlesMultiplier": 0.35,
+      "smokeEnabled": true,
+      "emberParticles": false,
+      "postProcessing": "off",
+      "lodBias": 2.0,
+      "dynamicLights": 1,
+      "vSync": false,
+      "maxActiveCustomers": 3,
+      "vfxGrillMarks": true
+    },
+    {
+      "id": "MEDIUM",
+      "resolutionScale": 0.9,
+      "shadows": "hard_only",
+      "shadowDistance": 15,
+      "particlesMultiplier": 0.7,
+      "smokeEnabled": true,
+      "emberParticles": true,
+      "postProcessing": "bloom_low",
+      "lodBias": 1.25,
+      "dynamicLights": 3,
+      "vSync": false,
+      "maxActiveCustomers": 4,
+      "vfxGrillMarks": true
+    },
+    {
+      "id": "HIGH",
+      "resolutionScale": 1.0,
+      "shadows": "soft",
+      "shadowDistance": 30,
+      "particlesMultiplier": 1.0,
+      "smokeEnabled": true,
+      "emberParticles": true,
+      "postProcessing": "bloom_dof",
+      "lodBias": 1.0,
+      "dynamicLights": 5,
+      "vSync": true,
+      "maxActiveCustomers": 6,
+      "vfxGrillMarks": true
+    }
+  ],
+  "autoDetect": {
+    "sampleSeconds": 3,
+    "fpsLowToMedium": 45,
+    "fpsMediumToHigh": 55,
+    "hysteresisFps": 5,
+    "ramThresholdMBLow": 2500,
+    "overrideKey": "quality_autodetect"
+  },
+  "renderPipeline": {
+    "choice": "URP",
+    "reason": "Stable, mobile-first, SRP Batcher reduces draw calls; widely maintained and non-experimental.",
+    "shaders": ["URP/Lit (food, props)", "Custom/FoodDoneness (parametrized)", "UI/Default (atlas)"],
+    "batching": ["SRP Batcher", "Static batching for scenery", "GPU instancing for embers"]
+  }
+}

@@ -1,0 +1,1341 @@
+{
+  "version": 1,
+  "generatedBy": "tools/studio/gen-levels.ts",
+  "levels": [
+    {
+      "id": "level_001",
+      "index": 1,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.easy",
+      "difficulty": "easy",
+      "difficultyScalar": 0.75,
+      "turnLengthSec": 90,
+      "spawnIntervalSec": 9,
+      "patienceScalar": 1.28,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 80,
+        "xp": 18,
+        "firstClearBonus": {
+          "coins": 150,
+          "xp": 30
+        }
+      }
+    },
+    {
+      "id": "level_002",
+      "index": 2,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.easy",
+      "difficulty": "easy",
+      "difficultyScalar": 0.842,
+      "turnLengthSec": 92,
+      "spawnIntervalSec": 8.35,
+      "patienceScalar": 1.2,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 105,
+        "xp": 24,
+        "firstClearBonus": {
+          "coins": 181,
+          "xp": 38
+        }
+      }
+    },
+    {
+      "id": "level_003",
+      "index": 3,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.easy",
+      "difficulty": "easy",
+      "difficultyScalar": 0.947,
+      "turnLengthSec": 95,
+      "spawnIntervalSec": 7.62,
+      "patienceScalar": 1.11,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 132,
+        "xp": 31,
+        "firstClearBonus": {
+          "coins": 216,
+          "xp": 46
+        }
+      }
+    },
+    {
+      "id": "level_004",
+      "index": 4,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.reward",
+      "difficulty": "reward",
+      "difficultyScalar": 0.75,
+      "turnLengthSec": 90,
+      "spawnIntervalSec": 9,
+      "patienceScalar": 1.28,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 80,
+        "xp": 18,
+        "embers": 1,
+        "firstClearBonus": {
+          "coins": 150,
+          "xp": 30
+        }
+      }
+    },
+    {
+      "id": "level_005",
+      "index": 5,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.easy",
+      "difficulty": "easy",
+      "difficultyScalar": 0.819,
+      "turnLengthSec": 92,
+      "spawnIntervalSec": 8.51,
+      "patienceScalar": 1.22,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 99,
+        "xp": 23,
+        "firstClearBonus": {
+          "coins": 173,
+          "xp": 36
+        }
+      }
+    },
+    {
+      "id": "level_006",
+      "index": 6,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.easy",
+      "difficulty": "easy",
+      "difficultyScalar": 0.924,
+      "turnLengthSec": 94,
+      "spawnIntervalSec": 7.78,
+      "patienceScalar": 1.129,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 126,
+        "xp": 30,
+        "firstClearBonus": {
+          "coins": 208,
+          "xp": 44
+        }
+      }
+    },
+    {
+      "id": "level_007",
+      "index": 7,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 1.028,
+      "turnLengthSec": 97,
+      "spawnIntervalSec": 7.05,
+      "patienceScalar": 1.039,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 154,
+        "xp": 37,
+        "firstClearBonus": {
+          "coins": 243,
+          "xp": 53
+        }
+      }
+    },
+    {
+      "id": "level_008",
+      "index": 8,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.reward",
+      "difficulty": "reward",
+      "difficultyScalar": 0.754,
+      "turnLengthSec": 90,
+      "spawnIntervalSec": 8.97,
+      "patienceScalar": 1.276,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 81,
+        "xp": 18,
+        "embers": 1,
+        "firstClearBonus": {
+          "coins": 151,
+          "xp": 30
+        }
+      }
+    },
+    {
+      "id": "level_009",
+      "index": 9,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.easy",
+      "difficulty": "easy",
+      "difficultyScalar": 0.901,
+      "turnLengthSec": 94,
+      "spawnIntervalSec": 7.94,
+      "patienceScalar": 1.149,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 120,
+        "xp": 28,
+        "firstClearBonus": {
+          "coins": 200,
+          "xp": 43
+        }
+      }
+    },
+    {
+      "id": "level_010",
+      "index": 10,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 1.005,
+      "turnLengthSec": 96,
+      "spawnIntervalSec": 7.21,
+      "patienceScalar": 1.059,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 148,
+        "xp": 35,
+        "firstClearBonus": {
+          "coins": 235,
+          "xp": 51
+        }
+      }
+    },
+    {
+      "id": "level_011",
+      "index": 11,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 1.109,
+      "turnLengthSec": 99,
+      "spawnIntervalSec": 6.48,
+      "patienceScalar": 0.968,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 176,
+        "xp": 42,
+        "firstClearBonus": {
+          "coins": 270,
+          "xp": 60
+        }
+      }
+    },
+    {
+      "id": "level_012",
+      "index": 12,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.reward",
+      "difficulty": "reward",
+      "difficultyScalar": 0.836,
+      "turnLengthSec": 92,
+      "spawnIntervalSec": 8.4,
+      "patienceScalar": 1.206,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 103,
+        "xp": 24,
+        "embers": 1,
+        "firstClearBonus": {
+          "coins": 179,
+          "xp": 37
+        }
+      }
+    },
+    {
+      "id": "level_013",
+      "index": 13,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.easy",
+      "difficulty": "easy",
+      "difficultyScalar": 0.982,
+      "turnLengthSec": 96,
+      "spawnIntervalSec": 7.37,
+      "patienceScalar": 1.079,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 142,
+        "xp": 33,
+        "firstClearBonus": {
+          "coins": 227,
+          "xp": 49
+        }
+      }
+    },
+    {
+      "id": "level_014",
+      "index": 14,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 1.087,
+      "turnLengthSec": 98,
+      "spawnIntervalSec": 6.64,
+      "patienceScalar": 0.988,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 170,
+        "xp": 40,
+        "firstClearBonus": {
+          "coins": 262,
+          "xp": 58
+        }
+      }
+    },
+    {
+      "id": "level_015",
+      "index": 15,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.hard",
+      "difficulty": "hard",
+      "difficultyScalar": 1.191,
+      "turnLengthSec": 101,
+      "spawnIntervalSec": 5.91,
+      "patienceScalar": 0.898,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 198,
+        "xp": 47,
+        "firstClearBonus": {
+          "coins": 297,
+          "xp": 67
+        }
+      }
+    },
+    {
+      "id": "level_016",
+      "index": 16,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.reward",
+      "difficulty": "reward",
+      "difficultyScalar": 0.917,
+      "turnLengthSec": 94,
+      "spawnIntervalSec": 7.83,
+      "patienceScalar": 1.135,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 125,
+        "xp": 29,
+        "embers": 1,
+        "firstClearBonus": {
+          "coins": 206,
+          "xp": 44
+        }
+      }
+    },
+    {
+      "id": "level_017",
+      "index": 17,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 1.064,
+      "turnLengthSec": 98,
+      "spawnIntervalSec": 6.81,
+      "patienceScalar": 1.008,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 164,
+        "xp": 39,
+        "firstClearBonus": {
+          "coins": 255,
+          "xp": 56
+        }
+      }
+    },
+    {
+      "id": "level_018",
+      "index": 18,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 1.168,
+      "turnLengthSec": 100,
+      "spawnIntervalSec": 6.07,
+      "patienceScalar": 0.918,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 191,
+        "xp": 46,
+        "firstClearBonus": {
+          "coins": 289,
+          "xp": 65
+        }
+      }
+    },
+    {
+      "id": "level_019",
+      "index": 19,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.hard",
+      "difficulty": "hard",
+      "difficultyScalar": 1.272,
+      "turnLengthSec": 103,
+      "spawnIntervalSec": 5.34,
+      "patienceScalar": 0.827,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0.12,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 219,
+        "xp": 53,
+        "firstClearBonus": {
+          "coins": 324,
+          "xp": 74
+        }
+      }
+    },
+    {
+      "id": "level_020",
+      "index": 20,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.reward",
+      "difficulty": "reward",
+      "difficultyScalar": 0.999,
+      "turnLengthSec": 96,
+      "spawnIntervalSec": 7.26,
+      "patienceScalar": 1.065,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 146,
+        "xp": 35,
+        "embers": 1,
+        "firstClearBonus": {
+          "coins": 233,
+          "xp": 51
+        }
+      }
+    },
+    {
+      "id": "level_021",
+      "index": 21,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 1.145,
+      "turnLengthSec": 100,
+      "spawnIntervalSec": 6.24,
+      "patienceScalar": 0.938,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 185,
+        "xp": 44,
+        "firstClearBonus": {
+          "coins": 282,
+          "xp": 63
+        }
+      }
+    },
+    {
+      "id": "level_022",
+      "index": 22,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.hard",
+      "difficulty": "hard",
+      "difficultyScalar": 1.249,
+      "turnLengthSec": 102,
+      "spawnIntervalSec": 5.5,
+      "patienceScalar": 0.847,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0.12,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 213,
+        "xp": 51,
+        "firstClearBonus": {
+          "coins": 316,
+          "xp": 72
+        }
+      }
+    },
+    {
+      "id": "level_023",
+      "index": 23,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.hard",
+      "difficulty": "hard",
+      "difficultyScalar": 1.35,
+      "turnLengthSec": 105,
+      "spawnIntervalSec": 4.8,
+      "patienceScalar": 0.76,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0.12,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 240,
+        "xp": 58,
+        "firstClearBonus": {
+          "coins": 350,
+          "xp": 80
+        }
+      }
+    },
+    {
+      "id": "level_024",
+      "index": 24,
+      "restaurantIndex": 0,
+      "nameKey": "level.name.reward",
+      "difficulty": "reward",
+      "difficultyScalar": 1.08,
+      "turnLengthSec": 98,
+      "spawnIntervalSec": 6.69,
+      "patienceScalar": 0.994,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 168,
+        "xp": 40,
+        "embers": 1,
+        "firstClearBonus": {
+          "coins": 260,
+          "xp": 58
+        }
+      }
+    },
+    {
+      "id": "level_025",
+      "index": 25,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.easy",
+      "difficulty": "easy",
+      "difficultyScalar": 0.75,
+      "turnLengthSec": 105,
+      "spawnIntervalSec": 9,
+      "patienceScalar": 1.28,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 200,
+        "xp": 32,
+        "firstClearBonus": {
+          "coins": 330,
+          "xp": 30
+        }
+      }
+    },
+    {
+      "id": "level_026",
+      "index": 26,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.easy",
+      "difficulty": "easy",
+      "difficultyScalar": 0.835,
+      "turnLengthSec": 107,
+      "spawnIntervalSec": 8.4,
+      "patienceScalar": 1.206,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 223,
+        "xp": 38,
+        "firstClearBonus": {
+          "coins": 358,
+          "xp": 37
+        }
+      }
+    },
+    {
+      "id": "level_027",
+      "index": 27,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.easy",
+      "difficulty": "easy",
+      "difficultyScalar": 0.933,
+      "turnLengthSec": 110,
+      "spawnIntervalSec": 7.72,
+      "patienceScalar": 1.122,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 249,
+        "xp": 44,
+        "firstClearBonus": {
+          "coins": 391,
+          "xp": 45
+        }
+      }
+    },
+    {
+      "id": "level_028",
+      "index": 28,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.reward",
+      "difficulty": "reward",
+      "difficultyScalar": 0.75,
+      "turnLengthSec": 105,
+      "spawnIntervalSec": 9,
+      "patienceScalar": 1.28,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 200,
+        "xp": 32,
+        "embers": 1,
+        "firstClearBonus": {
+          "coins": 330,
+          "xp": 30
+        }
+      }
+    },
+    {
+      "id": "level_029",
+      "index": 29,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.easy",
+      "difficulty": "easy",
+      "difficultyScalar": 0.791,
+      "turnLengthSec": 106,
+      "spawnIntervalSec": 8.71,
+      "patienceScalar": 1.244,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 211,
+        "xp": 35,
+        "firstClearBonus": {
+          "coins": 344,
+          "xp": 33
+        }
+      }
+    },
+    {
+      "id": "level_030",
+      "index": 30,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.easy",
+      "difficulty": "easy",
+      "difficultyScalar": 0.889,
+      "turnLengthSec": 108,
+      "spawnIntervalSec": 8.03,
+      "patienceScalar": 1.16,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 237,
+        "xp": 41,
+        "firstClearBonus": {
+          "coins": 376,
+          "xp": 42
+        }
+      }
+    },
+    {
+      "id": "level_031",
+      "index": 31,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.easy",
+      "difficulty": "easy",
+      "difficultyScalar": 0.986,
+      "turnLengthSec": 111,
+      "spawnIntervalSec": 7.35,
+      "patienceScalar": 1.075,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 263,
+        "xp": 48,
+        "firstClearBonus": {
+          "coins": 409,
+          "xp": 50
+        }
+      }
+    },
+    {
+      "id": "level_032",
+      "index": 32,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.reward",
+      "difficulty": "reward",
+      "difficultyScalar": 0.75,
+      "turnLengthSec": 105,
+      "spawnIntervalSec": 9,
+      "patienceScalar": 1.28,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 200,
+        "xp": 32,
+        "embers": 1,
+        "firstClearBonus": {
+          "coins": 330,
+          "xp": 30
+        }
+      }
+    },
+    {
+      "id": "level_033",
+      "index": 33,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.easy",
+      "difficulty": "easy",
+      "difficultyScalar": 0.845,
+      "turnLengthSec": 107,
+      "spawnIntervalSec": 8.34,
+      "patienceScalar": 1.198,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 225,
+        "xp": 38,
+        "firstClearBonus": {
+          "coins": 362,
+          "xp": 38
+        }
+      }
+    },
+    {
+      "id": "level_034",
+      "index": 34,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.easy",
+      "difficulty": "easy",
+      "difficultyScalar": 0.942,
+      "turnLengthSec": 110,
+      "spawnIntervalSec": 7.65,
+      "patienceScalar": 1.113,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 251,
+        "xp": 45,
+        "firstClearBonus": {
+          "coins": 394,
+          "xp": 46
+        }
+      }
+    },
+    {
+      "id": "level_035",
+      "index": 35,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 1.04,
+      "turnLengthSec": 112,
+      "spawnIntervalSec": 6.97,
+      "patienceScalar": 1.029,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 277,
+        "xp": 51,
+        "firstClearBonus": {
+          "coins": 427,
+          "xp": 54
+        }
+      }
+    },
+    {
+      "id": "level_036",
+      "index": 36,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.reward",
+      "difficulty": "reward",
+      "difficultyScalar": 0.759,
+      "turnLengthSec": 105,
+      "spawnIntervalSec": 8.94,
+      "patienceScalar": 1.272,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 202,
+        "xp": 33,
+        "embers": 1,
+        "firstClearBonus": {
+          "coins": 333,
+          "xp": 31
+        }
+      }
+    },
+    {
+      "id": "level_037",
+      "index": 37,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.easy",
+      "difficulty": "easy",
+      "difficultyScalar": 0.898,
+      "turnLengthSec": 109,
+      "spawnIntervalSec": 7.96,
+      "patienceScalar": 1.151,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 240,
+        "xp": 42,
+        "firstClearBonus": {
+          "coins": 379,
+          "xp": 42
+        }
+      }
+    },
+    {
+      "id": "level_038",
+      "index": 38,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 0.996,
+      "turnLengthSec": 111,
+      "spawnIntervalSec": 7.28,
+      "patienceScalar": 1.067,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 266,
+        "xp": 48,
+        "firstClearBonus": {
+          "coins": 412,
+          "xp": 50
+        }
+      }
+    },
+    {
+      "id": "level_039",
+      "index": 39,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 1.093,
+      "turnLengthSec": 114,
+      "spawnIntervalSec": 6.6,
+      "patienceScalar": 0.983,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 292,
+        "xp": 55,
+        "firstClearBonus": {
+          "coins": 444,
+          "xp": 59
+        }
+      }
+    },
+    {
+      "id": "level_040",
+      "index": 40,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.reward",
+      "difficulty": "reward",
+      "difficultyScalar": 0.813,
+      "turnLengthSec": 107,
+      "spawnIntervalSec": 8.56,
+      "patienceScalar": 1.226,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 217,
+        "xp": 36,
+        "embers": 1,
+        "firstClearBonus": {
+          "coins": 351,
+          "xp": 35
+        }
+      }
+    },
+    {
+      "id": "level_041",
+      "index": 41,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.easy",
+      "difficulty": "easy",
+      "difficultyScalar": 0.952,
+      "turnLengthSec": 110,
+      "spawnIntervalSec": 7.59,
+      "patienceScalar": 1.105,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 254,
+        "xp": 45,
+        "firstClearBonus": {
+          "coins": 397,
+          "xp": 47
+        }
+      }
+    },
+    {
+      "id": "level_042",
+      "index": 42,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 1.049,
+      "turnLengthSec": 112,
+      "spawnIntervalSec": 6.9,
+      "patienceScalar": 1.021,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 280,
+        "xp": 52,
+        "firstClearBonus": {
+          "coins": 430,
+          "xp": 55
+        }
+      }
+    },
+    {
+      "id": "level_043",
+      "index": 43,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 1.147,
+      "turnLengthSec": 115,
+      "spawnIntervalSec": 6.22,
+      "patienceScalar": 0.936,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 306,
+        "xp": 58,
+        "firstClearBonus": {
+          "coins": 462,
+          "xp": 63
+        }
+      }
+    },
+    {
+      "id": "level_044",
+      "index": 44,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.reward",
+      "difficulty": "reward",
+      "difficultyScalar": 0.866,
+      "turnLengthSec": 108,
+      "spawnIntervalSec": 8.19,
+      "patienceScalar": 1.179,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 231,
+        "xp": 40,
+        "embers": 1,
+        "firstClearBonus": {
+          "coins": 369,
+          "xp": 40
+        }
+      }
+    },
+    {
+      "id": "level_045",
+      "index": 45,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 1.005,
+      "turnLengthSec": 111,
+      "spawnIntervalSec": 7.21,
+      "patienceScalar": 1.059,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 268,
+        "xp": 49,
+        "firstClearBonus": {
+          "coins": 415,
+          "xp": 51
+        }
+      }
+    },
+    {
+      "id": "level_046",
+      "index": 46,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 1.103,
+      "turnLengthSec": 114,
+      "spawnIntervalSec": 6.53,
+      "patienceScalar": 0.974,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 294,
+        "xp": 56,
+        "firstClearBonus": {
+          "coins": 448,
+          "xp": 59
+        }
+      }
+    },
+    {
+      "id": "level_047",
+      "index": 47,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.hard",
+      "difficulty": "hard",
+      "difficultyScalar": 1.2,
+      "turnLengthSec": 116,
+      "spawnIntervalSec": 5.85,
+      "patienceScalar": 0.89,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0.12,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 320,
+        "xp": 62,
+        "firstClearBonus": {
+          "coins": 480,
+          "xp": 68
+        }
+      }
+    },
+    {
+      "id": "level_048",
+      "index": 48,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.reward",
+      "difficulty": "reward",
+      "difficultyScalar": 0.92,
+      "turnLengthSec": 109,
+      "spawnIntervalSec": 7.81,
+      "patienceScalar": 1.133,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 245,
+        "xp": 43,
+        "embers": 1,
+        "firstClearBonus": {
+          "coins": 387,
+          "xp": 44
+        }
+      }
+    },
+    {
+      "id": "level_049",
+      "index": 49,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 1.059,
+      "turnLengthSec": 113,
+      "spawnIntervalSec": 6.84,
+      "patienceScalar": 1.012,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 282,
+        "xp": 53,
+        "firstClearBonus": {
+          "coins": 433,
+          "xp": 56
+        }
+      }
+    },
+    {
+      "id": "level_050",
+      "index": 50,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 1.156,
+      "turnLengthSec": 115,
+      "spawnIntervalSec": 6.16,
+      "patienceScalar": 0.928,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 308,
+        "xp": 59,
+        "firstClearBonus": {
+          "coins": 465,
+          "xp": 64
+        }
+      }
+    },
+    {
+      "id": "level_051",
+      "index": 51,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.hard",
+      "difficulty": "hard",
+      "difficultyScalar": 1.254,
+      "turnLengthSec": 118,
+      "spawnIntervalSec": 5.47,
+      "patienceScalar": 0.843,
+      "maxOrdersOnScreen": 4,
+      "vipChance": 0.12,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 334,
+        "xp": 66,
+        "firstClearBonus": {
+          "coins": 498,
+          "xp": 72
+        }
+      }
+    },
+    {
+      "id": "level_052",
+      "index": 52,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.reward",
+      "difficulty": "reward",
+      "difficultyScalar": 0.973,
+      "turnLengthSec": 111,
+      "spawnIntervalSec": 7.44,
+      "patienceScalar": 1.087,
+      "maxOrdersOnScreen": 2,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 259,
+        "xp": 47,
+        "embers": 1,
+        "firstClearBonus": {
+          "coins": 404,
+          "xp": 49
+        }
+      }
+    },
+    {
+      "id": "level_053",
+      "index": 53,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 1.112,
+      "turnLengthSec": 114,
+      "spawnIntervalSec": 6.46,
+      "patienceScalar": 0.966,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 297,
+        "xp": 56,
+        "firstClearBonus": {
+          "coins": 451,
+          "xp": 60
+        }
+      }
+    },
+    {
+      "id": "level_054",
+      "index": 54,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.hard",
+      "difficulty": "hard",
+      "difficultyScalar": 1.21,
+      "turnLengthSec": 116,
+      "spawnIntervalSec": 5.78,
+      "patienceScalar": 0.882,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0.12,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 323,
+        "xp": 63,
+        "firstClearBonus": {
+          "coins": 483,
+          "xp": 68
+        }
+      }
+    },
+    {
+      "id": "level_055",
+      "index": 55,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.hard",
+      "difficulty": "hard",
+      "difficultyScalar": 1.307,
+      "turnLengthSec": 119,
+      "spawnIntervalSec": 5.1,
+      "patienceScalar": 0.797,
+      "maxOrdersOnScreen": 4,
+      "vipChance": 0.12,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 349,
+        "xp": 69,
+        "firstClearBonus": {
+          "coins": 516,
+          "xp": 76
+        }
+      }
+    },
+    {
+      "id": "level_056",
+      "index": 56,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.reward",
+      "difficulty": "reward",
+      "difficultyScalar": 1.027,
+      "turnLengthSec": 112,
+      "spawnIntervalSec": 7.06,
+      "patienceScalar": 1.04,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 274,
+        "xp": 50,
+        "embers": 1,
+        "firstClearBonus": {
+          "coins": 422,
+          "xp": 53
+        }
+      }
+    },
+    {
+      "id": "level_057",
+      "index": 57,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.medium",
+      "difficulty": "medium",
+      "difficultyScalar": 1.166,
+      "turnLengthSec": 115,
+      "spawnIntervalSec": 6.09,
+      "patienceScalar": 0.92,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 311,
+        "xp": 60,
+        "firstClearBonus": {
+          "coins": 469,
+          "xp": 65
+        }
+      }
+    },
+    {
+      "id": "level_058",
+      "index": 58,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.hard",
+      "difficulty": "hard",
+      "difficultyScalar": 1.263,
+      "turnLengthSec": 118,
+      "spawnIntervalSec": 5.41,
+      "patienceScalar": 0.835,
+      "maxOrdersOnScreen": 4,
+      "vipChance": 0.12,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 337,
+        "xp": 66,
+        "firstClearBonus": {
+          "coins": 501,
+          "xp": 73
+        }
+      }
+    },
+    {
+      "id": "level_059",
+      "index": 59,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.hard",
+      "difficulty": "hard",
+      "difficultyScalar": 1.35,
+      "turnLengthSec": 120,
+      "spawnIntervalSec": 4.8,
+      "patienceScalar": 0.76,
+      "maxOrdersOnScreen": 4,
+      "vipChance": 0.12,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 360,
+        "xp": 72,
+        "firstClearBonus": {
+          "coins": 530,
+          "xp": 80
+        }
+      }
+    },
+    {
+      "id": "level_060",
+      "index": 60,
+      "restaurantIndex": 1,
+      "nameKey": "level.name.reward",
+      "difficulty": "reward",
+      "difficultyScalar": 1.08,
+      "turnLengthSec": 113,
+      "spawnIntervalSec": 6.69,
+      "patienceScalar": 0.994,
+      "maxOrdersOnScreen": 3,
+      "vipChance": 0,
+      "targetStars3ServedPct": 0.9,
+      "rewards": {
+        "coins": 288,
+        "xp": 54,
+        "embers": 1,
+        "firstClearBonus": {
+          "coins": 440,
+          "xp": 58
+        }
+      }
+    }
+  ]
+}

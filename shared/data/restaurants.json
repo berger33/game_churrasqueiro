@@ -1,0 +1,354 @@
+{
+  "$schema": "schema/restaurants.schema.json",
+  "_comment": "Establishment progression. Each tier must introduce new mechanics/content, not just bigger numbers (spec §15).",
+  "version": 6,
+  "restaurants": [
+    {
+      "index": 0,
+      "id": "quintal",
+      "nameKey": "restaurant.quintal.name",
+      "taglineKey": "restaurant.quintal.tagline",
+      "unlockCostCoins": 0,
+      "requiredLevel": 1,
+      "grill": {
+        "slotsPerZone": 2,
+        "zoneCount": 3,
+        "heatStability": 0.85,
+        "charcoalDurationBonus": 0
+      },
+      "service": {
+        "maxOrdersOnScreen": 2,
+        "prepSlots": 1,
+        "employeeSlots": 0,
+        "tables": 0
+      },
+      "introduces": [
+        "core_grilling",
+        "flip",
+        "orders",
+        "patience"
+      ],
+      "customerPool": [
+        "comum",
+        "apressado",
+        "economico",
+        "vizinho"
+      ],
+      "turnLengthSec": 90,
+      "ambient": "warm_backyard",
+      "art": {
+        "scene": "Quintal",
+        "props": [
+          "churrasqueira_alvenaria",
+          "mesa_plastico",
+          "caixa_termica",
+          "banco",
+          "muro",
+          "plantas",
+          "casa_fundo"
+        ],
+        "lighting": "golden_hour"
+      }
+    },
+    {
+      "index": 1,
+      "id": "espetinho_rua",
+      "nameKey": "restaurant.espetinho.name",
+      "taglineKey": "restaurant.espetinho.tagline",
+      "unlockCostCoins": 0,
+      "requiredLevel": 8,
+      "grill": {
+        "slotsPerZone": 3,
+        "zoneCount": 3,
+        "heatStability": 0.9,
+        "charcoalDurationBonus": 0.1
+      },
+      "service": {
+        "maxOrdersOnScreen": 3,
+        "prepSlots": 1,
+        "employeeSlots": 1,
+        "tables": 0
+      },
+      "introduces": [
+        "skewers",
+        "combo",
+        "garcom",
+        "vip"
+      ],
+      "customerPool": [
+        "comum",
+        "apressado",
+        "economico",
+        "vizinho",
+        "generoso",
+        "familia",
+        "tio_do_churrasco"
+      ],
+      "turnLengthSec": 105,
+      "ambient": "street_evening",
+      "art": {
+        "scene": "EspetinhoDeRua",
+        "props": [
+          "carrinho_espetinho",
+          "toldo",
+          "banqueta",
+          "poste_luz",
+          "mesinha"
+        ],
+        "lighting": "night_warm"
+      }
+    },
+    {
+      "index": 2,
+      "id": "trailer",
+      "nameKey": "restaurant.trailer.name",
+      "taglineKey": "restaurant.trailer.tagline",
+      "unlockCostCoins": 3500,
+      "requiredLevel": 16,
+      "grill": {
+        "slotsPerZone": 3,
+        "zoneCount": 3,
+        "heatStability": 0.95,
+        "charcoalDurationBonus": 0.18
+      },
+      "service": {
+        "maxOrdersOnScreen": 3,
+        "prepSlots": 2,
+        "employeeSlots": 2,
+        "tables": 2
+      },
+      "introduces": [
+        "auxiliar",
+        "multi_order_rush",
+        "influencer"
+      ],
+      "customerPool": [
+        "comum",
+        "apressado",
+        "economico",
+        "vizinho",
+        "generoso",
+        "familia",
+        "tio_do_churrasco",
+        "influencer",
+        "turista"
+      ],
+      "turnLengthSec": 120,
+      "ambient": "trailer_night",
+      "art": {
+        "scene": "Trailer",
+        "props": [
+          "trailer",
+          "chapa",
+          "bancada",
+          "mesas_dobraveis",
+          "luminoso"
+        ],
+        "lighting": "neon_warm"
+      }
+    },
+    {
+      "index": 3,
+      "id": "churrascaria_bairro",
+      "nameKey": "restaurant.bairro.name",
+      "taglineKey": "restaurant.bairro.tagline",
+      "unlockCostCoins": 15000,
+      "requiredLevel": 24,
+      "grill": {
+        "slotsPerZone": 4,
+        "zoneCount": 3,
+        "heatStability": 1.0,
+        "charcoalDurationBonus": 0.26
+      },
+      "service": {
+        "maxOrdersOnScreen": 4,
+        "prepSlots": 2,
+        "employeeSlots": 3,
+        "tables": 4
+      },
+      "introduces": [
+        "idle_offline",
+        "churrasqueiro",
+        "costela",
+        "caixa"
+      ],
+      "customerPool": [
+        "comum",
+        "apressado",
+        "economico",
+        "vizinho",
+        "generoso",
+        "familia",
+        "tio_do_churrasco",
+        "influencer",
+        "turista",
+        "rival"
+      ],
+      "turnLengthSec": 135,
+      "ambient": "cozy_steakhouse",
+      "art": {
+        "scene": "ChurrascariaBairro",
+        "props": [
+          "salao",
+          "mesas_madeira",
+          "balcao",
+          "churrasqueira_inox",
+          "adegas"
+        ],
+        "lighting": "warm_interior"
+      }
+    },
+    {
+      "index": 4,
+      "id": "churrascaria_premium",
+      "nameKey": "restaurant.premium.name",
+      "taglineKey": "restaurant.premium.tagline",
+      "unlockCostCoins": 67000,
+      "requiredLevel": 34,
+      "grill": {
+        "slotsPerZone": 4,
+        "zoneCount": 4,
+        "heatStability": 1.05,
+        "charcoalDurationBonus": 0.35
+      },
+      "service": {
+        "maxOrdersOnScreen": 5,
+        "prepSlots": 3,
+        "employeeSlots": 4,
+        "tables": 6
+      },
+      "introduces": [
+        "gerente",
+        "cupim",
+        "zone_4",
+        "personalizacao"
+      ],
+      "customerPool": [
+        "comum",
+        "apressado",
+        "economico",
+        "vizinho",
+        "generoso",
+        "familia",
+        "tio_do_churrasco",
+        "influencer",
+        "turista",
+        "rival",
+        "vip"
+      ],
+      "turnLengthSec": 150,
+      "ambient": "premium_steakhouse",
+      "art": {
+        "scene": "ChurrascariaPremium",
+        "props": [
+          "salao_nobre",
+          "lustre",
+          "adega",
+          "churrasqueira_premium",
+          "bar"
+        ],
+        "lighting": "premium_warm"
+      }
+    },
+    {
+      "index": 5,
+      "id": "festival",
+      "nameKey": "restaurant.festival.name",
+      "taglineKey": "restaurant.festival.tagline",
+      "unlockCostCoins": 178000,
+      "requiredLevel": 46,
+      "grill": {
+        "slotsPerZone": 5,
+        "zoneCount": 4,
+        "heatStability": 1.1,
+        "charcoalDurationBonus": 0.45
+      },
+      "service": {
+        "maxOrdersOnScreen": 6,
+        "prepSlots": 4,
+        "employeeSlots": 5,
+        "tables": 8
+      },
+      "introduces": [
+        "event_multiturn",
+        "rush_wave",
+        "regional_ingredients"
+      ],
+      "customerPool": [
+        "comum",
+        "apressado",
+        "economico",
+        "vizinho",
+        "generoso",
+        "familia",
+        "tio_do_churrasco",
+        "influencer",
+        "turista",
+        "rival",
+        "vip"
+      ],
+      "turnLengthSec": 165,
+      "ambient": "festival_crowd",
+      "art": {
+        "scene": "Festival",
+        "props": [
+          "palco",
+          "tendas",
+          "bandeirinhas",
+          "churrasqueiras_multiplas"
+        ],
+        "lighting": "festival_dusk"
+      }
+    },
+    {
+      "index": 6,
+      "id": "rede_nacional",
+      "nameKey": "restaurant.rede.name",
+      "taglineKey": "restaurant.rede.tagline",
+      "unlockCostCoins": 4200000,
+      "requiredLevel": 60,
+      "grill": {
+        "slotsPerZone": 6,
+        "zoneCount": 4,
+        "heatStability": 1.15,
+        "charcoalDurationBonus": 0.6
+      },
+      "service": {
+        "maxOrdersOnScreen": 6,
+        "prepSlots": 5,
+        "employeeSlots": 6,
+        "tables": 12
+      },
+      "introduces": [
+        "empire_management",
+        "async_leaderboards",
+        "franchise_idle"
+      ],
+      "customerPool": [
+        "comum",
+        "apressado",
+        "economico",
+        "vizinho",
+        "generoso",
+        "familia",
+        "tio_do_churrasco",
+        "influencer",
+        "turista",
+        "rival",
+        "vip"
+      ],
+      "turnLengthSec": 180,
+      "ambient": "empire",
+      "art": {
+        "scene": "RedeNacional",
+        "props": [
+          "salao_premium",
+          "rodizio",
+          "vista_cidade"
+        ],
+        "lighting": "cinematic_warm"
+      }
+    }
+  ],
+  "_pacingNote": "Unlock costs tuned by tools/studio/run-sim.ts against a 1500-turn campaign at skill 0.55. Measured pacing after the prep-item serve fix (v5 -> v6): espetinho_rua 47, trailer 109, bairro 185->230 (cost 12k->15k), premium 377->460 (55k->67k), festival 842->1000 (150k->178k), rede 1228->1590 (3.25M->4.2M). Costs were raised because fixing two real bugs (vinagrete was unservable, and prep items respawned every tick) removed a ~10% customer leak that had been artificially slowing progression."
+}

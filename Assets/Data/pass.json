@@ -1,0 +1,65 @@
+{
+  "$schema": "schema/pass.schema.json",
+  "_comment": "Passe da Brasa (spec §32). Free track must never gate essential gameplay.",
+  "version": 2,
+  "season": {
+    "durationDays": 28,
+    "tiers": 50,
+    "xpPerTier": 1000,
+    "xpSources": {
+      "turnComplete": 120,
+      "perfectCook": 25,
+      "customerServed": 20,
+      "dailyMissionsAll": 400,
+      "weeklyMissionsAll": 1200,
+      "eventObjective": 250,
+      "comboMilestone": 60
+    },
+    "premiumProductId": "brasa.pass.season.v1"
+  },
+  "rules": {
+    "freeTrackContainsEssentialGameplay": false,
+    "premiumMostlyCosmetic": true,
+    "tierJumpProductId": "brasa.pass.bundle.v1",
+    "maxTierJumpPurchases": 1,
+    "carryoverOnExpire": "unclaimed_free_track_lost_with_notice"
+  },
+  "tracks": {
+    "free": [
+      { "tier": 1, "reward": { "coins": 300 } },
+      { "tier": 3, "reward": { "currency": "embers", "amount": 5 } },
+      { "tier": 5, "reward": { "coins": 600 } },
+      { "tier": 8, "reward": { "type": "booster", "id": "tip_2x", "amount": 1 } },
+      { "tier": 10, "reward": { "coins": 900 } },
+      { "tier": 13, "reward": { "currency": "embers", "amount": 6 } },
+      { "tier": 15, "reward": { "coins": 1200 } },
+      { "tier": 18, "reward": { "type": "ingredient", "id": "queijo_coalho" } },
+      { "tier": 20, "reward": { "coins": 1600 } },
+      { "tier": 23, "reward": { "currency": "embers", "amount": 8 } },
+      { "tier": 25, "reward": { "coins": 2000 } },
+      { "tier": 28, "reward": { "type": "booster", "id": "xp_2x", "amount": 2 } },
+      { "tier": 30, "reward": { "coins": 2500 } },
+      { "tier": 35, "reward": { "currency": "embers", "amount": 10 } },
+      { "tier": 40, "reward": { "coins": 3500 } },
+      { "tier": 45, "reward": { "currency": "embers", "amount": 12 } },
+      { "tier": 50, "reward": { "type": "chest", "id": "season_chest_free" } }
+    ],
+    "premium": [
+      { "tier": 1, "reward": { "currency": "embers", "amount": 40 } },
+      { "tier": 2, "reward": { "type": "skin", "id": "avental_temporada" } },
+      { "tier": 4, "reward": { "coins": 1500 } },
+      { "tier": 6, "reward": { "type": "decor", "id": "decor_temporada" } },
+      { "tier": 9, "reward": { "currency": "embers", "amount": 60 } },
+      { "tier": 12, "reward": { "type": "skin", "id": "faca_temporada" } },
+      { "tier": 16, "reward": { "coins": 4000 } },
+      { "tier": 20, "reward": { "currency": "embers", "amount": 90 } },
+      { "tier": 24, "reward": { "type": "skin", "id": "grill_skin_temporada" } },
+      { "tier": 29, "reward": { "coins": 6000 } },
+      { "tier": 34, "reward": { "currency": "embers", "amount": 120 } },
+      { "tier": 39, "reward": { "type": "sign", "id": "placa_temporada" } },
+      { "tier": 44, "reward": { "coins": 9000 } },
+      { "tier": 49, "reward": { "currency": "embers", "amount": 160 } },
+      { "tier": 50, "reward": { "type": "collection", "id": "emblem_temporada" } }
+    ]
+  }
+}

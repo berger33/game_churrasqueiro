@@ -1,0 +1,103 @@
+{
+  "$schema": "schema/iap.schema.json",
+  "_comment": "In-app products. Product ids must match Play Console exactly. Prices are store-defined; `suggestedPriceBRL` is for internal modelling only. Ethics rules from spec §98 are enforced by tests.",
+  "version": 2,
+  "ethics": {
+    "noDarkPatterns": true,
+    "confirmBeforePurchase": true,
+    "showRealPrice": true,
+    "noFakeScarcity": true,
+    "noDisguisedAds": true,
+    "restoreAlwaysAvailable": true,
+    "starterPackShownAfterTurns": 4,
+    "starterPackShownAfterFirstUpgrade": true,
+    "purchaseCooldownAfterAnyPurchaseHours": 24
+  },
+  "products": [
+    {
+      "id": "brasa.starterpack.v1",
+      "type": "nonconsumable_once",
+      "nameKey": "iap.starter.name",
+      "descKey": "iap.starter.desc",
+      "suggestedPriceBRL": 9.9,
+      "contents": [
+        { "currency": "embers", "amount": 100 },
+        { "currency": "coins", "amount": 5000 },
+        { "type": "skin", "id": "avental_mestre" },
+        { "type": "booster", "id": "tip_2x", "amount": 3 }
+      ],
+      "oneTimePerAccount": true,
+      "analyticsTier": "entry"
+    },
+    {
+      "id": "brasa.noads.v1",
+      "type": "nonconsumable",
+      "nameKey": "iap.noads.name",
+      "descKey": "iap.noads.desc",
+      "suggestedPriceBRL": 19.9,
+      "contents": [
+        { "type": "entitlement", "id": "no_interstitials" },
+        { "type": "note", "id": "rewarded_still_optional" }
+      ],
+      "oneTimePerAccount": true,
+      "analyticsTier": "utility"
+    },
+    {
+      "id": "brasa.coins.small.v1",
+      "type": "consumable",
+      "nameKey": "iap.embers.small.name",
+      "descKey": "iap.embers.small.desc",
+      "suggestedPriceBRL": 4.9,
+      "contents": [{ "currency": "embers", "amount": 120 }],
+      "analyticsTier": "currency_small"
+    },
+    {
+      "id": "brasa.coins.medium.v1",
+      "type": "consumable",
+      "nameKey": "iap.embers.medium.name",
+      "descKey": "iap.embers.medium.desc",
+      "suggestedPriceBRL": 14.9,
+      "contents": [{ "currency": "embers", "amount": 400 }],
+      "analyticsTier": "currency_medium"
+    },
+    {
+      "id": "brasa.coins.large.v1",
+      "type": "consumable",
+      "nameKey": "iap.embers.large.name",
+      "descKey": "iap.embers.large.desc",
+      "suggestedPriceBRL": 39.9,
+      "contents": [{ "currency": "embers", "amount": 1200 }],
+      "analyticsTier": "currency_large"
+    },
+    {
+      "id": "brasa.pass.season.v1",
+      "type": "consumable_seasonal",
+      "nameKey": "iap.pass.name",
+      "descKey": "iap.pass.desc",
+      "suggestedPriceBRL": 24.9,
+      "contents": [{ "type": "entitlement", "id": "pass_premium" }, { "currency": "embers", "amount": 60 }],
+      "analyticsTier": "pass"
+    },
+    {
+      "id": "brasa.pass.bundle.v1",
+      "type": "consumable_seasonal",
+      "nameKey": "iap.passbundle.name",
+      "descKey": "iap.passbundle.desc",
+      "suggestedPriceBRL": 49.9,
+      "contents": [{ "type": "entitlement", "id": "pass_premium" }, { "type": "passTierJump", "amount": 10 }, { "currency": "embers", "amount": 120 }],
+      "analyticsTier": "pass_bundle"
+    }
+  ],
+  "emberValueTableBRL": [
+    { "productId": "brasa.coins.small.v1", "brl": 4.9, "embers": 120 },
+    { "productId": "brasa.coins.medium.v1", "brl": 14.9, "embers": 400 },
+    { "productId": "brasa.coins.large.v1", "brl": 39.9, "embers": 1200 }
+  ],
+  "receiptValidation": {
+    "mode": "google_play_billing_v7",
+    "serverSideVerification": "optional_backendless",
+    "fallback": "local_signature_check",
+    "retryPolicy": { "attempts": 3, "backoffMs": [500, 2000, 8000] },
+    "gracefulOffline": "grant_pending_flag"
+  }
+}

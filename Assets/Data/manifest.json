@@ -1,0 +1,86 @@
+{
+  "generatedAt": "2026-09-17T15:47:36.115Z",
+  "source": "shared/data",
+  "files": {
+    "achievements.json": {
+      "sha256": "a3547ae4f4fe88224a61e410c8d332f2b1ec9333007fa9df6c262318a3388af3",
+      "bytes": 14882
+    },
+    "ads.json": {
+      "sha256": "be25ef6ad1f41cbbfd35aaefad74f073bf9c2d0db71f60c689c9b92c591d7741",
+      "bytes": 3138
+    },
+    "analytics.json": {
+      "sha256": "e7b78c0aa4ad97a2b4c5bfdb8948f442b436ecdc408f1e988914b4218781db4a",
+      "bytes": 9172
+    },
+    "collection.json": {
+      "sha256": "a1d97536f01cd9e5376c9323704f0a282df77190733cfb4aebd968d805f16cb0",
+      "bytes": 7564
+    },
+    "customers.json": {
+      "sha256": "9c8b6753aad908fbd18e922c5d984a7517c9ae57029aec957b4c5d3afbdd73f7",
+      "bytes": 5918
+    },
+    "economy.json": {
+      "sha256": "f5136ae451b13f0022e2363f649c43ce194475140f18b944b1d78a49a1f8aa68",
+      "bytes": 6495
+    },
+    "employees.json": {
+      "sha256": "f26f360cd0bef72a53538346ecc2fa386d9ecc930963cf150584b2b015323488",
+      "bytes": 3829
+    },
+    "events.json": {
+      "sha256": "670352623bd3e96b0431323f9055d827861719b3edd845993789210735ef6662",
+      "bytes": 4012
+    },
+    "grill.json": {
+      "sha256": "742ec70161a2ee643fc4b4ba4daf4a5c4a406f392a27c527df2bfc186c7f8271",
+      "bytes": 1989
+    },
+    "iap.json": {
+      "sha256": "e3d2be582a9000d71b237b18467b07fca69f5a33c86651a462359b77273288c7",
+      "bytes": 3635
+    },
+    "ingredients.json": {
+      "sha256": "111ca11cb04ee9abfc0b3c8e8e7fd15636f265bce0cd7e80c9f31faa183f399c",
+      "bytes": 14569
+    },
+    "levels.json": {
+      "sha256": "7a67d2bcb192d5fa1dd58207db632240af6a0723ee3c9776984689ac4ef4d201",
+      "bytes": 31075
+    },
+    "missions.json": {
+      "sha256": "d3d0c38caf09603dc723756fcce0104d193bbbd5ab88a01b79c27b80ec6f9584",
+      "bytes": 2694
+    },
+    "pass.json": {
+      "sha256": "d280e2a575064428261e4d4d486aa63971193bdc3db2a3727bd4f9e65ecde0ec",
+      "bytes": 2938
+    },
+    "performance.json": {
+      "sha256": "154c367e15b517e4509a65eecb2f73728d290eaa4aa1bb6fadc54c8f8ae7da96",
+      "bytes": 2290
+    },
+    "regions.json": {
+      "sha256": "94a4191d8ffc5e6898060386b836363b03fc5cd0100b0ae0a3ecfbababfb6529",
+      "bytes": 3321
+    },
+    "remoteconfig_defaults.json": {
+      "sha256": "99406f2cf28b78acded52e535cdf230945fcc295e068baff43ae50bd069f9f4a",
+      "bytes": 1985
+    },
+    "restaurants.json": {
+      "sha256": "180b4fff6b7af62e14bf9950f1fea7122903a5edf4f7215ec570dc6412a79544",
+      "bytes": 8482
+    },
+    "route.json": {
+      "sha256": "b2907a7efd6ee9f7f9ad9e55c71629517b174a53a8967bebea2f84e009318222",
+      "bytes": 4538
+    },
+    "upgrades.json": {
+      "sha256": "b8cb1d3be8fd365bf86c1c57f0aa8067016439fb0f1d248a75aee58f338c1a25",
+      "bytes": 10903
+    }
+  }
+}

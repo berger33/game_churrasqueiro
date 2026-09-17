@@ -1,0 +1,32 @@
+{
+  "$schema": "schema/route.schema.json",
+  "_comment": "Rota da Brasa — meta-progression map (spec §24). Ember Points are earned in play; each stop is a challenge + reward + story beat.",
+  "version": 2,
+  "emberPointSources": {
+    "perfectCook": 1,
+    "customerServed": 1,
+    "turnFlawless": 5,
+    "comboMilestone": 3,
+    "dailyMissionsAll": 10,
+    "weeklyMissionsAll": 30
+  },
+  "stops": [
+    { "index": 1, "id": "rua_do_bairro", "nameKey": "route.stop1.name", "region": "sudeste", "emberCost": 0, "challenge": { "type": "serve", "goal": 5 }, "reward": { "coins": 200 }, "storyKey": "route.stop1.story" },
+    { "index": 2, "id": "praca_central", "nameKey": "route.stop2.name", "region": "sudeste", "emberCost": 40, "challenge": { "type": "perfect", "goal": 8 }, "reward": { "coins": 400, "ingredient": "pao_de_alho" }, "storyKey": "route.stop2.story" },
+    { "index": 3, "id": "feira_livre", "nameKey": "route.stop3.name", "region": "sudeste", "emberCost": 80, "challenge": { "type": "combo", "goal": 5 }, "reward": { "embers": 3, "decor": "barraca_feira" }, "storyKey": "route.stop3.story" },
+    { "index": 4, "id": "estrada_serra", "nameKey": "route.stop4.name", "region": "sudeste", "emberCost": 130, "challenge": { "type": "flawlessTurns", "goal": 2 }, "reward": { "coins": 900 }, "storyKey": "route.stop4.story" },
+    { "index": 5, "id": "porto_alegre", "nameKey": "route.stop5.name", "region": "sul", "emberCost": 200, "challenge": { "type": "ingredient", "ingredient": "costela", "goal": 3 }, "reward": { "ingredient": "costela", "embers": 6 }, "storyKey": "route.stop5.story" },
+    { "index": 6, "id": "pampa", "nameKey": "route.stop6.name", "region": "sul", "emberCost": 260, "challenge": { "type": "lowZoneOnly", "goal": 8 }, "reward": { "equipment": "espeto_longo", "coins": 1500 }, "storyKey": "route.stop6.story" },
+    { "index": 7, "id": "serra_gaucha", "nameKey": "route.stop7.name", "region": "sul", "emberCost": 340, "challenge": { "type": "perfect", "goal": 25 }, "reward": { "embers": 10, "skin": "avental_gaucho" }, "storyKey": "route.stop7.story" },
+    { "index": 8, "id": "litoral_ne", "nameKey": "route.stop8.name", "region": "nordeste", "emberCost": 420, "challenge": { "type": "ingredient", "ingredient": "queijo_coalho", "goal": 10 }, "reward": { "coins": 3000 }, "storyKey": "route.stop8.story" },
+    { "index": 9, "id": "sertao", "nameKey": "route.stop9.name", "region": "nordeste", "emberCost": 520, "challenge": { "type": "combo", "goal": 12 }, "reward": { "ingredient": "carne_de_sol", "embers": 12 }, "storyKey": "route.stop9.story" },
+    { "index": 10, "id": "recife", "nameKey": "route.stop10.name", "region": "nordeste", "emberCost": 640, "challenge": { "type": "serve", "goal": 120 }, "reward": { "coins": 6000, "decor": "renda_decor" }, "storyKey": "route.stop10.story" },
+    { "index": 11, "id": "pantanal", "nameKey": "route.stop11.name", "region": "centro_oeste", "emberCost": 780, "challenge": { "type": "flawlessTurns", "goal": 5 }, "reward": { "embers": 16 }, "storyKey": "route.stop11.story" },
+    { "index": 12, "id": "fazenda_goias", "nameKey": "route.stop12.name", "region": "centro_oeste", "emberCost": 940, "challenge": { "type": "perfect", "goal": 60 }, "reward": { "ingredient": "maminha", "coins": 9000 }, "storyKey": "route.stop12.story" },
+    { "index": 13, "id": "chapada", "nameKey": "route.stop13.name", "region": "centro_oeste", "emberCost": 1120, "challenge": { "type": "combo", "goal": 18 }, "reward": { "embers": 22, "skin": "faca_chapada" }, "storyKey": "route.stop13.story" },
+    { "index": 14, "id": "belem", "nameKey": "route.stop14.name", "region": "norte", "emberCost": 1320, "challenge": { "type": "ingredient", "ingredient": "cupim", "goal": 6 }, "reward": { "equipment": "moquem", "coins": 14000 }, "storyKey": "route.stop14.story" },
+    { "index": 15, "id": "amazonas", "nameKey": "route.stop15.name", "region": "norte", "emberCost": 1560, "challenge": { "type": "slowCookNoBurn", "goal": 10 }, "reward": { "embers": 30, "collection": "mapa_da_brasa" }, "storyKey": "route.stop15.story" },
+    { "index": 16, "id": "festival_final", "nameKey": "route.stop16.name", "region": "sudeste", "emberCost": 1850, "challenge": { "type": "bossTurn", "goal": 1 }, "reward": { "coins": 40000, "embers": 60, "collection": "coroa_da_brasa" }, "storyKey": "route.stop16.story" }
+  ],
+  "postLaunchExpansion": { "stopsPerSeason": 6, "note": "Additional stops are shipped via Remote Config; the map renderer is data-driven and needs no client change." }
+}

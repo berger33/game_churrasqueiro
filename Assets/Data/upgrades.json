@@ -1,0 +1,471 @@
+{
+  "$schema": "schema/upgrades.schema.json",
+  "_comment": "Upgrade tracks. cost(level) = round(baseCost * growth^(level-1) / 10) * 10. Effects are additive per level unless noted. MVP ships 24 tracks (spec §84). Prestige tracks are the long-tail coin sink: measured total sink capacity must stay >= projected income at day 120+ (docs/06-ECONOMY.md).",
+  "version": 3,
+  "costFormula": {
+    "type": "geometric",
+    "growth": "perTrack"
+  },
+  "tracks": [
+    {
+      "id": "grill_size",
+      "category": "grill",
+      "nameKey": "upgrade.grill_size.name",
+      "descKey": "upgrade.grill_size.desc",
+      "baseCost": 180,
+      "growth": 1.62,
+      "maxLevel": 8,
+      "currency": "coins",
+      "effect": {
+        "stat": "slotsPerZone",
+        "delta": 1
+      },
+      "icon": "ic_grill_size"
+    },
+    {
+      "id": "grill_heat",
+      "category": "grill",
+      "nameKey": "upgrade.grill_heat.name",
+      "descKey": "upgrade.grill_heat.desc",
+      "baseCost": 220,
+      "growth": 1.6,
+      "maxLevel": 8,
+      "currency": "coins",
+      "effect": {
+        "stat": "highZoneMultiplier",
+        "delta": 0.06
+      },
+      "icon": "ic_heat"
+    },
+    {
+      "id": "grill_stability",
+      "category": "grill",
+      "nameKey": "upgrade.grill_stability.name",
+      "descKey": "upgrade.grill_stability.desc",
+      "baseCost": 260,
+      "growth": 1.66,
+      "maxLevel": 6,
+      "currency": "coins",
+      "effect": {
+        "stat": "heatStability",
+        "delta": 0.04
+      },
+      "icon": "ic_stability"
+    },
+    {
+      "id": "grill_speed",
+      "category": "grill",
+      "nameKey": "upgrade.grill_speed.name",
+      "descKey": "upgrade.grill_speed.desc",
+      "baseCost": 300,
+      "growth": 1.68,
+      "maxLevel": 6,
+      "currency": "coins",
+      "effect": {
+        "stat": "heatRampRate",
+        "delta": 0.05
+      },
+      "icon": "ic_speed"
+    },
+    {
+      "id": "charcoal_duration",
+      "category": "charcoal",
+      "nameKey": "upgrade.charcoal_duration.name",
+      "descKey": "upgrade.charcoal_duration.desc",
+      "baseCost": 150,
+      "growth": 1.55,
+      "maxLevel": 10,
+      "currency": "coins",
+      "effect": {
+        "stat": "charcoalDurationMult",
+        "delta": 0.09
+      },
+      "icon": "ic_charcoal"
+    },
+    {
+      "id": "charcoal_quality",
+      "category": "charcoal",
+      "nameKey": "upgrade.charcoal_quality.name",
+      "descKey": "upgrade.charcoal_quality.desc",
+      "baseCost": 340,
+      "growth": 1.63,
+      "maxLevel": 6,
+      "currency": "coins",
+      "effect": {
+        "stat": "minCharcoalEfficiency",
+        "delta": 0.05
+      },
+      "icon": "ic_charcoal_quality"
+    },
+    {
+      "id": "charcoal_auto",
+      "category": "charcoal",
+      "nameKey": "upgrade.charcoal_auto.name",
+      "descKey": "upgrade.charcoal_auto.desc",
+      "baseCost": 1200,
+      "growth": 1.9,
+      "maxLevel": 3,
+      "currency": "coins",
+      "effect": {
+        "stat": "autoRefillChance",
+        "delta": 0.33
+      },
+      "icon": "ic_auto_refill"
+    },
+    {
+      "id": "knife",
+      "category": "prep",
+      "nameKey": "upgrade.knife.name",
+      "descKey": "upgrade.knife.desc",
+      "baseCost": 140,
+      "growth": 1.5,
+      "maxLevel": 6,
+      "currency": "coins",
+      "effect": {
+        "stat": "prepSpeedMult",
+        "delta": 0.12
+      },
+      "icon": "ic_knife"
+    },
+    {
+      "id": "board",
+      "category": "prep",
+      "nameKey": "upgrade.board.name",
+      "descKey": "upgrade.board.desc",
+      "baseCost": 200,
+      "growth": 1.58,
+      "maxLevel": 5,
+      "currency": "coins",
+      "effect": {
+        "stat": "prepSlots",
+        "delta": 1
+      },
+      "icon": "ic_board"
+    },
+    {
+      "id": "counter",
+      "category": "prep",
+      "nameKey": "upgrade.counter.name",
+      "descKey": "upgrade.counter.desc",
+      "baseCost": 420,
+      "growth": 1.62,
+      "maxLevel": 5,
+      "currency": "coins",
+      "effect": {
+        "stat": "rawStockPerTurn",
+        "delta": 1
+      },
+      "icon": "ic_counter"
+    },
+    {
+      "id": "plates",
+      "category": "service",
+      "nameKey": "upgrade.plates.name",
+      "descKey": "upgrade.plates.desc",
+      "baseCost": 160,
+      "growth": 1.52,
+      "maxLevel": 6,
+      "currency": "coins",
+      "effect": {
+        "stat": "tipMult",
+        "delta": 0.06
+      },
+      "icon": "ic_plate"
+    },
+    {
+      "id": "tray",
+      "category": "service",
+      "nameKey": "upgrade.tray.name",
+      "descKey": "upgrade.tray.desc",
+      "baseCost": 280,
+      "growth": 1.6,
+      "maxLevel": 5,
+      "currency": "coins",
+      "effect": {
+        "stat": "serveSpeedMult",
+        "delta": 0.1
+      },
+      "icon": "ic_tray"
+    },
+    {
+      "id": "patience_charm",
+      "category": "service",
+      "nameKey": "upgrade.patience.name",
+      "descKey": "upgrade.patience.desc",
+      "baseCost": 520,
+      "growth": 1.7,
+      "maxLevel": 5,
+      "currency": "coins",
+      "effect": {
+        "stat": "patienceMult",
+        "delta": 0.07
+      },
+      "icon": "ic_patience"
+    },
+    {
+      "id": "tables",
+      "category": "restaurant",
+      "nameKey": "upgrade.tables.name",
+      "descKey": "upgrade.tables.desc",
+      "baseCost": 600,
+      "growth": 1.72,
+      "maxLevel": 6,
+      "currency": "coins",
+      "effect": {
+        "stat": "tables",
+        "delta": 1
+      },
+      "icon": "ic_table"
+    },
+    {
+      "id": "decor",
+      "category": "restaurant",
+      "nameKey": "upgrade.decor.name",
+      "descKey": "upgrade.decor.desc",
+      "baseCost": 480,
+      "growth": 1.66,
+      "maxLevel": 6,
+      "currency": "coins",
+      "effect": {
+        "stat": "tipMult",
+        "delta": 0.05
+      },
+      "icon": "ic_decor"
+    },
+    {
+      "id": "lighting",
+      "category": "restaurant",
+      "nameKey": "upgrade.lighting.name",
+      "descKey": "upgrade.lighting.desc",
+      "baseCost": 700,
+      "growth": 1.68,
+      "maxLevel": 4,
+      "currency": "coins",
+      "effect": {
+        "stat": "xpMult",
+        "delta": 0.05
+      },
+      "icon": "ic_lighting"
+    },
+    {
+      "id": "capacity",
+      "category": "restaurant",
+      "nameKey": "upgrade.capacity.name",
+      "descKey": "upgrade.capacity.desc",
+      "baseCost": 900,
+      "growth": 1.74,
+      "maxLevel": 5,
+      "currency": "coins",
+      "effect": {
+        "stat": "maxOrdersOnScreen",
+        "delta": 1
+      },
+      "icon": "ic_capacity"
+    },
+    {
+      "id": "sign",
+      "category": "restaurant",
+      "nameKey": "upgrade.sign.name",
+      "descKey": "upgrade.sign.desc",
+      "baseCost": 1100,
+      "growth": 1.8,
+      "maxLevel": 4,
+      "currency": "coins",
+      "effect": {
+        "stat": "customerSpawnRate",
+        "delta": 0.08
+      },
+      "icon": "ic_sign"
+    },
+    {
+      "id": "music",
+      "category": "restaurant",
+      "nameKey": "upgrade.music.name",
+      "descKey": "upgrade.music.desc",
+      "baseCost": 640,
+      "growth": 1.6,
+      "maxLevel": 4,
+      "currency": "coins",
+      "effect": {
+        "stat": "patienceMult",
+        "delta": 0.05
+      },
+      "icon": "ic_music"
+    },
+    {
+      "id": "garcom",
+      "category": "employees",
+      "nameKey": "upgrade.garcom.name",
+      "descKey": "upgrade.garcom.desc",
+      "baseCost": 2500,
+      "growth": 1.85,
+      "maxLevel": 5,
+      "currency": "coins",
+      "effect": {
+        "stat": "autoServeLevel",
+        "delta": 1
+      },
+      "icon": "ic_garcom"
+    },
+    {
+      "id": "auxiliar",
+      "category": "employees",
+      "nameKey": "upgrade.auxiliar.name",
+      "descKey": "upgrade.auxiliar.desc",
+      "baseCost": 4200,
+      "growth": 1.85,
+      "maxLevel": 5,
+      "currency": "coins",
+      "effect": {
+        "stat": "autoPrepLevel",
+        "delta": 1
+      },
+      "icon": "ic_auxiliar"
+    },
+    {
+      "id": "churrasqueiro",
+      "category": "employees",
+      "nameKey": "upgrade.churrasqueiro.name",
+      "descKey": "upgrade.churrasqueiro.desc",
+      "baseCost": 8000,
+      "growth": 1.9,
+      "maxLevel": 5,
+      "currency": "coins",
+      "effect": {
+        "stat": "autoFlipLevel",
+        "delta": 1
+      },
+      "icon": "ic_churrasqueiro"
+    },
+    {
+      "id": "caixa",
+      "category": "employees",
+      "nameKey": "upgrade.caixa.name",
+      "descKey": "upgrade.caixa.desc",
+      "baseCost": 12000,
+      "growth": 1.9,
+      "maxLevel": 4,
+      "currency": "coins",
+      "effect": {
+        "stat": "autoCollectLevel",
+        "delta": 1
+      },
+      "icon": "ic_caixa"
+    },
+    {
+      "id": "gerente",
+      "category": "employees",
+      "nameKey": "upgrade.gerente.name",
+      "descKey": "upgrade.gerente.desc",
+      "baseCost": 25000,
+      "growth": 1.95,
+      "maxLevel": 4,
+      "currency": "coins",
+      "effect": {
+        "stat": "idleRateMult",
+        "delta": 0.18
+      },
+      "icon": "ic_gerente"
+    },
+    {
+      "id": "brasa_mastery",
+      "category": "prestige",
+      "nameKey": "upgrade.brasa_mastery.name",
+      "descKey": "upgrade.brasa_mastery.desc",
+      "baseCost": 2000,
+      "growth": 1.32,
+      "maxLevel": 20,
+      "currency": "coins",
+      "effect": {
+        "stat": "tipMult",
+        "delta": 0.012
+      },
+      "icon": "ic_brasa_mastery"
+    },
+    {
+      "id": "clientela_fiel",
+      "category": "prestige",
+      "nameKey": "upgrade.clientela.name",
+      "descKey": "upgrade.clientela.desc",
+      "baseCost": 2500,
+      "growth": 1.31,
+      "maxLevel": 20,
+      "currency": "coins",
+      "effect": {
+        "stat": "patienceMult",
+        "delta": 0.01
+      },
+      "icon": "ic_clientela"
+    },
+    {
+      "id": "imperio_logistica",
+      "category": "prestige",
+      "nameKey": "upgrade.imperio.name",
+      "descKey": "upgrade.imperio.desc",
+      "baseCost": 3000,
+      "growth": 1.3,
+      "maxLevel": 20,
+      "currency": "coins",
+      "effect": {
+        "stat": "idleRateMult",
+        "delta": 0.02
+      },
+      "icon": "ic_imperio"
+    }
+  ],
+  "cosmeticTracks": [
+    {
+      "id": "apron",
+      "nameKey": "cosmetic.apron",
+      "currency": "embers",
+      "prices": [
+        0,
+        60,
+        120,
+        240
+      ]
+    },
+    {
+      "id": "hat",
+      "nameKey": "cosmetic.hat",
+      "currency": "embers",
+      "prices": [
+        0,
+        80,
+        160,
+        320
+      ]
+    },
+    {
+      "id": "knife_skin",
+      "nameKey": "cosmetic.knife",
+      "currency": "embers",
+      "prices": [
+        0,
+        100,
+        200
+      ]
+    },
+    {
+      "id": "grill_skin",
+      "nameKey": "cosmetic.grill",
+      "currency": "embers",
+      "prices": [
+        0,
+        150,
+        300,
+        600
+      ]
+    },
+    {
+      "id": "sign_skin",
+      "nameKey": "cosmetic.sign",
+      "currency": "embers",
+      "prices": [
+        0,
+        120,
+        260
+      ]
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<title>CHURRASCO! O Mestre da Brasa — Protótipo de Verificação</title>
+<!--
+  Type (§4 of docs/04-ART_STYLE.md): Baloo 2 for display, Nunito for UI.
+  Both are loaded with a fallback stack in src/theme.ts, so the prototype still
+  renders correctly with no network — the art direction does not depend on these
+  files being reachable.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap"
+  rel="stylesheet"
+/>
+<style>
+  :root {
+    --carvao: #1C1512; --cinza: #3A2E28; --madeira: #7A4A2A; --madeira-clara: #B98A55;
+    --creme: #F4E7D3; --offwhite: #FBF5EC; --brasa: #E0561F; --chama: #F2A63B;
+    --verde: #6FA84A; --ambar: #E8B23C; --telha: #C0442E; --ouro: #E7C24A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    height: 100%; background: var(--carvao); color: var(--creme);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    overscroll-behavior: none; touch-action: none;
+  }
+  #app {
+    position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(circle at 50% 20%, #2A1F19 0%, #150F0C 70%);
+  }
+  #stage { position: relative; }
+  canvas { display: block; border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+  #banner {
+    position: fixed; top: 0; left: 0; right: 0; padding: 6px 12px; text-align: center;
+    font-size: 11px; letter-spacing: .04em; color: #8b7a6d; background: rgba(0,0,0,.35);
+  }
+  #banner b { color: var(--creme); }
+</style>
+</head>
+<body>
+<div id="banner">
+  Protótipo de verificação de design — roda as <b>mesmas regras</b> do <b>tools/sim-core</b> que o cliente Unity usa.
+  Arraste da bancada para a brasa · toque para virar · arraste até o cliente para servir.
+</div>
+<div id="app"><div id="stage"><canvas id="c"></canvas></div></div>
+<script type="module" src="/bundle.js"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+{
+  "$schema": "schema/ads.schema.json",
+  "_comment": "Ad configuration. NO real IDs in code — everything comes from here or Remote Config. Dev build always uses Google's public test unit ids.",
+  "version": 2,
+  "mediation": {
+    "provider": "admob",
+    "sdk": "com.google.android.gms:play-services-ads (latest stable, check compat before bump)",
+    "biddingReady": true,
+    "futureNetworks": ["applovin", "unity", "mintegral"],
+    "initializationStrategy": "async_non_blocking",
+    "neverBlockFirstFrame": true
+  },
+  "androidAppId": {
+    "debug": "ca-app-pub-3940256099942544~3347511713",
+    "release": "REPLACE_IN_SECURE_CONFIG"
+  },
+  "iosAppId": {
+    "debug": "ca-app-pub-3940256099942544~1458002511",
+    "release": "REPLACE_IN_SECURE_CONFIG"
+  },
+  "units": {
+    "rewarded": {
+      "debug": "ca-app-pub-3940256099942544/5224354917",
+      "release": "REPLACE_IN_SECURE_CONFIG",
+      "preload": true,
+      "serverSideVerification": { "enabled": false, "note": "Enable when a backend exists (spec §35)." }
+    },
+    "interstitial": {
+      "debug": "ca-app-pub-3940256099942544/1033173712",
+      "release": "REPLACE_IN_SECURE_CONFIG",
+      "preload": true
+    },
+    "banner": { "enabled": false, "note": "Banners are disabled during gameplay by design (spec §34)." }
+  },
+  "rewardedPlacements": [
+    { "id": "double_offline", "context": "idle_collect", "cooldownMin": 0, "maxPerDay": 4, "analytics": "rewarded_double_offline" },
+    { "id": "double_turn", "context": "turn_result", "cooldownMin": 0, "maxPerDay": 6, "analytics": "rewarded_double_turn" },
+    { "id": "unburn_plate", "context": "burned_food", "cooldownMin": 2, "maxPerDay": 3, "analytics": "rewarded_unburn" },
+    { "id": "revive_turn", "context": "turn_failed", "cooldownMin": 0, "maxPerDay": 2, "analytics": "rewarded_revive" },
+    { "id": "call_vip", "context": "home", "cooldownMin": 60, "maxPerDay": 2, "analytics": "rewarded_vip" },
+    { "id": "extra_chest", "context": "mission_complete", "cooldownMin": 0, "maxPerDay": 2, "analytics": "rewarded_extra_chest" },
+    { "id": "speed_upgrade", "context": "upgrade_screen", "cooldownMin": 0, "maxPerDay": 3, "analytics": "rewarded_speed_upgrade" },
+    { "id": "reroll_reward", "context": "reward_screen", "cooldownMin": 0, "maxPerDay": 3, "analytics": "rewarded_reroll" }
+  ],
+  "interstitial": {
+    "enabled": true,
+    "placement": "turn_result_to_lobby_only",
+    "minSecondsBetween": 180,
+    "maxPerSession": 3,
+    "maxPerDay": 8,
+    "skipFirstTurns": 6,
+    "skipFirstSessions": 2,
+    "suppressAfterIapHours": 24,
+    "suppressAfterRewardedMin": 10,
+    "suppressDuring": ["cooking", "active_order", "critical_action", "tutorial"],
+    "showProbability": 0.6
+  },
+  "consent": {
+    "framework": "UMP (Google User Messaging Platform)",
+    "regions": { "eeaUk": "required", "brazil": "lgpd_notice", "other": "as_required" },
+    "requestOnFirstLaunch": true,
+    "blockingFirstFrame": false,
+    "childDirected": false
+  },
+  "antiFraud": {
+    "rewardTokenSingleUse": true,
+    "tokenTtlSec": 3600,
+    "maxConcurrentRewardCallbacks": 1,
+    "logRewardMismatch": true
+  }
+}
