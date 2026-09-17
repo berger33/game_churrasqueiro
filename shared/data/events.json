@@ -1,0 +1,61 @@
+{
+  "$schema": "schema/events.schema.json",
+  "_comment": "LiveOps events. All fields are Remote Config overridable so content ships without an app update (spec §30/§62).",
+  "version": 2,
+  "weeklyRecurring": [
+    {
+      "id": "segunda_linguica",
+      "nameKey": "event.segunda_linguica.name",
+      "descKey": "event.segunda_linguica.desc",
+      "dayOfWeek": "monday",
+      "durationHours": 24,
+      "modifiers": [{ "type": "ingredientBoost", "ingredient": "linguica_toscana", "valueMult": 1.5, "xpMult": 1.5 }],
+      "objective": { "stat": "food.linguica_toscana.served", "goal": 30 },
+      "rewards": [{ "milestone": 10, "reward": { "coins": 400 } }, { "milestone": 20, "reward": { "coins": 900 } }, { "milestone": 30, "reward": { "embers": 4 } }]
+    },
+    {
+      "id": "terca_picanha",
+      "nameKey": "event.terca_picanha.name",
+      "descKey": "event.terca_picanha.desc",
+      "dayOfWeek": "tuesday",
+      "durationHours": 24,
+      "modifiers": [{ "type": "ingredientBoost", "ingredient": "picanha", "valueMult": 1.6, "xpMult": 1.4 }],
+      "objective": { "stat": "food.picanha.perfect", "goal": 12 },
+      "rewards": [{ "milestone": 4, "reward": { "coins": 600 } }, { "milestone": 8, "reward": { "embers": 3 } }, { "milestone": 12, "reward": { "embers": 8 } }]
+    },
+    {
+      "id": "quarta_espetinho",
+      "nameKey": "event.quarta_espetinho.name",
+      "descKey": "event.quarta_espetinho.desc",
+      "dayOfWeek": "wednesday",
+      "durationHours": 24,
+      "modifiers": [{ "type": "categoryBoost", "category": "skewer", "valueMult": 1.5 }],
+      "objective": { "stat": "category.skewer.served", "goal": 40 },
+      "rewards": [{ "milestone": 15, "reward": { "coins": 500 } }, { "milestone": 40, "reward": { "embers": 5 } }]
+    },
+    {
+      "id": "fds_brasa",
+      "nameKey": "event.fds_brasa.name",
+      "descKey": "event.fds_brasa.desc",
+      "dayOfWeek": "saturday",
+      "durationHours": 48,
+      "modifiers": [{ "type": "globalTipBoost", "valueMult": 1.25 }, { "type": "vipChance", "valueAdd": 0.04 }],
+      "objective": { "stat": "customersServed", "goal": 80 },
+      "rewards": [{ "milestone": 30, "reward": { "coins": 1200 } }, { "milestone": 80, "reward": { "embers": 12 } }]
+    }
+  ],
+  "seasonal": [
+    { "id": "carnaval", "nameKey": "event.carnaval.name", "window": { "type": "relative", "anchor": "carnival", "daysBefore": 7, "durationDays": 12 }, "theme": "carnaval", "adds": ["skin_apron_carnaval", "decor_bandeirinhas"], "passId": "pass_carnaval" },
+    { "id": "festa_junina", "nameKey": "event.junina.name", "window": { "type": "fixed", "startMonth": 6, "startDay": 1, "durationDays": 30 }, "theme": "junina", "adds": ["food.pao_de_milho", "decor_balao", "skin_chapeu_palha"], "passId": "pass_junina" },
+    { "id": "ferias", "nameKey": "event.ferias.name", "window": { "type": "fixed", "startMonth": 7, "startDay": 1, "durationDays": 21 }, "theme": "ferias", "adds": ["decor_guarda_sol", "food.queijo_coalho_beach"] },
+    { "id": "inverno", "nameKey": "event.inverno.name", "window": { "type": "fixed", "startMonth": 7, "startDay": 10, "durationDays": 20 }, "theme": "inverno", "adds": ["food.costela_fire", "decor_lareira"] },
+    { "id": "primavera", "nameKey": "event.primavera.name", "window": { "type": "fixed", "startMonth": 9, "startDay": 22, "durationDays": 20 }, "theme": "primavera", "adds": ["decor_flores", "food.legumes_primavera"] },
+    { "id": "natal", "nameKey": "event.natal.name", "window": { "type": "fixed", "startMonth": 12, "startDay": 10, "durationDays": 26 }, "theme": "natal", "adds": ["skin_apron_natal", "decor_luzes", "food.chester"], "passId": "pass_natal" },
+    { "id": "anonovo", "nameKey": "event.anonovo.name", "window": { "type": "fixed", "startMonth": 12, "startDay": 28, "durationDays": 8 }, "theme": "anonovo", "adds": ["decor_fogos", "chest_anonovo"] }
+  ],
+  "defaults": {
+    "vipBaseChance": 0.06,
+    "vipMaxPerDay": 2,
+    "eventOverlapPolicy": "seasonal_wins_visuals_weekly_wins_modifiers"
+  }
+}

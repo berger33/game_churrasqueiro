@@ -1,0 +1,688 @@
+{
+  "$schema": "schema/achievements.schema.json",
+  "_comment": "Achievements. MVP ships 50 (spec §84/§29); schema supports hundreds. `goal.stat` maps to analytics/save counters.",
+  "version": 3,
+  "achievements": [
+    {
+      "id": "first_ember",
+      "nameKey": "ach.first_ember.name",
+      "descKey": "ach.first_ember.desc",
+      "stat": "turnsPlayed",
+      "goal": 1,
+      "reward": {
+        "coins": 50,
+        "embers": 1
+      },
+      "tier": 1
+    },
+    {
+      "id": "first_perfect",
+      "nameKey": "ach.first_perfect.name",
+      "descKey": "ach.first_perfect.desc",
+      "stat": "perfectCooks",
+      "goal": 1,
+      "reward": {
+        "coins": 80,
+        "embers": 1
+      },
+      "tier": 1
+    },
+    {
+      "id": "perfect_25",
+      "nameKey": "ach.perfect_25.name",
+      "descKey": "ach.perfect_25.desc",
+      "stat": "perfectCooks",
+      "goal": 25,
+      "reward": {
+        "coins": 300
+      },
+      "tier": 2
+    },
+    {
+      "id": "perfect_100",
+      "nameKey": "ach.perfect_100.name",
+      "descKey": "ach.perfect_100.desc",
+      "stat": "perfectCooks",
+      "goal": 100,
+      "reward": {
+        "coins": 900,
+        "embers": 3
+      },
+      "tier": 3
+    },
+    {
+      "id": "perfect_500",
+      "nameKey": "ach.perfect_500.name",
+      "descKey": "ach.perfect_500.desc",
+      "stat": "perfectCooks",
+      "goal": 500,
+      "reward": {
+        "coins": 4000,
+        "embers": 10
+      },
+      "tier": 4
+    },
+    {
+      "id": "perfect_2500",
+      "nameKey": "ach.perfect_2500.name",
+      "descKey": "ach.perfect_2500.desc",
+      "stat": "perfectCooks",
+      "goal": 2500,
+      "reward": {
+        "coins": 20000,
+        "embers": 25
+      },
+      "tier": 5
+    },
+    {
+      "id": "customers_10",
+      "nameKey": "ach.customers_10.name",
+      "descKey": "ach.customers_10.desc",
+      "stat": "customersServed",
+      "goal": 10,
+      "reward": {
+        "coins": 120
+      },
+      "tier": 1
+    },
+    {
+      "id": "customers_100",
+      "nameKey": "ach.customers_100.name",
+      "descKey": "ach.customers_100.desc",
+      "stat": "customersServed",
+      "goal": 100,
+      "reward": {
+        "coins": 1000,
+        "embers": 3
+      },
+      "tier": 2
+    },
+    {
+      "id": "customers_500",
+      "nameKey": "ach.customers_500.name",
+      "descKey": "ach.customers_500.desc",
+      "stat": "customersServed",
+      "goal": 500,
+      "reward": {
+        "coins": 5000,
+        "embers": 8
+      },
+      "tier": 3
+    },
+    {
+      "id": "customers_1000",
+      "nameKey": "ach.customers_1000.name",
+      "descKey": "ach.customers_1000.desc",
+      "stat": "customersServed",
+      "goal": 1000,
+      "reward": {
+        "coins": 12000,
+        "embers": 15
+      },
+      "tier": 4
+    },
+    {
+      "id": "customers_5000",
+      "nameKey": "ach.customers_5000.name",
+      "descKey": "ach.customers_5000.desc",
+      "stat": "customersServed",
+      "goal": 5000,
+      "reward": {
+        "coins": 60000,
+        "embers": 40
+      },
+      "tier": 5
+    },
+    {
+      "id": "orders_100",
+      "nameKey": "ach.orders_100.name",
+      "descKey": "ach.orders_100.desc",
+      "stat": "ordersCompleted",
+      "goal": 100,
+      "reward": {
+        "coins": 900
+      },
+      "tier": 2
+    },
+    {
+      "id": "orders_1000",
+      "nameKey": "ach.orders_1000.name",
+      "descKey": "ach.orders_1000.desc",
+      "stat": "ordersCompleted",
+      "goal": 1000,
+      "reward": {
+        "coins": 9000,
+        "embers": 12
+      },
+      "tier": 4
+    },
+    {
+      "id": "combo_3",
+      "nameKey": "ach.combo_3.name",
+      "descKey": "ach.combo_3.desc",
+      "stat": "bestCombo",
+      "goal": 3,
+      "reward": {
+        "coins": 150
+      },
+      "tier": 1
+    },
+    {
+      "id": "combo_5",
+      "nameKey": "ach.combo_5.name",
+      "descKey": "ach.combo_5.desc",
+      "stat": "bestCombo",
+      "goal": 5,
+      "reward": {
+        "coins": 350,
+        "embers": 2
+      },
+      "tier": 2
+    },
+    {
+      "id": "combo_10",
+      "nameKey": "ach.combo_10.name",
+      "descKey": "ach.combo_10.desc",
+      "stat": "bestCombo",
+      "goal": 10,
+      "reward": {
+        "coins": 1200,
+        "embers": 5
+      },
+      "tier": 3
+    },
+    {
+      "id": "combo_20",
+      "nameKey": "ach.combo_20.name",
+      "descKey": "ach.combo_20.desc",
+      "stat": "bestCombo",
+      "goal": 20,
+      "reward": {
+        "coins": 4000,
+        "embers": 12
+      },
+      "tier": 4
+    },
+    {
+      "id": "combo_35",
+      "nameKey": "ach.combo_35.name",
+      "descKey": "ach.combo_35.desc",
+      "stat": "bestCombo",
+      "goal": 35,
+      "reward": {
+        "coins": 12000,
+        "embers": 30
+      },
+      "tier": 5
+    },
+    {
+      "id": "coins_1k",
+      "nameKey": "ach.coins_1k.name",
+      "descKey": "ach.coins_1k.desc",
+      "stat": "coinsEarnedTotal",
+      "goal": 1000,
+      "reward": {
+        "embers": 2
+      },
+      "tier": 1
+    },
+    {
+      "id": "coins_10k",
+      "nameKey": "ach.coins_10k.name",
+      "descKey": "ach.coins_10k.desc",
+      "stat": "coinsEarnedTotal",
+      "goal": 10000,
+      "reward": {
+        "embers": 6
+      },
+      "tier": 2
+    },
+    {
+      "id": "coins_100k",
+      "nameKey": "ach.coins_100k.name",
+      "descKey": "ach.coins_100k.desc",
+      "stat": "coinsEarnedTotal",
+      "goal": 100000,
+      "reward": {
+        "embers": 20
+      },
+      "tier": 3
+    },
+    {
+      "id": "coins_1m",
+      "nameKey": "ach.coins_1m.name",
+      "descKey": "ach.coins_1m.desc",
+      "stat": "coinsEarnedTotal",
+      "goal": 1000000,
+      "reward": {
+        "embers": 60
+      },
+      "tier": 4
+    },
+    {
+      "id": "linguica_50",
+      "nameKey": "ach.linguica_50.name",
+      "descKey": "ach.linguica_50.desc",
+      "stat": "food.linguica_toscana.served",
+      "goal": 50,
+      "reward": {
+        "coins": 500
+      },
+      "tier": 2
+    },
+    {
+      "id": "pao_alho_50",
+      "nameKey": "ach.pao_alho_50.name",
+      "descKey": "ach.pao_alho_50.desc",
+      "stat": "food.pao_de_alho.served",
+      "goal": 50,
+      "reward": {
+        "coins": 400
+      },
+      "tier": 2
+    },
+    {
+      "id": "picanha_master",
+      "nameKey": "ach.picanha_master.name",
+      "descKey": "ach.picanha_master.desc",
+      "stat": "food.picanha.perfect",
+      "goal": 100,
+      "reward": {
+        "coins": 3000,
+        "embers": 10,
+        "collection": "medalha_picanha"
+      },
+      "tier": 4
+    },
+    {
+      "id": "costela_fan",
+      "nameKey": "ach.costela_fan.name",
+      "descKey": "ach.costela_fan.desc",
+      "stat": "food.costela.served",
+      "goal": 40,
+      "reward": {
+        "coins": 2500,
+        "embers": 6
+      },
+      "tier": 4
+    },
+    {
+      "id": "queijo_25",
+      "nameKey": "ach.queijo_25.name",
+      "descKey": "ach.queijo_25.desc",
+      "stat": "food.queijo_coalho.perfect",
+      "goal": 25,
+      "reward": {
+        "coins": 700
+      },
+      "tier": 3
+    },
+    {
+      "id": "espetinho_100",
+      "nameKey": "ach.espetinho_100.name",
+      "descKey": "ach.espetinho_100.desc",
+      "stat": "category.skewer.served",
+      "goal": 100,
+      "reward": {
+        "coins": 1200
+      },
+      "tier": 3
+    },
+    {
+      "id": "burned_1",
+      "nameKey": "ach.burned_1.name",
+      "descKey": "ach.burned_1.desc",
+      "stat": "burnedFood",
+      "goal": 1,
+      "reward": {
+        "coins": 40
+      },
+      "tier": 1,
+      "humor": true
+    },
+    {
+      "id": "burned_100",
+      "nameKey": "ach.burned_100.name",
+      "descKey": "ach.burned_100.desc",
+      "stat": "burnedFood",
+      "goal": 100,
+      "reward": {
+        "coins": 600,
+        "collection": "carvao_de_estimacao"
+      },
+      "tier": 3,
+      "humor": true
+    },
+    {
+      "id": "no_burn_turn_25",
+      "nameKey": "ach.no_burn_turn_25.name",
+      "descKey": "ach.no_burn_turn_25.desc",
+      "stat": "flawlessTurns",
+      "goal": 25,
+      "reward": {
+        "coins": 2000,
+        "embers": 5
+      },
+      "tier": 3
+    },
+    {
+      "id": "restaurant_2",
+      "nameKey": "ach.restaurant_2.name",
+      "descKey": "ach.restaurant_2.desc",
+      "stat": "restaurantsUnlocked",
+      "goal": 2,
+      "reward": {
+        "coins": 1500,
+        "embers": 5
+      },
+      "tier": 2
+    },
+    {
+      "id": "restaurant_3",
+      "nameKey": "ach.restaurant_3.name",
+      "descKey": "ach.restaurant_3.desc",
+      "stat": "restaurantsUnlocked",
+      "goal": 3,
+      "reward": {
+        "coins": 6000,
+        "embers": 12
+      },
+      "tier": 3
+    },
+    {
+      "id": "restaurant_5",
+      "nameKey": "ach.restaurant_5.name",
+      "descKey": "ach.restaurant_5.desc",
+      "stat": "restaurantsUnlocked",
+      "goal": 5,
+      "reward": {
+        "coins": 40000,
+        "embers": 50
+      },
+      "tier": 4
+    },
+    {
+      "id": "restaurant_7",
+      "nameKey": "ach.restaurant_7.name",
+      "descKey": "ach.restaurant_7.desc",
+      "stat": "restaurantsUnlocked",
+      "goal": 7,
+      "reward": {
+        "coins": 200000,
+        "embers": 150,
+        "collection": "coroa_da_brasa"
+      },
+      "tier": 5
+    },
+    {
+      "id": "upgrade_1",
+      "nameKey": "ach.upgrade_1.name",
+      "descKey": "ach.upgrade_1.desc",
+      "stat": "upgradesPurchased",
+      "goal": 1,
+      "reward": {
+        "coins": 100
+      },
+      "tier": 1
+    },
+    {
+      "id": "upgrade_25",
+      "nameKey": "ach.upgrade_25.name",
+      "descKey": "ach.upgrade_25.desc",
+      "stat": "upgradesPurchased",
+      "goal": 25,
+      "reward": {
+        "coins": 3000,
+        "embers": 8
+      },
+      "tier": 3
+    },
+    {
+      "id": "upgrade_100",
+      "nameKey": "ach.upgrade_100.name",
+      "descKey": "ach.upgrade_100.desc",
+      "stat": "upgradesPurchased",
+      "goal": 100,
+      "reward": {
+        "coins": 25000,
+        "embers": 40
+      },
+      "tier": 5
+    },
+    {
+      "id": "employee_1",
+      "nameKey": "ach.employee_1.name",
+      "descKey": "ach.employee_1.desc",
+      "stat": "employeesHired",
+      "goal": 1,
+      "reward": {
+        "coins": 800
+      },
+      "tier": 2
+    },
+    {
+      "id": "employee_5",
+      "nameKey": "ach.employee_5.name",
+      "descKey": "ach.employee_5.desc",
+      "stat": "employeesHired",
+      "goal": 5,
+      "reward": {
+        "coins": 8000,
+        "embers": 15
+      },
+      "tier": 4
+    },
+    {
+      "id": "level_5",
+      "nameKey": "ach.level_5.name",
+      "descKey": "ach.level_5.desc",
+      "stat": "playerLevel",
+      "goal": 5,
+      "reward": {
+        "coins": 500
+      },
+      "tier": 1
+    },
+    {
+      "id": "level_15",
+      "nameKey": "ach.level_15.name",
+      "descKey": "ach.level_15.desc",
+      "stat": "playerLevel",
+      "goal": 15,
+      "reward": {
+        "coins": 2500,
+        "embers": 6
+      },
+      "tier": 2
+    },
+    {
+      "id": "level_30",
+      "nameKey": "ach.level_30.name",
+      "descKey": "ach.level_30.desc",
+      "stat": "playerLevel",
+      "goal": 30,
+      "reward": {
+        "coins": 15000,
+        "embers": 25
+      },
+      "tier": 4
+    },
+    {
+      "id": "level_60",
+      "nameKey": "ach.level_60.name",
+      "descKey": "ach.level_60.desc",
+      "stat": "playerLevel",
+      "goal": 60,
+      "reward": {
+        "coins": 90000,
+        "embers": 80
+      },
+      "tier": 5
+    },
+    {
+      "id": "daily_7",
+      "nameKey": "ach.daily_7.name",
+      "descKey": "ach.daily_7.desc",
+      "stat": "dailyMissionsComplete",
+      "goal": 7,
+      "reward": {
+        "coins": 1200,
+        "embers": 4
+      },
+      "tier": 2
+    },
+    {
+      "id": "daily_100",
+      "nameKey": "ach.daily_100.name",
+      "descKey": "ach.daily_100.desc",
+      "stat": "dailyMissionsComplete",
+      "goal": 100,
+      "reward": {
+        "coins": 20000,
+        "embers": 40
+      },
+      "tier": 4
+    },
+    {
+      "id": "streak_7",
+      "nameKey": "ach.streak_7.name",
+      "descKey": "ach.streak_7.desc",
+      "stat": "loginStreak",
+      "goal": 7,
+      "reward": {
+        "embers": 10
+      },
+      "tier": 2
+    },
+    {
+      "id": "streak_30",
+      "nameKey": "ach.streak_30.name",
+      "descKey": "ach.streak_30.desc",
+      "stat": "loginStreak",
+      "goal": 30,
+      "reward": {
+        "embers": 60
+      },
+      "tier": 4
+    },
+    {
+      "id": "vip_1",
+      "nameKey": "ach.vip_1.name",
+      "descKey": "ach.vip_1.desc",
+      "stat": "vipServed",
+      "goal": 1,
+      "reward": {
+        "coins": 1000,
+        "embers": 3
+      },
+      "tier": 2
+    },
+    {
+      "id": "vip_25",
+      "nameKey": "ach.vip_25.name",
+      "descKey": "ach.vip_25.desc",
+      "stat": "vipServed",
+      "goal": 25,
+      "reward": {
+        "coins": 15000,
+        "embers": 30
+      },
+      "tier": 4
+    },
+    {
+      "id": "collection_10",
+      "nameKey": "ach.collection_10.name",
+      "descKey": "ach.collection_10.desc",
+      "stat": "collectionEntries",
+      "goal": 10,
+      "reward": {
+        "coins": 800,
+        "embers": 3
+      },
+      "tier": 2
+    },
+    {
+      "id": "collection_all_mvp",
+      "nameKey": "ach.collection_all_mvp.name",
+      "descKey": "ach.collection_all_mvp.desc",
+      "stat": "collectionEntries",
+      "goal": 37,
+      "reward": {
+        "coins": 50000,
+        "embers": 100,
+        "collection": "livro_dourado"
+      },
+      "tier": 5
+    },
+    {
+      "id": "route_10",
+      "nameKey": "ach.route_10.name",
+      "descKey": "ach.route_10.desc",
+      "stat": "routeStopsCleared",
+      "goal": 10,
+      "reward": {
+        "coins": 5000,
+        "embers": 12
+      },
+      "tier": 3
+    },
+    {
+      "id": "route_all",
+      "nameKey": "ach.route_all.name",
+      "descKey": "ach.route_all.desc",
+      "stat": "routeStopsCleared",
+      "goal": 30,
+      "reward": {
+        "coins": 80000,
+        "embers": 120
+      },
+      "tier": 5
+    },
+    {
+      "id": "idle_first",
+      "nameKey": "ach.idle_first.name",
+      "descKey": "ach.idle_first.desc",
+      "stat": "idleCollections",
+      "goal": 1,
+      "reward": {
+        "coins": 300
+      },
+      "tier": 1
+    },
+    {
+      "id": "idle_50",
+      "nameKey": "ach.idle_50.name",
+      "descKey": "ach.idle_50.desc",
+      "stat": "idleCollections",
+      "goal": 50,
+      "reward": {
+        "coins": 10000,
+        "embers": 20
+      },
+      "tier": 3
+    },
+    {
+      "id": "event_first",
+      "nameKey": "ach.event_first.name",
+      "descKey": "ach.event_first.desc",
+      "stat": "eventsCompleted",
+      "goal": 1,
+      "reward": {
+        "coins": 900,
+        "embers": 3
+      },
+      "tier": 2
+    },
+    {
+      "id": "pass_first",
+      "nameKey": "ach.pass_first.name",
+      "descKey": "ach.pass_first.desc",
+      "stat": "passTiersClaimed",
+      "goal": 1,
+      "reward": {
+        "coins": 600
+      },
+      "tier": 1
+    }
+  ]
+}
