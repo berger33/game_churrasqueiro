@@ -20,10 +20,21 @@ const BUNDLE = join(ROOT, 'prototype', 'dist', 'bundle.js');
 const calls = new Map();
 let ops = 0;
 
+const TRANSFORM_OPS = new Set(['setTransform', 'transform', 'scale', 'translate', 'rotate']);
+
 function record(name) {
   return (...args) => {
     calls.set(name, (calls.get(name) ?? 0) + 1);
     ops++;
+    // A non-finite layout transform (e.g. resize computing scale from a missing
+    // window.innerWidth) draws nothing yet records as "successful". Fail loudly.
+    if (TRANSFORM_OPS.has(name)) {
+      for (const a of args) {
+        if (typeof a === 'number' && !Number.isFinite(a)) {
+          throw new Error(`non-finite argument to ${name}(${args.join(',')}) — the frame would render blank`);
+        }
+      }
+    }
     // Gradient factories must return a usable object.
     if (name === 'createLinearGradient' || name === 'createRadialGradient') {
       return { addColorStop: () => {} };
@@ -139,6 +150,8 @@ class FakeAudioContext {
 }
 globalThis.AudioContext = FakeAudioContext;
 globalThis.window = globalThis;
+globalThis.innerWidth = 420;
+globalThis.innerHeight = 820;
 globalThis.devicePixelRatio = 1;
 globalThis.location = { search: '', href: 'http://localhost/' };
 

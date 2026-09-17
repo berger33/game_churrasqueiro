@@ -82,3 +82,6 @@ Thumbs.db
 tools/**/out/
 shared/generated/
 Assets/Data/Generated/
+
+# Rendered verification frames (artifacts, not source)
+prototype/shots/
