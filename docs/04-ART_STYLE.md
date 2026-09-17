@@ -176,3 +176,54 @@ sm_food_picanha_raw_l0, food, original, proprietary, 1.0, studio, 2026-09-17
 `source` is one of `original` | `ai-assisted-reviewed` | `third-party`. Anything
 `third-party` must have a license field that permits commercial use. A CI check rejects
 assets without a registry row.
+
+## 12. Prototype implementation status (what this bible looks like in code)
+
+Sections 1–11 specify the Unity target. This section records what the
+design-verification prototype **actually renders today**, so the two cannot be
+mistaken for one another. The prototype is 2D canvas, not the shader pipeline of
+§6; it exists to prove the art *direction* before the art *budget* is spent.
+
+| File | Responsibility |
+|---|---|
+| `prototype/src/theme.ts` | Palette (§3), type scale (§4), `roundRectPath` (enforces R3's 4 % minimum radius), `panel`/`pill`/`outlinedText`, and the vector icons that replaced every emoji |
+| `prototype/src/foods.ts` | One distinct silhouette per ingredient (R2), plus the doneness ramp as a *material* change, never a shape change |
+| `prototype/src/main.ts` | Composition: backdrop, grill, HUD, order cards, bench, drag feedback, result screen |
+
+**Rule compliance, verified rather than asserted:**
+
+- **R2 (silhouette-first)** — all 16 ingredients have their own outline, so none
+  is a generic rounded rectangle. `npm run check-art` walks the full switch:
+  16 ingredients × 8 doneness levels + icon form = 144 draws, each asserted to
+  paint, build a path and emit gradient stops. It also asserts `donenessColors`
+  stays finite and inside 0–255 at both ends of the ramp.
+- **R3 (round everything)** — `roundRectPath` clamps the radius to at least 4 % of
+  the smallest dimension, so the rule cannot be violated by a call site passing `0`.
+- **R4 (warm light only)** — the key light is a cached golden-hour gradient with a
+  warm pool behind the grill; every icon and panel highlight is drawn from the
+  warm end of the palette.
+- **R5 (one palette)** — `theme.ts` exports a single `C` object; no draw method
+  declares its own colour literals for structural surfaces.
+
+**Doneness as material, not shape** (§6's principle, applied in 2D): the
+silhouette never changes between raw and burned. Only the fill gradient, the sear
+stripes, the sheen and the under-glow change. This is deliberate — a player reads
+"is it ready?" from colour and marks, and must never have to re-learn a shape.
+
+**What the prototype does *not* prove:** the `Custom/FoodDoneness` shader of §6,
+the lighting rig of §7, the VFX budgets of §8, and the asset registry of §11 are
+all still specification. The prototype's coals, glow and gradients are canvas
+improvisations that will be replaced by real assets; only the direction carries over.
+
+**Verification** — two harnesses execute the shipped render code, because a
+typecheck proves compilation and not drawing:
+
+- `npm run check-render` imports the same `dist/bundle.js` the browser loads,
+  serves the real tables from `shared/data`, and drives init, a bench-to-grill
+  drag, a flip tap and a full turn through to the result screen.
+- `npm run check-art` is the silhouette coverage walk described above.
+
+`check-render` has already caught one real regression: dropping the module's
+bootstrap block let the bundler tree-shake the entire `Game` class away, shipping
+a 175-byte empty bundle that typechecked clean and would have rendered a blank
+canvas.

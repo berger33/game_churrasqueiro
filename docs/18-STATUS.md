@@ -14,14 +14,16 @@ Every claim below was produced by a command run in this checkout.
 
 | Area | Check | Result |
 |---|---|---|
-| Unit tests | `npx vitest run` | **128 passed / 0 failed** (7 files) |
+| Unit tests | `npx vitest run` | **135 passed / 0 failed** (8 files) |
 | Localisation | `npm run check-l10n` | **OK** — 340 keys referenced by data, all translated in pt-BR (469 keys total); en-US / es-419 are declared 10.7 % stubs that fall back to pt-BR |
 | Data integrity | `npm run validate` | **OK** — 20 tables, 16 ingredients, 11 customers, 7 restaurants, 27 upgrade tracks, 58 achievements, 37 collection entries, 47 analytics events, 60 authored levels |
 | Short-horizon economy | `npm run sim` | **all 15 balance targets met** |
 | Long-horizon economy | `npm run sim:long` (1500 turns) | **all 15 balance targets met** — see §3 |
 | Economy report | `HORIZON=1500 npm run balance-report` | reaches **level 80**; income growth L5→L70 **×13.10** vs cost growth **×29.28** → costs outpace income, so purchases stay meaningful |
 | Unity data copy | `npm run verify-data-sync` | **OK — Assets/Data matches shared/data (20 tables)** |
-| Prototype bundle | `npx esbuild --bundle prototype/src/main.ts` | **215 kB, 0 errors** |
+| Prototype bundle | `npx esbuild --bundle prototype/src/main.ts` | **342 kB, 0 errors** |
+| Art coverage | `npm run check-art` | **OK** — 16 ingredients × 8 doneness levels + icons = **144 draws**, all painted |
+| Render smoke | `npm run check-render` | **OK** — real bundle driven through init, a drag, a flip and a full turn; **12.3 M canvas ops, no exceptions** |
 | Prototype server | `node prototype/dev-server.mjs` | listening on `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
 
 ### The localisation gate caught a §56 violation
@@ -181,9 +183,16 @@ finding, §5.2 records the two bug fixes that invalidated the earlier curve.
 No other document cites pacing or income figures — verified by grepping the whole
 `docs/` tree for the superseded values.
 
-⚠ **Still unchecked:** docs 02–16 describe systems (art, audio, Unity, CI, store
+⚠ **Still unchecked:** docs 02–16 describe systems (audio, Unity, CI, store
 rollout) that do not yet exist as code. They are specifications, not descriptions
 of shipped behaviour.
+
+**Partial exception — `04-ART_STYLE.md`:** §12 was added to separate the two. It
+records what the design-verification prototype *actually renders* (theme,
+per-ingredient silhouettes, composition), which rules are verified by
+`npm run check-art` / `npm run check-render`, and states plainly that the §6 food
+shader, §7 lighting rig, §8 VFX budgets and §11 asset registry remain
+specification. The prototype proves art *direction*, not the art *budget*.
 
 ---
 
