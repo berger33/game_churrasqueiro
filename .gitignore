@@ -1,0 +1,87 @@
+# ─── Unity ───────────────────────────────────────────────────────────────────
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+[Bb]uildReports/
+sysinfo.txt
+*.stackdump
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+crashlytics-build.properties
+.gradle/
+
+# Unity generated project files (keep .csproj/.sln out of VCS)
+/[Ee]xportedObj/
+.consulo/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Unity crash reports
+sysinfo.txt
+
+# Builds (never version binaries)
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# ─── Secrets / credentials (NEVER commit) ───────────────────────────────────
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
+secrets.json
+**/secrets.json
+Assets/StreamingAssets/credentials.json
+firebase-config.json
+google-services.json
+GoogleService-Info.plist
+.env
+.env.*
+!.env.example
+
+# ─── Node / tooling ─────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-error.log
+.pnpm-debug.log
+dist/
+coverage/
+*.tsbuildinfo
+
+# ─── Editor / OS ────────────────────────────────────────────────────────────
+.vs/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# ─── Generated (regenerable from shared/data + tools) ───────────────────────
+tools/**/out/
+shared/generated/
+Assets/Data/Generated/
+
+# Rendered verification frames (artifacts, not source)
+prototype/shots/

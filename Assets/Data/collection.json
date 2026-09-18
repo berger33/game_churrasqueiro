@@ -1,0 +1,71 @@
+{
+  "$schema": "schema/collection.schema.json",
+  "_comment": "Livro do Mestre da Brasa (spec §21). Entries reference content ids so unlocks stay in sync with gameplay data.",
+  "version": 2,
+  "categories": [
+    { "id": "carnes", "nameKey": "collection.carnes" },
+    { "id": "aves", "nameKey": "collection.aves" },
+    { "id": "linguicas", "nameKey": "collection.linguicas" },
+    { "id": "queijos", "nameKey": "collection.queijos" },
+    { "id": "paes", "nameKey": "collection.paes" },
+    { "id": "acompanhamentos", "nameKey": "collection.acompanhamentos" },
+    { "id": "espetinhos", "nameKey": "collection.espetinhos" },
+    { "id": "molhos", "nameKey": "collection.molhos" },
+    { "id": "equipamentos", "nameKey": "collection.equipamentos" },
+    { "id": "churrasqueiras", "nameKey": "collection.churrasqueiras" }
+  ],
+  "mastery": {
+    "xpFormula": { "type": "power", "a": 30, "exponent": 1.5 },
+    "levels": [
+      { "level": 1, "titleKey": "mastery.iniciante" },
+      { "level": 5, "titleKey": "mastery.assador" },
+      { "level": 10, "titleKey": "mastery.especialista" },
+      { "level": 20, "titleKey": "mastery.mestre" }
+    ],
+    "rewardPerLevel": { "coins": 40, "embersEvery5": 3 },
+    "cosmeticOnly": true
+  },
+  "entries": [
+    { "id": "c_picanha", "category": "carnes", "refType": "ingredient", "refId": "picanha", "rarity": "rare", "originKey": "collection.c_picanha.origin" },
+    { "id": "c_maminha", "category": "carnes", "refType": "ingredient", "refId": "maminha", "rarity": "rare", "originKey": "collection.c_maminha.origin" },
+    { "id": "c_contra_file", "category": "carnes", "refType": "ingredient", "refId": "contra_file", "rarity": "uncommon", "originKey": "collection.c_contra_file.origin" },
+    { "id": "c_fraldinha", "category": "carnes", "refType": "ingredient", "refId": "fraldinha", "rarity": "uncommon", "originKey": "collection.c_fraldinha.origin" },
+    { "id": "c_costela", "category": "carnes", "refType": "ingredient", "refId": "costela", "rarity": "rare", "originKey": "collection.c_costela.origin" },
+    { "id": "c_cupim", "category": "carnes", "refType": "ingredient", "refId": "cupim", "rarity": "epic", "originKey": "collection.c_cupim.origin" },
+    { "id": "c_frango", "category": "aves", "refType": "ingredient", "refId": "frango_coxa", "rarity": "common", "originKey": "collection.c_frango.origin" },
+    { "id": "c_asinha", "category": "aves", "refType": "ingredient", "refId": "asinha_frango", "rarity": "common", "originKey": "collection.c_asinha.origin" },
+    { "id": "c_coracao", "category": "aves", "refType": "ingredient", "refId": "coracao_frango", "rarity": "uncommon", "originKey": "collection.c_coracao.origin" },
+    { "id": "c_linguica", "category": "linguicas", "refType": "ingredient", "refId": "linguica_toscana", "rarity": "common", "originKey": "collection.c_linguica.origin" },
+    { "id": "c_queijo", "category": "queijos", "refType": "ingredient", "refId": "queijo_coalho", "rarity": "uncommon", "originKey": "collection.c_queijo.origin" },
+    { "id": "c_pao_alho", "category": "paes", "refType": "ingredient", "refId": "pao_de_alho", "rarity": "common", "originKey": "collection.c_pao_alho.origin" },
+    { "id": "c_vinagrete", "category": "acompanhamentos", "refType": "ingredient", "refId": "vinagrete", "rarity": "common", "originKey": "collection.c_vinagrete.origin" },
+    { "id": "c_legumes", "category": "acompanhamentos", "refType": "ingredient", "refId": "legumes_grelhados", "rarity": "common", "originKey": "collection.c_legumes.origin" },
+    { "id": "c_esp_frango", "category": "espetinhos", "refType": "ingredient", "refId": "espetinho_frango", "rarity": "common", "originKey": "collection.c_esp_frango.origin" },
+    { "id": "c_esp_misto", "category": "espetinhos", "refType": "ingredient", "refId": "espetinho_misto", "rarity": "uncommon", "originKey": "collection.c_esp_misto.origin" },
+
+    { "id": "c_molho_campanha", "category": "molhos", "refType": "sauce", "refId": "molho_campanha", "rarity": "common", "originKey": "collection.c_molho_campanha.origin" },
+    { "id": "c_molho_alho", "category": "molhos", "refType": "sauce", "refId": "molho_alho", "rarity": "common", "originKey": "collection.c_molho_alho.origin" },
+    { "id": "c_molho_pimenta", "category": "molhos", "refType": "sauce", "refId": "molho_pimenta", "rarity": "uncommon", "originKey": "collection.c_molho_pimenta.origin" },
+    { "id": "c_farofa", "category": "molhos", "refType": "sauce", "refId": "farofa", "rarity": "uncommon", "originKey": "collection.c_farofa.origin" },
+
+    { "id": "c_espeto_longo", "category": "equipamentos", "refType": "equipment", "refId": "espeto_longo", "rarity": "rare", "originKey": "collection.c_espeto_longo.origin" },
+    { "id": "c_grelha_argola", "category": "equipamentos", "refType": "equipment", "refId": "grelha_argola", "rarity": "uncommon", "originKey": "collection.c_grelha_argola.origin" },
+    { "id": "c_faca_churrasqueiro", "category": "equipamentos", "refType": "equipment", "refId": "faca_churrasqueiro", "rarity": "uncommon", "originKey": "collection.c_faca.origin" },
+    { "id": "c_moquem", "category": "equipamentos", "refType": "equipment", "refId": "moquem", "rarity": "epic", "originKey": "collection.c_moquem.origin" },
+    { "id": "c_abanador", "category": "equipamentos", "refType": "equipment", "refId": "abanador", "rarity": "common", "originKey": "collection.c_abanador.origin" },
+    { "id": "c_sal_grosso", "category": "equipamentos", "refType": "equipment", "refId": "sal_grosso", "rarity": "common", "originKey": "collection.c_sal_grosso.origin" },
+
+    { "id": "c_g_alvenaria", "category": "churrasqueiras", "refType": "grillSkin", "refId": "churrasqueira_alvenaria", "rarity": "common", "originKey": "collection.c_g_alvenaria.origin" },
+    { "id": "c_g_tambor", "category": "churrasqueiras", "refType": "grillSkin", "refId": "churrasqueira_tambor", "rarity": "common", "originKey": "collection.c_g_tambor.origin" },
+    { "id": "c_g_inox", "category": "churrasqueiras", "refType": "grillSkin", "refId": "churrasqueira_inox", "rarity": "uncommon", "originKey": "collection.c_g_inox.origin" },
+    { "id": "c_g_premium", "category": "churrasqueiras", "refType": "grillSkin", "refId": "churrasqueira_premium", "rarity": "rare", "originKey": "collection.c_g_premium.origin" },
+    { "id": "c_g_fogo_chao", "category": "churrasqueiras", "refType": "grillSkin", "refId": "churrasqueira_fogo_chao", "rarity": "rare", "originKey": "collection.c_g_fogo_chao.origin" },
+    { "id": "c_g_neon", "category": "churrasqueiras", "refType": "grillSkin", "refId": "churrasqueira_neon", "rarity": "epic", "originKey": "collection.c_g_neon.origin" },
+
+    { "id": "c_medalha_picanha", "category": "carnes", "refType": "trophy", "refId": "medalha_picanha", "rarity": "epic", "originKey": "collection.c_medalha_picanha.origin" },
+    { "id": "c_coroa_da_brasa", "category": "churrasqueiras", "refType": "trophy", "refId": "coroa_da_brasa", "rarity": "legendary", "originKey": "collection.c_coroa.origin" },
+    { "id": "c_livro_dourado", "category": "equipamentos", "refType": "trophy", "refId": "livro_dourado", "rarity": "legendary", "originKey": "collection.c_livro_dourado.origin" },
+    { "id": "c_carvao_pet", "category": "equipamentos", "refType": "trophy", "refId": "carvao_de_estimacao", "rarity": "common", "originKey": "collection.c_carvao_pet.origin" },
+    { "id": "c_mapa_brasa", "category": "equipamentos", "refType": "trophy", "refId": "mapa_da_brasa", "rarity": "epic", "originKey": "collection.c_mapa.origin" }
+  ]
+}

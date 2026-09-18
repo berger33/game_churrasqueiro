@@ -1,0 +1,162 @@
+{
+  "$schema": "schema/regions.schema.json",
+  "_comment": "Sabores do Brasil (spec §23). Regional content researched against real culinary traditions; each region gets equal depth and no stereotypes. Player-facing text lives in shared/l10n via *Key fields; this file holds identifiers only.",
+  "version": 3,
+  "regions": [
+    {
+      "id": "sul",
+      "nameKey": "region.sul.name",
+      "traditionKey": "region.sul.tradition",
+      "states": [
+        "RS",
+        "SC",
+        "PR"
+      ],
+      "ingredients": [
+        "costela",
+        "cupim"
+      ],
+      "equipment": [
+        "espeto_longo",
+        "grelha_argola"
+      ],
+      "decor": [
+        "chimarrao_decor",
+        "poncho_decor"
+      ],
+      "challenge": {
+        "id": "ch_sul_fogo_chao",
+        "rule": "low_zone_only",
+        "goal": 12
+      }
+    },
+    {
+      "id": "sudeste",
+      "nameKey": "region.sudeste.name",
+      "traditionKey": "region.sudeste.tradition",
+      "states": [
+        "SP",
+        "RJ",
+        "MG",
+        "ES"
+      ],
+      "ingredients": [
+        "contra_file",
+        "pao_de_alho",
+        "vinagrete"
+      ],
+      "equipment": [
+        "chapa_boteco",
+        "carrinho_espetinho"
+      ],
+      "decor": [
+        "mesa_boteco",
+        "azulejo_decor"
+      ],
+      "challenge": {
+        "id": "ch_sudeste_boteco",
+        "rule": "serve_30_skewers",
+        "goal": 30
+      }
+    },
+    {
+      "id": "centro_oeste",
+      "nameKey": "region.centro_oeste.name",
+      "traditionKey": "region.centro_oeste.tradition",
+      "states": [
+        "MT",
+        "MS",
+        "GO",
+        "DF"
+      ],
+      "ingredients": [
+        "picanha",
+        "maminha"
+      ],
+      "equipment": [
+        "grelha_fazenda"
+      ],
+      "decor": [
+        "arreio_decor",
+        "cerca_decor"
+      ],
+      "challenge": {
+        "id": "ch_co_picanha",
+        "rule": "perfect_picanha",
+        "goal": 10
+      }
+    },
+    {
+      "id": "nordeste",
+      "nameKey": "region.nordeste.name",
+      "traditionKey": "region.nordeste.tradition",
+      "states": [
+        "BA",
+        "PE",
+        "CE",
+        "MA",
+        "PB",
+        "RN",
+        "AL",
+        "SE",
+        "PI"
+      ],
+      "ingredients": [
+        "queijo_coalho",
+        "carne_de_sol",
+        "farofa"
+      ],
+      "equipment": [
+        "braseiro_praia",
+        "espeto_curto"
+      ],
+      "decor": [
+        "renda_decor",
+        "guarda_sol_praia"
+      ],
+      "challenge": {
+        "id": "ch_ne_carvao",
+        "rule": "perfect_coalho",
+        "goal": 10
+      }
+    },
+    {
+      "id": "norte",
+      "nameKey": "region.norte.name",
+      "traditionKey": "region.norte.tradition",
+      "states": [
+        "AM",
+        "PA",
+        "AC",
+        "RO",
+        "RR",
+        "AP",
+        "TO"
+      ],
+      "ingredients": [
+        "tambaqui_brasa",
+        "pirarucu_brasa"
+      ],
+      "equipment": [
+        "moquem"
+      ],
+      "decor": [
+        "folhagem_decor",
+        "ceramica_marajoara"
+      ],
+      "challenge": {
+        "id": "ch_norte_moquem",
+        "rule": "slow_cook_no_burn",
+        "goal": 8
+      }
+    }
+  ],
+  "mapStyle": "stylized_brazil_low_poly",
+  "unlockOrder": [
+    "sudeste",
+    "sul",
+    "nordeste",
+    "centro_oeste",
+    "norte"
+  ]
+}

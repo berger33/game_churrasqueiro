@@ -1,0 +1,94 @@
+{
+  "$schema": "schema/grill.schema.json",
+  "_comment": "Grill/heat model. Zones are horizontal bands across the grill bed (top = low, bottom = high) so one-handed vertical dragging changes heat.",
+  "version": 3,
+  "zones": [
+    {
+      "id": "low",
+      "nameKey": "zone.low",
+      "index": 0,
+      "heatMultiplier": 0.55,
+      "embers": 1,
+      "color": "#4A2A1C"
+    },
+    {
+      "id": "medium",
+      "nameKey": "zone.medium",
+      "index": 1,
+      "heatMultiplier": 1.0,
+      "embers": 2,
+      "color": "#8C3A18"
+    },
+    {
+      "id": "high",
+      "nameKey": "zone.high",
+      "index": 2,
+      "heatMultiplier": 1.55,
+      "embers": 4,
+      "color": "#E0561F"
+    }
+  ],
+  "charcoal": {
+    "baseDurationSec": 150,
+    "efficiencyCurve": [
+      {
+        "t": 0.0,
+        "value": 0.75
+      },
+      {
+        "t": 0.12,
+        "value": 1.0
+      },
+      {
+        "t": 0.55,
+        "value": 1.0
+      },
+      {
+        "t": 1.0,
+        "value": 0.62
+      }
+    ],
+    "refillTimeSec": 2.2,
+    "refillCostCoins": 0,
+    "lowWarningThreshold": 0.22
+  },
+  "slots": {
+    "baseSlotsPerZone": 2,
+    "slotWidthNorm": 0.24,
+    "slotHeightNorm": 0.2
+  },
+  "interaction": {
+    "dragThresholdPx": 12,
+    "flipCooldownSec": 0.18,
+    "serveDragToTray": true,
+    "longPressSecToServe": 0.45,
+    "haptics": {
+      "perfect": "light",
+      "flip": "none",
+      "burned": "heavy",
+      "upgrade": "medium",
+      "comboMilestone": "medium"
+    }
+  },
+  "scoring": {
+    "perfectLabel": "score.perfect",
+    "goodLabel": "score.good",
+    "overcookedLabel": "score.overcooked",
+    "rawLabel": "score.raw",
+    "burnedLabel": "score.burned",
+    "goodWindowPadding": 0.08,
+    "comboMilestones": [
+      3,
+      5,
+      10,
+      15,
+      20
+    ],
+    "comboBreakOn": [
+      "burned",
+      "wrongOrder",
+      "lostCustomer"
+    ],
+    "_economyNote": "Payout/combo money constants live in economy.json -> reward. Do not duplicate them here."
+  }
+}
