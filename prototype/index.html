@@ -3,17 +3,12 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-<title>CHURRASCO! O Mestre da Brasa — Protótipo de Verificação</title>
-<!--
-  Type (§4 of docs/04-ART_STYLE.md): Baloo 2 for display, Nunito for UI.
-  Both are loaded with a fallback stack in src/theme.ts, so the prototype still
-  renders correctly with no network — the art direction does not depend on these
-  files being reachable.
--->
+<meta name="theme-color" content="#1C1512" />
+<title>CHURRASCO! O Mestre da Brasa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
-  href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap"
   rel="stylesheet"
 />
 <style>
@@ -24,28 +19,33 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body {
-    height: 100%; background: var(--carvao); color: var(--creme);
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    overscroll-behavior: none; touch-action: none;
+    height: 100%; background: #0A0705; color: var(--creme);
+    font-family: "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif;
+    overscroll-behavior: none; touch-action: none; overflow: hidden;
   }
   #app {
     position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
-    background: radial-gradient(circle at 50% 20%, #2A1F19 0%, #150F0C 70%);
+    background:
+      radial-gradient(ellipse at 50% 8%, #3B2418 0%, #1A100B 45%, #0A0705 100%);
   }
-  #stage { position: relative; }
-  canvas { display: block; border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
-  #banner {
-    position: fixed; top: 0; left: 0; right: 0; padding: 6px 12px; text-align: center;
-    font-size: 11px; letter-spacing: .04em; color: #8b7a6d; background: rgba(0,0,0,.35);
+  #app::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(circle at 20% 90%, rgba(224,86,31,0.06) 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(242,166,59,0.04) 0%, transparent 40%);
   }
-  #banner b { color: var(--creme); }
+  #stage { position: relative; z-index: 1; }
+  canvas {
+    display: block; border-radius: 24px;
+    box-shadow:
+      0 30px 80px rgba(0,0,0,.75),
+      0 0 0 1px rgba(255,214,160,0.08),
+      0 0 120px rgba(224,86,31,0.10);
+    image-rendering: auto;
+  }
 </style>
 </head>
 <body>
-<div id="banner">
-  Protótipo de verificação de design — roda as <b>mesmas regras</b> do <b>tools/sim-core</b> que o cliente Unity usa.
-  Arraste da bancada para a brasa · toque para virar · arraste até o cliente para servir.
-</div>
 <div id="app"><div id="stage"><canvas id="c"></canvas></div></div>
 <script type="module" src="/bundle.js"></script>
 </body>

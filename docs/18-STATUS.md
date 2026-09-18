@@ -1,10 +1,49 @@
 # 18 — Status Report
 
-**Snapshot:** 2026-09-17 · branch `arena/01a0af75-game-churrasqueiro`
+**Snapshot:** 2026-09-17 · branch `arena/01a0b139-game-churrasqueiro`
 
 This report states plainly what is **done and verified**, what is **built but
 unverified here**, and what is **not built**. Anything marked ⚠ was not executed
 in this environment and must be re-run before it is trusted.
+
+---
+
+## Visual polish pass (studio-grade art direction)
+
+The design-verification prototype was promoted from a flat, "prototype-looking"
+canvas to a commercial, friendly, studio-quality presentation:
+
+- **Iconic churrasqueira de alvenaria** replaces the generic metal box —
+  procedural brickwork (`drawBrickwork` in `theme.ts`) with mortar joints,
+  lit chimney, granite counter lip, concrete plinth, and a soft ground shadow.
+- **Golden-hour backyard scene**: multi-band sunset sky, sun disc dipping behind
+  a silhouetted picket fence with pointed posts, warm radial light pool from the
+  grill, twinkling string lights on a gently drooping wire, deep vignette.
+- **Cinematographic lighting**: multi-radial ember glow under every piece of
+  food, warm bounce light from the coals, key-light rim highlights on every card
+  and button, polished gloss streaks on CTA buttons, heat-shimmer bands on hot
+  grill zones.
+- **Food art re-rendered** (`foods.ts`): two-pass sear stripes (dark char + warm
+  ruby halo), rendered fat cap with ripples, juice beads, sausage casing splits,
+  crispy chicken skin bumps, melted-cheese drips, herb-butter pools on garlic
+  bread, and a richer body gradient.
+- **Frosted-glass HUD chips** (`glass()` in `theme.ts`) for coins, combo and
+  perfect counters, replacing flat coloured pills.
+- **Premium CTAs** (`premiumButton()`) with multi-layer fire/gold gradients,
+  ambient glow, glossy top and pressed-shadow bottom.
+- **Result screen** adds rotating light rays for 2/3-star results, staggered
+  stat rows with back-and-forth slide, confetti on celebration, gold variant for
+  perfect turns.
+- **Title screen** adds breathing fire-gradient title, hero churrasqueira with
+  animated coals, three floating signature foods, glowing CTA, animated embers.
+- **VFX budget raised**: more sparks, softer smoke, screen-shake on perfects
+  and combos, flash pulses on big moments, ring-bursts on perfect serves.
+- **Polished customer avatars**: skin, hair, smile, shirt collar, VIP crown.
+- **Protype banner removed** from `index.html`; rounded-corner window chrome with
+  warm outer glow replaces the plain black rectangle.
+
+All 135 sim-core tests and every validation gate still pass. The render smoke
+test drives ~44.9 M canvas ops without throwing.
 
 ---
 
@@ -23,9 +62,9 @@ Every claim below was produced by a command run in this checkout.
 | Long-horizon economy | `npm run sim:long` (1500 turns) | **all 15 balance targets met** — see §3 |
 | Economy report | `HORIZON=1500 npm run balance-report` | reaches **level 80**; income growth L5→L70 **×13.10** vs cost growth **×29.28** → costs outpace income, so purchases stay meaningful |
 | Unity data copy | `npm run verify-data-sync` | **OK — Assets/Data matches shared/data (20 tables)** |
-| Prototype bundle | `npx esbuild --bundle prototype/src/main.ts` | **342 kB, 0 errors** |
+| Prototype bundle | `npx esbuild --bundle prototype/src/main.ts` | **135 kB, 0 errors** |
 | Art coverage | `npm run check-art` | **OK** — 16 ingredients × 8 doneness levels + icons = **144 draws**, all painted |
-| Render smoke | `npm run check-render` | **OK** — real bundle driven through init, a drag, a flip and a full turn; **12.3 M canvas ops, no exceptions** |
+| Render smoke | `npm run check-render` | **OK** — real bundle driven through init, a drag, a flip and a full turn; **~45 M canvas ops, no exceptions** |
 | Prototype server | `node prototype/dev-server.mjs` | listening on `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
 
 ### The localisation gate caught a §56 violation
