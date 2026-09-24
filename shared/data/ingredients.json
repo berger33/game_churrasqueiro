@@ -1,0 +1,629 @@
+{
+  "$schema": "schema/ingredients.schema.json",
+  "_comment": "CHURRASCO! O Mestre da Brasa — food table. Single source of truth. Unity reads Assets/Data/Ingredients.json (synced by `npm run sync-data`). Do NOT hand-tune gameplay values in C#.",
+  "version": 5,
+  "shared": {
+    "stageThresholds": {
+      "RAW_MAX": 0.35,
+      "RARE_MAX": 0.6,
+      "MEDIUM_MAX": 0.95,
+      "WELL_MAX": 1.2
+    },
+    "carryoverRate": 0.12,
+    "burnedThreshold": 1.2,
+    "minEvennessForPerfect": 0.6,
+    "defaultPerfectWindow": [
+      0.72,
+      0.86
+    ]
+  },
+  "items": [
+    {
+      "id": "linguica_toscana",
+      "nameKey": "food.linguica_toscana.name",
+      "descKey": "food.linguica_toscana.desc",
+      "category": "sausage",
+      "collectionCategory": "linguicas",
+      "rarity": "common",
+      "cookMethod": "grill",
+      "sides": 2,
+      "sideCookSec": 5.5,
+      "idealZone": "medium",
+      "heatRate": 1.0,
+      "burnRate": 1.15,
+      "flipNeeded": true,
+      "perfectWindow": [
+        0.7,
+        0.88
+      ],
+      "value": 14,
+      "xp": 4,
+      "satisfaction": 1.0,
+      "unlock": {
+        "restaurantIndex": 0,
+        "level": 1
+      },
+      "art": {
+        "shape": "sausage",
+        "rawColor": "#C4605A",
+        "cookedColor": "#7A3B22",
+        "burnColor": "#2E1A12",
+        "gloss": 0.45,
+        "fatSheen": true
+      }
+    },
+    {
+      "id": "pao_de_alho",
+      "nameKey": "food.pao_de_alho.name",
+      "descKey": "food.pao_de_alho.desc",
+      "category": "bread",
+      "collectionCategory": "paes",
+      "rarity": "common",
+      "cookMethod": "grill",
+      "sides": 2,
+      "sideCookSec": 3.0,
+      "idealZone": "medium",
+      "heatRate": 1.1,
+      "burnRate": 1.9,
+      "flipNeeded": true,
+      "perfectWindow": [
+        0.68,
+        0.84
+      ],
+      "value": 10,
+      "xp": 3,
+      "satisfaction": 0.8,
+      "unlock": {
+        "restaurantIndex": 0,
+        "level": 2
+      },
+      "stageOverrides": [
+        {
+          "id": "cold",
+          "max": 0.35,
+          "nameKey": "stage.pao.cold"
+        },
+        {
+          "id": "warm",
+          "max": 0.6,
+          "nameKey": "stage.pao.warm"
+        },
+        {
+          "id": "crispy",
+          "max": 0.95,
+          "nameKey": "stage.pao.crispy"
+        },
+        {
+          "id": "burned",
+          "max": 999,
+          "nameKey": "stage.pao.burned"
+        }
+      ],
+      "art": {
+        "shape": "bread",
+        "rawColor": "#EBD9A8",
+        "cookedColor": "#B5762C",
+        "burnColor": "#3A2413",
+        "gloss": 0.2,
+        "fatSheen": false
+      }
+    },
+    {
+      "id": "queijo_coalho",
+      "nameKey": "food.queijo_coalho.name",
+      "descKey": "food.queijo_coalho.desc",
+      "category": "cheese",
+      "collectionCategory": "queijos",
+      "rarity": "uncommon",
+      "cookMethod": "grill",
+      "sides": 2,
+      "sideCookSec": 4.5,
+      "idealZone": "medium",
+      "heatRate": 1.0,
+      "burnRate": 1.6,
+      "flipNeeded": true,
+      "perfectWindow": [
+        0.68,
+        0.84
+      ],
+      "value": 16,
+      "xp": 4,
+      "satisfaction": 0.9,
+      "unlock": {
+        "restaurantIndex": 0,
+        "level": 6
+      },
+      "region": "nordeste",
+      "stageOverrides": [
+        {
+          "id": "cold",
+          "max": 0.35,
+          "nameKey": "stage.queijo.cold"
+        },
+        {
+          "id": "soft",
+          "max": 0.6,
+          "nameKey": "stage.queijo.soft"
+        },
+        {
+          "id": "golden",
+          "max": 0.95,
+          "nameKey": "stage.queijo.golden"
+        },
+        {
+          "id": "melting",
+          "max": 1.2,
+          "nameKey": "stage.queijo.melting"
+        },
+        {
+          "id": "burned",
+          "max": 999,
+          "nameKey": "stage.queijo.burned"
+        }
+      ],
+      "art": {
+        "shape": "cube_skewer",
+        "rawColor": "#F6EFDC",
+        "cookedColor": "#D9A03F",
+        "burnColor": "#3B2A16",
+        "gloss": 0.3,
+        "fatSheen": false,
+        "meltAmount": 0.35
+      }
+    },
+    {
+      "id": "coracao_frango",
+      "nameKey": "food.coracao_frango.name",
+      "descKey": "food.coracao_frango.desc",
+      "category": "poultry",
+      "collectionCategory": "aves",
+      "rarity": "uncommon",
+      "cookMethod": "grill",
+      "sides": 2,
+      "sideCookSec": 4.0,
+      "idealZone": "high",
+      "heatRate": 1.05,
+      "burnRate": 1.4,
+      "flipNeeded": true,
+      "perfectWindow": [
+        0.72,
+        0.88
+      ],
+      "value": 18,
+      "xp": 5,
+      "satisfaction": 1.0,
+      "unlock": {
+        "restaurantIndex": 0,
+        "level": 4
+      },
+      "art": {
+        "shape": "skewer_chunks",
+        "rawColor": "#8E3A3E",
+        "cookedColor": "#5E2A1C",
+        "burnColor": "#241209",
+        "gloss": 0.55,
+        "fatSheen": true
+      }
+    },
+    {
+      "id": "frango_coxa",
+      "nameKey": "food.frango_coxa.name",
+      "descKey": "food.frango_coxa.desc",
+      "category": "poultry",
+      "collectionCategory": "aves",
+      "rarity": "common",
+      "cookMethod": "grill",
+      "sides": 2,
+      "sideCookSec": 8.0,
+      "idealZone": "medium",
+      "heatRate": 0.95,
+      "burnRate": 1.0,
+      "flipNeeded": true,
+      "perfectWindow": [
+        0.76,
+        0.9
+      ],
+      "value": 24,
+      "xp": 7,
+      "satisfaction": 1.1,
+      "unlock": {
+        "restaurantIndex": 0,
+        "level": 8
+      },
+      "art": {
+        "shape": "drumstick",
+        "rawColor": "#E8B98F",
+        "cookedColor": "#A8621F",
+        "burnColor": "#2C1A0E",
+        "gloss": 0.4,
+        "fatSheen": true
+      }
+    },
+    {
+      "id": "asinha_frango",
+      "nameKey": "food.asinha_frango.name",
+      "descKey": "food.asinha_frango.desc",
+      "category": "poultry",
+      "collectionCategory": "aves",
+      "rarity": "common",
+      "cookMethod": "grill",
+      "sides": 2,
+      "sideCookSec": 5.0,
+      "idealZone": "medium",
+      "heatRate": 1.0,
+      "burnRate": 1.35,
+      "flipNeeded": true,
+      "perfectWindow": [
+        0.72,
+        0.86
+      ],
+      "value": 16,
+      "xp": 5,
+      "satisfaction": 0.9,
+      "unlock": {
+        "restaurantIndex": 1,
+        "level": 12
+      },
+      "art": {
+        "shape": "wing",
+        "rawColor": "#E6BE95",
+        "cookedColor": "#B06A22",
+        "burnColor": "#2E1B0F",
+        "gloss": 0.5,
+        "fatSheen": true
+      }
+    },
+    {
+      "id": "espetinho_frango",
+      "nameKey": "food.espetinho_frango.name",
+      "descKey": "food.espetinho_frango.desc",
+      "category": "skewer",
+      "collectionCategory": "espetinhos",
+      "rarity": "common",
+      "cookMethod": "grill",
+      "sides": 4,
+      "sideCookSec": 2.6,
+      "idealZone": "medium",
+      "heatRate": 1.0,
+      "burnRate": 1.45,
+      "flipNeeded": true,
+      "perfectWindow": [
+        0.7,
+        0.88
+      ],
+      "value": 19,
+      "xp": 6,
+      "satisfaction": 1.0,
+      "unlock": {
+        "restaurantIndex": 1,
+        "level": 1
+      },
+      "art": {
+        "shape": "skewer_chunks",
+        "rawColor": "#E0B48C",
+        "cookedColor": "#A66520",
+        "burnColor": "#2A170D",
+        "gloss": 0.45,
+        "fatSheen": true
+      }
+    },
+    {
+      "id": "espetinho_misto",
+      "nameKey": "food.espetinho_misto.name",
+      "descKey": "food.espetinho_misto.desc",
+      "category": "skewer",
+      "collectionCategory": "espetinhos",
+      "rarity": "uncommon",
+      "cookMethod": "grill",
+      "sides": 4,
+      "sideCookSec": 3.0,
+      "idealZone": "medium",
+      "heatRate": 1.0,
+      "burnRate": 1.5,
+      "flipNeeded": true,
+      "perfectWindow": [
+        0.68,
+        0.86
+      ],
+      "value": 20,
+      "xp": 6,
+      "satisfaction": 1.0,
+      "unlock": {
+        "restaurantIndex": 1,
+        "level": 5
+      },
+      "art": {
+        "shape": "skewer_mixed",
+        "rawColor": "#D2A184",
+        "cookedColor": "#9C5B22",
+        "burnColor": "#28160C",
+        "gloss": 0.45,
+        "fatSheen": true
+      }
+    },
+    {
+      "id": "legumes_grelhados",
+      "nameKey": "food.legumes_grelhados.name",
+      "descKey": "food.legumes_grelhados.desc",
+      "category": "sides",
+      "collectionCategory": "acompanhamentos",
+      "rarity": "common",
+      "cookMethod": "grill",
+      "sides": 2,
+      "sideCookSec": 4.0,
+      "idealZone": "medium",
+      "heatRate": 1.0,
+      "burnRate": 1.2,
+      "flipNeeded": true,
+      "perfectWindow": [
+        0.66,
+        0.84
+      ],
+      "value": 12,
+      "xp": 4,
+      "satisfaction": 0.7,
+      "unlock": {
+        "restaurantIndex": 0,
+        "level": 10
+      },
+      "art": {
+        "shape": "veggie_tray",
+        "rawColor": "#7FB04A",
+        "cookedColor": "#4E7530",
+        "burnColor": "#22261A",
+        "gloss": 0.3,
+        "fatSheen": false
+      }
+    },
+    {
+      "id": "fraldinha",
+      "nameKey": "food.fraldinha.name",
+      "descKey": "food.fraldinha.desc",
+      "category": "beef",
+      "collectionCategory": "carnes",
+      "rarity": "uncommon",
+      "cookMethod": "grill",
+      "sides": 2,
+      "sideCookSec": 9.0,
+      "idealZone": "high",
+      "heatRate": 1.0,
+      "burnRate": 0.95,
+      "flipNeeded": true,
+      "perfectWindow": [
+        0.66,
+        0.8
+      ],
+      "value": 38,
+      "xp": 11,
+      "satisfaction": 1.3,
+      "unlock": {
+        "restaurantIndex": 0,
+        "level": 14
+      },
+      "art": {
+        "shape": "steak_thin",
+        "rawColor": "#B4313A",
+        "cookedColor": "#6B2E1C",
+        "burnColor": "#22120A",
+        "gloss": 0.5,
+        "fatSheen": true,
+        "marbling": 0.25
+      }
+    },
+    {
+      "id": "contra_file",
+      "nameKey": "food.contra_file.name",
+      "descKey": "food.contra_file.desc",
+      "category": "beef",
+      "collectionCategory": "carnes",
+      "rarity": "uncommon",
+      "cookMethod": "grill",
+      "sides": 2,
+      "sideCookSec": 10.0,
+      "idealZone": "high",
+      "heatRate": 1.0,
+      "burnRate": 0.9,
+      "flipNeeded": true,
+      "perfectWindow": [
+        0.64,
+        0.78
+      ],
+      "value": 44,
+      "xp": 12,
+      "satisfaction": 1.35,
+      "unlock": {
+        "restaurantIndex": 2,
+        "level": 22
+      },
+      "art": {
+        "shape": "steak",
+        "rawColor": "#A82C36",
+        "cookedColor": "#63291A",
+        "burnColor": "#1F1109",
+        "gloss": 0.5,
+        "fatSheen": true,
+        "marbling": 0.35,
+        "fatCap": true
+      }
+    },
+    {
+      "id": "maminha",
+      "nameKey": "food.maminha.name",
+      "descKey": "food.maminha.desc",
+      "category": "beef",
+      "collectionCategory": "carnes",
+      "rarity": "rare",
+      "cookMethod": "grill",
+      "sides": 2,
+      "sideCookSec": 11.0,
+      "idealZone": "high",
+      "heatRate": 0.98,
+      "burnRate": 0.85,
+      "flipNeeded": true,
+      "perfectWindow": [
+        0.62,
+        0.76
+      ],
+      "value": 46,
+      "xp": 13,
+      "satisfaction": 1.4,
+      "unlock": {
+        "restaurantIndex": 2,
+        "level": 26
+      },
+      "art": {
+        "shape": "steak_thick",
+        "rawColor": "#9E2831",
+        "cookedColor": "#5D2618",
+        "burnColor": "#1D1008",
+        "gloss": 0.55,
+        "fatSheen": true,
+        "marbling": 0.45,
+        "fatCap": true
+      }
+    },
+    {
+      "id": "picanha",
+      "nameKey": "food.picanha.name",
+      "descKey": "food.picanha.desc",
+      "category": "beef",
+      "collectionCategory": "carnes",
+      "rarity": "rare",
+      "cookMethod": "grill",
+      "sides": 2,
+      "sideCookSec": 9.5,
+      "idealZone": "high",
+      "heatRate": 1.0,
+      "burnRate": 0.85,
+      "flipNeeded": true,
+      "perfectWindow": [
+        0.64,
+        0.76
+      ],
+      "value": 52,
+      "xp": 15,
+      "satisfaction": 1.6,
+      "unlock": {
+        "restaurantIndex": 1,
+        "level": 8
+      },
+      "art": {
+        "shape": "steak_picanha",
+        "rawColor": "#9C2730",
+        "cookedColor": "#5A2417",
+        "burnColor": "#1C0F08",
+        "gloss": 0.6,
+        "fatSheen": true,
+        "marbling": 0.55,
+        "fatCap": true
+      }
+    },
+    {
+      "id": "costela",
+      "nameKey": "food.costela.name",
+      "descKey": "food.costela.desc",
+      "category": "beef",
+      "collectionCategory": "carnes",
+      "rarity": "rare",
+      "cookMethod": "grill",
+      "sides": 2,
+      "sideCookSec": 18.0,
+      "idealZone": "low",
+      "heatRate": 0.9,
+      "burnRate": 0.55,
+      "flipNeeded": false,
+      "perfectWindow": [
+        0.76,
+        0.88
+      ],
+      "value": 60,
+      "xp": 18,
+      "satisfaction": 1.7,
+      "unlock": {
+        "restaurantIndex": 3,
+        "level": 34
+      },
+      "region": "sul",
+      "art": {
+        "shape": "rack",
+        "rawColor": "#8F2C31",
+        "cookedColor": "#522015",
+        "burnColor": "#190D07",
+        "gloss": 0.6,
+        "fatSheen": true,
+        "marbling": 0.5,
+        "bone": true
+      }
+    },
+    {
+      "id": "cupim",
+      "nameKey": "food.cupim.name",
+      "descKey": "food.cupim.desc",
+      "category": "beef",
+      "collectionCategory": "carnes",
+      "rarity": "epic",
+      "cookMethod": "grill",
+      "sides": 2,
+      "sideCookSec": 20.0,
+      "idealZone": "low",
+      "heatRate": 0.85,
+      "burnRate": 0.5,
+      "flipNeeded": false,
+      "perfectWindow": [
+        0.78,
+        0.9
+      ],
+      "value": 66,
+      "xp": 20,
+      "satisfaction": 1.8,
+      "unlock": {
+        "restaurantIndex": 4,
+        "level": 44
+      },
+      "art": {
+        "shape": "chunk",
+        "rawColor": "#8A2A30",
+        "cookedColor": "#4E1E14",
+        "burnColor": "#180C06",
+        "gloss": 0.6,
+        "fatSheen": true,
+        "marbling": 0.6
+      }
+    },
+    {
+      "id": "vinagrete",
+      "nameKey": "food.vinagrete.name",
+      "descKey": "food.vinagrete.desc",
+      "category": "sides",
+      "collectionCategory": "acompanhamentos",
+      "rarity": "common",
+      "cookMethod": "prep",
+      "sides": 1,
+      "sideCookSec": 0,
+      "idealZone": "none",
+      "heatRate": 0,
+      "burnRate": 0,
+      "flipNeeded": false,
+      "perfectWindow": [
+        0.0,
+        1.0
+      ],
+      "prepSec": 2.0,
+      "value": 8,
+      "xp": 2,
+      "satisfaction": 0.6,
+      "unlock": {
+        "restaurantIndex": 0,
+        "level": 12
+      },
+      "art": {
+        "shape": "bowl",
+        "rawColor": "#D9534F",
+        "cookedColor": "#C0453F",
+        "burnColor": "#7A2C28",
+        "gloss": 0.6,
+        "fatSheen": false
+      }
+    }
+  ]
+}

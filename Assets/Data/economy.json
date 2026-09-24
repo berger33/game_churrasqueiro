@@ -1,0 +1,227 @@
+{
+  "$schema": "schema/economy.schema.json",
+  "_comment": "Economy curves & targets. The simulator (tools/studio/run-sim.ts) asserts the `targets` block; balance changes must keep them green.",
+  "version": 11,
+  "currencies": {
+    "coins": {
+      "id": "coins",
+      "nameKey": "currency.coins",
+      "premium": false,
+      "icon": "ic_coin",
+      "cap": 999999999
+    },
+    "embers": {
+      "id": "embers",
+      "nameKey": "currency.embers",
+      "premium": true,
+      "icon": "ic_ember",
+      "cap": 999999
+    }
+  },
+  "xp": {
+    "formula": {
+      "type": "power",
+      "a": 55,
+      "exponent": 1.42,
+      "minPerLevel": 40
+    },
+    "maxLevel": 80
+  },
+  "reward": {
+    "orderBaseTip": 0.1,
+    "perfectTipBonus": 0.25,
+    "speedBonusMax": 0.25,
+    "speedBonusWindow": 0.6,
+    "comboStep": 0.06,
+    "comboCap": 1.6,
+    "levelUpCoins": {
+      "type": "power",
+      "base": 100,
+      "exponent": 0.85
+    },
+    "levelUpEmbers": {
+      "every": 5,
+      "amount": 3
+    },
+    "turnEndBonus": {
+      "base": 25,
+      "perPerfect": 8,
+      "perLostCustomer": -20
+    },
+    "roundCoinMultiplierRange": [
+      0.95,
+      1.05
+    ],
+    "_note": "coins = value * satisfaction * (1 + perfectTipBonus*[perfect] + speedBonus) * comboMult * tipMult * eventMult * (1 + (customerTipMultiplier - 1) * customerTipWeight). Customer generosity scales a damped tip term, never the whole plate price, so a VIP cannot swing a turn by 6x. Verified by tools/studio/run-sim.ts (coinSpike target).",
+    "customerTipWeight": 0.35,
+    "_curvesNote": "levelUpCoins(level) = round(base * level^exponent). A geometric curve here was measured to pay 10.3M coins at level 47 (see docs/06-ECONOMY.md \"exponential blow-up\"); polynomial keeps level rewards in the same order of magnitude as turn income."
+  },
+  "idle": {
+    "coinsPerMinuteByRestaurant": [
+      0,
+      6,
+      16,
+      42,
+      96,
+      210,
+      430
+    ],
+    "xpPerMinuteByRestaurant": [
+      0,
+      0.4,
+      1.0,
+      2.4,
+      5.0,
+      9.0,
+      16.0
+    ],
+    "maxOfflineHours": 8,
+    "rampInMinutes": 20,
+    "adDoubleAvailable": true,
+    "minCollectIntervalMin": 30
+  },
+  "dailyReward": {
+    "cycleDays": 7,
+    "streakBonusPerCycle": 0.15,
+    "graceDays": 1,
+    "days": [
+      {
+        "day": 1,
+        "rewards": [
+          {
+            "currency": "coins",
+            "amount": 250
+          }
+        ]
+      },
+      {
+        "day": 2,
+        "rewards": [
+          {
+            "type": "ingredient",
+            "id": "queijo_coalho"
+          }
+        ]
+      },
+      {
+        "day": 3,
+        "rewards": [
+          {
+            "currency": "embers",
+            "amount": 5
+          }
+        ]
+      },
+      {
+        "day": 4,
+        "rewards": [
+          {
+            "currency": "coins",
+            "amount": 600
+          }
+        ]
+      },
+      {
+        "day": 5,
+        "rewards": [
+          {
+            "type": "booster",
+            "id": "tip_2x",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "day": 6,
+        "rewards": [
+          {
+            "currency": "embers",
+            "amount": 10
+          }
+        ]
+      },
+      {
+        "day": 7,
+        "rewards": [
+          {
+            "type": "chest",
+            "id": "special_chest"
+          }
+        ]
+      }
+    ]
+  },
+  "targets": {
+    "_comment": "Balance guardrails. `npm run sim` (with LONG_HORIZON for multi-month pacing) fails the build if any target is violated. Bands were derived from the measured simulation on 2026-09-17 and are ~+-20% wide so they catch regressions without being a rubber stamp. Full derivation and the two exponential blow-ups this caught: docs/06-ECONOMY.md.",
+    "turnsPerSession": [
+      3,
+      5
+    ],
+    "sessionLengthMinutes": [
+      6,
+      10
+    ],
+    "firstUpgradeAffordableAfterTurns": [
+      1,
+      2
+    ],
+    "restaurantUnlockPacingTurns": {
+      "espetinho_rua": [
+        28,
+        45
+      ],
+      "trailer": [
+        72,
+        115
+      ],
+      "churrascaria_bairro": [
+        115,
+        185
+      ],
+      "churrascaria_premium": [
+        195,
+        315
+      ],
+      "festival": [
+        340,
+        550
+      ],
+      "rede_nacional": [
+        950,
+        1450
+      ]
+    },
+    "dailyCoinIncomeAtLevel": {
+      "5": [
+        9000,
+        14000
+      ],
+      "15": [
+        36000,
+        56000
+      ],
+      "30": [
+        78000,
+        122000
+      ],
+      "50": [
+        98000,
+        152000
+      ]
+    },
+    "coinSpendRatio": [
+      0.7,
+      0.99
+    ],
+    "maxSingleTurnCoinSpikeVsMedian": 6,
+    "noUpgradeCostRegression": true,
+    "perfectRateAtSkillMid": [
+      0.4,
+      0.62
+    ],
+    "_pacingNote": "Measured pacing at skill 0.55, 1500-turn campaign: espetinho_rua 34 (day ~3), trailer 90 (day 8), bairro 146 (day 12), premium 247 (day 21), festival 430 (day 36), rede_nacional 1180 (day 98), assuming 12 turns/day. This is intentionally brisker early than the original plan: the first three establishments land inside the player's first fortnight because early retention is priority 2. The 430->1180 gap is filled by the collection (37), achievements (58), prestige tracks, the region route, weekly events and the Brasa Pass rather than by a new restaurant.",
+    "_spendRatioNote": "The harness is a deliberately greedy spender, so a ratio near 1.0 is the desired outcome (no coin accumulation). The LOWER bound is the real guardrail: it catches sinks that are too cheap or income that is too high, i.e. inflation.",
+    "_incomePlateauNote": "L30 and L50 income are deliberately close (measured 95.4k vs 96.7k at skill 0.55). Level difficulty is capped at d=1.0, so after level 30 income is stable and progression becomes horizontal: restaurants, collection, prestige tracks and cosmetics rather than raw coin income. Pushing coin income past L30 would only put bigger numbers on screen without adding decisions.",
+    "_bandDerivationNote": "Bands are +-20% around the measured curve above; they are regression guards, not aspirational targets. Raising restaurant coin costs alone does NOT slow pacing: the greedy harness spends the coins it cannot sink into a pricier restaurant on upgrades instead, raising income (sink substitution). Measured: raising bairro 12k->15k moved its unlock from turn 185 to 146, i.e. faster. Slow pacing by reducing income or by scaling ALL sinks together, never one sink alone."
+  }
+}
