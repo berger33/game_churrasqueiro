@@ -15,6 +15,7 @@ describe('CI lockstep', () => {
   it('ci.yml runs every gate that run-gates.mjs runs', () => {
     const yml = readFileSync('.github/workflows/ci.yml', 'utf8');
     const mjs = readFileSync('tools/studio/run-gates.mjs', 'utf8');
+    expect(yml).toContain("node-version: '22'");
     for (const id of GATES) {
       expect(mjs.includes(`['${id}',`), `run-gates.mjs missing ${id}`).toBe(true);
       const inYml = id === 'test'
