@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    The engine-free C# core (Assets/Scripts/Core), compiled outside Unity under
+    Unity's constraints: the .NET Standard 2.1 API, C# 9, nullable reference
+    types, warnings as errors. Unity compiles the same files itself; this
+    project exists so a PR cannot merge C# that does not build (the core had
+    never been compiled before it: docs/18-STATUS.md §2). Run by
+    `npm run check-csharp` (docs/12-BUILD.md §5).
+  -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AssemblyName>Churrasco.Core</AssemblyName>
+    <RootNamespace>Churrasco.Core</RootNamespace>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../../Assets/Scripts/Core/**/*.cs" />
+  </ItemGroup>
+</Project>

@@ -78,6 +78,12 @@ coverage/
 Thumbs.db
 *.swp
 
+# ─── C# core check (tools/csharp: built by CI, not by Unity) ─────────────────
+# The rule above ignores Unity's generated *.csproj; these two are hand-written.
+!tools/csharp/**/*.csproj
+tools/csharp/**/bin/
+tools/csharp/**/obj/
+
 # ─── Generated (regenerable from shared/data + tools) ───────────────────────
 tools/**/out/
 shared/generated/
