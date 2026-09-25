@@ -30,9 +30,9 @@ import { TurnSimulation, type CustomerRuntime } from '../../tools/sim-core/src/t
 import type { GameDatabase, Ingredient, RawDataBundle } from '../../tools/sim-core/src/types.ts';
 import { createL10n, type L10n, type L10nTable } from '../../tools/sim-core/src/l10n.ts';
 import {
-  C, DISPLAY, UI, avatar, checkIcon, clamp01, clockIcon, coinIcon, drawBrickwork,
-  drawWoodGrain, ease, flameIcon, font, glass, hex, lerp, mix, outlinedText, panel,
-  premiumButton, rgb, roundRectPath, shade, smoothstep, starIcon
+  C, DISPLAY, UI, avatar, brushedMetalGradient, checkIcon, clamp01, clockIcon, coinIcon,
+  drawBrickwork, drawCheckerFloor, drawWoodGrain, ease, flameIcon, font, glass, hex, lerp, mix,
+  outlinedText, panel, premiumButton, rgb, roundRectPath, shade, smoothstep, starIcon
 } from './theme.ts';
 import { drawFood as drawFoodArt, drawFoodIcon } from './foods.ts';
 import { audio } from './audio.ts';
@@ -1304,13 +1304,35 @@ class Game {
       }
       c.fillStyle = 'rgba(10,6,4,0.8)';
       c.fillRect(0,410,W,6); c.fillRect(0,456,W,6);
-      const ground = c.createLinearGradient(0,530,0,H);
-      ground.addColorStop(0,'#2A1910'); ground.addColorStop(0.5,'#1A0F09'); ground.addColorStop(1,'#0C0705');
-      c.fillStyle = ground; c.fillRect(0,520,W,H-520);
-      const pool = c.createRadialGradient(W/2,440,30,W/2,440,380);
-      pool.addColorStop(0,'rgba(255,160,60,0.28)'); pool.addColorStop(0.4,'rgba(224,86,31,0.14)'); pool.addColorStop(1,'rgba(224,86,31,0)');
-      c.fillStyle = pool; c.fillRect(0,0,W,H);
-      c.strokeStyle='rgba(30,20,14,0.7)'; c.lineWidth=1; c.beginPath(); c.moveTo(-20,120); c.quadraticCurveTo(W/2,180,W+20,110); c.stroke();
+      // ── Ground: warm checker + perspective + brasa pool (reference polish) ──
+      const groundY = 518;
+      // base dark + checker tiles (like restaurant tiling but in warm churrascaria browns)
+      c.fillStyle = '#1A0F09'; c.fillRect(0, groundY, W, H - groundY);
+      // checker executed via helper on a temp rect for perf
+      drawCheckerFloor(c, 0, groundY, W, H - groundY, { tile: 28, light: '#2E1D14', dark: '#1B0F0A', alpha: 0.72 });
+      // perspective foreshorten: darker toward horizon, lighter near feet (fake AO)
+      const persp = c.createLinearGradient(0, groundY, 0, H);
+      persp.addColorStop(0, 'rgba(0,0,0,0.42)');
+      persp.addColorStop(0.35, 'rgba(0,0,0,0.14)');
+      persp.addColorStop(0.72, 'rgba(0,0,0,0)');
+      persp.addColorStop(1, 'rgba(0,0,0,0.28)');
+      c.fillStyle = persp; c.fillRect(0, groundY, W, H - groundY);
+      // brasa bloom pool — big studio soft light on the ground
+      const pool = c.createRadialGradient(W / 2, 440, 18, W / 2, 440, 420);
+      pool.addColorStop(0, 'rgba(255,170,80,0.34)');
+      pool.addColorStop(0.22, 'rgba(255,140,50,0.20)');
+      pool.addColorStop(0.45, 'rgba(224,86,31,0.12)');
+      pool.addColorStop(1, 'rgba(224,86,31,0)');
+      c.fillStyle = pool; c.fillRect(0, 0, W, H);
+      // extra counter shadow on the floor (like the bar shadow in reference)
+      const barShadow = c.createLinearGradient(0, groundY, 0, groundY + 42);
+      barShadow.addColorStop(0, 'rgba(0,0,0,0.34)');
+      barShadow.addColorStop(1, 'rgba(0,0,0,0)');
+      c.fillStyle = barShadow; c.fillRect(0, groundY, W, 42);
+      // string wire — soft curve with highlight
+      c.strokeStyle = 'rgba(22,12,8,0.72)'; c.lineWidth = 1.6; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(-20, 120); c.quadraticCurveTo(W / 2, 182, W + 20, 110); c.stroke();
+      c.strokeStyle = 'rgba(255,220,170,0.08)'; c.lineWidth = 1; c.beginPath(); c.moveTo(-20, 118.5); c.quadraticCurveTo(W / 2, 180.5, W + 20, 108.5); c.stroke();
       for (let i=0;i<this.lightPhases.length;i++) {
         const t = i/(this.lightPhases.length-1);
         const lx=-20+t*(W+40); const ly=120+Math.sin(t*Math.PI)*58-10;
@@ -1320,20 +1342,38 @@ class Game {
         c.fillStyle=bg; c.beginPath(); c.arc(lx,ly+4,14,0,Math.PI*2); c.fill();
         c.fillStyle='#FFE4A6'; c.beginPath(); c.arc(lx,ly+4,2.2,0,Math.PI*2); c.fill();
       }
-      const vig=c.createRadialGradient(W/2,H*0.5,H*0.2,W/2,H*0.52,H*0.85);
-      vig.addColorStop(0,'rgba(0,0,0,0)'); vig.addColorStop(0.6,'rgba(0,0,0,0.25)'); vig.addColorStop(1,'rgba(0,0,0,0.75)');
-      c.fillStyle=vig; c.fillRect(0,0,W,H);
-      this.bgCache=off;
+      // cinematic vignette — deeper top corners, softer near grill (like reference depth)
+      const vig = c.createRadialGradient(W / 2, H * 0.52, H * 0.20, W / 2, H * 0.52, H * 0.95);
+      vig.addColorStop(0, 'rgba(0,0,0,0)');
+      vig.addColorStop(0.55, 'rgba(0,0,0,0.22)');
+      vig.addColorStop(0.82, 'rgba(0,0,0,0.52)');
+      vig.addColorStop(1, 'rgba(0,0,0,0.78)');
+      c.fillStyle = vig; c.fillRect(0, 0, W, H);
+      // subtle interior AO lines — kitchen tile groove imitation
+      c.strokeStyle = 'rgba(255,220,170,0.04)'; c.lineWidth = 1;
+      for (let gy = 410; gy < 470; gy += 18) { c.beginPath(); c.moveTo(0, gy); c.lineTo(W, gy); c.stroke(); }
+      this.bgCache = off;
     }
-    ctx.drawImage(this.bgCache,0,0);
-    for (let i=0;i<this.lightPhases.length;i++) {
-      const t=i/(this.lightPhases.length-1);
-      const lx=-20+t*(W+40); const ly=120+Math.sin(t*Math.PI)*58-6;
-      const tw=0.72+0.28*Math.abs(Math.sin(this.now*2.4+this.lightPhases[i]!));
-      const g=ctx.createRadialGradient(lx,ly,0,lx,ly,18);
-      g.addColorStop(0,`rgba(255,230,160,${0.7*tw})`); g.addColorStop(0.5,`rgba(255,180,80,${0.25*tw})`); g.addColorStop(1,'rgba(255,160,60,0)');
-      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(lx,ly,18,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle=`rgba(255,245,210,${0.85*tw})`; ctx.beginPath(); ctx.arc(lx,ly,2,0,Math.PI*2); ctx.fill();
+    ctx.drawImage(this.bgCache, 0, 0);
+    // live string lights — per-frame twinkle + outer bloom (reference warmth)
+    for (let i = 0; i < this.lightPhases.length; i++) {
+      const t = i / (this.lightPhases.length - 1);
+      const lx = -20 + t * (W + 40); const ly = 120 + Math.sin(t * Math.PI) * 58 - 6;
+      const tw = 0.72 + 0.28 * Math.abs(Math.sin(this.now * 2.4 + this.lightPhases[i]!));
+      // outer bloom 32px — soft like bokeh
+      const outer = ctx.createRadialGradient(lx, ly, 0, lx, ly, 28);
+      outer.addColorStop(0, `rgba(255,220,140,${0.22 * tw})`);
+      outer.addColorStop(1, 'rgba(255,160,60,0)');
+      ctx.fillStyle = outer; ctx.beginPath(); ctx.arc(lx, ly, 28, 0, Math.PI * 2); ctx.fill();
+      const g = ctx.createRadialGradient(lx, ly, 0, lx, ly, 18);
+      g.addColorStop(0, `rgba(255,232,170,${0.78 * tw})`);
+      g.addColorStop(0.45, `rgba(255,190,90,${0.30 * tw})`);
+      g.addColorStop(1, 'rgba(255,160,60,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(lx, ly, 18, 0, Math.PI * 2); ctx.fill();
+      // core bulb — warm white
+      ctx.fillStyle = `rgba(255,248,225,${0.95 * tw})`; ctx.beginPath(); ctx.arc(lx, ly, 2.4, 0, Math.PI * 2); ctx.fill();
+      // inner filament dot
+      ctx.fillStyle = `rgba(255,220,140,${0.55 * tw})`; ctx.beginPath(); ctx.arc(lx, ly, 1, 0, Math.PI * 2); ctx.fill();
     }
   }
 
@@ -2190,11 +2230,15 @@ class Game {
         ctx.fillStyle='rgba(30,16,10,0.85)'; ctx.beginPath(); ctx.arc(chimX+CHIMNEY_W+6, chimY+18, 8,0,Math.PI*2); ctx.fill();
         ctx.fillStyle=C.ouroLight; ctx.font=font(8,900,UI); ctx.textAlign='center'; ctx.fillText('♨',chimX+CHIMNEY_W+6,chimY+21);
       } else if (style==='inox') {
-        // inox chimney metallic
-        const mg=ctx.createLinearGradient(chimX,0,chimX+CHIMNEY_W,0);
-        mg.addColorStop(0,'#A8B5BF'); mg.addColorStop(0.5,'#E6EEF4'); mg.addColorStop(1,'#7E8F9E');
-        ctx.fillStyle=mg; roundRectPath(ctx,chimX,chimY,CHIMNEY_W,CHIMNEY_H,4); ctx.fill();
-        ctx.strokeStyle='rgba(255,255,255,0.35)'; ctx.lineWidth=1; ctx.stroke();
+        // inox chimney — brushed stainless with linear highlight (reference polish)
+        ctx.fillStyle = brushedMetalGradient(ctx, chimX, chimY, CHIMNEY_W, CHIMNEY_H);
+        roundRectPath(ctx, chimX, chimY, CHIMNEY_W, CHIMNEY_H, 4); ctx.fill();
+        // specular streak like the reference inox counter
+        ctx.fillStyle = 'rgba(255,255,255,0.42)';
+        ctx.fillRect(chimX + CHIMNEY_W * 0.30, chimY + 2, 6, CHIMNEY_H - 4);
+        ctx.fillStyle = 'rgba(255,255,255,0.14)';
+        ctx.fillRect(chimX + CHIMNEY_W * 0.42, chimY + 2, 2, CHIMNEY_H - 4);
+        ctx.strokeStyle = 'rgba(255,255,255,0.28)'; ctx.lineWidth = 1.1; roundRectPath(ctx, chimX, chimY, CHIMNEY_W, CHIMNEY_H, 4); ctx.stroke();
       } else {
         drawBrickwork(ctx,chimX,chimY,CHIMNEY_W,CHIMNEY_H,{brickH:12, lit:true});
       }
@@ -2230,10 +2274,11 @@ class Game {
       // lata dent mark
       ctx.fillStyle='rgba(0,0,0,0.18)'; ctx.beginPath(); ctx.ellipse(overallX+30,counterY+6,10,4,0.3,0,Math.PI*2); ctx.fill();
     } else if (style==='inox') {
-      const cG=ctx.createLinearGradient(0,counterY,0,counterY+counterH);
-      cG.addColorStop(0,'#E8EEF2'); cG.addColorStop(0.5,'#BFCBD5'); cG.addColorStop(1,'#8E9EAD');
-      ctx.fillStyle=cG; roundRectPath(ctx,overallX-6,counterY,overallW+12,counterH,4); ctx.fill();
-      ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.fillRect(overallX+10,counterY+2,overallW-14,2);
+      ctx.fillStyle = brushedMetalGradient(ctx, overallX - 6, counterY, overallW + 12, counterH);
+      roundRectPath(ctx, overallX - 6, counterY, overallW + 12, counterH, 4); ctx.fill();
+      // top specular blade highlight like reference bar edge
+      ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.fillRect(overallX + 2, counterY + 1, overallW + 6, 2.2);
+      ctx.fillStyle = 'rgba(255,255,255,0.16)'; ctx.fillRect(overallX + 2, counterY + 3.2, overallW + 6, 1);
     } else if (style==='chapa') {
       const cG=ctx.createLinearGradient(0,counterY,0,counterY+counterH);
       cG.addColorStop(0,'#6B6F73'); cG.addColorStop(0.4,'#3A3E42'); cG.addColorStop(1,'#1E2226');
@@ -2294,12 +2339,12 @@ class Game {
       ctx.fillStyle='rgba(255,255,255,0.08)'; ctx.font=font(8,900,UI); ctx.textAlign='center';
       ctx.fillText('LATA 18L', cx, baseY-10);
     } else if (style==='inox') {
-      // inox tubular legs, reflective
-      const legG = ctx.createLinearGradient(0,counterY,0,baseY);
-      legG.addColorStop(0,'#D0D8DF'); legG.addColorStop(0.5,'#A0ADB9'); legG.addColorStop(1,'#7A8795');
-      for (const lx of [overallX+18, overallX+overallW-18]) {
-        ctx.fillStyle=legG; roundRectPath(ctx,lx-6,counterY+6,12,baseY-counterY-2,4); ctx.fill();
-        ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.fillRect(lx-5,counterY+8,2, baseY-counterY-8);
+      // inox tubular legs — brushed tubes with highlight (reference stainless polish)
+      for (const lx of [overallX + 18, overallX + overallW - 18]) {
+        ctx.fillStyle = brushedMetalGradient(ctx, lx - 6, counterY + 6, 12, baseY - counterY - 2);
+        roundRectPath(ctx, lx - 6, counterY + 6, 12, baseY - counterY - 2, 6); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.42)'; ctx.fillRect(lx - 4.5, counterY + 10, 2.2, baseY - counterY - 14);
+        ctx.strokeStyle = 'rgba(200,210,220,0.32)'; ctx.lineWidth = 1; roundRectPath(ctx, lx - 6, counterY + 6, 12, baseY - counterY - 2, 6); ctx.stroke();
       }
       // side shelf in inox
       glass(ctx, overallX+overallW+2, counterY+18, 18, 40, { alpha:0.18, border:'rgba(200,210,220,0.45)' });
@@ -2325,9 +2370,9 @@ class Game {
     if (style==='lata') {
       ctx.fillStyle='rgba(0,0,0,0.25)'; roundRectPath(ctx,overallX-4,baseY-2,overallW+8,6,2); ctx.fill();
     } else if (style==='inox') {
-      const mg=ctx.createLinearGradient(0,baseY-8,0,baseY+6);
-      mg.addColorStop(0,'#E8EEF2'); mg.addColorStop(1,'#8FA0B5');
-      ctx.fillStyle=mg; roundRectPath(ctx,overallX-10,baseY-4,overallW+20,10,4); ctx.fill();
+      ctx.fillStyle = brushedMetalGradient(ctx, overallX - 10, baseY - 4, overallW + 20, 10);
+      roundRectPath(ctx, overallX - 10, baseY - 4, overallW + 20, 10, 4); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.42)'; ctx.fillRect(overallX - 4, baseY - 2, overallW + 8, 1.4);
     } else {
       ctx.fillStyle=plinthG; roundRectPath(ctx,overallX-10,baseY-4,overallW+20,10,3); ctx.fill();
     }
@@ -2357,12 +2402,21 @@ class Game {
       const zx=fx+6, zw=fw-12;
       // warm base fill so coals glow even when clipped
       ctx.save(); roundRectPath(ctx,zx,y+3,zw,zoneH-6,6); ctx.clip();
-      // base ember bed — warm orange so grill never looks black
-      const bedG=ctx.createLinearGradient(0,y,0,y+zoneH);
-      bedG.addColorStop(0,`rgba(180,60,20,${0.35+heat*0.25})`);
-      bedG.addColorStop(0.5,`rgba(220,90,30,${0.30+heat*0.35})`);
-      bedG.addColorStop(1,'rgba(80,25,8,0.95)');
-      ctx.fillStyle=bedG; ctx.fillRect(zx,y,zw,zoneH);
+      // ember bed — reference-accurate: warm-orange base with inner glow + deep bottom coal bed
+      const bedG = ctx.createLinearGradient(0, y, 0, y + zoneH);
+      bedG.addColorStop(0, `rgba(210,70,24,${0.42 + heat * 0.30})`);
+      bedG.addColorStop(0.35, `rgba(240,110,36,${0.38 + heat * 0.38})`);
+      bedG.addColorStop(0.68, `rgba(150,45,14,${0.88 + heat * 0.08})`);
+      bedG.addColorStop(1, 'rgba(62,22,8,0.98)');
+      ctx.fillStyle = bedG; ctx.fillRect(zx, y, zw, zoneH);
+      // inner radial bloom at center of zone — like coals glowing from depth
+      const bloomR = Math.min(zw * 0.42, zoneH * 1.2);
+      const bloomX = zx + zw * 0.52, bloomY = y + zoneH * 0.58;
+      const bloom = ctx.createRadialGradient(bloomX, bloomY, 0, bloomX, bloomY, bloomR);
+      bloom.addColorStop(0, `rgba(255,180,80,${0.22 * heat})`);
+      bloom.addColorStop(0.45, `rgba(255,120,40,${0.14 * heat})`);
+      bloom.addColorStop(1, 'rgba(120,30,10,0)');
+      ctx.fillStyle = bloom; ctx.beginPath(); ctx.ellipse(bloomX, bloomY, bloomR, bloomR * 0.42, 0, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle='rgba(40,25,15,0.45)'; ctx.fillRect(zx,y+zoneH*0.55,zw,zoneH*0.5);
       const seed=z*97;
       for(let k=0;k<30;k++){

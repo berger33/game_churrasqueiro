@@ -714,7 +714,10 @@ export function avatar(
   ctx.restore();
 }
 
-/** Brick pattern fill (churrasqueira de alvenaria). */
+/** Brick pattern fill (churrasqueira de alvenaria) — high-fidelity for reference validation.
+ *  Additions vs base: mortar shadow AO, beveled edge highlight, 3-stop vertical gradient
+ *  per brick, subtle hue jitter, lit wash from brasa and an outer occlusion stroke.
+ */
 export function drawBrickwork(
   ctx: CanvasRenderingContext2D,
   x: number, y: number, w: number, h: number,
@@ -726,9 +729,19 @@ export function drawBrickwork(
   ctx.beginPath();
   ctx.rect(x, y, w, h);
   ctx.clip();
-  // base mortar
-  ctx.fillStyle = C.argamassa;
+  // mortar base — warm light cement with AO at seams
+  const mg = ctx.createLinearGradient(x, y, x, y + h);
+  mg.addColorStop(0, '#D9BF9E');
+  mg.addColorStop(0.5, C.argamassa);
+  mg.addColorStop(1, '#A68A6A');
+  ctx.fillStyle = mg;
   ctx.fillRect(x, y, w, h);
+  // mortar AO — darken every horizontal seam
+  ctx.fillStyle = 'rgba(42,24,14,0.16)';
+  for (let row = 0; row < Math.ceil(h / (brickH + mortar)) + 1; row++) {
+    const gy = y + row * (brickH + mortar) + brickH;
+    ctx.fillRect(x, gy - 0.5, w, 1.4);
+  }
   // bricks
   const rows = Math.ceil(h / (brickH + mortar)) + 2;
   for (let row = 0; row < rows; row++) {
@@ -736,33 +749,51 @@ export function drawBrickwork(
     const offset = (row % 2) * (brickW / 2 + mortar / 2);
     for (let bx = x - brickW; bx < x + w + brickW; bx += brickW + mortar) {
       const xx = bx + offset;
-      // brick body with vertical gradient (lit top)
-      const g = ctx.createLinearGradient(0, yy, 0, yy + brickH);
-      const dark = row < 2 && lit ? mix(hex(C.tijoloClaro), hex(C.tijoloSombra), 0.3) : C.tijoloSombra;
-      g.addColorStop(0, lit && row < 2 ? '#D5643F' : C.tijoloClaro);
-      g.addColorStop(0.4, C.tijolo);
-      g.addColorStop(1, dark);
+      const jitter = ((row * 17 + Math.floor(bx / brickW) * 13) % 7) * 0.012;
+      const litTop = lit && row < 2;
+      const g = ctx.createLinearGradient(xx, yy, xx, yy + brickH);
+      g.addColorStop(0, litTop ? `rgba(230,110,70,${0.92 + jitter})` : `rgba(181,78,46,${0.98})`);
+      g.addColorStop(0.28, C.tijoloClaro);
+      g.addColorStop(0.55, C.tijolo);
+      g.addColorStop(1, C.tijoloSombra);
       ctx.fillStyle = g;
-      roundRectPath(ctx, xx, yy, brickW, brickH, 2);
+      roundRectPath(ctx, xx, yy, brickW, brickH, 2.2);
       ctx.fill();
-      // soft highlight
-      ctx.fillStyle = 'rgba(255,210,170,0.08)';
-      ctx.fillRect(xx + 2, yy + 1, brickW - 4, 2);
+      // inner bevel highlight (top edge)
+      ctx.fillStyle = `rgba(255,220,180,${litTop ? 0.22 : 0.12})`;
+      roundRectPath(ctx, xx + 1, yy + 0.6, brickW - 2, 2.2, 1);
+      ctx.fill();
+      // side highlight — fake normal
+      const sideG = ctx.createLinearGradient(xx, yy, xx + 6, yy);
+      sideG.addColorStop(0, 'rgba(255,255,255,0.10)');
+      sideG.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = sideG;
+      ctx.fillRect(xx + 1, yy + 3, 6, brickH - 6);
+      // micro-mortar shadow under brick
+      ctx.fillStyle = 'rgba(22,10,6,0.18)';
+      ctx.fillRect(xx, yy + brickH - 1, brickW, 1.4);
     }
   }
-  // warm light wash for the front face
   if (lit) {
     const wash = ctx.createLinearGradient(0, y, 0, y + h);
-    wash.addColorStop(0, 'rgba(255,170,80,0.18)');
-    wash.addColorStop(0.4, 'rgba(224,86,31,0.08)');
-    wash.addColorStop(1, 'rgba(0,0,0,0.18)');
+    wash.addColorStop(0, 'rgba(255,190,100,0.20)');
+    wash.addColorStop(0.35, 'rgba(255,150,60,0.10)');
+    wash.addColorStop(0.7, 'rgba(224,86,31,0.06)');
+    wash.addColorStop(1, 'rgba(0,0,0,0.20)');
     ctx.fillStyle = wash;
     ctx.fillRect(x, y, w, h);
   }
+  // outer occlusion stroke
+  ctx.strokeStyle = 'rgba(20,10,6,0.22)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
   ctx.restore();
 }
 
-/** Wood-grain procedural fill for tabletops and benches. */
+/** Wood-grain procedural fill — upgraded to match Cooking Fever polish.
+ *  Adds: per-plank base tint, dual-grain (coarse + fine), varnish specular,
+ *  chamfered seam AO, richer knots with ring highlights.
+ */
 export function drawWoodGrain(
   ctx: CanvasRenderingContext2D,
   x: number, y: number, w: number, h: number,
@@ -773,48 +804,140 @@ export function drawWoodGrain(
   ctx.beginPath();
   ctx.rect(x, y, w, h);
   ctx.clip();
-  // base wood gradient
   const g = ctx.createLinearGradient(0, y, 0, y + h);
-  g.addColorStop(0, mix(hex(base), [255, 230, 190], 0.12));
-  g.addColorStop(0.5, base);
+  g.addColorStop(0, mix(hex(base), [255, 238, 210], 0.18));
+  g.addColorStop(0.28, base);
+  g.addColorStop(0.72, mix(hex(base), hex(dark), 0.5));
   g.addColorStop(1, dark);
   ctx.fillStyle = g;
   ctx.fillRect(x, y, w, h);
-  // plank seams
-  ctx.strokeStyle = 'rgba(40,22,10,0.35)';
-  ctx.lineWidth = 1.2;
-  for (let i = 1; i < planks; i++) {
+  // per-plank tint so no two planks look cloned
+  for (let i = 0; i < planks; i++) {
     const px = x + (w / planks) * i;
-    ctx.beginPath();
-    ctx.moveTo(px, y); ctx.lineTo(px, y + h);
-    ctx.stroke();
-    // seam highlight
-    ctx.strokeStyle = 'rgba(255,220,170,0.15)';
-    ctx.beginPath();
-    ctx.moveTo(px - 1, y); ctx.lineTo(px - 1, y + h);
-    ctx.stroke();
-    ctx.strokeStyle = 'rgba(40,22,10,0.35)';
+    const pw = w / planks;
+    const tint = (i % 2 ? 'rgba(255,245,220,0.08)' : 'rgba(60,32,14,0.06)');
+    ctx.fillStyle = tint;
+    ctx.fillRect(px, y, pw, h);
   }
-  // grain lines
-  ctx.strokeStyle = 'rgba(60,32,14,0.20)';
-  ctx.lineWidth = 1;
-  for (let k = 0; k < Math.ceil(h / 8); k++) {
-    const gy = y + 4 + k * 8;
+  // coarse grain
+  ctx.strokeStyle = 'rgba(70,38,18,0.22)';
+  ctx.lineWidth = 1.1;
+  for (let k = 0; k < Math.ceil(h / 7); k++) {
+    const gy = y + 5 + k * 7;
     ctx.beginPath();
     ctx.moveTo(x + 2, gy);
-    for (let px = x + 2; px < x + w - 2; px += 20) {
-      ctx.quadraticCurveTo(px + 10, gy + Math.sin((px + k * 23) * 0.05) * 2.5, px + 20, gy);
+    for (let px = x + 2; px < x + w - 2; px += 18) {
+      ctx.quadraticCurveTo(px + 9, gy + Math.sin((px * 0.07 + k * 41) * 0.9) * 2.8, px + 18, gy + Math.cos((px + k * 7) * 0.04) * 0.6);
     }
     ctx.stroke();
   }
-  // knots
-  ctx.fillStyle = 'rgba(70,38,18,0.28)';
-  for (let k = 0; k < planks + 1; k++) {
-    const kx = x + 20 + ((k * 97) % (w - 40));
-    const ky = y + 16 + ((k * 53) % (h - 30));
+  // fine micro-grain (subtle)
+  ctx.strokeStyle = 'rgba(70,38,18,0.10)';
+  ctx.lineWidth = 0.7;
+  for (let k = 0; k < Math.ceil(h / 5); k++) {
+    const gy = y + 2 + k * 6.5;
     ctx.beginPath();
-    ctx.ellipse(kx, ky, 6, 3, k * 0.6, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.moveTo(x + 8, gy);
+    for (let px = x + 8; px < x + w - 8; px += 24) {
+      ctx.quadraticCurveTo(px + 12, gy + Math.sin(px * 0.12 + k) * 1.1, px + 24, gy);
+    }
+    ctx.stroke();
   }
+  // plank seams — deep AO + highlight
+  for (let i = 1; i < planks; i++) {
+    const px = x + (w / planks) * i;
+    // AO trench
+    ctx.fillStyle = 'rgba(28,16,8,0.28)';
+    ctx.fillRect(px - 0.6, y, 1.8, h);
+    ctx.strokeStyle = 'rgba(20,11,6,0.32)';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(px, y); ctx.lineTo(px, y + h); ctx.stroke();
+    // varnish highlight left of seam
+    ctx.strokeStyle = 'rgba(255,230,190,0.20)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(px - 1.2, y + 2); ctx.lineTo(px - 1.2, y + h - 2); ctx.stroke();
+  }
+  // varnish top specular — long horizontal bloom like lacquered counter
+  const varnish = ctx.createLinearGradient(0, y, 0, y + Math.min(h * 0.38, 28));
+  varnish.addColorStop(0, 'rgba(255,245,220,0.30)');
+  varnish.addColorStop(0.5, 'rgba(255,240,210,0.12)');
+  varnish.addColorStop(1, 'rgba(255,240,210,0)');
+  ctx.fillStyle = varnish;
+  ctx.fillRect(x, y, w, Math.min(h * 0.38, 28));
+  // knots — with concentric rings
+  for (let k = 0; k < planks + 1; k++) {
+    const kx = x + 18 + ((k * 97) % (w - 36));
+    const ky = y + 14 + ((k * 53) % (h - 28));
+    const a = k * 0.62;
+    ctx.save();
+    ctx.translate(kx, ky);
+    ctx.rotate(a);
+    // outer ring shadow
+    ctx.fillStyle = 'rgba(42,22,10,0.38)';
+    ctx.beginPath(); ctx.ellipse(0, 0, 8.5, 4.2, 0, 0, Math.PI * 2); ctx.fill();
+    // knot body
+    const kg = ctx.createRadialGradient(-2, -0.5, 0.8, 0, 0, 8);
+    kg.addColorStop(0, 'rgba(96,52,22,0.95)');
+    kg.addColorStop(0.5, 'rgba(70,38,18,0.85)');
+    kg.addColorStop(1, 'rgba(42,22,10,0.0)');
+    ctx.fillStyle = kg;
+    ctx.beginPath(); ctx.ellipse(0, 0, 8, 3.8, 0, 0, Math.PI * 2); ctx.fill();
+    // highlight ring
+    ctx.strokeStyle = 'rgba(255,220,170,0.18)';
+    ctx.lineWidth = 0.9;
+    ctx.beginPath(); ctx.ellipse(0, 0, 6.2, 2.9, 0, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+  }
+  // bottom AO like counter lip
+  const foot = ctx.createLinearGradient(0, y + h - 10, 0, y + h);
+  foot.addColorStop(0, 'rgba(0,0,0,0)');
+  foot.addColorStop(1, 'rgba(0,0,0,0.28)');
+  ctx.fillStyle = foot;
+  ctx.fillRect(x, y + h - 10, w, 10);
+  ctx.restore();
+}
+
+/** Brushed stainless helper — linear highlight streak like reference inox counters. */
+export function brushedMetalGradient(
+  ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number
+): CanvasGradient {
+  const g = ctx.createLinearGradient(x, y, x + w, y);
+  g.addColorStop(0, '#A9B3BC');
+  g.addColorStop(0.18, '#D8E2E8');
+  g.addColorStop(0.32, '#F4F7F9');
+  g.addColorStop(0.38, '#EDF1F4');
+  g.addColorStop(0.52, '#C2CED8');
+  g.addColorStop(0.70, '#E6EEF4');
+  g.addColorStop(1, '#8FA0AF');
+  return g;
+}
+
+/** Subtle checkered floor — like the restaurant tiling in the reference, but warm/wood-leaning. */
+export function drawCheckerFloor(
+  ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number,
+  opts: { tile?: number; light?: string; dark?: string; alpha?: number } = {}
+): void {
+  const { tile = 26, light = '#2B1B12', dark = '#241610', alpha = 0.55 } = opts;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  // base
+  ctx.fillStyle = dark;
+  ctx.fillRect(x, y, w, h);
+  // light tiles
+  ctx.fillStyle = light;
+  const cols = Math.ceil(w / tile) + 1;
+  const rows = Math.ceil(h / tile) + 1;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if ((r + c) % 2 === 0) {
+        ctx.fillRect(x + c * tile, y + r * tile, tile - 1, tile - 1);
+      }
+    }
+  }
+  // grout AO
+  ctx.strokeStyle = 'rgba(10,6,4,0.22)';
+  ctx.lineWidth = 0.8;
+  for (let r = 0; r <= rows; r++) { ctx.beginPath(); ctx.moveTo(x, y + r * tile); ctx.lineTo(x + w, y + r * tile); ctx.stroke(); }
+  for (let c = 0; c <= cols; c++) { ctx.beginPath(); ctx.moveTo(x + c * tile, y); ctx.lineTo(x + c * tile, y + h); ctx.stroke(); }
   ctx.restore();
 }
