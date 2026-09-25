@@ -314,7 +314,12 @@ class Game {
         this.update(step);
         acc -= step;
       }
-      this.draw(canvas);
+      // Headless harness (`prototype/shoot.mjs`) sets this while catching the
+      // sim up to the result screen. dt is already capped at 0.1s; skipping
+      // raster is what keeps check-shots off the 3.8 GB / 300 s path.
+      if (!(globalThis as unknown as { __churrascoSkipDraw?: boolean }).__churrascoSkipDraw) {
+        this.draw(canvas);
+      }
       requestAnimationFrame(frame);
     };
     requestAnimationFrame(frame);

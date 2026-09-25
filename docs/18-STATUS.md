@@ -69,8 +69,9 @@ Every claim below was produced by a command run in this checkout.
 | Prototype bundle | `npx esbuild --bundle prototype/src/main.ts` | **135 kB, 0 errors** — and the source now type-checks, which it never did |
 | Art coverage | `npm run check-art` | **OK** — 16 ingredients × 8 doneness levels + icons = **144 draws**, all painted |
 | Render smoke | `npm run check-render` | **OK** — real bundle driven through init, a drag, a flip and a full turn; **~45 M canvas ops, no exceptions** |
+| Shot harness | `npm run check-shots` | **OK — 6.6 s.** 5 real PNGs (splash, home/JOGAR, empty grill, cooking, result). 161 painted frames, 980 sim-only ticks. 60 s self-budget. The old tail was 10 800 full-scene draws (~3.8 GB RSS / 300 s timeout). |
 | Prototype server | `node prototype/dev-server.mjs` | listening on `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
-| CI | `.github/workflows/ci.yml` + `npm run gates` | **green on ubuntu-latest (21 s).** 12 per-PR gates. Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. Unity compile is still absent — no toolchain. |
+| CI | `.github/workflows/ci.yml` + `npm run gates` | **green on ubuntu-latest (21 s) for the previous 12 gates.** 13th gate is `check-shots` (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. Unity compile is still absent — no toolchain. |
 
 ### The localisation gate caught a §56 violation
 
@@ -376,9 +377,7 @@ specification. The prototype proves art *direction*, not the art *budget*.
 3. Write the Unity scene layer and run the feel pass.
 4. Confirm the 767-turn mid-game gap with telemetry before V1.0.
 5. Grow en-US / es-419 from 9.7 % stub to full coverage before any non-BR launch.
-6. Give `npm run check-shots` a budget that matches its cost: its final step pumps
-   10,800 frames of full-scene canvas work (~3.8 GB RSS) and did not finish within
-   15 minutes of wall clock in this sandbox, so a 300 s timeout kills it mid-run.
-   Every earlier step renders fine; only the result-screen tail is pathological.
-   Raise the timeout, or make the tail cheaper (it re-draws the whole scene at
-   60 fps for 180 simulated seconds).
+6. **Prototype FTUE** — rewrite the 6-step first-run so it matches the splash →
+   home → JOGAR path the shot harness now drives. (`npm run check-shots` is done:
+   sim catch-up at the 0.1s dt cap with `__churrascoSkipDraw`, 60s self-budget,
+   PNGs of splash / home / empty grill / cooking / result.)

@@ -73,6 +73,9 @@ strict, but nothing invoked `tsc`.
 10. `npm run check-vectors` — the golden vectors still match the rules
 11. `npm run check-art` — 16 ingredients × 8 doneness levels all paint
 12. `npm run check-render` — real prototype bundle driven through a full turn
+13. `npm run check-shots` — real PNGs of splash → home → play → result. Sim
+    catch-up at the 0.1s dt cap with draw skipped; do not pump 10 800 full-scene
+    frames and do not raise the timeout to hide that.
 
 **Nightly** (`.github/workflows/nightly.yml`, 11:00 UTC / 08:00 BRT):
 

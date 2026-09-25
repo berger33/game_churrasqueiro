@@ -39,7 +39,7 @@ jobs:
       - name: Install
         run: npm ci
 
-      # Same 12 gates as `npm run gates`. Separate steps so a failure
+      # Same 13 gates as `npm run gates`. Separate steps so a failure
       # names the gate in the GitHub UI instead of collapsing into exit 9.
       - run: npm run typecheck
       - run: npm run validate
@@ -53,3 +53,4 @@ jobs:
       - run: npm run check-vectors
       - run: npm run check-art
       - run: npm run check-render
+      - run: npm run check-shots

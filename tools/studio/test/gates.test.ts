@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 const GATES = [
   'typecheck', 'validate', 'check-schema', 'verify-schemas', 'check-l10n',
   'check-csharp-types', 'verify-data-sync', 'test', 'sim', 'check-vectors',
-  'check-art', 'check-render'
+  'check-art', 'check-render', 'check-shots'
 ];
 
 describe('CI lockstep', () => {

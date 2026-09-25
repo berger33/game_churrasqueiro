@@ -10,7 +10,7 @@
  * Unity compile / AAB size / asset-registry are not here because this
  * environment has no Unity toolchain (docs/12-BUILD.md §5).
  *
- * GitHub Actions runs the same 12 commands as separate `run:` steps
+ * GitHub Actions runs the same 13 commands as separate `run:` steps
  * (`.github/workflows/ci.yml`) so a failure names the gate. `tools/studio/test/gates.test.ts`
  * fails the build if the two lists drift.
  */
@@ -28,7 +28,8 @@ const GATES = [
   ['sim', 'short-horizon economy guardrails'],
   ['check-vectors', 'golden vectors still match the rules'],
   ['check-art', '16 ingredients × 8 doneness levels all paint'],
-  ['check-render', 'real prototype bundle driven through a full turn']
+  ['check-render', 'real prototype bundle driven through a full turn'],
+  ['check-shots', 'real PNGs of splash, home, play, result — sim catch-up, not 10 800 draws']
 ];
 
 let failed = 0;
