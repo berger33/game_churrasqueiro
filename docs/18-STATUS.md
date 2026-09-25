@@ -70,7 +70,7 @@ Every claim below was produced by a command run in this checkout.
 | Art coverage | `npm run check-art` | **OK** — 16 ingredients × 8 doneness levels + icons = **144 draws**, all painted |
 | Render smoke | `npm run check-render` | **OK** — real bundle driven through init, a drag, a flip and a full turn; **~45 M canvas ops, no exceptions** |
 | Prototype server | `node prototype/dev-server.mjs` | listening on `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
-| CI | `.github/workflows/ci.yml` + `npm run gates` | **added.** 12 per-PR gates, same command locally and on GitHub. First Actions run is the verification that ubuntu-latest can install `@napi-rs/canvas`. Nightly `sim:long` is `.github/workflows/nightly.yml`. Unity compile is still absent — no toolchain. |
+| CI | `.github/workflows/ci.yml` + `npm run gates` | **green on ubuntu-latest (21 s).** 12 per-PR gates. Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. Unity compile is still absent — no toolchain. |
 
 ### The localisation gate caught a §56 violation
 
