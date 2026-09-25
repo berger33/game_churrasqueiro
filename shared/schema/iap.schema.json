@@ -133,12 +133,7 @@
             "type": "number"
           },
           "type": {
-            "enum": [
-              "consumable",
-              "consumable_seasonal",
-              "nonconsumable",
-              "nonconsumable_once"
-            ]
+            "type": "string"
           }
         },
         "required": [

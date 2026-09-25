@@ -79,8 +79,9 @@
           "rarity": {
             "enum": [
               "common",
+              "uncommon",
               "rare",
-              "uncommon"
+              "epic"
             ]
           },
           "unlock": {

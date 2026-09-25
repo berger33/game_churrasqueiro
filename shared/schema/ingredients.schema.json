@@ -74,12 +74,12 @@
           "category": {
             "enum": [
               "beef",
-              "bread",
-              "cheese",
-              "poultry",
               "sausage",
-              "sides",
-              "skewer"
+              "poultry",
+              "skewer",
+              "cheese",
+              "bread",
+              "sides"
             ]
           },
           "collectionCategory": {
@@ -114,9 +114,9 @@
           },
           "idealZone": {
             "enum": [
-              "high",
               "low",
               "medium",
+              "high",
               "none"
             ]
           },
@@ -135,9 +135,9 @@
           "rarity": {
             "enum": [
               "common",
-              "epic",
+              "uncommon",
               "rare",
-              "uncommon"
+              "epic"
             ]
           },
           "region": {
@@ -150,7 +150,11 @@
             "type": "number"
           },
           "sides": {
-            "type": "integer"
+            "enum": [
+              1,
+              2,
+              4
+            ]
           },
           "stageOverrides": {
             "type": "array",
