@@ -240,13 +240,21 @@ class Game {
     const levels = await fetch('/data/levels.json').then((r) => r.json());
     this.levels = levels.levels;
 
-    // Churrasqueiras progression — data-driven
+    // Churrasqueiras progression — data-driven (also injected into sim-core db for TurnSimulation)
+    let rawChurr: any = null;
     try {
-      const rawChurr = await fetch('/data/churrasqueiras.json').then((r) => r.json());
+      rawChurr = await fetch('/data/churrasqueiras.json').then((r) => r.json());
       this.churrasqueiras = (rawChurr.churrasqueiras ?? []) as ChurrasqueiraSpec[];
     } catch {
       // fallback to single 3-zone if offline
       this.churrasqueiras = [];
+    }
+    if (rawChurr && this.db) {
+      (this.db as any).churrasqueiras = rawChurr;
+      (this.db as any).churrasqueiraById = new Map(this.churrasqueiras.map((c) => [c.id, c as any]));
+      // re-validate with churrasqueiras now present
+      const extraProblems = validateDatabase(this.db);
+      if (extraProblems.length) console.warn('[churr] validation:', extraProblems);
     }
     // migrate meta: clamp churrasqueiraId to known ids
     if (this.churrasqueiras.length > 0) {
@@ -404,6 +412,8 @@ class Game {
 
   private requestNextLevel(): void {
     const lvl = this.levels[this.levelIndex] ?? this.levels[this.levels.length - 1]!;
+    const actForTurn = this.activeChurr();
+    const actEvoLv = actForTurn ? (this.meta.churrasqueiraLv[actForTurn.id] ?? 1) : 1;
     this.sim = new TurnSimulation(
       this.db,
       {
@@ -417,15 +427,18 @@ class Game {
           patienceScalar: lvl.patienceScalar,
           difficultyScalar: lvl.difficultyScalar,
           maxOrdersOnScreen: lvl.maxOrdersOnScreen
-        }
+        },
+        churrasqueiraId: actForTurn?.id,
+        churrasqueiraLevel: actEvoLv
       },
       20260917 + this.levelIndex
     );
-    // Apply churrasqueira progression (overrides restaurant grill)
+    // Apply churrasqueira progression (overrides restaurant grill) — kept for HUD/grelha visual sync; TurnSimulation already applied same via cooking.ts
     this.applyChurrasqueiraToSim();
     const restaurant = this.db.restaurantByIndex.get(lvl.restaurantIndex)!;
     const chName = this.activeChurr() ? this.l10n.t(this.activeChurr()!.nameKey) : '';
-    const evoShort = this.activeEvo()?.shortName ?? '';
+    const evoData = this.activeEvo();
+    const evoShort = evoData ? this.l10n.t(evoData.nameKey) : '';
     // FTUE: only show 1 ingredient at first
     if (!this.meta.ftueDone) {
       this.unlocked = this.db.ingredients.items.filter(i => i.id === 'linguica_toscana');
@@ -890,7 +903,7 @@ class Game {
               this.burst(p.x,p.y,16, (ch?.visual.color ?? C.ouroLight), 'spark');
               audio.play('levelUp');
               const nxt = evolveInfo.next!;
-              this.float(W/2, 380, `Evoluiu: ${nxt.shortName}!`, C.ouroLight, 18);
+              this.float(W/2, 380, `Evoluiu: ${this.l10n.t(nxt.nameKey)}!`, C.ouroLight, 18);
               // tiny hint about fileiras if zoneCount increased
               if (nxt.zoneCount > (this.activeEvo()?.zoneCount ?? 1)) {
                 setTimeout(()=> this.float(W/2, 400, `+1 fileira desbloqueada!`, C.verdeClaro, 14), 400);
@@ -1493,7 +1506,7 @@ class Game {
       ctx.fillText(`${this.l10n.t(actCh.nameKey).toUpperCase()} · ${actEvo.zoneCount} ${actEvo.zoneCount>1?'FILEIRAS':'FILEIRA'} · ${actEvo.slotsPerZone} cortes/fila`, 28, cardY+28);
       outlinedText(ctx, `${lvl.id.toUpperCase()} · ${this.l10n.t(actCh.subtitleKey).toUpperCase()}`, 28, cardY+46, C.perola, 14, { outline:2, weight:900, align:'left' });
       ctx.font=font(10,600,UI); ctx.fillStyle='rgba(244,231,211,0.55)';
-      ctx.fillText(actEvo.shortName + ' · Toque para cozinhar — 90s',28, cardY+62);
+      ctx.fillText(this.l10n.t(actEvo.nameKey) + ' · Toque para cozinhar — 90s',28, cardY+62);
     } else {
       const restaurant = this.db.restaurantByIndex.get(0)!;
       ctx.font=font(10,800,UI); ctx.fillStyle='rgba(244,231,211,0.6)';
@@ -1587,7 +1600,7 @@ class Game {
     }
     if (showcaseActCh && showcaseActEvo){
       ctx.font=font(12,900,UI); ctx.fillStyle=C.perola;
-      const short = showcaseActEvo.shortName;
+      const short = this.l10n.t(showcaseActEvo.nameKey);
       const name = this.l10n.t(showcaseActCh.nameKey);
       ctx.fillText(`${name} — ${short}`, tx, showcaseY+42);
       ctx.font=font(10,600,UI); ctx.fillStyle='rgba(244,231,211,0.58)';
