@@ -1,5 +1,6 @@
 import type { PlayerState } from './economy.ts';
 import { newPlayerState, STARTER_CHURRASQUEIRA_ID } from './economy.ts';
+import type { TutorialState } from './tutorial.ts';
 
 /**
  * Save system (spec §57 / §58).
@@ -12,7 +13,11 @@ import { newPlayerState, STARTER_CHURRASQUEIRA_ID } from './economy.ts';
  *   and offline earnings clamped instead of being farmed.
  */
 
-export const SAVE_SCHEMA_VERSION = 2;
+/**
+ * v1 → v2: the equipped churrasqueira (`player.churrasqueiraId` / `churrasqueiraLevels`).
+ * v2 → v3: the FTUE (`progress.tutorial` / `progress.ftueDone`, docs/05-UX_FLOW.md §4).
+ */
+export const SAVE_SCHEMA_VERSION = 3;
 
 export interface DailyState {
   streak: number;
@@ -50,6 +55,18 @@ export interface ProgressState {
   adState: { rewardedToday: Record<string, number>; interstitialsToday: number; lastInterstitialUnixSec: number; dayStamp: number };
   entitlements: string[];
   pendingRewards: { id: string; token: string; grantedAtUnixSec: number }[];
+  /**
+   * The TutorialDirector's state (tools/sim-core/src/tutorial.ts), so an FTUE
+   * interrupted by the app dying resumes at its step and never re-sends a step
+   * it already reported. `null` until the first launch creates one. Restore with
+   * `restoreTutorialState(table, progress.tutorial, progress.ftueDone)`.
+   */
+  tutorial: TutorialState | null;
+  /**
+   * The FTUE is finished or skipped. It wins over `tutorial` on restore: a
+   * returning player never redoes the first run, whatever else the save says.
+   */
+  ftueDone: boolean;
 }
 
 export interface SaveGame {
@@ -104,7 +121,9 @@ export function defaultProgress(): ProgressState {
     leaderboards: {},
     adState: { rewardedToday: {}, interstitialsToday: 0, lastInterstitialUnixSec: 0, dayStamp: 0 },
     entitlements: [],
-    pendingRewards: []
+    pendingRewards: [],
+    tutorial: null,
+    ftueDone: false
   };
 }
 
@@ -176,6 +195,18 @@ export function migrate(save: SaveGame, fromVersion: number): SaveGame {
   } else if (!out.player.churrasqueiraLevels[out.player.churrasqueiraId]) {
     out.player.churrasqueiraLevels[out.player.churrasqueiraId] = 1;
   }
+  // v3: the FTUE. A save written before it existed belongs to someone who has
+  // already played — the six-step first run must not ambush a returning player.
+  const progress = { ...out.progress };
+  if (fromVersion < 3) {
+    progress.tutorial = null;
+    progress.ftueDone = true;
+  }
+  if (progress.tutorial === undefined || (progress.tutorial !== null && typeof progress.tutorial !== 'object')) {
+    progress.tutorial = null; // restoreTutorialState() validates what is left
+  }
+  if (typeof progress.ftueDone !== 'boolean') progress.ftueDone = false;
+  out.progress = progress;
   out.schemaVersion = SAVE_SCHEMA_VERSION;
   return out;
 }

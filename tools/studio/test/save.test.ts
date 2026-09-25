@@ -4,8 +4,17 @@ import {
   deserializeSave, detectClockTampering, migrate, newSave, resolveDailyClaim,
   serializeSave, stableStringify, unixDay
 } from '../../sim-core/src/save.ts';
+import { TutorialDirector, restoreTutorialState, type TutorialTable } from '../../sim-core/src/tutorial.ts';
+import type { AnalyticsEvent } from '../../sim-core/src/analytics.ts';
+import { readJson } from '../load-data.ts';
 
 const NOW = 1_758_100_000;
+const tutorialTable = readJson('tutorial.json') as TutorialTable;
+
+/** An envelope exactly as an older build would have written it. */
+function envelopeAt(version: number, payload: object): string {
+  return JSON.stringify({ v: version, crc: crc32(stableStringify(payload)), payload });
+}
 
 describe('save serialisation', () => {
   it('round-trips a fresh save', () => {
@@ -107,6 +116,90 @@ describe('migration', () => {
   });
 });
 
+describe('FTUE state (v3, docs/05-UX_FLOW.md §4)', () => {
+  it('a fresh save has no FTUE record yet, so the first launch starts at step 1', () => {
+    const s = newSave('ftue-1', NOW);
+    expect(s.progress.tutorial).toBeNull();
+    expect(s.progress.ftueDone).toBe(false);
+    const state = restoreTutorialState(tutorialTable, s.progress.tutorial, s.progress.ftueDone);
+    expect(state.step).toBe(1);
+    expect(state.started).toBe(false);
+  });
+
+  it('carries the director across a save and load: the run resumes and never re-sends a step', () => {
+    const first: AnalyticsEvent[] = [];
+    const d1 = new TutorialDirector(tutorialTable, null, (e) => first.push(e));
+    d1.start();
+    d1.tick(3);
+    d1.report('placed');
+    d1.miss();
+    d1.tick(4);
+    d1.report('flipped');
+
+    const s = newSave('ftue-2', NOW);
+    s.progress.tutorial = d1.state;
+    s.progress.ftueDone = d1.done;
+    const loaded = deserializeSave(serializeSave(s));
+    expect(loaded.ok).toBe(true);
+    if (!loaded.ok) return;
+    expect(loaded.save.progress.tutorial).toEqual(d1.state);
+
+    const again: AnalyticsEvent[] = [];
+    const d2 = new TutorialDirector(
+      tutorialTable,
+      restoreTutorialState(tutorialTable, loaded.save.progress.tutorial, loaded.save.progress.ftueDone),
+      (e) => again.push(e)
+    );
+    expect(d2.current?.id).toBe('serve');
+    expect(d2.state.misses).toBe(1);
+    expect(d2.elapsedMs).toBe(7000);
+    d2.start(); // idempotent: tutorial_start went out before the save
+    d2.report('served');
+    expect(again.map((e) => e.name)).toEqual(['tutorial_step']);
+    expect(again[0]!.params).toEqual({ step: 'serve', step_index: 3, elapsed_ms: 7000 });
+  });
+
+  it('a pre-v3 save is a returning player: the FTUE counts as done', () => {
+    const v2 = newSave('ftue-3', NOW) as unknown as { schemaVersion: number; progress: Record<string, unknown> };
+    v2.schemaVersion = 2;
+    delete v2.progress['tutorial'];
+    delete v2.progress['ftueDone'];
+    const out = deserializeSave(envelopeAt(2, v2));
+    expect(out.ok).toBe(true);
+    if (!out.ok) return;
+    expect(out.save.schemaVersion).toBe(SAVE_SCHEMA_VERSION);
+    expect(out.save.progress.ftueDone).toBe(true);
+    expect(out.save.progress.tutorial).toBeNull();
+    const events: AnalyticsEvent[] = [];
+    const d = new TutorialDirector(
+      tutorialTable,
+      restoreTutorialState(tutorialTable, out.save.progress.tutorial, out.save.progress.ftueDone),
+      (e) => events.push(e)
+    );
+    expect(d.done).toBe(true);
+    d.start();
+    expect(events).toEqual([]);
+  });
+
+  it('a v3 save with the FTUE fields missing or mangled still loads, as a fresh run', () => {
+    const v3 = newSave('ftue-4', NOW) as unknown as { progress: Record<string, unknown> };
+    delete v3.progress['tutorial'];
+    v3.progress['ftueDone'] = 'yes';
+    const out = deserializeSave(envelopeAt(3, v3));
+    expect(out.ok).toBe(true);
+    if (!out.ok) return;
+    expect(out.save.progress.tutorial).toBeNull();
+    expect(out.save.progress.ftueDone).toBe(false);
+  });
+
+  it('migration does not mutate the save it was given', () => {
+    const s = newSave('ftue-5', NOW);
+    const before = JSON.stringify(s.progress);
+    migrate(s, 2);
+    expect(JSON.stringify(s.progress)).toBe(before);
+  });
+});
+
 describe('clock tampering', () => {
   it('flags a backwards clock jump', () => {
     const s = newSave('install-6', NOW);
@@ -177,5 +270,7 @@ describe('defaults', () => {
     expect(s.locale).toBe('pt-BR');
     expect(defaultDaily().streak).toBe(0);
     expect(defaultProgress().pass.claimedFree).toEqual([]);
+    expect(defaultProgress().tutorial).toBeNull();
+    expect(defaultProgress().ftueDone).toBe(false);
   });
 });
