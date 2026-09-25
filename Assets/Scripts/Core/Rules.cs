@@ -3,14 +3,19 @@
 // EXACT port of tools/sim-core/src/cooking.ts. That file is the reference
 // implementation: it is covered by unit tests and drives the balance simulator.
 // tools/golden/vectors.json freezes 98 input->output pairs generated from it, and
-// the parity runner replays them here — every value must match to 1e-9.
+// tools/csharp/parity replays the ones this file covers (cooking, flip, scoring,
+// effective heat) — every value must match to 1e-9.
 //
-// Change a formula here, change it there, regenerate the vectors, and both CI
-// gates (npm test, npm run check-vectors) must stay green.
+// Change a formula here, change it there, regenerate the vectors, and the CI
+// gates (npm test, npm run check-vectors, npm run check-csharp) must stay green.
 //
-// WARNING: this file has not been compiled. No C# toolchain exists in the
-// environment where it was written (see docs/18-STATUS.md §2). `dotnet build`
-// must pass before it is trusted.
+// Compiled as netstandard2.1 / C# 9 (Unity's profile) with warnings as errors,
+// and replayed against tools/golden/vectors.json, by `npm run check-csharp` on
+// every PR. Its first run found two divergences, now fixed: StageOf had no
+// "rare" band, and ScoreItem rounded halves to even (a 24.5-coin plate paid 24,
+// not 25). A third — EffectiveHeat ignoring the runtime zone heat a churrasqueira
+// sets — was found reading this file against cooking.ts; no vector covers it
+// until the churrasqueira functions are ported with TurnSimulation.cs.
 
 #nullable enable
 using System;
@@ -155,6 +160,18 @@ namespace Churrasco.Core
     {
         public static double Clamp(double v, double lo, double hi) => v < lo ? lo : v > hi ? hi : v;
         public static double Clamp01(double v) => Clamp(v, 0, 1);
+
+        /// <summary>
+        /// JavaScript's <c>Math.round</c>: halves round toward +∞ (2.5 → 3, -2.5 → -2).
+        /// <c>Math.Round</c> rounds halves to even (2.5 → 2), which is not the rule
+        /// the TypeScript reference — and every golden vector — was produced with.
+        /// </summary>
+        public static double RoundHalfUp(double v)
+        {
+            if (double.IsNaN(v) || double.IsInfinity(v)) return v;
+            double r = Math.Floor(v);
+            return v - r >= 0.5 ? r + 1 : r;
+        }
     }
 
     /// <summary>
@@ -199,12 +216,27 @@ namespace Churrasco.Core
                 XpMult = 1 + Get("lighting"),
                 CustomerSpawnRate = 1 + Get("sign"),
                 // Matches the TS: autoFlipLevel is purely the churrasqueiro level.
-                AutoFlipLevel = (int)Math.Floor(Level("churrasqueiro")),
-                AutoServeLevel = (int)Math.Floor(Level("garcom")),
-                AutoPrepLevel = (int)Math.Floor(Level("auxiliar")),
+                AutoFlipLevel = Level("churrasqueiro"),
+                AutoServeLevel = Level("garcom"),
+                AutoPrepLevel = Level("auxiliar"),
                 IdleRateMult = 1 + Get("gerente"),
                 RawStockPerTurn = 6 + (int)Math.Floor(Get("counter"))
             };
+        }
+
+        // ── Grill creation ──────────────────────────────────────────────────
+
+        /// <summary>
+        /// Port of createGrill(stats, db): one runtime zone per table zone, up to
+        /// the derived zone count, each starting at the table's heat multiplier.
+        /// </summary>
+        public static GrillRuntime CreateGrill(DerivedStats stats, GameData data)
+        {
+            var g = new GrillRuntime { Stats = stats, CharcoalT = 0, CharcoalEfficiency = 1, Refilling = 0 };
+            int count = Math.Min(stats.ZoneCount, data.Grill.Zones.Count);
+            for (int i = 0; i < count; i++)
+                g.Zones.Add(new GrillZoneRuntime { Index = i, Heat = data.Grill.Zones[i].HeatMultiplier });
+            return g;
         }
 
         // ── Food creation ───────────────────────────────────────────────────
@@ -280,13 +312,18 @@ namespace Churrasco.Core
 
         /// <summary>
         /// effectiveHeat(g, zoneIndex, db). The top zone gets the full upgrade
-        /// bonus; lower zones get a share of it scaled by position.
+        /// bonus; lower zones get a share of it scaled by position. The base is
+        /// the runtime zone's heat — a churrasqueira patches it (the FTUE's 1-zone
+        /// lata cooks at its heatBase) — and the table value only for a zone the
+        /// grill does not have, exactly like the TypeScript.
         /// </summary>
         public static double EffectiveHeat(GrillRuntime g, int zoneIndex, GameData data)
         {
-            double baseHeat = zoneIndex >= 0 && zoneIndex < data.Grill.Zones.Count
-                ? data.Grill.Zones[zoneIndex].HeatMultiplier
-                : 1;
+            double baseHeat = zoneIndex >= 0 && zoneIndex < g.Zones.Count
+                ? g.Zones[zoneIndex].Heat
+                : zoneIndex >= 0 && zoneIndex < data.Grill.Zones.Count
+                    ? data.Grill.Zones[zoneIndex].HeatMultiplier
+                    : 1;
             int top = g.Zones.Count - 1;
             double bonus = zoneIndex == top
                 ? g.Stats.HighZoneBonus
@@ -417,10 +454,10 @@ namespace Churrasco.Core
                 return overrides[overrides.Count - 1].Id;
             }
             var t = data.Ingredients.Shared.StageThresholds;
-            if (f.Burned || d >= t.WELLMAX) return "burned";
-            if (d >= t.MEDIUMMAX) return "well";
-            if (d >= t.RAREMAX) return "medium";
-            if (d >= t.RAWMAX) return "raw";
+            if (f.Burned || d >= t.WELL_MAX) return "burned";
+            if (d >= t.MEDIUM_MAX) return "well";
+            if (d >= t.RARE_MAX) return "medium";
+            if (d >= t.RAW_MAX) return "rare"; // was "raw": the rare band did not exist in C# (caught by tools/csharp/parity)
             return "raw";
         }
 
@@ -518,8 +555,10 @@ namespace Churrasco.Core
                 Evenness = ev,
                 WindowLo = lo,
                 WindowHi = hi,
-                Coins = (int)Math.Round(coins),
-                Xp = (int)Math.Round(xp)
+                // JS Math.round, not Math.Round: a 24.5-coin plate pays 25 in the
+                // reference and paid 24 here (espetinho_misto, tools/csharp/parity).
+                Coins = (int)MathUtil.RoundHalfUp(coins),
+                Xp = (int)MathUtil.RoundHalfUp(xp)
             };
         }
     }

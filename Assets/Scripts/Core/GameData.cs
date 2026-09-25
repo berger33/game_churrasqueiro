@@ -7,7 +7,8 @@
 // Rules code takes a GameData rather than reaching for singletons, so the same
 // rules can run against a modified dataset in tests and in the editor tooling.
 //
-// WARNING: not compiled — no C# toolchain in the authoring environment.
+// Compiled (netstandard2.1, C# 9 — Unity's profile) and exercised against the
+// real tables by tools/csharp on every PR (docs/12-BUILD.md §5).
 
 #nullable enable
 using System;
@@ -23,13 +24,13 @@ namespace Churrasco.Core
     /// </summary>
     public sealed class GameData
     {
-        public Ingredients Ingredients = null!;
-        public Grill Grill = null!;
-        public Customers Customers = null!;
-        public Restaurants Restaurants = null!;
-        public Upgrades Upgrades = null!;
-        public Economy Economy = null!;
-        public Levels Levels = null!;
+        public IngredientsTable Ingredients = null!;
+        public GrillTable Grill = null!;
+        public CustomersTable Customers = null!;
+        public RestaurantsTable Restaurants = null!;
+        public UpgradesTable Upgrades = null!;
+        public EconomyTable Economy = null!;
+        public LevelsTable Levels = null!;
 
         private readonly Dictionary<string, IngredientsItems> _ingredientById =
             new Dictionary<string, IngredientsItems>(StringComparer.Ordinal);
@@ -118,9 +119,10 @@ namespace Churrasco.Core
                     if (_customerById.ContainsKey(c.Id))
                         problems.Add($"customer: duplicate id \"{c.Id}\"");
                     _customerById[c.Id] = c;
-                    if (c.PatienceSec <= 0) problems.Add($"customer \"{c.Id}\": patienceSec must be > 0");
-                    if (c.MinOrders > c.MaxOrders)
-                        problems.Add($"customer \"{c.Id}\": minOrders > maxOrders");
+                    // Same rules as validateDatabase() in data.ts.
+                    if (c.ItemsMin < 1) problems.Add($"customer \"{c.Id}\": itemsMin must be >= 1");
+                    if (c.ItemsMax < c.ItemsMin) problems.Add($"customer \"{c.Id}\": itemsMax < itemsMin");
+                    if (c.PatienceMultiplier <= 0) problems.Add($"customer \"{c.Id}\": patienceMultiplier must be > 0");
                 }
             }
 
@@ -175,13 +177,13 @@ namespace Churrasco.Core
         {
             var data = new GameData
             {
-                Ingredients = Deserialise<Ingredients>(readJson, "ingredients.json"),
-                Grill = Deserialise<Grill>(readJson, "grill.json"),
-                Customers = Deserialise<Customers>(readJson, "customers.json"),
-                Restaurants = Deserialise<Restaurants>(readJson, "restaurants.json"),
-                Upgrades = Deserialise<Upgrades>(readJson, "upgrades.json"),
-                Economy = Deserialise<Economy>(readJson, "economy.json"),
-                Levels = Deserialise<Levels>(readJson, "levels.json")
+                Ingredients = Deserialise<IngredientsTable>(readJson, "ingredients.json"),
+                Grill = Deserialise<GrillTable>(readJson, "grill.json"),
+                Customers = Deserialise<CustomersTable>(readJson, "customers.json"),
+                Restaurants = Deserialise<RestaurantsTable>(readJson, "restaurants.json"),
+                Upgrades = Deserialise<UpgradesTable>(readJson, "upgrades.json"),
+                Economy = Deserialise<EconomyTable>(readJson, "economy.json"),
+                Levels = Deserialise<LevelsTable>(readJson, "levels.json")
             };
             problems = data.Build();
             return data;
@@ -205,15 +207,21 @@ namespace Churrasco.Core
     /// </summary>
     public static class Json
     {
-        public static Func<string, T> Deserialiser<T> { get; set; } = null!;
+        /// <summary>
+        /// (json, target type) → instance. Assign once at boot, e.g. Newtonsoft:
+        /// <c>Json.Deserialiser = (s, t) => JsonConvert.DeserializeObject(s, t)!;</c>
+        /// or System.Text.Json with <c>PropertyNameCaseInsensitive = true</c> (the
+        /// generated classes need case-insensitive binding; tools/csharp/parity uses it).
+        /// Not generic: a generic property (<c>Deserialiser&lt;T&gt;</c>) is not C#.
+        /// </summary>
+        public static Func<string, Type, object>? Deserialiser { get; set; }
 
         public static T Deserialize<T>(string json) where T : class
         {
-            if (Deserialiser<T> == null)
-                throw new InvalidOperationException(
-                    "Json.Deserialiser<T> is not configured. Assign it at boot " +
-                    "(e.g. JsonConvert.DeserializeObject<T>) before loading data.");
-            return Deserialiser<T>(json);
+            var deserialiser = Deserialiser ?? throw new InvalidOperationException(
+                "Json.Deserialiser is not configured. Assign it at boot " +
+                "(e.g. (s, t) => JsonConvert.DeserializeObject(s, t)) before loading data.");
+            return (T)deserialiser(json, typeof(T));
         }
 
         public static readonly CultureInfo Invariant = CultureInfo.InvariantCulture;
