@@ -241,6 +241,19 @@ silhouette never changes between raw and burned. Only the fill gradient, the sea
 stripes, the sheen and the under-glow change. This is deliberate — a player reads
 "is it ready?" from colour and marks, and must never have to re-learn a shape.
 
+**Painted sprites over the procedural art (docs/22 §7.1).** Since the AI art pass, the
+prototype draws the **approved** painted sprites wherever they exist:
+
+- foods, crossfaded between neighbouring doneness frames;
+- the lata grill in its 3 evolutions, with ember strips per heat zone inside the opening;
+- customer portraits;
+- the counter and the Quintal scene.
+
+`prototype/src/sprites.ts` loads what `tools/art/build-runtime.mjs` built from `Assets/Art`.
+Everything above stays as the fallback, drawn while an image decodes or when it is missing.
+`check-art` and `check-render` run without `Image`, so they keep proving the fallback;
+`check-shots` renders the painted frames.
+
 **What the prototype does *not* prove:** the `Custom/FoodDoneness` shader of §6,
 the lighting rig of §7 and the VFX budgets of §8 are still specification. The asset
 registry of §11 exists since the AI art pass (lote 01: 43 sprites approved; lote 02: 50

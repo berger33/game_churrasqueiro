@@ -26,7 +26,8 @@
  *
  * Usage: node prototype/shoot.mjs
  */
-import { createCanvas } from '@napi-rs/canvas';
+import { createCanvas, Image as NapiImage } from '@napi-rs/canvas';
+import { readFileSync } from 'node:fs';
 import { readFile, writeFile, mkdir, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -87,6 +88,14 @@ globalThis.innerHeight = 820;
 globalThis.devicePixelRatio = 1;
 globalThis.location = { search: '', href: 'http://localhost/' };
 
+// Images: the painted sprites (docs/22 §7.1) load through the real decoder, from the same
+// files the dev server serves under /assets/. check-render and check-art have no Image, so
+// they keep exercising the procedural fallback; this harness renders the art.
+globalThis.Image = class extends NapiImage {
+  set src(url) { super.src = readFileSync(join(ROOT, 'prototype', String(url).replace(/^https?:\/\/[^/]+/, ''))); }
+  get src() { return super.src; }
+};
+
 const rafQueue = [];
 globalThis.requestAnimationFrame = (fn) => { rafQueue.push(fn); return rafQueue.length; };
 globalThis.cancelAnimationFrame = () => {};
@@ -103,6 +112,7 @@ globalThis.fetch = async (url) => {
   let file;
   if (rel.startsWith('/data/')) file = join(ROOT, 'shared', 'data', rel.slice(6));
   else if (rel.startsWith('/l10n/')) file = join(ROOT, 'shared', 'l10n', rel.slice(6));
+  else if (rel.startsWith('/assets/')) file = join(ROOT, 'prototype', rel);
   else throw new Error('unexpected fetch ' + url);
   if (!cache.has(file)) cache.set(file, await readFile(file, 'utf8'));
   const body = cache.get(file);
@@ -129,6 +139,17 @@ let skippedFrames = 0;
 
 function skipDraw(on) {
   globalThis.__churrascoSkipDraw = on;
+}
+
+/** Waits until every sprite in /assets/art/index.json is decoded (or gives up: fallback art). */
+async function waitForArt(ms = 5000) {
+  const t0 = Date.now();
+  for (;;) {
+    const a = globalThis.__churrascoArt;
+    if (a && a.expected() > 0 && a.loaded() >= a.expected()) { console.log(`art: ${a.loaded()} sprites decoded`); return; }
+    if (Date.now() - t0 > ms) { console.log(`art: ${a ? `${a.loaded()}/${a.expected()}` : 'no hook'} after ${ms} ms — procedural fallback`); return; }
+    await new Promise((r) => setTimeout(r, 20));
+  }
 }
 
 async function waitForLoop(ms = 2500) {
@@ -255,6 +276,7 @@ const handIs = (kind) => () => ftue()?.hand?.kind === kind;
 // ═══ First launch (fresh install) ════════════════════════════════════════════
 await import(pathToFileURL(BUNDLE).href);
 await waitForLoop();
+await waitForArt();
 const firstRunLog = globalThis.__churrascoAnalytics;
 
 // 1. Splash (auto-advance is 1.45s; we snapshot it, then skip with a tap).
@@ -335,6 +357,7 @@ listeners.clear();
 rafQueue.length = 0;
 await import(pathToFileURL(BUNDLE).href + '?relaunch=1');
 await waitForLoop();
+await waitForArt();
 const relaunchLog = globalThis.__churrascoAnalytics;
 assert(relaunchLog !== firstRunLog, 'relaunch should run a new game instance');
 

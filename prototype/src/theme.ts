@@ -16,6 +16,8 @@
  */
 
 // ── Palette (docs/04-ART_STYLE.md §3, expanded for studio grade) ────────────
+import { drawIconSprite } from './sprites.ts';
+
 export const C = {
   // Deep structure
   carvao: '#1C1512',
@@ -482,6 +484,7 @@ function parse(c: string): [number, number, number, number] {
 // ── Vector icons (cinematic lighting) ──────────────────────────────────────
 
 export function coinIcon(ctx: CanvasRenderingContext2D, x: number, y: number, r: number): void {
+  if (drawIconSprite(ctx, 'ic_coin', x, y, r * 2.35)) return;
   ctx.save();
   ctx.translate(x, y);
   // outer shadow disc
@@ -523,6 +526,7 @@ export function coinIcon(ctx: CanvasRenderingContext2D, x: number, y: number, r:
 export function flameIcon(
   ctx: CanvasRenderingContext2D, x: number, y: number, r: number, hot = false
 ): void {
+  if (drawIconSprite(ctx, 'ic_flame', x, y, r * 2.7)) return;
   ctx.save();
   ctx.translate(x, y);
   // outer glow
@@ -563,6 +567,7 @@ export function starIcon(
   opts: { filled?: boolean; scale?: number; glow?: boolean } = {}
 ): void {
   const { filled = true, scale = 1, glow = false } = opts;
+  if (filled && !glow && drawIconSprite(ctx, 'ic_star', x, y, r * 2.3 * scale)) return;
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(scale, scale);
@@ -607,6 +612,7 @@ export function starIcon(
 }
 
 export function clockIcon(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, col: string): void {
+  if (drawIconSprite(ctx, 'ic_clock', x, y, r * 2.4)) return;
   ctx.save();
   ctx.translate(x, y);
   ctx.fillStyle = 'rgba(0,0,0,0.35)';
@@ -637,6 +643,7 @@ export function clockIcon(ctx: CanvasRenderingContext2D, x: number, y: number, r
 }
 
 export function checkIcon(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, col: string): void {
+  if (drawIconSprite(ctx, 'ic_check', x, y, r * 2.4)) return;
   ctx.save();
   ctx.translate(x, y);
   ctx.strokeStyle = col;

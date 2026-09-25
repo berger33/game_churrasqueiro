@@ -45,6 +45,10 @@ import {
   outlinedText, panel, preloadTextures, premiumButton, rgb, roundRectPath, shade, smoothstep, starIcon
 } from './theme.ts';
 import { drawFood as drawFoodArt, drawFoodIcon } from './foods.ts';
+import {
+  preloadSprites, setStageThresholds, drawFoodSprite, drawFoodIconSprite, drawPortrait, grillSprite,
+  backgroundSprite, propSprite, fxSprite, drawIconSprite, quadPoint, quadInverse, quadPath, type Quad
+} from './sprites.ts';
 import { audio } from './audio.ts';
 
 const W = 420;
@@ -56,6 +60,12 @@ const GRILL_BOTTOM = 472;
 const BENCH_TOP = 552;
 const CHIMNEY_W = 68;
 const GRILL_BODY_W = W - 40;
+/** Painted grills (docs/22 §7.1): the opening's width on screen and where its centre sits. */
+const GRILL_ART_BED_W = 330;
+const GRILL_ART_HOLE_Y = 342;
+
+/** A painted grill placed on screen: the sprite rect and its cooking opening (screen coords). */
+interface GrillArt { img: CanvasImageSource; x: number; y: number; w: number; h: number; quad: Quad }
 
 // ── Screens ───────────────────────────────────────────────────────────────────
 type Screen = 'splash' | 'title' | 'home' | 'play' | 'result' | 'bonus_frenzy' | 'bonus_wheel' | 'bonus_chef';
@@ -256,6 +266,10 @@ class Game {
 
   private unlocked: Ingredient[] = [];
   private bgCache: HTMLCanvasElement | null = null;
+  /** What bgCache holds: 'proc' or 'art:<restaurant>' — the painted scene arrives after load. */
+  private bgCacheKey = '';
+  /** Restaurant of the current turn, for its painted background. */
+  private sceneRestaurant = 'quintal';
   private now = 0;
   private resultT = 0;
   private splashT = 0;
@@ -300,6 +314,7 @@ class Game {
   async init(canvas: HTMLCanvasElement): Promise<void> {
     const raw = await this.loadData();
     this.db = createDatabase(raw);
+    setStageThresholds(this.db.ingredients.shared.stageThresholds);
     this.l10n = await this.loadL10n();
     const problems = validateDatabase(this.db);
     if (problems.length) throw new Error(`data invalid: ${problems.join('; ')}`);
@@ -397,6 +412,7 @@ class Game {
     this.resize(canvas);
     this.bindInput(canvas);
     try { preloadTextures(); } catch {}
+    try { preloadSprites(); } catch {}
     this.screen = 'splash';
 
     let last = performance.now();
@@ -509,6 +525,7 @@ class Game {
     );
     // Grill heat/slots come from TurnSimulation (churrasqueiraId/Level above).
     const restaurant = this.db.restaurantByIndex.get(lvl.restaurantIndex)!;
+    this.sceneRestaurant = restaurant.id;
     const chName = this.activeChurr() ? this.l10n.t(this.activeChurr()!.nameKey) : '';
     const evoData = this.activeEvo();
     const evoShort = evoData ? this.l10n.t(evoData.nameKey) : '';
@@ -656,7 +673,7 @@ class Game {
         const b = this.benchItemRect(0);
         const zone = this.sim.grill.zones[hint.zoneIndex];
         const slot = zone ? zone.items.length : 0;
-        return { from: { x: b.x + b.w / 2, y: b.y + b.h / 2 - 4 }, to: { x: this.slotX(hint.zoneIndex, slot), y: this.zoneY(hint.zoneIndex) } };
+        return { from: { x: b.x + b.w / 2, y: b.y + b.h / 2 - 4 }, to: this.toGrillScreen(this.slotX(hint.zoneIndex, slot), this.zoneY(hint.zoneIndex)) };
       }
       case 'flip':
         return { from: this.foodScreenPos(hint.food), to: null };
@@ -1107,7 +1124,125 @@ class Game {
     if (!f.onGrill) return { x: W / 2, y: BENCH_TOP - 30 };
     const zone = this.sim.grill.zones[f.zoneIndex];
     const idx = zone ? zone.items.indexOf(f) : 0;
-    return { x: this.slotX(f.zoneIndex, Math.max(0, idx)), y: this.zoneY(f.zoneIndex) };
+    return this.toGrillScreen(this.slotX(f.zoneIndex, Math.max(0, idx)), this.zoneY(f.zoneIndex));
+  }
+
+  // ── Painted grill (docs/22 §7.1) ─────────────────────────────────────────
+  /** Where the painted grill of the active churrasqueira sits; null → the procedural grill. */
+  private grillArtView(hero: boolean): GrillArt | null {
+    const ch = hero ? (this.churrasqueiras[0] ?? this.activeChurr()) : this.activeChurr();
+    if (!ch) return null;
+    const evo = hero ? (this.meta.churrasqueiraLv[ch.id] ?? 1) : (this.activeEvo()?.level ?? 1);
+    const g = grillSprite(ch.id, evo);
+    if (!g) return null;
+    const [bx = 0, by = 0, bw = 1, bh = 1] = g.hole.bbox;
+    let s: number, gx: number, gy: number;
+    if (hero) {
+      s = 330 / g.w; gx = W / 2 - (g.w * s) / 2; gy = 262;
+    } else {
+      s = Math.min(GRILL_ART_BED_W / bw, (W - 12) / g.w);
+      gx = W / 2 - (bx + bw / 2) * s;
+      gy = GRILL_ART_HOLE_Y - (by + bh / 2) * s;
+    }
+    const quad = g.hole.quad.map(([x, y]) => [gx + x * s, gy + y * s]) as Quad;
+    return { img: g.img, x: gx, y: gy, w: g.w * s, h: g.h * s, quad };
+  }
+  /** Logical grill-bed point (slotX/zoneY space) → screen. Identity for the procedural grill;
+   *  through the opening's quad for a painted one, so drawing, taps, drops and the FTUE hand
+   *  all agree on where a food is. */
+  private toGrillScreen(x: number, y: number): Pt {
+    const art = this.screen === 'play' ? this.grillArtView(false) : null;
+    if (!art) return { x, y };
+    const u = 0.14 + 0.72 * clamp01((x - 55) / (W - 110));
+    const v = clamp01((y - GRILL_TOP) / (GRILL_BOTTOM - GRILL_TOP));
+    return quadPoint(art.quad, u, v);
+  }
+  /** Grill zone under a screen point (−1 = not over the grill). */
+  private grillZoneAt(x: number, y: number): number {
+    const art = this.screen === 'play' ? this.grillArtView(false) : null;
+    if (!art) return y > GRILL_TOP - 4 && y < GRILL_BOTTOM + 4 ? this.zoneAt(y) : -1;
+    const { u, v } = quadInverse(art.quad, x, y);
+    if (u < -0.12 || u > 1.12 || v < -0.45 || v > 1.45) return -1; // generous touch margin
+    const n = this.zoneCount();
+    return Math.min(n - 1, Math.max(0, Math.floor(clamp01(v) * n)));
+  }
+  /** Fire bed (one ember strip per zone, picked by heat), grate, then the painted frame. */
+  private drawGrillSprite(ctx: CanvasRenderingContext2D, art: GrillArt, heats: number[]): void {
+    const q = art.quad, n = Math.max(1, heats.length);
+    const xs = q.map((p) => p[0]), ys = q.map((p) => p[1]);
+    const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.34)';
+    ctx.beginPath(); ctx.ellipse(art.x + art.w / 2, art.y + art.h - 8, art.w * 0.46, 14, 0, 0, Math.PI * 2); ctx.fill();
+    quadPath(ctx, q); ctx.clip();
+    ctx.fillStyle = '#140a05'; ctx.fillRect(minX, minY, maxX - minX, maxY - minY);
+    for (let z = 0; z < n; z++) {
+      // Crossfade the two strips around this zone's heat, on a lifted scale so a low fire still
+      // glows (the zone chip names the heat); charcoal running out visibly dims the bed.
+      const hv = 0.35 + (heats[z] ?? 1) * 0.8;
+      const lv: [string, number][] = [['embers_low', 0.55], ['embers_medium', 1], ['embers_high', 1.55]];
+      const i0 = hv >= lv[1]![1] ? 1 : 0;
+      const t = clamp01((hv - lv[i0]![1]) / (lv[i0 + 1]![1] - lv[i0]![1]));
+      const strip = fxSprite(lv[i0]![0]), stripHi = fxSprite(lv[i0 + 1]![0]);
+      const a = quadPoint(q, -0.05, z / n), b = quadPoint(q, 1.05, z / n);
+      const c = quadPoint(q, 1.05, (z + 1) / n), d = quadPoint(q, -0.05, (z + 1) / n);
+      const y0 = Math.min(a.y, b.y), y1 = Math.max(c.y, d.y);
+      ctx.save();
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.lineTo(c.x, c.y); ctx.lineTo(d.x, d.y); ctx.closePath(); ctx.clip();
+      if (strip) {
+        const breathe = 0.86 + 0.14 * Math.sin(this.now * 2.2 + z * 1.7); // the coals breathe
+        ctx.globalAlpha = breathe;
+        ctx.drawImage(strip, minX - 8, y0, maxX - minX + 16, Math.max(10, y1 - y0));
+        if (stripHi && t > 0.02) {
+          ctx.globalAlpha = breathe * t;
+          ctx.drawImage(stripHi, minX - 8, y0, maxX - minX + 16, Math.max(10, y1 - y0));
+        }
+      } else {
+        const g = ctx.createLinearGradient(0, y0, 0, y1);
+        g.addColorStop(0, '#5A1D0B'); g.addColorStop(1, '#E0561F');
+        ctx.fillStyle = g; ctx.fillRect(minX, y0, maxX - minX, y1 - y0);
+      }
+      ctx.restore();
+      if (z > 0) { // seam between heat zones
+        ctx.strokeStyle = 'rgba(20,10,5,0.55)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      }
+    }
+    const depth = ctx.createLinearGradient(0, minY, 0, maxY); // far rim in shadow, glow from below
+    depth.addColorStop(0, 'rgba(12,6,3,0.6)'); depth.addColorStop(0.35, 'rgba(12,6,3,0.08)'); depth.addColorStop(1, 'rgba(255,140,50,0.12)');
+    ctx.fillStyle = depth; ctx.fillRect(minX, minY, maxX - minX, maxY - minY);
+    for (let k = 1; k < 10; k++) { // grate bars, parallel to the far rim
+      const p0 = quadPoint(q, -0.02, k / 10), p1 = quadPoint(q, 1.02, k / 10);
+      ctx.strokeStyle = 'rgba(22,16,13,0.95)'; ctx.lineWidth = 2.4;
+      ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
+      ctx.strokeStyle = 'rgba(214,190,166,0.5)'; ctx.lineWidth = 0.8;
+      ctx.beginPath(); ctx.moveTo(p0.x, p0.y - 0.9); ctx.lineTo(p1.x, p1.y - 0.9); ctx.stroke();
+    }
+    ctx.restore();
+    ctx.drawImage(art.img, art.x, art.y, art.w, art.h);
+  }
+  private drawGrillArt(ctx: CanvasRenderingContext2D, art: GrillArt): void {
+    const n = this.zoneCount();
+    const eff = this.sim.grill.charcoalEfficiency;
+    const heats = Array.from({ length: n }, (_, z) => ((this.sim.grill.zones[z] as { heat?: number } | undefined)?.heat ?? 1) * eff);
+    this.drawGrillSprite(ctx, art, heats);
+    const labels = n === 1 ? ['FOGO BAIXO'] : n === 2 ? ['BRASA BAIXA', 'BRASA ALTA'] : ['BAIXA', 'MÉDIA', 'ALTA'];
+    for (let z = 0; z < n; z++) {
+      const heat = heats[z] ?? 1, lab = labels[z] ?? `F${z + 1}`, labW = lab.length * 6 + 14;
+      const p = quadPoint(art.quad, 0.04, (z + 0.2) / n);
+      ctx.save();
+      glass(ctx, p.x, p.y - 7, labW, 14, { alpha: 0.3, border: heat > 1.1 ? C.chama : heat > 0.85 ? C.ambar : 'rgba(255,220,160,0.28)' });
+      ctx.font = font(7, 900, UI); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = heat > 1.1 ? C.chamaCore : heat > 0.85 ? C.ambar : 'rgba(244,231,211,0.85)';
+      ctx.fillText(lab, p.x + labW / 2, p.y);
+      ctx.restore();
+    }
+    for (const f of this.sim.foods) {
+      if (!f.onGrill || f.served) continue;
+      if (this.drag?.food === f) continue;
+      const p = this.foodScreenPos(f); this.drawFood(ctx, f, p.x, p.y, 1);
+    }
+    this.drawCharcoalGauge(ctx, W / 2 - GRILL_ART_BED_W / 2, GRILL_BOTTOM + 8, GRILL_ART_BED_W);
   }
   private benchItemRect(i: number): { x: number; y: number; w: number; h: number } {
     const w = 74; const gap = 8;
@@ -1525,8 +1660,8 @@ class Game {
         }
       }
 
-      if (d.y > GRILL_TOP - 4 && d.y < GRILL_BOTTOM + 4) {
-        const z = this.zoneAt(d.y);
+      {
+        const z = this.grillZoneAt(d.x, d.y);
         if (z >= 0) {
           if (ftue && !d.fromBench && !ftue.allows('move', d.food)) {
             this.tutorial.miss(); // step 3: the plate goes to the customer, not back on the coals
@@ -1719,6 +1854,29 @@ class Game {
 
   // ── Draw ──────────────────────────────────────────────────────────────────
   private drawBackdrop(ctx: CanvasRenderingContext2D): void {
+    // Painted scene of the turn's restaurant (docs/22 §7.1); the procedural sunset otherwise.
+    const artId = this.screen === 'play' ? this.sceneRestaurant : this.screen === 'title' ? 'quintal' : null;
+    const art = artId ? backgroundSprite(artId) : null;
+    const key = art ? `art:${artId}` : 'proc';
+    if (this.bgCacheKey !== key) { this.bgCache = null; this.bgCacheKey = key; }
+    if (art) {
+      if (!this.bgCache) {
+        const off = document.createElement('canvas');
+        off.width = W; off.height = H;
+        const c = off.getContext('2d')!;
+        const s = Math.max(W / art.width, H / art.height);
+        c.drawImage(art, (W - art.width * s) / 2, (H - art.height * s) / 2, art.width * s, art.height * s);
+        const top = c.createLinearGradient(0, 0, 0, 230); // HUD and order cards stay legible
+        top.addColorStop(0, 'rgba(20,10,5,0.55)'); top.addColorStop(1, 'rgba(20,10,5,0)');
+        c.fillStyle = top; c.fillRect(0, 0, W, 230);
+        const vig = c.createRadialGradient(W / 2, H * 0.45, H * 0.3, W / 2, H * 0.45, H * 0.75);
+        vig.addColorStop(0, 'rgba(0,0,0,0)'); vig.addColorStop(1, 'rgba(0,0,0,0.35)');
+        c.fillStyle = vig; c.fillRect(0, 0, W, H);
+        this.bgCache = off;
+      }
+      ctx.drawImage(this.bgCache, 0, 0);
+      return; // the painting has its own string lights
+    }
     if (!this.bgCache) {
       const off = document.createElement('canvas');
       off.width = W; off.height = H;
@@ -1922,13 +2080,17 @@ class Game {
     this.drawChurrasqueira(ctx,true);
     // Fix #1 5s test 15% tocavam hero achando que era botão — reduz affordance falsa (glow 1.3→0.55, sem hover, não-clicável)
     const hero=['picanha','linguica_toscana','espetinho_frango'];
+    const heroArt = this.grillArtView(true); // painted grill: the dishes rest on its grate
     hero.forEach((id,i)=>{
       const ing=this.db?.ingredientById.get(id);
       if(!ing) return;
-      drawFoodArt(ctx,ing,W/2-60+i*60,378,{doneness:0.6, burned:false, scale:0.82, glow:0.55, heat:0.9});
+      const p = heroArt ? quadPoint(heroArt.quad, 0.24 + i * 0.26, 0.52) : { x: W/2-60+i*60, y: 378 };
+      if (!heroArt || !drawFoodSprite(ctx, ing.id, ing.sides, p.x, p.y, { doneness: 0.78, burned: false, scale: 0.9 })) {
+        drawFoodArt(ctx,ing,p.x,p.y,{doneness:0.6, burned:false, scale:0.82, glow:0.55, heat:0.9});
+      }
     });
     ctx.font=font(9,600,UI); ctx.textAlign='center'; ctx.fillStyle='rgba(244,231,211,0.32)';
-    ctx.fillText('pratos ilustrativos', W/2, 414);
+    ctx.fillText('pratos ilustrativos', W/2, heroArt ? Math.min(506, heroArt.y + heroArt.h + 6) : 414);
     const bw=260, bh=68, bx=W/2-bw/2, by=520;
     const breathe2=1+Math.sin(this.now*2.4)*0.02;
     ctx.save(); ctx.scale(breathe2,breathe2);
@@ -2041,42 +2203,54 @@ class Game {
     // thumbnail bg
     roundRectPath(ctx,thumbX,thumbY,thumbW,thumbH,12); ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.fill();
     ctx.save(); roundRectPath(ctx,thumbX,thumbY,thumbW,thumbH,12); ctx.clip();
-    // draw miniature grill based on style
-    const style = showcaseActCh?.visual.style ?? 'lata';
-    // subtle gradient for thumb
-    const tg = ctx.createLinearGradient(thumbX,thumbY,thumbX,thumbY+thumbH);
-    if (style === 'lata') { tg.addColorStop(0,'#7A4A2E'); tg.addColorStop(1,'#4B2A18'); }
-    else if (style === 'chapa') { tg.addColorStop(0,'#5A5E62'); tg.addColorStop(1,'#2A2E33'); }
-    else if (style === 'inox') { tg.addColorStop(0,'#D8E2E8'); tg.addColorStop(1,'#8FA0AF'); }
-    else { tg.addColorStop(0,'#8B5A2B'); tg.addColorStop(1,'#3A2510'); }
-    ctx.fillStyle=tg; ctx.fillRect(thumbX,thumbY,thumbW,thumbH);
-    // fileiras lines inside thumb
-    const evoForThumb = showcaseActEvo;
-    if (evoForThumb) {
-      const fCount = evoForThumb.zoneCount;
-      for(let i=0;i<fCount;i++){
-        const y = thumbY + 10 + (thumbH-20) * (i / Math.max(1,fCount-1)) * (fCount>1?1:0) + (fCount===1? (thumbH/2-4):0);
-        const hh = fCount===1? 26 : (thumbH-20)/fCount - 4;
-        const gyThumb = fCount===1 ? thumbY + thumbH/2 - hh/2 : thumbY+10 + i*((thumbH-20)/fCount);
-        // ember glow
-        ctx.fillStyle = i===fCount-1 || fCount===1 ? 'rgba(255,120,40,0.85)' : i===1 ? 'rgba(255,180,80,0.55)' : 'rgba(210,90,30,0.45)';
-        roundRectPath(ctx,thumbX+8,gyThumb,thumbW-16,hh,4); ctx.fill();
-        // grate lines
-        ctx.strokeStyle='rgba(0,0,0,0.35)'; ctx.lineWidth=1;
-        for(let gx=thumbX+12; gx<thumbX+thumbW-12; gx+=8){ ctx.beginPath(); ctx.moveTo(gx,gyThumb+2); ctx.lineTo(gx,gyThumb+hh-2); ctx.stroke(); }
-        // label zone
-        if (fCount>1){
-          ctx.font=font(7,800,UI); ctx.fillStyle='rgba(0,0,0,0.55)'; ctx.textAlign='center';
-          const labels=['BAIXA','MÉDIA','ALTA']; ctx.fillText(labels[i] ?? `F${i+1}`, thumbX+thumbW/2, gyThumb+hh/2+2);
+    // painted grill of the active churrasqueira + evolution, with its coals (docs/22 §7.1)
+    const thumbGrill = showcaseActCh ? grillSprite(showcaseActCh.id, showcaseActEvo?.level ?? 1) : null;
+    if (thumbGrill) {
+      const warm = ctx.createRadialGradient(thumbX + thumbW / 2, thumbY + thumbH * 0.6, 4, thumbX + thumbW / 2, thumbY + thumbH * 0.6, thumbW * 0.7);
+      warm.addColorStop(0, 'rgba(255,170,90,0.28)'); warm.addColorStop(1, 'rgba(40,20,10,0)');
+      ctx.fillStyle = warm; ctx.fillRect(thumbX, thumbY, thumbW, thumbH);
+      const k = Math.min((thumbW - 4) / thumbGrill.w, (thumbH - 4) / thumbGrill.h);
+      const gx = thumbX + (thumbW - thumbGrill.w * k) / 2, gy = thumbY + (thumbH - thumbGrill.h * k) / 2;
+      this.drawGrillSprite(ctx, { img: thumbGrill.img, x: gx, y: gy, w: thumbGrill.w * k, h: thumbGrill.h * k,
+        quad: thumbGrill.hole.quad.map(([x, y]) => [gx + x * k, gy + y * k]) as Quad }, [1]);
+    } else {
+      // draw miniature grill based on style
+      const style = showcaseActCh?.visual.style ?? 'lata';
+      // subtle gradient for thumb
+      const tg = ctx.createLinearGradient(thumbX,thumbY,thumbX,thumbY+thumbH);
+      if (style === 'lata') { tg.addColorStop(0,'#7A4A2E'); tg.addColorStop(1,'#4B2A18'); }
+      else if (style === 'chapa') { tg.addColorStop(0,'#5A5E62'); tg.addColorStop(1,'#2A2E33'); }
+      else if (style === 'inox') { tg.addColorStop(0,'#D8E2E8'); tg.addColorStop(1,'#8FA0AF'); }
+      else { tg.addColorStop(0,'#8B5A2B'); tg.addColorStop(1,'#3A2510'); }
+      ctx.fillStyle=tg; ctx.fillRect(thumbX,thumbY,thumbW,thumbH);
+      // fileiras lines inside thumb
+      const evoForThumb = showcaseActEvo;
+      if (evoForThumb) {
+        const fCount = evoForThumb.zoneCount;
+        for(let i=0;i<fCount;i++){
+          const y = thumbY + 10 + (thumbH-20) * (i / Math.max(1,fCount-1)) * (fCount>1?1:0) + (fCount===1? (thumbH/2-4):0);
+          const hh = fCount===1? 26 : (thumbH-20)/fCount - 4;
+          const gyThumb = fCount===1 ? thumbY + thumbH/2 - hh/2 : thumbY+10 + i*((thumbH-20)/fCount);
+          // ember glow
+          ctx.fillStyle = i===fCount-1 || fCount===1 ? 'rgba(255,120,40,0.85)' : i===1 ? 'rgba(255,180,80,0.55)' : 'rgba(210,90,30,0.45)';
+          roundRectPath(ctx,thumbX+8,gyThumb,thumbW-16,hh,4); ctx.fill();
+          // grate lines
+          ctx.strokeStyle='rgba(0,0,0,0.35)'; ctx.lineWidth=1;
+          for(let gx=thumbX+12; gx<thumbX+thumbW-12; gx+=8){ ctx.beginPath(); ctx.moveTo(gx,gyThumb+2); ctx.lineTo(gx,gyThumb+hh-2); ctx.stroke(); }
+          // label zone
+          if (fCount>1){
+            ctx.font=font(7,800,UI); ctx.fillStyle='rgba(0,0,0,0.55)'; ctx.textAlign='center';
+            const labels=['BAIXA','MÉDIA','ALTA']; ctx.fillText(labels[i] ?? `F${i+1}`, thumbX+thumbW/2, gyThumb+hh/2+2);
+          }
         }
       }
-    }
-    // chimney or not
-    if (showcaseActCh?.visual.chimney){
-      ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.fillRect(thumbX+thumbW-18, thumbY-2, 10, 8);
-      ctx.fillStyle='#8B7A62'; roundRectPath(ctx,thumbX+thumbW-18,thumbY-6,10,8,2); ctx.fill();
-      // smoke puff
-      ctx.fillStyle='rgba(220,210,195,0.22)'; ctx.beginPath(); ctx.arc(thumbX+thumbW-13, thumbY-10, 4+Math.sin(this.now*2)*1,0,Math.PI*2); ctx.fill();
+      // chimney or not
+      if (showcaseActCh?.visual.chimney){
+        ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.fillRect(thumbX+thumbW-18, thumbY-2, 10, 8);
+        ctx.fillStyle='#8B7A62'; roundRectPath(ctx,thumbX+thumbW-18,thumbY-6,10,8,2); ctx.fill();
+        // smoke puff
+        ctx.fillStyle='rgba(220,210,195,0.22)'; ctx.beginPath(); ctx.arc(thumbX+thumbW-13, thumbY-10, 4+Math.sin(this.now*2)*1,0,Math.PI*2); ctx.fill();
+      }
     }
     ctx.restore();
     ctx.strokeStyle='rgba(255,214,160,0.16)'; ctx.lineWidth=1; roundRectPath(ctx,thumbX,thumbY,thumbW,thumbH,12); ctx.stroke();
@@ -2199,8 +2373,10 @@ class Game {
       ctx.save(); ctx.translate(x+22, uy+26);
       ctx.fillStyle= canAfford? C.ouroLight : C.madeiraPinho;
       ctx.beginPath(); ctx.arc(0,0,14,0,Math.PI*2); ctx.fill();
-      if(idx===0) flameIcon(ctx,0,1,8,true);
-      else starIcon(ctx,0,0,8,{filled:true});
+      if (!(track?.icon && drawIconSprite(ctx, track.icon, 0, 0, 26))) { // the data names each track's icon
+        if(idx===0) flameIcon(ctx,0,1,8,true);
+        else starIcon(ctx,0,0,8,{filled:true});
+      }
       ctx.restore();
       ctx.textAlign='left';
       ctx.fillStyle=C.perola;
@@ -2636,7 +2812,7 @@ class Game {
         ctx.fillStyle=vipGlow; roundRectPath(ctx,r.x,r.y,r.w,r.h,14); ctx.fill();
       }
       const ax=r.x+22, ay=r.y+22;
-      avatar(ctx,ax,ay,15, vip? C.ouro : C.telha, 'rgba(244,231,211,0.38)',{vip});
+      if (!drawPortrait(ctx, c.def.id, c.uid, ax, ay, 15, vip ? C.ouro : 'rgba(255,214,160,0.6)')) avatar(ctx,ax,ay,15, vip? C.ouro : C.telha, 'rgba(244,231,211,0.38)',{vip});
       ctx.font=font(11,800,UI); ctx.textAlign='left'; ctx.textBaseline='middle';
       ctx.fillStyle= vip? C.ouroLight : C.madeiraPinho;
       ctx.shadowColor='rgba(0,0,0,0.5)'; ctx.shadowBlur=2;
@@ -2647,7 +2823,7 @@ class Game {
         const done=line.fulfilledBy.length>0;
         const ing=this.db.ingredientById.get(line.ingredientId);
         ctx.save(); if(done) ctx.globalAlpha=0.4;
-        if(ing) drawFoodIcon(ctx,ing,ix+11,r.y+34,22);
+        if(ing && !drawFoodIconSprite(ctx,ing.id,ix+11,r.y+34,22,'served')) drawFoodIcon(ctx,ing,ix+11,r.y+34,22);
         ctx.restore();
         if(done) checkIcon(ctx,ix+11,r.y+34,8,C.verdeClaro);
         ix+=26;
@@ -2670,6 +2846,10 @@ class Game {
   }
 
   private drawChurrasqueira(ctx: CanvasRenderingContext2D, heroMode=false): void {
+    if (heroMode) {
+      const art = this.grillArtView(true);
+      if (art) { this.drawGrillSprite(ctx, art, [1]); return; }
+    }
     const act = !heroMode ? this.activeChurr() : (this.churrasqueiras[0] ?? this.activeChurr());
     const style = act?.visual.style ?? 'brick';
     const accent = act?.visual.color ?? '#8A5A33';
@@ -2847,6 +3027,8 @@ class Game {
   }
 
   private drawGrill(ctx: CanvasRenderingContext2D): void {
+    const art = this.grillArtView(false);
+    if (art) { this.drawGrillArt(ctx, art); return; }
     const n=this.zoneCount();
     // overallW matches style width when not hero
     const actG = this.activeChurr();
@@ -2974,7 +3156,8 @@ class Game {
     const ing=f.ingredient;
     // Same value tickGrill cooks with (effectiveHeat) — see 18-STATUS §4.1.
     const heat=f.onGrill ? effectiveHeat(this.sim.grill, f.zoneIndex, this.db) : 0.4;
-    drawFoodArt(ctx,ing,x,y,{doneness:d, burned:f.burned, scale, glow: f.onGrill?1:0.4, heat});
+    const artH = drawFoodSprite(ctx, ing.id, ing.sides, x, y, { doneness: d, burned: f.burned, scale });
+    if (!artH) drawFoodArt(ctx,ing,x,y,{doneness:d, burned:f.burned, scale, glow: f.onGrill?1:0.4, heat});
     if(d>0.3 && Math.random()<0.08){
       const hh=ing.sides>=4?17:25; const w=ing.sides>=4?44:54;
       const col=d>1?'rgba(55,55,55,.55)':'rgba(220,210,195,.32)';
@@ -2982,7 +3165,7 @@ class Game {
     }
     const stage=String(stageOf(this.db,f));
     const even=evenness(f);
-    const hh=(ing.sides>=4?17:25)*scale;
+    const hh= artH ? artH*0.72 : (ing.sides>=4?17:25)*scale;
     outlinedText(ctx,this.stageLabel(f,stage).toUpperCase(),x,y+hh/2+14,f.burned?C.telha:even<0.6?C.ambar:'rgba(244,231,211,0.85)',10,{weight:800, family:UI, outline:3});
     // In the FTUE the label follows the coach (docs/20: "espere dourar → toque"),
     // and the guided steps leave it to the overlay's prompt.
@@ -3001,18 +3184,27 @@ class Game {
 
   private drawBench(ctx: CanvasRenderingContext2D): void {
     const by=BENCH_TOP-16, bh=H-by+10;
-    ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.fillRect(8,by-4,W-16,8);
-    ctx.save(); roundRectPath(ctx,6,by,W-12,bh,16); ctx.clip(); drawWoodGrain(ctx,6,by,W-12,bh,{planks:3}); ctx.restore();
-    ctx.save(); roundRectPath(ctx,6,by,W-12,bh,16); ctx.clip();
-    const lip=ctx.createLinearGradient(0,by,0,by+8); lip.addColorStop(0,'rgba(255,230,185,0.4)'); lip.addColorStop(1,'rgba(255,230,185,0)'); ctx.fillStyle=lip; ctx.fillRect(6,by,W-12,8); ctx.restore();
-    ctx.strokeStyle='rgba(255,214,160,0.22)'; ctx.lineWidth=1.5; roundRectPath(ctx,6+0.75,by+0.75,W-12-1.5,bh-1.5,16-0.75); ctx.stroke();
+    const bench = propSprite('bancada'); // painted counter: its back edge spans the screen, sides cropped
+    if (bench) {
+      const bw = 600, bhh = (bench.h * bw) / bench.w;
+      ctx.fillStyle='rgba(0,0,0,0.35)'; ctx.fillRect(0,by-8,W,10);
+      ctx.drawImage(bench.img, W/2 - bw/2, by - 4, bw, bhh);
+    } else {
+      ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.fillRect(8,by-4,W-16,8);
+      ctx.save(); roundRectPath(ctx,6,by,W-12,bh,16); ctx.clip(); drawWoodGrain(ctx,6,by,W-12,bh,{planks:3}); ctx.restore();
+      ctx.save(); roundRectPath(ctx,6,by,W-12,bh,16); ctx.clip();
+      const lip=ctx.createLinearGradient(0,by,0,by+8); lip.addColorStop(0,'rgba(255,230,185,0.4)'); lip.addColorStop(1,'rgba(255,230,185,0)'); ctx.fillStyle=lip; ctx.fillRect(6,by,W-12,8); ctx.restore();
+      ctx.strokeStyle='rgba(255,214,160,0.22)'; ctx.lineWidth=1.5; roundRectPath(ctx,6+0.75,by+0.75,W-12-1.5,bh-1.5,16-0.75); ctx.stroke();
+    }
     outlinedText(ctx,this.l10n.t('ui.hud.bench'),20,by+12,'rgba(255,235,205,0.75)',11,{weight:800, family:UI, align:'left', outline:2});
     this.unlocked.forEach((ing,i)=>{
       const r=this.benchItemRect(i);
       if(r.y+r.h>H) return;
       const isDragging=this.drag!==null && this.drag.food.ingredient.id===ing.id;
-      panel(ctx,r.x,r.y,r.w,r.h,{r:12, top:'rgba(50,35,26,0.95)', bottom:'rgba(26,17,12,0.95)', border: isDragging? C.brasa : 'rgba(255,214,160,0.18)', borderWidth: isDragging?2:1, shadow:8, innerGlow:true});
-      drawFoodIcon(ctx,ing,r.x+r.w/2,r.y+24,32);
+      panel(ctx,r.x,r.y,r.w,r.h, bench
+        ? {r:12, top:'rgba(42,24,12,0.30)', bottom:'rgba(24,12,6,0.46)', border: isDragging? C.brasa : 'rgba(255,232,196,0.30)', borderWidth: isDragging?2:1, shadow:4, innerGlow:false}
+        : {r:12, top:'rgba(50,35,26,0.95)', bottom:'rgba(26,17,12,0.95)', border: isDragging? C.brasa : 'rgba(255,214,160,0.18)', borderWidth: isDragging?2:1, shadow:8, innerGlow:true});
+      if (!drawFoodIconSprite(ctx,ing.id,r.x+r.w/2,r.y+24,32,'raw')) drawFoodIcon(ctx,ing,r.x+r.w/2,r.y+24,32);
       const label=this.l10n.t(ing.nameKey);
       outlinedText(ctx,label.length>13?label.slice(0,12)+'…':label,r.x+r.w/2,r.y+48,C.perola,10,{weight:800, family:UI, outline:2});
       ctx.save(); glass(ctx,r.x+r.w/2-22,r.y+r.h-17,44,14,{r:7, alpha:0.18, border:'rgba(231,194,74,0.4)'});
@@ -3023,7 +3215,20 @@ class Game {
 
   private drawDragged(ctx: CanvasRenderingContext2D): void {
     const d=this.drag!;
-    const overGrill=d.y>GRILL_TOP-4 && d.y<GRILL_BOTTOM+4;
+    const art = this.grillArtView(false);
+    const artZone = art ? this.grillZoneAt(d.x, d.y) : -1;
+    if (art && artZone >= 0) {
+      const n = this.zoneCount();
+      const a = quadPoint(art.quad, 0, artZone / n), b = quadPoint(art.quad, 1, artZone / n);
+      const c = quadPoint(art.quad, 1, (artZone + 1) / n), e = quadPoint(art.quad, 0, (artZone + 1) / n);
+      ctx.save();
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.lineTo(c.x, c.y); ctx.lineTo(e.x, e.y); ctx.closePath();
+      ctx.fillStyle = 'rgba(242,166,59,0.16)'; ctx.fill();
+      ctx.setLineDash([8, 5]); ctx.lineDashOffset = -this.now * 28; ctx.strokeStyle = C.chama; ctx.lineWidth = 2.5; ctx.shadowColor = C.chama; ctx.shadowBlur = 8;
+      ctx.stroke();
+      ctx.restore();
+    }
+    const overGrill=!art && d.y>GRILL_TOP-4 && d.y<GRILL_BOTTOM+4;
     if(overGrill){
       const z=this.zoneAt(d.y);
       if(z>=0){
@@ -3127,7 +3332,7 @@ class Game {
   private ftueHoles(on: string, hint: CoachAction): Rect[] {
     const plate = this.ftue?.plate;
     const plateHole = (): Rect => {
-      const p = plate ? this.foodScreenPos(plate) : { x: W / 2, y: this.zoneY(0) };
+      const p = plate ? this.foodScreenPos(plate) : this.toGrillScreen(W / 2, this.zoneY(0));
       return { x: p.x - 48, y: p.y - 42, w: 96, h: 84, r: 22 };
     };
     if (on === 'placed') {
@@ -3151,7 +3356,7 @@ class Game {
       const ing = hint.kind === 'place' ? this.ftue?.ingredient : 'food' in hint ? hint.food?.ingredient : undefined;
       if (ph.carrying && ing) {
         ctx.save(); ctx.globalAlpha = 0.8 * ph.alpha;
-        drawFoodIcon(ctx, ing, at.x, at.y - 4, 34);
+        if (!drawFoodIconSprite(ctx, ing.id, at.x, at.y - 4, 34, 'raw')) drawFoodIcon(ctx, ing, at.x, at.y - 4, 34);
         ctx.restore();
       }
       drawHand(ctx, at.x + 4, at.y + 6, ph.press, ph.alpha);
