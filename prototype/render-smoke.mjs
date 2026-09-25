@@ -289,6 +289,33 @@ async function main() {
   const complete = log.find((e) => e.name === 'tutorial_complete');
   if (complete.params.misses !== 0) throw new Error(`following the hand still cost ${complete.params.misses} misses`);
 
+  // Home's daily calendar (docs/18-STATUS.md §7): the strip's own panel opens
+  // it — its hit box used to be the empty gap underneath — RESGATAR pays the
+  // day once per calendar day, and ✕ closes it. Geometry comes from the same
+  // layout the drawing uses (`__churrascoHome`).
+  const home = () => globalThis.__churrascoHome;
+  const tapAt = async (x, y) => { pointer('pointerdown', x, y); pointer('pointerup', x, y); await pump(4); };
+  const centre = (r) => [r.x + r.w / 2, r.y + r.h / 2];
+  const strip = home().strip;
+  await tapAt(strip.x + strip.w / 2, strip.y + strip.h + 30);
+  if (home().dailyOpen) throw new Error('the empty gap under the daily strip opened the calendar');
+  await tapAt(...centre(strip));
+  if (!home().dailyOpen) throw new Error('tapping the daily strip did not open the calendar');
+  const coinsBeforeDaily = home().coins;
+  await tapAt(...centre(home().modal.claim));
+  if (home().lastClaimDay !== 1 || home().coins !== coinsBeforeDaily + 250) {
+    throw new Error(`RESGATAR did not pay day 1 (250): ${JSON.stringify(home())}`);
+  }
+  await tapAt(...centre(home().modal.days[1]));
+  await tapAt(...centre(home().modal.claim));
+  if (home().lastClaimDay !== 1 || home().coins !== coinsBeforeDaily + 250) throw new Error('the calendar paid twice in one day');
+  await tapAt(...centre(home().modal.close));
+  if (home().dailyOpen) throw new Error('✕ did not close the calendar');
+  const dailyEvents = (globalThis.__churrascoAnalytics ?? []).filter((e) => e.name === 'daily_reward');
+  if (dailyEvents.length !== 1 || !dailyEvents[0].valid || dailyEvents[0].params.day_index !== 1) {
+    throw new Error(`daily_reward analytics: ${JSON.stringify(dailyEvents)}`);
+  }
+
   // Then an ordinary turn from Home: JOGAR, a drag, a flip, run out to the result.
   pointer('pointerdown', 210, 310);
   pointer('pointerup', 210, 310);
@@ -356,6 +383,7 @@ async function main() {
   console.log(`[render-smoke] OK — ${ops.toLocaleString('en-US')} canvas ops, no exceptions`);
   console.log(`[render-smoke] FTUE played by following the hand: ${names.join(' → ')} (misses 0)`);
   console.log(`[render-smoke] second install, backgrounded then skipped: ${names2.join(' → ')}`);
+  console.log(`[render-smoke] daily calendar: strip opens it, RESGATAR pays day 1 once (+250), ✕ closes it`);
   console.log(`[render-smoke] top ops: ` + drawn.slice(0, 8).map(([k, v]) => `${k}=${v}`).join(' '));
   console.log(`[render-smoke] gradient calls: linear=${calls.get('createLinearGradient') ?? 0} radial=${calls.get('createRadialGradient') ?? 0}`);
   console.log(`[render-smoke] text drawn: fillText=${calls.get('fillText') ?? 0} strokeText=${calls.get('strokeText') ?? 0}`);

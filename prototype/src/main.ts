@@ -132,6 +132,8 @@ interface Meta {
   longestStreak: number;
   lastLoginISO: string; // YYYY-MM-DD
   lastClaimDay: number; // 1..7
+  /** Calendar day of the last daily claim: one claim per day. */
+  lastClaimISO: string;
   turnsPlayed: number;
   bestCombo: number;
   totalPerfect: number;
@@ -165,7 +167,7 @@ function loadMeta(): Meta {
   // `tutorial.json` and the "step 6 unreachable" rule in validate-data.ts.)
   const fallback: Meta = {
     coins: 0, embers: 0, xp: 0, level: 1, streak: 1, longestStreak: 1,
-    lastLoginISO: todayISO(), lastClaimDay: 0, turnsPlayed: 0, bestCombo: 0,
+    lastLoginISO: todayISO(), lastClaimDay: 0, lastClaimISO: '', turnsPlayed: 0, bestCombo: 0,
     totalPerfect: 0, collection: [], ftueDone: false,
     ftueStep: 0, clearedLevels: [], bonusReady: null, bonusExpiresAt: 0, wheelSpins: 1, lastWheelSpinISO: '',
     upgrades: { grill_size: 0 }, graceUsed: false,
@@ -367,6 +369,8 @@ class Game {
         this.meta.graceUsed = false;
         this.meta.lastClaimDay = 0;
       }
+      // A finished 7-day cycle starts over the next day (it used to stay at 7 for good).
+      if (this.meta.lastClaimDay >= 7) this.meta.lastClaimDay = 0;
       this.meta.lastLoginISO = today;
       saveMeta(this.meta);
       // Offline earnings simulation: fake 45-180 min away
@@ -726,9 +730,14 @@ class Game {
   private update(dt: number): void {
     this.now += dt;
     // Read-only views for the Node harnesses (shoot.mjs / render-smoke.mjs).
-    const dbg = globalThis as unknown as { __churrascoScreen?: Screen; __churrascoFtue?: unknown };
+    const dbg = globalThis as unknown as { __churrascoScreen?: Screen; __churrascoFtue?: unknown; __churrascoHome?: unknown };
     dbg.__churrascoScreen = this.screen;
     if (!this.ftue && !this.homeFtueActive() && !this.ftueResultActive()) dbg.__churrascoFtue = null;
+    dbg.__churrascoHome = this.screen === 'home' ? {
+      coins: this.meta.coins, embers: this.meta.embers, lastClaimDay: this.meta.lastClaimDay,
+      claimable: this.dailyClaimable(), dailyOpen: this.dailyModalOpen,
+      strip: this.dailyStripLayout().panel, modal: this.dailyModalOpen ? this.dailyModalLayout() : null
+    } : null;
     if (this.screen === 'splash') {
       this.splashT += dt;
       if (this.splashT > 1.45) {
@@ -1116,6 +1125,66 @@ class Game {
     return { x: 14 + idx * (cardW + 8), y: 460, w: cardW, h: 52, r: 16 };
   }
 
+  /**
+   * Home daily strip geometry — shared by drawDailyStrip and the tap handler.
+   * The hit box used to be y 188–268: the empty gap *under* the drawn strip
+   * (y 80–188), so tapping the strip did nothing and tapping thin air opened it.
+   */
+  private dailyStripLayout(): { panel: Rect; days: Rect[] } {
+    const boxW = 50, gap = 6, rowW = 7 * boxW + 6 * gap;
+    const x0 = W / 2 - rowW / 2;
+    return {
+      // 116 tall so the grace-day line sits inside the panel instead of on its edge.
+      panel: { x: 12, y: 80, w: W - 24, h: 116 },
+      days: Array.from({ length: 7 }, (_, i) => ({ x: x0 + i * (boxW + gap), y: 128, w: boxW, h: 52 }))
+    };
+  }
+
+  /**
+   * Daily modal geometry — shared by drawDailyModal and its tap handler. They
+   * disagreed three ways: the day cards were hit-tested at the strip's x
+   * positions (the middle of "Dia 1" missed), RESGATAR had no hit box at all,
+   * and ✕ was hit-tested 40 px above the panel (its drawing also hung off the
+   * panel's right edge, as did the seventh day card).
+   */
+  private dailyModalLayout(): { panel: Rect; days: Rect[]; claim: Rect; close: Rect } {
+    const cw = 360, ch = 420, cx = W / 2 - cw / 2, cy = 180;
+    const boxW = 44, gap = 6, rowW = 7 * boxW + 6 * gap;
+    const x0 = W / 2 - rowW / 2;
+    const bw = 220, bh = 48;
+    return {
+      panel: { x: cx, y: cy, w: cw, h: ch },
+      days: Array.from({ length: 7 }, (_, i) => ({ x: x0 + i * (boxW + gap), y: cy + 68, w: boxW, h: 58 })),
+      claim: { x: W / 2 - bw / 2, y: cy + 150, w: bw, h: bh },
+      close: { x: cx + cw - 48, y: cy + 12, w: 36, h: 24 }
+    };
+  }
+
+  /** The day that can be claimed now (1–7), or null: one claim per calendar day. */
+  private dailyClaimable(): number | null {
+    const next = this.meta.lastClaimDay + 1;
+    if (next > 7 || this.meta.lastClaimISO === todayISO()) return null;
+    return next;
+  }
+
+  /** RESGATAR, or a tap on the next day's card. */
+  private claimDaily(at: Pt): boolean {
+    const day = this.dailyClaimable();
+    if (day === null) { audio.play('uiError'); return false; }
+    const rew = DAILY_REWARDS[day - 1]!;
+    if (rew.icon === 'coin') this.meta.coins += rew.amount ?? 0;
+    else if (rew.icon === 'ember') this.meta.embers += rew.amount ?? 0;
+    if (day === 7) this.meta.coins += 500;
+    this.meta.lastClaimDay = day;
+    this.meta.lastClaimISO = todayISO();
+    saveMeta(this.meta);
+    this.track({ name: 'daily_reward', params: { day_index: day, streak: this.meta.streak } });
+    this.burst(at.x, at.y, 16, C.ouroLight, 'confetti');
+    audio.play('coin');
+    if (day === 7) audio.play('levelUp');
+    return true;
+  }
+
   // ── Input ─────────────────────────────────────────────────────────────────
   private bindInput(canvas: HTMLCanvasElement): void {
     const toLocal = (e: PointerEvent): { x: number; y: number } => {
@@ -1132,30 +1201,17 @@ class Game {
 
       // Global close for modals
       if (this.dailyModalOpen) {
-        // hit test daily claim
-        const claimHit = this.hitDailyClaim(p);
-        if (claimHit !== null) {
-          if (claimHit === this.meta.lastClaimDay + 1 && claimHit <= 7) {
-            const rew = DAILY_REWARDS[claimHit-1]!;
-            if (rew.icon === 'coin') this.meta.coins += rew.amount ?? 0;
-            else if (rew.icon === 'ember') this.meta.embers += rew.amount ?? 0;
-            this.meta.lastClaimDay = claimHit;
-            if (claimHit === 7) this.meta.coins += 500;
-            saveMeta(this.meta);
-            this.burst(p.x, p.y, 16, C.ouroLight, 'confetti');
-            audio.play('coin');
-            if (claimHit === 7) audio.play('levelUp');
-          }
-          return;
-        }
-        // close button
-        if (p.x > W-56 && p.y > 140 && p.y < 180 && p.x < W-20) {
+        const L = this.dailyModalLayout();
+        if (contains(L.close, p, 10)) {
           this.dailyModalOpen = false;
           audio.play('uiTap');
           return;
         }
+        const next = this.meta.lastClaimDay + 1;
+        const onNextCard = next <= 7 && contains(L.days[next - 1]!, p, 3);
+        if (onNextCard || contains(L.claim, p, 4)) { this.claimDaily(p); return; }
         // tap outside to close
-        if (p.y < 180 || p.y > 640) { this.dailyModalOpen = false; return; }
+        if (!contains(L.panel, p)) this.dailyModalOpen = false;
         return;
       }
       if (this.offlinePopup) {
@@ -1269,7 +1325,7 @@ class Game {
           return;
         }
         // Daily strip
-        if (p.y > 188 && p.y < 268 && p.x > 12 && p.x < W-12) {
+        if (contains(this.dailyStripLayout().panel, p)) {
           this.dailyModalOpen = true;
           audio.play('uiTap');
           return;
@@ -1520,17 +1576,6 @@ class Game {
   private hitHomeUpgrade(p: {x:number;y:number}): string | null {
     // upgrade teaser at 460-512 after the churrasqueira showcase (2 cards), with a little slop
     for (const id of ['grill_size', 'grill_heat']) if (contains(this.homeUpgradeRect(id), p, 4)) return id;
-    return null;
-  }
-  private hitDailyClaim(p: {x:number;y:number}): number | null {
-    if (p.y < 240 || p.y > 320) return null;
-    // 7 boxes from x 16, w 48 gap 6
-    const startX = 16;
-    const boxW = 50;
-    for (let i=0;i<7;i++) {
-      const x = startX + i*(boxW+6);
-      if (p.x >= x && p.x <= x+boxW) return i+1;
-    }
     return null;
   }
   /**
@@ -2297,22 +2342,26 @@ class Game {
     flameIcon(ctx,cx+8,cy,8,true); ctx.font=font(13,900,DISPLAY); ctx.fillStyle=C.chamaCore; ctx.fillText(String(this.meta.embers),cx+20,cy+1);
     // streak flame top right small
     ctx.font=font(11,800,UI); ctx.textAlign='right'; ctx.fillStyle=C.ambar;
-    ctx.fillText(`${this.meta.streak} dias`,W-18,58);
+    ctx.fillText(`${this.meta.streak} ${this.meta.streak === 1 ? 'dia' : 'dias'}`,W-18,58);
   }
 
   private drawDailyStrip(ctx: CanvasRenderingContext2D): void {
-    panel(ctx,12, 80, W-24, 108, {r:18, top:'rgba(44,32,24,0.96)', bottom:'rgba(22,15,10,0.96)', border:'rgba(255,214,160,0.18)', shadow:12, innerGlow:true});
+    const L = this.dailyStripLayout();
+    panel(ctx, L.panel.x, L.panel.y, L.panel.w, L.panel.h, {r:18, top:'rgba(44,32,24,0.96)', bottom:'rgba(22,15,10,0.96)', border:'rgba(255,214,160,0.18)', shadow:12, innerGlow:true});
     ctx.font=font(11,900,UI); ctx.textAlign='left'; ctx.fillStyle=C.perola;
     ctx.fillText('Recompensa diária · sequência com graça',20,102);
     ctx.font=font(10,600,UI); ctx.fillStyle='rgba(244,231,211,0.5)';
-    ctx.fillText(`Dia ${this.meta.lastClaimDay+1} de 7 · Volte amanhã = +15% no ciclo`,20,116);
+    const claimable = this.dailyClaimable();
+    ctx.fillText(claimable !== null
+      ? `Dia ${claimable} de 7 · toque para resgatar · Volte amanhã = +15% no ciclo`
+      : `Resgatado hoje · Volte amanhã = +15% no ciclo`, 20, 116);
     // 7 boxes
-    const startX=16, boxW=50, gap=6, y=128;
+    const { y, w: boxW } = L.days[0]!;
     for (let i=0;i<7;i++) {
-      const x=startX + i*(boxW+gap);
+      const x=L.days[i]!.x;
       const day=i+1;
       const claimed=day <= this.meta.lastClaimDay;
-      const isNext=day === this.meta.lastClaimDay+1;
+      const isNext=day === claimable;
       const isSeventh=day===7;
       panel(ctx,x,y,boxW,52,{r:12, top: claimed? 'rgba(70,52,28,0.98)' : isNext? 'rgba(58,46,40,0.98)':'rgba(34,24,18,0.96)', bottom: claimed? 'rgba(38,26,14,0.98)':'rgba(18,12,8,0.96)', border: claimed? C.ouro : isNext? C.ouroLight : 'rgba(255,214,160,0.14)', borderWidth: isNext?1.5:1, shadow:6, innerGlow:true});
       if (claimed) {
@@ -2342,9 +2391,9 @@ class Game {
         ctx.globalAlpha=1;
       }
     }
-    // streak bonus hint
+    // streak bonus hint — inside the panel (it used to sit on its bottom edge)
     ctx.font=font(9,700,UI); ctx.textAlign='center'; ctx.fillStyle='rgba(244,231,211,0.4)';
-    ctx.fillText('Perdeu 1 dia? Você tem 1 dia de graça — sequência não quebra.',W/2, y+62);
+    ctx.fillText('Perdeu 1 dia? Você tem 1 dia de graça — sequência não quebra.',W/2, L.panel.y + L.panel.h - 8);
   }
 
   private drawBottomNav(ctx: CanvasRenderingContext2D): void {
@@ -3400,19 +3449,21 @@ class Game {
   private drawDailyModal(ctx: CanvasRenderingContext2D): void {
     // scrim
     ctx.fillStyle='rgba(6,3,2,0.72)'; ctx.fillRect(0,0,W,H);
-    const cw=360,cx=W/2-cw/2, cy=180, ch=420;
+    const L = this.dailyModalLayout();
+    const { x: cx, y: cy, w: cw, h: ch } = L.panel;
     panel(ctx,cx,cy,cw,ch,{r:24, top:'rgba(58,42,30,0.98)', bottom:'rgba(24,16,10,0.98)', border:C.ouro, borderWidth:1.5, shadow:32, glowTop:'rgba(255,220,160,0.28)'});
     // header
     outlinedText(ctx,'Recompensa Diária',W/2,cy+32,C.perola,20,{outline:3, weight:900});
     ctx.font=font(11,600,UI); ctx.textAlign='center'; ctx.fillStyle='rgba(244,231,211,0.6)';
-    ctx.fillText(`Sequência: ${this.meta.streak} dias · Graça: ${this.meta.graceUsed? 'usada':'disponível'}`,W/2,cy+52);
+    ctx.fillText(`Sequência: ${this.meta.streak} ${this.meta.streak === 1 ? 'dia' : 'dias'} · Graça: ${this.meta.graceUsed? 'usada':'disponível'}`,W/2,cy+52);
     // streak bar 7
-    const startX=cx+18, boxW=44, gap=6, y=cy+68;
+    const claimable = this.dailyClaimable();
+    const { y, w: boxW } = L.days[0]!;
     for(let i=0;i<7;i++){
-      const x=startX+i*(boxW+gap);
+      const x=L.days[i]!.x;
       const day=i+1;
       const claimed=day<=this.meta.lastClaimDay;
-      const isNext=day===this.meta.lastClaimDay+1;
+      const isNext=day===claimable;
       panel(ctx,x,y,boxW,58,{r:12, top: claimed? 'rgba(70,52,28,0.98)': isNext? 'rgba(58,46,40,0.98)':'rgba(34,24,18,0.96)', bottom: claimed? 'rgba(38,26,14,0.98)':'rgba(18,12,8,0.96)', border: claimed? C.ouro : isNext? C.ouroLight : 'rgba(255,214,160,0.14)', shadow:6});
       const rew=DAILY_REWARDS[i]!;
       const icx=x+boxW/2, icy=y+18;
@@ -3428,37 +3479,35 @@ class Game {
     }
     // claim button for next day
     const nextDay=this.meta.lastClaimDay+1;
-    const canClaim=nextDay<=7 && nextDay> this.meta.lastClaimDay;
-    const btnY=cy+150;
-    const bw=220,bh=48,bx=W/2-bw/2;
+    const canClaim=claimable !== null;
+    const { x: bx, y: btnY, w: bw, h: bh } = L.claim;
     if (nextDay<=7) {
       if (canClaim) premiumButton(ctx,bx,btnY,bw,bh,{variant:'gold'});
       else panel(ctx,bx,btnY,bw,bh,{r:24, top:'rgba(60,44,24,0.6)', bottom:'rgba(30,22,12,0.6)', border:'rgba(255,255,255,0.1)'});
       outlinedText(ctx, canClaim? `RESGATAR DIA ${nextDay}` : `JÁ RESGATADO`, W/2, btnY+bh/2+2, canClaim? C.carvao: C.creme,14,{outline: canClaim?2:1, weight:900});
-      if (canClaim) {
-        ctx.font=font(10,600,UI); ctx.fillStyle='rgba(244,231,211,0.6)'; ctx.textAlign='center';
-        ctx.fillText('Toque no card do dia para resgatar',W/2,btnY+bh+16);
-      }
+      ctx.font=font(10,600,UI); ctx.fillStyle='rgba(244,231,211,0.6)'; ctx.textAlign='center';
+      ctx.fillText(canClaim ? 'ou toque no card do dia' : `Volte amanhã para o dia ${nextDay}`, W/2, btnY+bh+16);
     } else {
       ctx.font=font(11,700,UI); ctx.fillStyle=C.verdeClaro; ctx.textAlign='center';
       ctx.fillText('Ciclo completo! +15% no próximo ciclo',W/2,btnY+20);
     }
     // grace info
     ctx.font=font(9,600,UI); ctx.fillStyle='rgba(244,231,211,0.5)'; ctx.textAlign='center';
-    ctx.fillText('Sequência com 1 dia de graça · Falhou 1 dia? Não quebra!',W/2,cy+220);
+    ctx.fillText('Sequência com 1 dia de graça · Falhou 1 dia? Não quebra!',W/2,cy+234);
     // progress to 7
-    const barW=cw-36, barX=cx+18, barY=cy+240;
+    const barW=cw-36, barX=cx+18, barY=cy+248;
     roundRectPath(ctx,barX,barY,barW,8,4); ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.fill();
     roundRectPath(ctx,barX,barY,barW*(this.meta.lastClaimDay/7),8,4); const g=ctx.createLinearGradient(barX,0,barX+barW,0); g.addColorStop(0,C.brasaHot); g.addColorStop(1,C.ouroLight); ctx.fillStyle=g; ctx.fill();
     ctx.font=font(10,700,UI); ctx.fillStyle=C.perola; ctx.textAlign='left'; ctx.fillText(`${this.meta.lastClaimDay}/7`,barX, barY+18);
     ctx.textAlign='right'; ctx.fillStyle='rgba(244,231,211,0.6)'; ctx.fillText('Baú do 7º dia: +500 moedas + 10 Brasas', barX+barW, barY+18);
     // retention boost teaser
-    panel(ctx,cx+14,cy+268,cw-28,46,{r:14, top:'rgba(44,32,56,0.9)', bottom:'rgba(28,18,36,0.9)', border:'rgba(200,160,255,0.2)'});
-    ctx.textAlign='left'; ctx.font=font(11,800,UI); ctx.fillStyle=C.perola; ctx.fillText('Volte em 2h e ganhe Brasa Quente 15min (1.5×)',cx+24,cy+286);
-    ctx.font=font(10,600,UI); ctx.fillStyle='rgba(244,231,211,0.6)'; ctx.fillText('Notificação às 19:00 · toque para ativar',cx+24,cy+302);
+    panel(ctx,cx+14,cy+280,cw-28,46,{r:14, top:'rgba(44,32,56,0.9)', bottom:'rgba(28,18,36,0.9)', border:'rgba(200,160,255,0.2)'});
+    ctx.textAlign='left'; ctx.font=font(11,800,UI); ctx.fillStyle=C.perola; ctx.fillText('Volte em 2h e ganhe Brasa Quente 15min (1.5×)',cx+24,cy+298);
+    ctx.font=font(10,600,UI); ctx.fillStyle='rgba(244,231,211,0.6)'; ctx.fillText('Notificação às 19:00 · toque para ativar',cx+24,cy+314);
     // close
-    glass(ctx,W-54,cy+12,36,24,{alpha:0.14, border:'rgba(255,255,255,0.2)'});
-    ctx.font=font(12,800,UI); ctx.textAlign='center'; ctx.fillStyle=C.perola; ctx.fillText('✕',W-36,cy+24);
+    const X = L.close;
+    glass(ctx,X.x,X.y,X.w,X.h,{alpha:0.14, border:'rgba(255,255,255,0.2)'});
+    ctx.font=font(12,800,UI); ctx.textAlign='center'; ctx.fillStyle=C.perola; ctx.fillText('✕',X.x+X.w/2,X.y+12);
     // bottom hint
     ctx.font=font(9,600,UI); ctx.fillStyle='rgba(244,231,211,0.4)'; ctx.textAlign='center';
     ctx.fillText('Toque fora para fechar',W/2,cy+ch-14);
