@@ -9,6 +9,10 @@
  * `sim:long` is deliberately not here — it is the nightly workflow.
  * Unity compile / AAB size / asset-registry are not here because this
  * environment has no Unity toolchain (docs/12-BUILD.md §5).
+ *
+ * GitHub Actions runs the same 12 commands as separate `run:` steps
+ * (`.github/workflows/ci.yml`) so a failure names the gate. `tools/studio/test/gates.test.ts`
+ * fails the build if the two lists drift.
  */
 import { execSync } from 'node:child_process';
 

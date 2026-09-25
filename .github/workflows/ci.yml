@@ -2,8 +2,8 @@
 # ideal-zone mechanic shipped as dead code (docs/18-STATUS.md §4.1):
 # tsconfig.json was strict, but no job ever ran `tsc`.
 #
-# The gate list lives in `tools/studio/run-gates.mjs` (`npm run gates`) so
-# local and CI cannot drift. Long-horizon pacing is `.github/workflows/nightly.yml`.
+# Keep this step list in lockstep with `tools/studio/run-gates.mjs`
+# (`npm run gates` locally). Long-horizon pacing is nightly.yml.
 # Unity compile is not in this file: there is no Unity toolchain here.
 
 name: CI
@@ -37,5 +37,17 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Gates
-        run: npm run gates
+      # Same 12 gates as `npm run gates`. Separate steps so a failure
+      # names the gate in the GitHub UI instead of collapsing into exit 9.
+      - run: npm run typecheck
+      - run: npm run validate
+      - run: npm run check-schema
+      - run: npm run verify-schemas
+      - run: npm run check-l10n
+      - run: npm run check-csharp-types
+      - run: npm run verify-data-sync
+      - run: npm test
+      - run: npm run sim
+      - run: npm run check-vectors
+      - run: npm run check-art
+      - run: npm run check-render
