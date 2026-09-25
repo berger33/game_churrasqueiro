@@ -71,7 +71,7 @@ Every claim below was produced by a command run in this checkout.
 | Render smoke | `npm run check-render` | **OK** — real bundle driven through init, a drag, a flip and a full turn; **~45 M canvas ops, no exceptions** |
 | Shot harness | `npm run check-shots` | **OK — 6.6 s.** 5 real PNGs (splash, home/JOGAR, empty grill, cooking, result). 161 painted frames, 980 sim-only ticks. 60 s self-budget. The old tail was 10 800 full-scene draws (~3.8 GB RSS / 300 s timeout). |
 | Prototype server | `node prototype/dev-server.mjs` | listening on `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
-| CI | `.github/workflows/ci.yml` + `npm run gates` | **green on ubuntu-latest (21 s) for the previous 12 gates.** 13th gate is `check-shots` (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. Unity compile is still absent — no toolchain. |
+| CI | `.github/workflows/ci.yml` + `npm run gates` | **green on ubuntu-latest (28 s), 13 gates.** `check-shots` is in the per-PR list (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. Unity compile is still absent — no toolchain. |
 
 ### The localisation gate caught a §56 violation
 
