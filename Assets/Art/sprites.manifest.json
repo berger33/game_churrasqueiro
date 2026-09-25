@@ -49,6 +49,18 @@
       "source": "art/source/lote-01/char_clientes_a.png",
       "batch": "lote-01"
     },
+    "spr_char_customer_economico": {
+      "file": "Assets/Art/Sprites/Characters/spr_char_customer_economico.png",
+      "w": 279,
+      "h": 340,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "character",
+      "source": "art/source/lote-02/char_clientes_b.png",
+      "batch": "lote-02"
+    },
     "spr_char_customer_familia": {
       "file": "Assets/Art/Sprites/Characters/spr_char_customer_familia.png",
       "w": 290,
@@ -61,6 +73,18 @@
       "source": "art/source/lote-01/char_clientes_a.png",
       "batch": "lote-01"
     },
+    "spr_char_customer_generoso": {
+      "file": "Assets/Art/Sprites/Characters/spr_char_customer_generoso.png",
+      "w": 371,
+      "h": 325,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "character",
+      "source": "art/source/lote-02/char_clientes_b.png",
+      "batch": "lote-02"
+    },
     "spr_char_customer_influencer": {
       "file": "Assets/Art/Sprites/Characters/spr_char_customer_influencer.png",
       "w": 304,
@@ -72,6 +96,30 @@
       "category": "character",
       "source": "art/source/lote-01/char_clientes_a.png",
       "batch": "lote-01"
+    },
+    "spr_char_customer_rival_a": {
+      "file": "Assets/Art/Sprites/Characters/spr_char_customer_rival_a.png",
+      "w": 259,
+      "h": 350,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "character",
+      "source": "art/source/lote-02/char_clientes_b.png",
+      "batch": "lote-02"
+    },
+    "spr_char_customer_rival_b": {
+      "file": "Assets/Art/Sprites/Characters/spr_char_customer_rival_b.png",
+      "w": 257,
+      "h": 353,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "character",
+      "source": "art/source/lote-02/char_clientes_b.png",
+      "batch": "lote-02"
     },
     "spr_char_customer_tio_do_churrasco": {
       "file": "Assets/Art/Sprites/Characters/spr_char_customer_tio_do_churrasco.png",
@@ -96,6 +144,270 @@
       "category": "character",
       "source": "art/source/lote-01/char_clientes_a.png",
       "batch": "lote-01"
+    },
+    "spr_char_customer_turista_a": {
+      "file": "Assets/Art/Sprites/Characters/spr_char_customer_turista_a.png",
+      "w": 284,
+      "h": 339,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "character",
+      "source": "art/source/lote-02/char_clientes_b.png",
+      "batch": "lote-02"
+    },
+    "spr_char_customer_turista_b": {
+      "file": "Assets/Art/Sprites/Characters/spr_char_customer_turista_b.png",
+      "w": 281,
+      "h": 316,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "character",
+      "source": "art/source/lote-02/char_clientes_b.png",
+      "batch": "lote-02"
+    },
+    "spr_char_customer_vip": {
+      "file": "Assets/Art/Sprites/Characters/spr_char_customer_vip.png",
+      "w": 216,
+      "h": 351,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "character",
+      "source": "art/source/lote-02/char_clientes_b.png",
+      "batch": "lote-02"
+    },
+    "spr_char_customer_vizinho": {
+      "file": "Assets/Art/Sprites/Characters/spr_char_customer_vizinho.png",
+      "w": 348,
+      "h": 342,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "character",
+      "source": "art/source/lote-02/char_clientes_b.png",
+      "batch": "lote-02"
+    },
+    "spr_food_asinha_frango_burned": {
+      "file": "Assets/Art/Sprites/Food/spr_food_asinha_frango_burned.png",
+      "w": 444,
+      "h": 292,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_asinha_frango.png",
+      "batch": "lote-02"
+    },
+    "spr_food_asinha_frango_medium": {
+      "file": "Assets/Art/Sprites/Food/spr_food_asinha_frango_medium.png",
+      "w": 444,
+      "h": 292,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_asinha_frango.png",
+      "batch": "lote-02"
+    },
+    "spr_food_asinha_frango_rare": {
+      "file": "Assets/Art/Sprites/Food/spr_food_asinha_frango_rare.png",
+      "w": 444,
+      "h": 292,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_asinha_frango.png",
+      "batch": "lote-02"
+    },
+    "spr_food_asinha_frango_raw": {
+      "file": "Assets/Art/Sprites/Food/spr_food_asinha_frango_raw.png",
+      "w": 444,
+      "h": 292,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_asinha_frango.png",
+      "batch": "lote-02"
+    },
+    "spr_food_asinha_frango_served": {
+      "file": "Assets/Art/Sprites/Food/spr_food_asinha_frango_served.png",
+      "w": 397,
+      "h": 300,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_asinha_frango.png",
+      "batch": "lote-02"
+    },
+    "spr_food_asinha_frango_well": {
+      "file": "Assets/Art/Sprites/Food/spr_food_asinha_frango_well.png",
+      "w": 444,
+      "h": 292,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_asinha_frango.png",
+      "batch": "lote-02"
+    },
+    "spr_food_coracao_frango_burned": {
+      "file": "Assets/Art/Sprites/Food/spr_food_coracao_frango_burned.png",
+      "w": 384,
+      "h": 146,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_coracao_frango.png",
+      "batch": "lote-02"
+    },
+    "spr_food_coracao_frango_medium": {
+      "file": "Assets/Art/Sprites/Food/spr_food_coracao_frango_medium.png",
+      "w": 384,
+      "h": 146,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_coracao_frango.png",
+      "batch": "lote-02"
+    },
+    "spr_food_coracao_frango_rare": {
+      "file": "Assets/Art/Sprites/Food/spr_food_coracao_frango_rare.png",
+      "w": 384,
+      "h": 146,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_coracao_frango.png",
+      "batch": "lote-02"
+    },
+    "spr_food_coracao_frango_raw": {
+      "file": "Assets/Art/Sprites/Food/spr_food_coracao_frango_raw.png",
+      "w": 384,
+      "h": 146,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_coracao_frango.png",
+      "batch": "lote-02"
+    },
+    "spr_food_coracao_frango_served": {
+      "file": "Assets/Art/Sprites/Food/spr_food_coracao_frango_served.png",
+      "w": 375,
+      "h": 275,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_coracao_frango.png",
+      "batch": "lote-02"
+    },
+    "spr_food_coracao_frango_well": {
+      "file": "Assets/Art/Sprites/Food/spr_food_coracao_frango_well.png",
+      "w": 384,
+      "h": 146,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_coracao_frango.png",
+      "batch": "lote-02"
+    },
+    "spr_food_espetinho_frango_burned": {
+      "file": "Assets/Art/Sprites/Food/spr_food_espetinho_frango_burned.png",
+      "w": 442,
+      "h": 140,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_espetinho_frango.png",
+      "batch": "lote-02"
+    },
+    "spr_food_espetinho_frango_medium": {
+      "file": "Assets/Art/Sprites/Food/spr_food_espetinho_frango_medium.png",
+      "w": 442,
+      "h": 140,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_espetinho_frango.png",
+      "batch": "lote-02"
+    },
+    "spr_food_espetinho_frango_rare": {
+      "file": "Assets/Art/Sprites/Food/spr_food_espetinho_frango_rare.png",
+      "w": 442,
+      "h": 140,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_espetinho_frango.png",
+      "batch": "lote-02"
+    },
+    "spr_food_espetinho_frango_raw": {
+      "file": "Assets/Art/Sprites/Food/spr_food_espetinho_frango_raw.png",
+      "w": 442,
+      "h": 140,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_espetinho_frango.png",
+      "batch": "lote-02"
+    },
+    "spr_food_espetinho_frango_served": {
+      "file": "Assets/Art/Sprites/Food/spr_food_espetinho_frango_served.png",
+      "w": 386,
+      "h": 255,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_espetinho_frango.png",
+      "batch": "lote-02"
+    },
+    "spr_food_espetinho_frango_well": {
+      "file": "Assets/Art/Sprites/Food/spr_food_espetinho_frango_well.png",
+      "w": 442,
+      "h": 140,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_espetinho_frango.png",
+      "batch": "lote-02"
     },
     "spr_food_espetinho_misto_burned": {
       "file": "Assets/Art/Sprites/Food/spr_food_espetinho_misto_burned.png",
@@ -168,6 +480,222 @@
       "category": "food",
       "source": "art/source/lote-01/food_espetinho_misto.png",
       "batch": "lote-01"
+    },
+    "spr_food_fraldinha_burned": {
+      "file": "Assets/Art/Sprites/Food/spr_food_fraldinha_burned.png",
+      "w": 386,
+      "h": 220,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_fraldinha.png",
+      "batch": "lote-02"
+    },
+    "spr_food_fraldinha_medium": {
+      "file": "Assets/Art/Sprites/Food/spr_food_fraldinha_medium.png",
+      "w": 386,
+      "h": 220,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_fraldinha.png",
+      "batch": "lote-02"
+    },
+    "spr_food_fraldinha_rare": {
+      "file": "Assets/Art/Sprites/Food/spr_food_fraldinha_rare.png",
+      "w": 386,
+      "h": 220,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_fraldinha.png",
+      "batch": "lote-02"
+    },
+    "spr_food_fraldinha_raw": {
+      "file": "Assets/Art/Sprites/Food/spr_food_fraldinha_raw.png",
+      "w": 386,
+      "h": 220,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_fraldinha.png",
+      "batch": "lote-02"
+    },
+    "spr_food_fraldinha_served": {
+      "file": "Assets/Art/Sprites/Food/spr_food_fraldinha_served.png",
+      "w": 390,
+      "h": 289,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_fraldinha.png",
+      "batch": "lote-02"
+    },
+    "spr_food_fraldinha_well": {
+      "file": "Assets/Art/Sprites/Food/spr_food_fraldinha_well.png",
+      "w": 386,
+      "h": 220,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_fraldinha.png",
+      "batch": "lote-02"
+    },
+    "spr_food_frango_coxa_burned": {
+      "file": "Assets/Art/Sprites/Food/spr_food_frango_coxa_burned.png",
+      "w": 410,
+      "h": 280,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_frango_coxa.png",
+      "batch": "lote-02"
+    },
+    "spr_food_frango_coxa_medium": {
+      "file": "Assets/Art/Sprites/Food/spr_food_frango_coxa_medium.png",
+      "w": 410,
+      "h": 280,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_frango_coxa.png",
+      "batch": "lote-02"
+    },
+    "spr_food_frango_coxa_rare": {
+      "file": "Assets/Art/Sprites/Food/spr_food_frango_coxa_rare.png",
+      "w": 410,
+      "h": 280,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_frango_coxa.png",
+      "batch": "lote-02"
+    },
+    "spr_food_frango_coxa_raw": {
+      "file": "Assets/Art/Sprites/Food/spr_food_frango_coxa_raw.png",
+      "w": 410,
+      "h": 280,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_frango_coxa.png",
+      "batch": "lote-02"
+    },
+    "spr_food_frango_coxa_served": {
+      "file": "Assets/Art/Sprites/Food/spr_food_frango_coxa_served.png",
+      "w": 374,
+      "h": 316,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_frango_coxa.png",
+      "batch": "lote-02"
+    },
+    "spr_food_frango_coxa_well": {
+      "file": "Assets/Art/Sprites/Food/spr_food_frango_coxa_well.png",
+      "w": 410,
+      "h": 280,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_frango_coxa.png",
+      "batch": "lote-02"
+    },
+    "spr_food_legumes_grelhados_burned": {
+      "file": "Assets/Art/Sprites/Food/spr_food_legumes_grelhados_burned.png",
+      "w": 388,
+      "h": 284,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_legumes_grelhados.png",
+      "batch": "lote-02"
+    },
+    "spr_food_legumes_grelhados_medium": {
+      "file": "Assets/Art/Sprites/Food/spr_food_legumes_grelhados_medium.png",
+      "w": 388,
+      "h": 284,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_legumes_grelhados.png",
+      "batch": "lote-02"
+    },
+    "spr_food_legumes_grelhados_rare": {
+      "file": "Assets/Art/Sprites/Food/spr_food_legumes_grelhados_rare.png",
+      "w": 388,
+      "h": 284,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_legumes_grelhados.png",
+      "batch": "lote-02"
+    },
+    "spr_food_legumes_grelhados_raw": {
+      "file": "Assets/Art/Sprites/Food/spr_food_legumes_grelhados_raw.png",
+      "w": 388,
+      "h": 284,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_legumes_grelhados.png",
+      "batch": "lote-02"
+    },
+    "spr_food_legumes_grelhados_served": {
+      "file": "Assets/Art/Sprites/Food/spr_food_legumes_grelhados_served.png",
+      "w": 374,
+      "h": 271,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_legumes_grelhados.png",
+      "batch": "lote-02"
+    },
+    "spr_food_legumes_grelhados_well": {
+      "file": "Assets/Art/Sprites/Food/spr_food_legumes_grelhados_well.png",
+      "w": 388,
+      "h": 284,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_legumes_grelhados.png",
+      "batch": "lote-02"
     },
     "spr_food_linguica_toscana_burned": {
       "file": "Assets/Art/Sprites/Food/spr_food_linguica_toscana_burned.png",
@@ -457,6 +985,54 @@
       "source": "art/source/lote-01/food_queijo_coalho.png",
       "batch": "lote-01"
     },
+    "spr_food_vinagrete_prep": {
+      "file": "Assets/Art/Sprites/Food/spr_food_vinagrete_prep.png",
+      "w": 463,
+      "h": 312,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_vinagrete.png",
+      "batch": "lote-02"
+    },
+    "spr_food_vinagrete_raw": {
+      "file": "Assets/Art/Sprites/Food/spr_food_vinagrete_raw.png",
+      "w": 463,
+      "h": 312,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_vinagrete.png",
+      "batch": "lote-02"
+    },
+    "spr_food_vinagrete_ready": {
+      "file": "Assets/Art/Sprites/Food/spr_food_vinagrete_ready.png",
+      "w": 358,
+      "h": 316,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_vinagrete.png",
+      "batch": "lote-02"
+    },
+    "spr_food_vinagrete_served": {
+      "file": "Assets/Art/Sprites/Food/spr_food_vinagrete_served.png",
+      "w": 449,
+      "h": 384,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-02/food_vinagrete.png",
+      "batch": "lote-02"
+    },
     "spr_grill_lata_valente_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_lata_valente_evo1.png",
       "w": 1042,
@@ -496,6 +1072,86 @@
         "areaFrac": 0.2099
       },
       "batch": "lote-01"
+    },
+    "spr_grill_lata_valente_evo2": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_lata_valente_evo2.png",
+      "w": 956,
+      "h": 698,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "grill",
+      "source": "art/source/lote-02/grill_lata_valente_evo2.png",
+      "hole": {
+        "bbox": [
+          61,
+          27,
+          850,
+          276
+        ],
+        "quad": [
+          [
+            61,
+            120
+          ],
+          [
+            667,
+            27
+          ],
+          [
+            910,
+            187
+          ],
+          [
+            278,
+            302
+          ]
+        ],
+        "tiltDeg": -8.7,
+        "areaFrac": 0.1994
+      },
+      "batch": "lote-02"
+    },
+    "spr_grill_lata_valente_evo3": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_lata_valente_evo3.png",
+      "w": 988,
+      "h": 696,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "grill",
+      "source": "art/source/lote-02/grill_lata_valente_evo3.png",
+      "hole": {
+        "bbox": [
+          64,
+          28,
+          852,
+          283
+        ],
+        "quad": [
+          [
+            64,
+            123
+          ],
+          [
+            676,
+            28
+          ],
+          [
+            915,
+            191
+          ],
+          [
+            284,
+            310
+          ]
+        ],
+        "tiltDeg": -8.8,
+        "areaFrac": 0.1972
+      },
+      "batch": "lote-02"
     },
     "spr_prop_bancada": {
       "file": "Assets/Art/Sprites/Props/spr_prop_bancada.png",
@@ -596,6 +1252,81 @@
         "burned": "spr_food_espetinho_misto_burned"
       },
       "served": "spr_food_espetinho_misto_served"
+    },
+    "espetinho_frango": {
+      "kind": "grill",
+      "states": {
+        "raw": "spr_food_espetinho_frango_raw",
+        "rare": "spr_food_espetinho_frango_rare",
+        "medium": "spr_food_espetinho_frango_medium",
+        "well": "spr_food_espetinho_frango_well",
+        "burned": "spr_food_espetinho_frango_burned"
+      },
+      "served": "spr_food_espetinho_frango_served"
+    },
+    "coracao_frango": {
+      "kind": "grill",
+      "states": {
+        "raw": "spr_food_coracao_frango_raw",
+        "rare": "spr_food_coracao_frango_rare",
+        "medium": "spr_food_coracao_frango_medium",
+        "well": "spr_food_coracao_frango_well",
+        "burned": "spr_food_coracao_frango_burned"
+      },
+      "served": "spr_food_coracao_frango_served"
+    },
+    "frango_coxa": {
+      "kind": "grill",
+      "states": {
+        "raw": "spr_food_frango_coxa_raw",
+        "rare": "spr_food_frango_coxa_rare",
+        "medium": "spr_food_frango_coxa_medium",
+        "well": "spr_food_frango_coxa_well",
+        "burned": "spr_food_frango_coxa_burned"
+      },
+      "served": "spr_food_frango_coxa_served"
+    },
+    "asinha_frango": {
+      "kind": "grill",
+      "states": {
+        "raw": "spr_food_asinha_frango_raw",
+        "rare": "spr_food_asinha_frango_rare",
+        "medium": "spr_food_asinha_frango_medium",
+        "well": "spr_food_asinha_frango_well",
+        "burned": "spr_food_asinha_frango_burned"
+      },
+      "served": "spr_food_asinha_frango_served"
+    },
+    "fraldinha": {
+      "kind": "grill",
+      "states": {
+        "raw": "spr_food_fraldinha_raw",
+        "rare": "spr_food_fraldinha_rare",
+        "medium": "spr_food_fraldinha_medium",
+        "well": "spr_food_fraldinha_well",
+        "burned": "spr_food_fraldinha_burned"
+      },
+      "served": "spr_food_fraldinha_served"
+    },
+    "legumes_grelhados": {
+      "kind": "grill",
+      "states": {
+        "raw": "spr_food_legumes_grelhados_raw",
+        "rare": "spr_food_legumes_grelhados_rare",
+        "medium": "spr_food_legumes_grelhados_medium",
+        "well": "spr_food_legumes_grelhados_well",
+        "burned": "spr_food_legumes_grelhados_burned"
+      },
+      "served": "spr_food_legumes_grelhados_served"
+    },
+    "vinagrete": {
+      "kind": "prep",
+      "states": {
+        "raw": "spr_food_vinagrete_raw",
+        "prep": "spr_food_vinagrete_prep",
+        "ready": "spr_food_vinagrete_ready"
+      },
+      "served": "spr_food_vinagrete_served"
     }
   }
 }

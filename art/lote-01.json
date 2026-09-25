@@ -1,5 +1,5 @@
 {
-  "_comment": "Lote 01 — estilo + núcleo do gameplay (docs/22-ARTE_2D_PLANO.md §6). Cada entrada diz como tools/art/process-sprites.mjs recorta uma imagem gerada por IA (fundo magenta chapado) em sprites com transparência. Os brutos ficam em art/source/ (fora do git — tamanho); os prompts exatos em art/prompts/lote-01.md.",
+  "_comment": "Lote 01 — estilo + núcleo do gameplay (docs/22-ARTE_2D_PLANO.md §6). Cada entrada diz como tools/art/process-sprites.mjs recorta uma imagem gerada por IA (fundo magenta chapado) em sprites com transparência; `review`, `label` e `preview` alimentam tools/art/review-sheet.mjs. Os brutos deste lote se perderam num reset do ambiente (os masters em Assets/Art são a fonte de verdade); os prompts estão em art/prompts/lote-01.md. Aprovado pelo dono em 2026-09-25.",
   "batch": "lote-01",
   "date": "2026-09-25",
   "sourceDir": "art/source/lote-01",
@@ -7,87 +7,114 @@
     {
       "source": "food_picanha.png",
       "mode": "grid", "cols": 2, "rows": 3,
-      "category": "food", "subject": "picanha",
+      "category": "food", "subject": "picanha", "label": "Picanha",
       "cells": ["raw", "rare", "medium", "well", "burned", "served"],
       "states": ["raw", "rare", "medium", "well", "burned"],
-      "out": "Assets/Art/Sprites/Food"
+      "out": "Assets/Art/Sprites/Food",
+      "review": { "verdict": "ok", "note": "excelente; referência de estilo das outras comidas" }
     },
     {
       "source": "food_linguica_toscana.png",
       "mode": "grid", "cols": 2, "rows": 3,
-      "category": "food", "subject": "linguica_toscana",
+      "category": "food", "subject": "linguica_toscana", "label": "Linguiça toscana",
       "cells": ["raw", "rare", "medium", "well", "burned", "served"],
       "states": ["raw", "rare", "medium", "well", "burned"],
-      "out": "Assets/Art/Sprites/Food"
+      "out": "Assets/Art/Sprites/Food",
+      "review": { "verdict": "ok" }
     },
     {
       "source": "food_pao_de_alho.png",
       "mode": "grid", "cols": 2, "rows": 3,
-      "category": "food", "subject": "pao_de_alho",
+      "category": "food", "subject": "pao_de_alho", "label": "Pão de alho",
       "cells": ["raw", "rare", "medium", "well", "burned", "served"],
       "states": ["raw", "rare", "medium", "well", "burned"],
       "out": "Assets/Art/Sprites/Food",
-      "notes": "o modelo escreveu legendas sob cada célula; o recorte mantém só o maior componente"
+      "notes": "o modelo escreveu legendas sob cada célula; o recorte mantém só o maior componente",
+      "review": { "verdict": "ok", "note": "as legendas que o modelo escreveu foram descartadas no recorte" }
     },
     {
       "source": "food_queijo_coalho.png",
       "mode": "grid", "cols": 2, "rows": 3,
-      "category": "food", "subject": "queijo_coalho",
+      "category": "food", "subject": "queijo_coalho", "label": "Queijo coalho",
       "cells": ["raw", "rare", "medium", "well", "burned", "served"],
       "states": ["raw", "rare", "medium", "well", "burned"],
-      "out": "Assets/Art/Sprites/Food"
+      "out": "Assets/Art/Sprites/Food",
+      "review": { "verdict": "ok" }
     },
     {
       "source": "food_espetinho_misto.png",
       "mode": "grid", "cols": 2, "rows": 3,
-      "category": "food", "subject": "espetinho_misto",
+      "category": "food", "subject": "espetinho_misto", "label": "Espetinho misto",
       "cells": ["raw", "rare", "medium", "well", "burned", "served"],
       "states": ["raw", "rare", "medium", "well", "burned"],
       "maxTiltDeg": 6,
       "out": "Assets/Art/Sprites/Food",
-      "notes": "gerado na diagonal (~25°); os 5 estados são girados juntos para a horizontal da grelha"
+      "notes": "gerado na diagonal (~25°); os 5 estados são girados juntos para a horizontal da grelha",
+      "review": { "verdict": "ok", "note": "gerado na diagonal; os 5 estados foram girados juntos" }
     },
     {
       "source": "grill_lata_valente.png",
       "mode": "single", "hole": true,
-      "category": "grill", "name": "spr_grill_lata_valente_evo1",
+      "category": "grill", "name": "spr_grill_lata_valente_evo1", "label": "Lata Valente evo 1 — Lata Amassada",
       "out": "Assets/Art/Sprites/Grills",
-      "notes": "vista oblíqua: a boca sai como paralelogramo, as zonas do jogo são faixas horizontais — refazer de frente no lote 02"
+      "notes": "vista oblíqua (boca inclinada); mantida: a lata tem 1 zona e 2–3 vagas em todas as evoluções, as vagas são mapeadas no quad do furo",
+      "review": { "verdict": "ok", "note": "vista oblíqua mantida (decisão): 1 zona e 2–3 vagas, mapeadas no quadrilátero do furo" }
     },
     {
       "source": "bg_quintal.png",
       "mode": "opaque",
-      "category": "background", "name": "bg_restaurant_quintal",
+      "category": "background", "name": "bg_restaurant_quintal", "label": "fundo: quintal (9:16)",
       "out": "Assets/Art/Backgrounds"
     },
     {
       "source": "fx_brasas.png",
       "mode": "strips",
-      "category": "fx", "names": ["t_fx_embers_low", "t_fx_embers_medium", "t_fx_embers_high"],
+      "category": "fx", "names": ["t_fx_embers_low", "t_fx_embers_medium", "t_fx_embers_high"], "label": "brasas (3 faixas de uma imagem)",
       "out": "Assets/Art/FX"
     },
     {
       "source": "prop_bancada.png",
       "mode": "single",
-      "category": "prop", "name": "spr_prop_bancada",
+      "category": "prop", "name": "spr_prop_bancada", "label": "bancada",
       "out": "Assets/Art/Sprites/Props",
-      "notes": "desenhada como mesa em perspectiva (tampo mais estreito atrás); cabe na tela se escalada além das bordas"
+      "notes": "desenhada como mesa em perspectiva (tampo mais estreito atrás); cabe na tela se escalada além das bordas",
+      "review": { "verdict": "ok", "note": "mesa em perspectiva; no jogo fica escalada além das bordas (ver a montagem)" }
     },
     {
       "source": "char_clientes_a.png",
       "mode": "components", "minAreaFrac": 0.012,
-      "category": "character",
+      "category": "character", "label": "Clientes (lote A)",
       "out": "Assets/Art/Sprites/Characters",
       "names": [
-        { "name": "spr_char_customer_comum",            "at": [180, 140] },
-        { "name": "spr_char_customer_apressado_a",      "at": [520, 170] },
-        { "name": "spr_char_customer_apressado_b",      "at": [1040, 160] },
-        { "name": "spr_char_customer_familia",          "at": [300, 400] },
-        { "name": "spr_char_customer_tio_do_churrasco", "at": [1040, 400] },
-        { "name": "spr_char_customer_influencer",       "at": [300, 650] },
-        { "name": "spr_char_customer_turista",          "at": [1060, 650] }
+        { "name": "spr_char_customer_comum",            "at": [180, 140], "label": "comum" },
+        { "name": "spr_char_customer_apressado_a",      "at": [520, 170], "label": "apressado (a)" },
+        { "name": "spr_char_customer_apressado_b",      "at": [1040, 160], "label": "apressado (b)" },
+        { "name": "spr_char_customer_familia",          "at": [300, 400], "label": "família" },
+        { "name": "spr_char_customer_tio_do_churrasco", "at": [1040, 400], "label": "tio do churrasco" },
+        { "name": "spr_char_customer_influencer",       "at": [300, 650], "label": "influencer" },
+        { "name": "spr_char_customer_turista",          "at": [1060, 650], "label": "turista (sem camisa)", "flag": true }
       ],
-      "notes": "o modelo ignorou a grade 2×3: 7 retratos (dois 'apressado'), linhas de grade desenhadas, turista sem camisa"
+      "notes": "o modelo ignorou a grade 2×3: 7 retratos (dois 'apressado'), linhas de grade desenhadas, turista sem camisa",
+      "review": { "verdict": "ok", "note": "7 retratos em vez de 6 (dois apressados viram variantes a/b). O turista sem camisa contradiz o look de customers.json (camisa_floral): versões com camisa no lote 02." }
     }
-  ]
+  ],
+  "preview": {
+    "background": "bg_restaurant_quintal",
+    "grill": "spr_grill_lata_valente_evo1",
+    "embers": "t_fx_embers_medium",
+    "onGrill": [
+      ["spr_food_picanha_medium", 0.2, 0.52, 70],
+      ["spr_food_queijo_coalho_rare", 0.44, 0.3, 58],
+      ["spr_food_linguica_toscana_well", 0.52, 0.72, 66],
+      ["spr_food_espetinho_misto_medium", 0.79, 0.46, 86]
+    ],
+    "benchItems": [
+      ["spr_food_picanha_raw", 64], ["spr_food_linguica_toscana_raw", 64], ["spr_food_pao_de_alho_raw", 64],
+      ["spr_food_queijo_coalho_raw", 64], ["spr_food_espetinho_misto_raw", 76]
+    ],
+    "orders": [
+      ["spr_char_customer_tio_do_churrasco", ["spr_food_picanha_served", "spr_food_pao_de_alho_served"], 0.72],
+      ["spr_char_customer_influencer", ["spr_food_queijo_coalho_served", "spr_food_linguica_toscana_served"], 0.4]
+    ]
+  }
 }

@@ -1,7 +1,8 @@
 # 22 — Plano de Arte 2D Profissional (gerada por IA, em lotes de 10)
 
 **Data:** 2026-09-25 · branch `arena/01a0d72a-game-churrasqueiro`
-**Status:** Lote 01 gerado e processado. **Aguardando aprovação**; nenhuma imagem do lote 02 é gerada antes do "ok".
+**Status:** Lote 01 **aprovado** (2026-09-25). Lote 02 gerado e processado, **aguardando aprovação**;
+nenhuma imagem do lote 03 é gerada antes do "ok".
 
 > **Por quê.** A mecânica agrada, mas o visual do protótipo (tudo desenhado por código em
 > `prototype/src/foods.ts`, `theme.ts` e `main.ts`) ainda parece amador. Este plano troca cada
@@ -19,11 +20,12 @@
 | 3. Recorte | sprites com transparência, nomeados, com pivô | `Assets/Art/**` + `sprites.manifest.json` |
 | 4. Registro | 1 linha por sprite (`status=pending`) | `Assets/Art/ASSET_REGISTRY.csv` |
 | 5. Revisão | folha de contato + montagem no layout do jogo | `art/review/lote-NN*.jpg` |
-| 6. Aprovação | "ok" do dono do jogo → `status=approved` | registro + este documento |
+| 6. Aprovação | "ok" do dono do jogo → `node tools/art/set-status.mjs lote-NN approved` | registro + este documento |
 | 7. Integração | sprites no protótipo (fallback procedural mantido) e no Unity | §7 |
 
 Uma imagem gerada rende vários sprites. Exemplo: uma folha 2×3 de picanha vira os 5 estados de
-cozimento mais o prato servido. O lote 01 transformou **10 imagens em 43 sprites**.
+cozimento mais o prato servido. O lote 01 transformou **10 imagens em 43 sprites**, e o lote 02
+em **50**.
 
 ---
 
@@ -40,8 +42,12 @@ A bíblia continua sendo `docs/04-ART_STYLE.md`: as regras R1–R5, a paleta que
   - churrasqueiras e props: ¾ frontal, abertura/tampo com a borda de cima **horizontal**;
   - clientes: busto de frente, fundo limpo, **sem roupa magenta ou rosa-choque** (é a cor do recorte);
   - fundos: 9:16, cena sem personagens, com espaço livre no terço central para a churrasqueira.
-- **Consistência:** a primeira imagem de cada família vira referência (`images: [...]`) das
-  seguintes. Todas as comidas do lote 01 foram geradas com a picanha como guia.
+- **Consistência:** a primeira imagem aprovada de cada família vira referência (`images: [...]`)
+  das seguintes. Todas as comidas do lote 01 foram geradas com a picanha como guia. As
+  referências são **remontadas a partir dos masters** com `tools/art/make-ref.mjs` (sprites
+  recolocados sobre magenta, no layout pedido), porque os brutos não sobrevivem a um reset
+  (§8). A evo 1 da lata como referência segurou a câmera das evoluções 2 e 3: a boca inclina
+  −8,6°, −8,7° e −8,8°.
 - **Sem texto dentro da arte.** Todo texto é desenhado pelo jogo (localizável, §56). Quando o
   modelo escreve legendas, o recorte as descarta (§4).
 
@@ -105,10 +111,18 @@ prompt ─► generate_image ─► art/source/lote-NN/*.png   (RGB, fundo ≈ m
                  node tools/art/review-sheet.mjs art/lote-NN.json
                                   ▼
             art/review/lote-NN.jpg (folha)  +  lote-NN-preview.jpg (montagem)
+                                  │  aprovação do dono
+                                  ▼
+            node tools/art/set-status.mjs lote-NN approved   (registro: approved)
 ```
 
-Os dois scripts são determinísticos e rápidos (lote 01: cerca de 3 s para os 43 sprites). Rodar de novo
-depois de melhorar o recorte **não** perde aprovações, porque o registro preserva `status`/`source`.
+Referências para o lote seguinte: `node tools/art/make-ref.mjs grid|single …` monta a imagem
+de referência a partir dos masters aprovados.
+
+Os scripts são determinísticos e rápidos (cerca de 3 s por lote). Rodar de novo depois de
+melhorar o recorte **não** perde aprovações: uma linha revisada fica congelada (`status`,
+`source` e `notes`). Se o bruto de uma imagem não existe mais, o recorte pula essa imagem e
+mantém os masters já versionados (testado com o lote 01).
 
 ---
 
@@ -141,7 +155,9 @@ cor:
 7. **Estados da mesma comida:** giram juntos para a horizontal (`maxTiltDeg`; o espetinho saiu a
    ~25° e foi endireitado), são igualados pela área da máscara (a IA varia o tamanho entre
    células), são centrados pelo centróide e dividem **a mesma tela e o mesmo pivô**. Assim o
-   crossfade entre estados vizinhos nunca "pula" o contorno (regra §6 da bíblia).
+   crossfade entre estados vizinhos nunca "pula" o contorno (regra §6 da bíblia). Itens de
+   preparo (`kind: "prep"`, hoje só o vinagrete) mudam de forma de propósito (tábua → tigela) e
+   usam `align: false`.
 8. **Furo da churrasqueira:** a boca pintada em magenta vira região transparente fechada. O
    script grava no manifesto a `bbox`, o quadrilátero `quad` (TL, TR, BR, BL) e a inclinação
    `tiltDeg`. Os cantos saem dos extremos diagonais ou dos extremos de eixo, o que cobrir mais
@@ -164,8 +180,9 @@ proíbem roupa e props magenta; a camisa salmão da mãe (lote 01) passou porque
    - legibilidade no tamanho real do jogo (44×17 px para espetinhos, 54×25 px para as demais comidas, ícones de 22–34 px);
    - teste do ícone de 48 px em cinza.
 3. Entregar a folha de contato, a montagem e a lista de defeitos, e **pedir aprovação**.
-4. Aprovado: `status=approved`, `source=ai-assisted-reviewed` (ciclo em `docs/04` §11).
-   Recusado: `status=rejected` e a refação entra no topo do próximo lote.
+4. Aprovado: `node tools/art/set-status.mjs lote-NN approved`, que grava `status=approved` e
+   `source=ai-assisted-reviewed` (ciclo em `docs/04` §11). Recusado: `status=rejected`, e a
+   refação entra no topo do próximo lote. Trocado por uma versão melhor: `superseded`.
 5. **Nunca** usar a montagem de prévia como screenshot de loja: as capturas da loja têm que
    ser do jogo rodando (`docs/15-ASO.md` §5, `docs/13-RELEASE.md` §3). A montagem traz esse
    aviso escrito nela.
@@ -176,8 +193,8 @@ proíbem roupa e props magenta; a camisa salmão da mãe (lote 01) passou porque
 
 | Lote | Conteúdo (10 imagens) | Status |
 |---|---|---|
-| **01** | picanha, linguiça toscana, pão de alho, queijo coalho, espetinho misto · churrasqueira lata (evo 1) · fundo quintal · brasas (3 calores) · bancada · clientes A | **entregue, aguardando aprovação** |
-| **02** | espetinho de frango, coração de frango, coxa de frango, legumes grelhados, asinha, fraldinha, vinagrete · clientes B (`economico`, `vizinho`, `generoso`, `rival`, `vip` + turista refeito, se pedido) · lata evo 2 e evo 3 (com a evo 1 como referência) | proposto |
+| **01** | picanha, linguiça toscana, pão de alho, queijo coalho, espetinho misto · churrasqueira lata (evo 1) · fundo quintal · brasas (3 calores) · bancada · clientes A | **aprovado** (2026-09-25) |
+| **02** | espetinho de frango, coração de frango, coxa de frango, legumes grelhados, asinha, fraldinha, vinagrete · clientes B (`economico`, `vizinho`, `generoso`, `rival`, `vip` + turista com camisa floral) · lata evo 2 e evo 3 (com a evo 1 como referência) | **entregue, aguardando aprovação** |
 | **03** | contra-filé, maminha, costela, cupim · churrasqueiras chapa, inox e fornalha (evo 1, de frente, com boca retangular para 2–3 zonas) · fundos espetinho de rua, trailer, churrascaria de bairro | planejado |
 | **04** | kit de UI (logo, botões e painéis 9-slice, ícones de moeda/navegação/recompensa, HUD, estrelas) · arte das telas título e resultado · fundos churrascaria premium, festival, rede nacional | planejado |
 | **05** | evoluções 2 e 3 de chapa, inox e fornalha · VFX (fumaça, faíscas, explosão do PERFEITO, moedas/confete) | planejado |
@@ -192,11 +209,22 @@ proíbem roupa e props magenta; a camisa salmão da mãe (lote 01) passou porque
 | 3 | `food_pao_de_alho` | 6 | ✅ o modelo escreveu legendas; o recorte descartou todas |
 | 4 | `food_queijo_coalho` | 6 | ✅ |
 | 5 | `food_espetinho_misto` | 6 | ✅ gerado na diagonal; os 5 estados foram girados juntos para a horizontal |
-| 6 | `grill_lata_valente` | 1 + furo | ⚠️ ótima arte, mas vista oblíqua (boca inclinada −8,6°). **Serve** porque a lata tem 1 zona e 2–3 vagas em todas as evoluções: o jogo mapeia as vagas no quadrilátero do furo. As churrasqueiras de 2–3 zonas serão pedidas de frente |
+| 6 | `grill_lata_valente` | 1 + furo | ✅ vista oblíqua (boca inclinada −8,6°), **mantida por decisão**: a lata tem 1 zona e 2–3 vagas em todas as evoluções, e o jogo mapeia as vagas no quadrilátero do furo. As churrasqueiras de 2–3 zonas serão pedidas de frente |
 | 7 | `bg_quintal` | 1 | ✅ excelente: fim de tarde, varal de lâmpadas, bananeira, piso de terracota |
 | 8 | `fx_brasas` | 3 | ✅ mesmo desenho nos três calores, só muda a intensidade |
 | 9 | `prop_bancada` | 1 | ✅ usável: é uma mesa em perspectiva e cabe na tela escalada além das bordas (a montagem mostra) |
-| 10 | `char_clientes_a` | 7 | ⚠️ o modelo fez 7 retratos em vez de 6 (dois "apressado" viram variantes a/b); **turista sem camisa**, sinalizado para decisão |
+| 10 | `char_clientes_a` | 7 | ✅ o modelo fez 7 retratos em vez de 6 (dois "apressado" viram variantes a/b). O **turista sem camisa** contradiz o `look` de `customers.json` (`camisa_floral`): foi mantido, e o lote 02 traz versões com camisa para escolha |
+
+Aprovado pelo dono em 2026-09-25 ("prosseguir para o próximo lote").
+
+Divergências menores entre a arte aprovada e os dados, para decidir na integração:
+
+- o `look` do `apressado` pede boné, uniforme e crachá, e a arte mostra um executivo olhando o relógio;
+- o `look` do `tio_do_churrasco` pede careca, barba, camisa aberta e óculos, e a arte mostra boné, bigode e avental;
+- a descrição da lata fala em "lata de 18 litros", e a arte é um tambor cortado.
+
+O `look` só alimenta o avatar procedural, que vira fallback. O caminho mais barato é ajustar os
+dados e o texto à arte aprovada.
 
 **Lições aplicadas ao prompt do lote 02:**
 
@@ -205,6 +233,26 @@ proíbem roupa e props magenta; a camisa salmão da mãe (lote 01) passou porque
 - "vista frontal simétrica, borda de cima horizontal" para grelhas e props;
 - "nenhuma roupa rosa ou magenta" para personagens;
 - sempre passar uma imagem aprovada da mesma família como referência.
+
+### 6.2 Resultado do lote 02
+
+| # | Imagem | Sprites | Avaliação |
+|---|---|---|---|
+| 1 | `food_espetinho_frango` | 6 | ✅ gerado inclinado (~20°); os estados foram girados juntos |
+| 2 | `food_coracao_frango` | 6 | ⚠️ o **selado** saiu mais claro que o cru e o ao ponto: no crossfade a cor vai de escuro a claro e volta a dourado. Usável; refazer só se incomodar |
+| 3 | `food_frango_coxa` | 6 | ✅ |
+| 4 | `food_asinha_frango` | 6 | ✅ |
+| 5 | `food_fraldinha` | 6 | ✅ fibra longa, sem capa de gordura; servida fatiada contra a fibra |
+| 6 | `food_legumes_grelhados` | 6 | ✅ a bandeja de ferro mantém o contorno em todos os estados |
+| 7 | `food_vinagrete` | 4 | ✅ item de preparo: ingredientes → picado → pronto → servido |
+| 8 | `char_clientes_b` | 8 | ⚠️ pedidos 6 em 2×3, vieram **8** em 2×4. Os extras viram variantes b: um rival homem e um turista sem câmera. Todos seguem o `look` dos dados (o chinelo do vizinho não aparece num busto) |
+| 9 | `grill_lata_valente_evo2` | 1 + furo | ✅ Tijolinho de Apoio: mesmo tambor, sobre tijolos, com remendos rebitados |
+| 10 | `grill_lata_valente_evo3` | 1 + furo | ✅ Aprovada pela Vó: pintada, base de alvenaria, pano de prato xadrez e vasinho de ervas |
+
+**O que as correções de prompt resolveram:** nenhuma linha de grade e nenhuma legenda nas 10
+imagens (no lote 01, 6 imagens tinham linhas e 1 tinha legendas). **O que não resolveram:** a
+contagem de retratos (7 no lote 01, 8 no lote 02). Os extras não se perdem, porque o recorte os
+nomeia pela posição e eles viram variantes.
 
 ---
 
@@ -252,16 +300,24 @@ Só começa depois da aprovação do lote. Nenhum código do jogo muda enquanto 
 
 | O quê | Onde | Git? | Lote 01 |
 |---|---|---|---|
-| Brutos da IA | `art/source/lote-NN/` | **não** (`.gitignore`), 1,4–2,6 MB cada | 17 MB |
-| Especificação do recorte | `art/lote-NN.json` | sim | 4 KB |
-| Prompts exatos | `art/prompts/lote-NN.md` | sim | — |
-| Masters PNG | `Assets/Art/**` | sim | 9,1 MB (43 sprites) |
-| Folhas de revisão | `art/review/*.jpg` | sim | ~1 MB |
+| O quê | Onde | Git? | Lote 01 | Lote 02 |
+|---|---|---|---|---|
+| Brutos da IA | `art/source/lote-NN/` | **não** (`.gitignore`) | 17 MB (perdidos) | 14,3 MB |
+| Especificação do recorte | `art/lote-NN.json` | sim | 7 KB | 7 KB |
+| Prompts exatos | `art/prompts/lote-NN.md` | sim | reconstruídos | literais |
+| Masters PNG | `Assets/Art/**` | sim | 9,4 MB (43 sprites) | 6,7 MB (50 sprites) |
+| Folhas de revisão | `art/review/*.jpg` | sim | 1,1 MB | 1,0 MB |
 
-Projeção: ~60 imagens somam cerca de 55 MB de masters. Se passar de ~100 MB, mover
-`Assets/Art/**/*.png` para Git LFS; é preciso `git-lfs` nas máquinas e no CI, e ele não existe
-neste ambiente. **Ponto de decisão: lote 03.** Os brutos não vão para o git: o master
-processado é a fonte de verdade, e os brutos só servem para reprocessar.
+**Brutos são descartáveis.** O master processado é a fonte de verdade; os brutos só servem para
+reprocessar. Neste ambiente, um reset apaga tudo o que o `.gitignore` ignora, e foi assim que
+os brutos do lote 01 se perderam. Guardá-los como anexo de release também não funciona aqui:
+o host de upload do GitHub é bloqueado, e o rascunho de teste foi apagado. Por isso a regra é
+**processar e versionar os masters no mesmo turno da geração**: um reset só custa os brutos,
+nunca o trabalho. Referências para lotes futuros saem dos masters (`make-ref.mjs`).
+
+Projeção: ~60 imagens somam cerca de 50 MB de masters (16 MB depois de 2 lotes). Se passar de
+~100 MB, mover `Assets/Art/**/*.png` para Git LFS; é preciso `git-lfs` nas máquinas e no CI, e
+ele não existe neste ambiente. **Ponto de decisão: lote 03.**
 
 ---
 
@@ -290,8 +346,9 @@ processado é a fonte de verdade, e os brutos só servem para reprocessar.
 
 ## 11. Próximos passos
 
-1. **Aprovação do lote 01** (decisões pendentes: manter a lata oblíqua? refazer o turista com camisa?).
-2. Integrar os sprites aprovados no protótipo (§7.1), com preview ao vivo.
-3. Lote 02 (§6), com os prompts gravados em `art/prompts/lote-02.md` antes da geração.
-4. Gate `check-art-registry`: todo arquivo em `Assets/Art` tem linha no registro, e toda linha
+1. ~~Aprovação do lote 01~~: **aprovado** (lata oblíqua mantida; turista mantido, com versões com camisa no lote 02).
+2. **Aprovação do lote 02.** Decisões pendentes: qual turista fica (lote 01 sem camisa, (a) ou (b))? Refazer o selado do coração?
+3. Integrar os sprites aprovados no protótipo (§7.1), com preview ao vivo.
+4. Lote 03 (§6), com os prompts gravados em `art/prompts/lote-03.md` antes da geração.
+5. Gate `check-art-registry`: todo arquivo em `Assets/Art` tem linha no registro, e toda linha
    aponta para um arquivo que existe (o CI que `docs/04` §11 já promete).

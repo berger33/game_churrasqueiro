@@ -446,7 +446,8 @@ async function updateRegistry(entries) {
   }
   for (const e of entries) {
     const prev = byName.get(e.name);
-    if (prev && prev.status && prev.status !== 'pending') { e.status = prev.status; e.source = prev.source; }
+    // A reviewed row is frozen: re-processing never resets its decision or its notes.
+    if (prev && prev.status && prev.status !== 'pending') { e.status = prev.status; e.source = prev.source; e.notes = prev.notes; }
     if (!prev) order.push(e.name);
     byName.set(e.name, { ...prev, ...e });
   }
@@ -478,8 +479,16 @@ async function main() {
   });
   const put = (name, entry) => { manifest.sprites[name] = { ...entry, batch: batch.batch }; };
 
+  let skipped = 0;
   for (const spec of batch.assets) {
     const srcPath = join(ROOT, batch.sourceDir, spec.source);
+    if (!existsSync(srcPath)) {
+      // Raw outputs are not in git and do not survive a workspace reset; the masters
+      // already committed stay valid (docs/22 §8). Nothing is deleted or rewritten.
+      console.warn(`[art] skip ${spec.source}: raw file missing — keeping the committed masters`);
+      skipped++;
+      continue;
+    }
     const src = await loadRgba(srcPath);
     const srcRel = relative(ROOT, srcPath);
     if (spec.mode === 'opaque') {
@@ -498,16 +507,21 @@ async function main() {
     if (spec.mode === 'grid') {
       const cells = processGrid(img, lab, comps, spec);
       const byCell = Object.fromEntries(spec.cells.map((n, i) => [n, cells[i]]));
-      const aligned = alignStates(spec.states.map((s) => byCell[s].sprite), spec.maxTiltDeg);
-      const food = { states: {}, served: null };
+      // Grill foods share one canvas so neighbouring states can crossfade; prep items
+      // (vinagrete: board → chopped → bowl) change shape by design, so `align: false`.
+      const align = spec.align !== false;
+      const aligned = align ? alignStates(spec.states.map((s) => byCell[s].sprite), spec.maxTiltDeg) : [];
+      const food = { kind: spec.kind ?? 'grill', states: {}, served: null };
       for (let i = 0; i < spec.cells.length; i++) {
         const cellName = spec.cells[i];
         const name = `spr_food_${spec.subject}_${cellName}`;
         const si = spec.states.indexOf(cellName);
-        const sprite = si >= 0 ? aligned[si] : cells[i].sprite;
+        const sprite = si >= 0 && align ? aligned[si] : cells[i].sprite;
         const file = await writeSprite(spec.out, name, sprite);
         put(name, { file, w: sprite.w, h: sprite.h, pivot: sprite.pivot ?? [0.5, 0.5], category: 'food', source: srcRel });
-        if (si >= 0) food.states[cellName] = name; else food.served = name;
+        if (cellName === 'served') food.served = name;
+        else if (si >= 0) food.states[cellName] = name;
+        else (food.other ??= {})[cellName] = name;
         const warn = [cells[i].dropped ? `${cells[i].dropped} stray part(s) dropped` : '', cells[i].touches ? 'touches cell edge' : ''].filter(Boolean).join('; ');
         row(name, 'food', file, [spec.notes ?? '', warn].filter(Boolean).join(' — '));
         console.log(`[art] ${name.padEnd(38)} ${sprite.w}×${sprite.h}${warn ? `  (${warn})` : ''}`);
@@ -545,7 +559,7 @@ async function main() {
   const sorted = { _comment: manifest._comment, sprites: Object.fromEntries(Object.entries(manifest.sprites).sort(([a], [b]) => a.localeCompare(b))), foods: manifest.foods };
   await writeFile(MANIFEST, JSON.stringify(sorted, null, 2) + '\n');
   await updateRegistry(registry);
-  console.log(`[art] ${registry.length} sprites → ${relative(ROOT, MANIFEST)}, ${relative(ROOT, REGISTRY)}`);
+  console.log(`[art] ${registry.length} sprites → ${relative(ROOT, MANIFEST)}, ${relative(ROOT, REGISTRY)}${skipped ? ` · ${skipped} source(s) skipped (raw missing)` : ''}`);
 }
 
 main().catch((e) => { console.error('[art] FAILED:', e.message); process.exit(1); });
