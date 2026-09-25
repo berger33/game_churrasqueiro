@@ -38,4 +38,21 @@ function run(args) {
 }
 run(['build', 'tools/csharp/core/Churrasco.Core.csproj', '-c', 'Release', '-nologo', '-v', 'quiet']);
 run(['build', 'tools/csharp/parity/Churrasco.Parity.csproj', '-c', 'Release', '-nologo', '-v', 'quiet']);
-run(['run', '--no-build', '--project', 'tools/csharp/parity/Churrasco.Parity.csproj', '-c', 'Release']);
+
+// The parity report is also published as a check annotation on GitHub, so a
+// reviewer sees "N checks agree / M not ported" on the PR without opening logs.
+console.log('[csharp] dotnet run --project tools/csharp/parity');
+const parity = spawnSync('dotnet', ['run', '--no-build', '--project', 'tools/csharp/parity/Churrasco.Parity.csproj', '-c', 'Release'],
+  { cwd: ROOT, env, encoding: 'utf8' });
+process.stdout.write(parity.stdout ?? '');
+process.stderr.write(parity.stderr ?? '');
+if (process.env.GITHUB_ACTIONS) {
+  const lines = (parity.stdout ?? '').split('\n').filter((l) => l.startsWith('[parity]'));
+  const verdict = lines.at(-1) ?? '[parity] no output';
+  const escape = (t) => t.replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+  const body = escape(lines.join('\n'));
+  console.log(parity.status === 0
+    ? `::notice title=check-csharp (C# core vs TypeScript)::${body}`
+    : `::error title=check-csharp (C# core vs TypeScript)::${escape(verdict)}%0A${body}`);
+}
+process.exit(parity.status ?? 1);
