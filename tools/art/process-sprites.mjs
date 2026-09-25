@@ -337,9 +337,9 @@ function enclosedHole(sprite) {
 
 // ── modes ────────────────────────────────────────────────────────────────────
 
-function processGrid(img, lab, comps, spec) {
+function processGrid(img, lab, comps, spec, { keepAllInCell = false, minAreaFrac = 0.0015 } = {}) {
   const cw = img.w / spec.cols, ch = img.h / spec.rows;
-  const minArea = img.w * img.h * 0.0015;
+  const minArea = img.w * img.h * minAreaFrac;
   const out = [];
   for (let r = 0; r < spec.rows; r++) {
     for (let c = 0; c < spec.cols; c++) {
@@ -348,7 +348,11 @@ function processGrid(img, lab, comps, spec) {
       if (!inCell.length) throw new Error(`${spec.source}: cell ${r * spec.cols + c} is empty`);
       const main = inCell.reduce((a, b) => (b.area > a.area ? b : a));
       const zone = grow(main, 0.12);
-      const keep = inCell.filter((k) => k === main || (k.area >= main.area * 0.06 && overlaps(k, zone)));
+      // Food sheets drop loose parts (the model's captions); an icon keeps every part in its
+      // cell (flames over a starter, a glint off a blade), minus specks.
+      const keep = keepAllInCell
+        ? inCell.filter((k) => k.area >= main.area * 0.015)
+        : inCell.filter((k) => k === main || (k.area >= main.area * 0.06 && overlaps(k, zone)));
       const dropped = inCell.length - keep.length;
       const touches = main.minx <= cell.minx + 1 || main.maxx >= cell.maxx - 1 || main.miny <= cell.miny + 1 || main.maxy >= cell.maxy - 1;
       out.push({ sprite: extract(img, lab, new Set(keep.map((k) => k.id))), dropped, touches });
@@ -527,6 +531,20 @@ async function main() {
         console.log(`[art] ${name.padEnd(38)} ${sprite.w}×${sprite.h}${warn ? `  (${warn})` : ''}`);
       }
       manifest.foods[spec.subject] = food;
+      console.log(`[art]   ${spec.source}: ${tag}`);
+    } else if (spec.mode === 'icons') {
+      if (spec.names.length !== spec.cols * spec.rows) throw new Error(`${spec.source}: ${spec.names.length} names for ${spec.cols * spec.rows} cells`);
+      const cells = processGrid(img, lab, comps, spec, { keepAllInCell: true, minAreaFrac: 0.0002 });
+      const category = spec.category ?? 'ui';
+      for (let i = 0; i < spec.names.length; i++) {
+        const { sprite, touches } = cells[i];
+        const name = spec.names[i];
+        const file = await writeSprite(spec.out, name, sprite);
+        put(name, { file, w: sprite.w, h: sprite.h, pivot: [0.5, 0.5], category, source: srcRel });
+        const warn = touches ? 'touches cell edge' : '';
+        row(name, category, file, [spec.notes ?? '', warn].filter(Boolean).join(' — '));
+        console.log(`[art] ${name.padEnd(38)} ${sprite.w}×${sprite.h}${warn ? `  (${warn})` : ''}`);
+      }
       console.log(`[art]   ${spec.source}: ${tag}`);
     } else if (spec.mode === 'components') {
       for (const { name, sprite } of processComponents(img, lab, comps, spec)) {

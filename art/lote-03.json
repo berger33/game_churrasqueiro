@@ -1,0 +1,100 @@
+{
+  "_comment": "Lote 03 — ordem da primeira aparição (docs/22-ARTE_2D_PLANO.md §2, §6): ícones de interface e de upgrades, as churrasqueiras de 2–3 zonas (níveis 4, 8, 14), três restaurantes (níveis 8, 16, 24) e duas carnes (22, 26). Os nomes dos ícones são os ids que os dados já usam (economy.json currencies[].icon, upgrades.json tracks[].icon). Prompts exatos em art/prompts/lote-03.md.",
+  "batch": "lote-03",
+  "date": "2026-09-25",
+  "sourceDir": "art/source/lote-03",
+  "assets": [
+    {
+      "source": "ui_icons_core.png",
+      "mode": "icons", "cols": 3, "rows": 3,
+      "category": "ui", "label": "Ícones de interface",
+      "names": ["ic_coin", "ic_ember", "ic_star", "ic_clock", "ic_flame", "ic_check", "ic_chest", "ic_booster", "ic_lock"],
+      "out": "Assets/Art/UI/Icons",
+      "review": { "verdict": "ok", "note": "moeda e brasa são os ícones que economy.json já referencia (ic_coin, ic_ember)" }
+    },
+    {
+      "source": "ui_icons_upgrades_a.png",
+      "mode": "icons", "cols": 3, "rows": 3,
+      "category": "ui", "label": "Ícones de upgrade (1/3)",
+      "names": ["ic_grill_size", "ic_heat", "ic_stability", "ic_speed", "ic_charcoal", "ic_charcoal_quality", "ic_auto_refill", "ic_knife", "ic_board"],
+      "out": "Assets/Art/UI/Icons",
+      "review": { "verdict": "ok", "note": "ic_heat é o card destacado no passo 6 do FTUE" }
+    },
+    {
+      "source": "grill_ze_da_esquina_evo1.png",
+      "mode": "single", "hole": true,
+      "category": "grill", "name": "spr_grill_ze_da_esquina_evo1", "label": "Zé da Esquina evo 1 — Chapa da Calçada",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": { "verdict": "redo", "note": "boca em janela frontal, inclinada 7°, só 6 % do sprite (lata: 20 %): a grelha de 2 zonas ficaria minúscula na tela. Refazer no lote 04 com guia de layout" }
+    },
+    {
+      "source": "grill_parrilla_chef_cisma_evo1.png",
+      "mode": "single", "hole": true,
+      "category": "grill", "name": "spr_grill_parrilla_chef_cisma_evo1", "label": "Chef Cisma evo 1 — Inox Brilhando",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": { "verdict": "redo", "note": "mesma janela frontal (9°, 5 % do sprite); inox, termômetro e base de tijolo estão bons, a câmera não" }
+    },
+    {
+      "source": "grill_fornalha_dragao_manso_evo1.png",
+      "mode": "single", "hole": true,
+      "category": "grill", "name": "spr_grill_fornalha_dragao_manso_evo1", "label": "Dragão Manso evo 1 — Tijolo Refratário",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": { "verdict": "redo", "note": "janela frontal (−9°, 5 % do sprite); tijolo refratário e dragãozinho na chaminé estão bons" }
+    },
+    {
+      "source": "bg_espetinho_rua.png",
+      "mode": "opaque",
+      "category": "background", "name": "bg_restaurant_espetinho_rua", "label": "fundo: espetinho de rua (noite)",
+      "out": "Assets/Art/Backgrounds"
+    },
+    {
+      "source": "bg_trailer.png",
+      "mode": "opaque",
+      "category": "background", "name": "bg_restaurant_trailer", "label": "fundo: trailer (neon)",
+      "out": "Assets/Art/Backgrounds"
+    },
+    {
+      "source": "bg_churrascaria_bairro.png",
+      "mode": "opaque",
+      "category": "background", "name": "bg_restaurant_churrascaria_bairro", "label": "fundo: churrascaria de bairro",
+      "out": "Assets/Art/Backgrounds"
+    },
+    {
+      "source": "food_contra_file.png",
+      "mode": "grid", "cols": 2, "rows": 3,
+      "category": "food", "subject": "contra_file", "label": "Contra-filé",
+      "cells": ["raw", "rare", "medium", "well", "burned", "served"],
+      "states": ["raw", "rare", "medium", "well", "burned"],
+      "out": "Assets/Art/Sprites/Food",
+      "review": { "verdict": "ok" }
+    },
+    {
+      "source": "food_maminha.png",
+      "mode": "grid", "cols": 2, "rows": 3,
+      "category": "food", "subject": "maminha", "label": "Maminha",
+      "cells": ["raw", "rare", "medium", "well", "burned", "served"],
+      "states": ["raw", "rare", "medium", "well", "burned"],
+      "out": "Assets/Art/Sprites/Food",
+      "review": { "verdict": "warn", "note": "pouco triangular: parecida com o contra-filé" }
+    }
+  ],
+  "compare": ["spr_grill_lata_valente_evo1"],
+  "preview": {
+    "background": "bg_restaurant_espetinho_rua",
+    "grill": "spr_grill_lata_valente_evo3",
+    "embers": "t_fx_embers_medium",
+    "onGrill": [
+      ["spr_food_contra_file_rare", 0.22, 0.5, 72],
+      ["spr_food_maminha_medium", 0.52, 0.45, 72],
+      ["spr_food_linguica_toscana_medium", 0.8, 0.52, 62]
+    ],
+    "benchItems": [
+      ["spr_food_contra_file_raw", 62], ["spr_food_maminha_raw", 62], ["spr_food_espetinho_frango_raw", 76],
+      ["spr_food_linguica_toscana_raw", 62], ["spr_food_pao_de_alho_raw", 62]
+    ],
+    "orders": [
+      ["spr_char_customer_vizinho", ["spr_food_contra_file_served", "spr_food_pao_de_alho_served"], 0.8],
+      ["spr_char_customer_rival_a", ["spr_food_maminha_served", "spr_food_linguica_toscana_served"], 0.35]
+    ]
+  }
+}

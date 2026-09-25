@@ -91,9 +91,10 @@ async function batchStatus() {
   }
   const total = Object.values(count).reduce((a, b) => a + b, 0);
   if (!total) return 'sem registro';
-  if (count.approved === total) return 'aprovado';
+  const PT = { approved: 'aprovados', pending: 'pendentes', rejected: 'recusados', superseded: 'substituídos' };
+  if (!count.pending && !count.rejected) return `aprovado${count.superseded ? ` (${count.superseded} substituído${count.superseded > 1 ? 's' : ''})` : ''}`;
   if (count.pending === total) return 'aguardando aprovação';
-  return Object.entries(count).map(([k, v]) => `${v} ${k}`).join(', ');
+  return Object.entries(count).map(([k, v]) => `${v} ${PT[k] ?? k}`).join(', ');
 }
 
 // ── drawing helpers ──────────────────────────────────────────────────────────
@@ -179,7 +180,7 @@ async function contactSheet() {
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, 170);
   text(ctx, `${batchLabel} · arte 2D gerada por IA`, M, 78, 60, P.cream, DISPLAY);
   const nSprites = Object.values(manifest.sprites).filter((s) => s.batch === batch.batch).length;
-  text(ctx, `${batch.assets.length} imagens viraram ${nSprites} sprites recortados · ${batch.date} · status: ${status}`, M, 130, 30, status === 'aprovado' ? P.ok : P.gold, UI);
+  text(ctx, `${batch.assets.length} imagens viraram ${nSprites} sprites recortados · ${batch.date} · status: ${status}`, M, 130, 30, status.startsWith('aprovado') ? P.ok : P.gold, UI);
   text(ctx, 'fundo xadrez = área transparente', W - M, 130, 24, P.muted, UIB, 'right');
 
   let y = 210;
@@ -214,6 +215,40 @@ async function contactSheet() {
     }
   }
 
+  // UI icons: big, then at the game's size (32 px) on dark and in greyscale on light
+  const iconSets = batch.assets.filter((a) => a.mode === 'icons');
+  if (iconSets.length) {
+    section('Ícones', 'cada ícone também no tamanho real do jogo (32 px) e em cinza: a silhueta precisa ler sozinha');
+    const labelW = 250, gap = 10;
+    for (const a of iconSets) {
+      const n = a.names.length, cw = (W - 2 * M - labelW - gap * (n - 1)) / n, rowH = cw + 128;
+      ctx.fillStyle = P.panel; roundRect(ctx, M - 8, y - 8, W - 2 * M + 16, rowH, 18); ctx.fill();
+      text(ctx, `#${imgNo(a)}`, M + 8, y + 50, 44, P.gold, DISPLAY);
+      let ly = wrap(ctx, a.label ?? a.source, M + 8, y + 94, labelW - 24, 28, 30, P.cream, DISPLAY);
+      ly = verdictChip(ctx, a.review, M + 8, ly + 6);
+      if (a.review?.note) wrap(ctx, a.review.note, M + 8, ly, labelW - 24, 18, 21, P.sand, UIB, 3);
+      for (let i = 0; i < n; i++) {
+        const x = M + labelW + i * (cw + gap);
+        const s = await sprite(a.names[i]);
+        checker(ctx, x, y, cw, cw);
+        fit(ctx, s.img, x, y, cw, cw, 12);
+        // real size, on the dark UI panel colour
+        ctx.fillStyle = '#2c2018'; roundRect(ctx, x, y + cw + 8, cw / 2 - 4, 48, 8); ctx.fill();
+        fit(ctx, s.img, x + (cw / 2 - 4 - 32) / 2, y + cw + 16, 32, 32, 0);
+        // greyscale test on a light card
+        const g = createCanvas(32, 32), gx = g.getContext('2d');
+        fit(gx, s.img, 0, 0, 32, 32, 0);
+        const d = gx.getImageData(0, 0, 32, 32);
+        for (let p = 0; p < d.data.length; p += 4) { const l = 0.299 * d.data[p] + 0.587 * d.data[p + 1] + 0.114 * d.data[p + 2]; d.data[p] = d.data[p + 1] = d.data[p + 2] = l; }
+        gx.putImageData(d, 0, 0);
+        ctx.fillStyle = '#efe6da'; roundRect(ctx, x + cw / 2 + 4, y + cw + 8, cw / 2 - 4, 48, 8); ctx.fill();
+        ctx.drawImage(g, x + cw / 2 + 4 + (cw / 2 - 4 - 32) / 2, y + cw + 16);
+        text(ctx, a.names[i].replace(/^ic_/, ''), x + cw / 2, y + cw + 88, 19, P.sand, UIB, 'center');
+      }
+      y += rowH + 16;
+    }
+  }
+
   // grills and props (single objects), with earlier sprites for comparison
   const singles = batch.assets.filter((a) => a.mode === 'single');
   const compare = (batch.compare ?? []).map((name) => ({ compareName: name }));
@@ -236,8 +271,8 @@ async function contactSheet() {
         text(ctx, `${name.replace(/^spr_(grill|prop)_/, '')} — ${s.batch.replace('lote-', 'lote ')} (comparação)`, x, ty, 24, P.muted, UIB);
         ty += 30;
       } else {
-        text(ctx, `#${imgNo(item)} ${item.label ?? name}`, x, ty, 26, P.cream, UIB);
-        ty = verdictChip(ctx, item.review, x, ty + 36);
+        ty = wrap(ctx, `#${imgNo(item)} ${item.label ?? name}`, x, ty, bw - 10, 25, 29, P.cream, UIB, 2);
+        ty = verdictChip(ctx, item.review, x, ty + 8);
         if (item.review?.note) ty = wrap(ctx, item.review.note, x, ty, bw - 10, 21, 25, P.sand, UIB);
       }
       if (s.hole) text(ctx, `boca: inclinação ${s.hole.tiltDeg ?? '?'}°, ${Math.round(s.hole.areaFrac * 100)} % do sprite`, x, ty + 4, 21, P.cyan, UIB);
@@ -250,7 +285,8 @@ async function contactSheet() {
   const strips = batch.assets.filter((a) => a.mode === 'strips');
   const opaque = batch.assets.filter((a) => a.mode === 'opaque');
   if (strips.length || opaque.length) {
-    section('Brasas por calor e fundos', 'faixas opacas que ficam sob a grelha: fraco / médio / forte — mesmo desenho, só muda a intensidade');
+    if (strips.length) section('Brasas por calor e fundos', 'faixas opacas que ficam sob a grelha: fraco / médio / forte — mesmo desenho, só muda a intensidade');
+    else section('Fundos dos restaurantes', 'cenas 9:16 sem pessoas nem texto; o terço do meio fica livre para a churrasqueira');
     const top = y;
     let bottom = y;
     for (const fxA of strips) {
@@ -267,15 +303,16 @@ async function contactSheet() {
       y += 50;
       bottom = y;
     }
-    let bx = W - M;
+    // next to the strips: packed from the right edge; alone: left to right in batch order
+    const bgW = (a) => Math.round((manifest.sprites[a.name].w * 820) / manifest.sprites[a.name].h);
+    let bx = strips.length ? W - M - opaque.reduce((t, a) => t + bgW(a) + 30, -30) : M;
     for (const bgA of opaque) {
       const s = await sprite(bgA.name);
-      const bh = 820, bw = Math.round((s.img.width * bh) / s.img.height);
-      bx -= bw;
+      const bh = 820, bw = bgW(bgA);
       ctx.drawImage(s.img, bx, top, bw, bh);
       ctx.strokeStyle = P.line; ctx.lineWidth = 3; ctx.strokeRect(bx, top, bw, bh);
       text(ctx, `#${imgNo(bgA)} ${bgA.label ?? bgA.name}`, bx, top + bh + 36, 26, P.ok, UIB);
-      bx -= 30;
+      bx += bw + 30;
       bottom = Math.max(bottom, top + bh + 60);
     }
     y = bottom + 20;
@@ -347,12 +384,26 @@ async function montage(pv) {
   const [bx0, by0, bw0, bh0] = grill.hole.bbox;
   const hx = gx + bx0 * gs, hy = gy + by0 * gs, hw = bw0 * gs, hh = bh0 * gs;
 
-  // ember bed under the grate
-  const embers = await sprite(pv.embers ?? 't_fx_embers_medium');
+  // ember bed under the grate: one strip, or one band per heat zone (top = low → bottom = high,
+  // like grill.json)
   ctx.save();
   quadPath(); ctx.clip();
   ctx.fillStyle = '#1a0c06'; ctx.fillRect(hx, hy, hw, hh);
-  ctx.drawImage(embers.img, hx - 6, hy + hh * 0.18, hw + 12, hh * 0.9);
+  if (pv.zones) {
+    for (let z = 0; z < pv.zones.length; z++) {
+      const v0 = z / pv.zones.length, v1 = (z + 1) / pv.zones.length;
+      const band = [at(-0.05, v0), at(1.05, v0), at(1.05, v1), at(-0.05, v1)];
+      const ys = band.map((p) => p[1]);
+      const e = await sprite(pv.zones[z]);
+      ctx.save();
+      ctx.beginPath(); band.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); ctx.clip();
+      ctx.drawImage(e.img, hx - 6, Math.min(...ys), hw + 12, Math.max(8, Math.max(...ys) - Math.min(...ys)));
+      ctx.restore();
+    }
+  } else {
+    const embers = await sprite(pv.embers ?? 't_fx_embers_medium');
+    ctx.drawImage(embers.img, hx - 6, hy + hh * 0.18, hw + 12, hh * 0.9);
+  }
   const glow = ctx.createLinearGradient(0, hy, 0, hy + hh);
   glow.addColorStop(0, 'rgba(20,8,4,0.55)'); glow.addColorStop(0.5, 'rgba(255,120,40,0.10)'); glow.addColorStop(1, 'rgba(255,150,60,0.22)');
   ctx.fillStyle = glow; ctx.fillRect(hx, hy, hw, hh);
