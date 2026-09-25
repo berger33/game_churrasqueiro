@@ -70,14 +70,27 @@ Instrumentation: nylon guitar, cavaquinho, pandeiro, upright bass, light shaker.
 Independent music/SFX sliders and a mute (§53). Max 12 simultaneous voices; oldest
 non-essential voice is stolen. Sizzle is **never** stolen — it is gameplay information.
 
-## 6. Status
+## 6. Status — REAL ASSETS 2026-09-24 (synthesized foley + 3400K, CC0 until studio)
 
-**No audio is recorded yet.** The asset list in §3 is the specification.
+**Real WAVs agora existem** em `Assets/Audio/` (31 arquivos 8MB) e `prototype/public/audio/`
+servidos em `/audio/` — gerados deterministicamente por `tools/generate-audio-assets.mjs`
+(44.1 kHz/16-bit PCM). Trocar por gravação de estúdio: substituir o WAV mantendo o mesmo nome
+(manifest.json).
 
-The prototype now carries WebAudio-synthesised placeholders so the *rhythm* of the feedback
-can be evaluated before any recording budget is spent — implemented in
-`prototype/src/audio.ts`. Every placeholder is **not shippable** (§82) and keeps the id from
-§3, so swapping in a recording is a one-line change per cue.
+| Asset | Arquivos | Duração |
+|---|---|---|
+| `sfx_grill_sizzle_loop` | `sfx_grill_sizzle_loop.wav` + `sfx_charcoal_crackle_loop.wav` | 2.2s + 3.0s loop |
+| `sfx_flip` 4 variants | `sfx_flip_01..04.wav` | 0.32s no-repeat |
+| `sfx_place` 2 | `sfx_place_01..02.wav` | 0.18s |
+| `sfx_perfect` 3 | `sfx_perfect_01..03.wav` | 0.42s |
+| `mus_home` / `gameplay` / `result` | `mus_home.wav` 30s 92 BPM, `mus_gameplay.wav` 38s 98 BPM, `mus_result.wav` 12s | 3400K warm |
+
+Engine híbrida `prototype/src/audio.ts`: em `unlock()` faz `fetch` + `decodeAudioData` do
+`manifest.json`; se tem buffer toca `AudioBufferSourceNode` (coin pitchRun via `playbackRate`,
+combo tier via arquivo), senão cai no sintético WebAudio (noise+biquad+osc) — nunca mudo.
+Bed `startSizzleBed()` usa loop real + `Biquad lowpass` com `setIntensity(heat×efficiency)`.
+
+Placeholder anterior era só sintético. Agora é shippable placeholder até 12h de estúdio.
 
 What is wired, and where:
 

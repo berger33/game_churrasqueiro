@@ -58,6 +58,20 @@ export function deriveStats(db: GameDatabase, restaurant: RestaurantDef, levels:
   };
 }
 
+/** Apply churrasqueira evolution overrides on top of restaurant-derived stats (data-driven 1F→2F→3F). */
+export function applyChurrasqueiraToStats(stats: DerivedStats, db: GameDatabase, churrasqueiraId: string, evoLevel: number): DerivedStats {
+  const ch = db.churrasqueiraById?.get(churrasqueiraId);
+  if (!ch) return stats;
+  const evo = ch.evolutions.find(e => e.level === evoLevel) ?? ch.evolutions[0];
+  if (!evo) return stats;
+  return {
+    ...stats,
+    slotsPerZone: evo.slotsPerZone,
+    zoneCount: evo.zoneCount,
+    charcoalDurationSec: db.grill.charcoal.baseDurationSec * (1 + (evo.charcoalBonus ?? 0))
+  };
+}
+
 // ── Food runtime ─────────────────────────────────────────────────────────────
 
 export type DonenessStageId = 'raw' | 'rare' | 'medium' | 'well' | 'burned' | string;
@@ -149,6 +163,49 @@ export function createGrill(stats: DerivedStats, db: GameDatabase): GrillRuntime
   return { zones, charcoalT: 0, charcoalEfficiency: 1, refilling: 0, stats };
 }
 
+/** Patch grill zones heat to match churrasqueira evolution (heatBase + ramp). */
+export function patchGrillForChurrasqueira(grill: GrillRuntime, db: GameDatabase, churrasqueiraId: string, evoLevel: number): void {
+  const ch = db.churrasqueiraById?.get(churrasqueiraId);
+  if (!ch) return;
+  const evo = ch.evolutions.find(e => e.level === evoLevel) ?? ch.evolutions[0];
+  if (!evo) return;
+  // recreate zones array with correct count/heat, preserving items where possible (but turn start has no items)
+  const newZones: GrillRuntime['zones'] = [];
+  for (let i = 0; i < evo.zoneCount; i++) {
+    let heat = evo.heatBase;
+    if (evo.zoneCount > 1) heat += (i / (evo.zoneCount - 1)) * 0.85;
+    // try to keep existing items if same index (for mid-turn migration not needed)
+    const old = grill.zones[i];
+    newZones.push({ index: i, heat, items: old ? [...old.items] : [] });
+  }
+  grill.zones = newZones;
+  // also ensure stats reflect evo
+  grill.stats.zoneCount = evo.zoneCount;
+  grill.stats.slotsPerZone = evo.slotsPerZone;
+}
+
+/**
+ * Runtime zone index for a data-table zone id (`low` / `medium` / `high`), or `-1`
+ * for `none` / unknown ids.
+ *
+ * The table always describes three zones, but the runtime grill does not have to:
+ * churrasqueira evolutions ship 1-, 2- and 3-zone grills (`lata_valente` has one).
+ * Using the table index directly pointed `high` at a zone that does not exist and
+ * crashed the skill policy on every starter grill. The id is mapped by its
+ * *relative* position (cool end → cool end, hot end → hot end); when the counts
+ * match this is the identity, so the default grill behaves exactly as before.
+ */
+export function runtimeZoneIndex(g: GrillRuntime, db: GameDatabase, zoneId: string): number {
+  if (zoneId === 'none') return -1;
+  const table = db.grill.zones;
+  const t = table.findIndex((z) => z.id === zoneId);
+  const n = g.zones.length;
+  if (t < 0 || n === 0) return -1;
+  if (n === table.length) return t;
+  if (n === 1 || table.length === 1) return 0;
+  return Math.round((t / (table.length - 1)) * (n - 1));
+}
+
 export function grillSlotsFree(g: GrillRuntime): number {
   const cap = g.stats.slotsPerZone;
   let free = 0;
@@ -163,7 +220,8 @@ export function zoneIsFull(g: GrillRuntime, zoneIndex: number): boolean {
 
 /** Effective heat of a zone, including charcoal efficiency and upgrade bonuses. */
 export function effectiveHeat(g: GrillRuntime, zoneIndex: number, db: GameDatabase): number {
-  const base = db.grill.zones[zoneIndex]?.heatMultiplier ?? 1;
+  // Prefer churrasqueira-patched heat stored on the grill runtime; fallback to db table for legacy
+  const base = g.zones[zoneIndex]?.heat ?? db.grill.zones[zoneIndex]?.heatMultiplier ?? 1;
   const top = g.zones.length - 1;
   const bonus = zoneIndex === top ? g.stats.highZoneBonus : g.stats.highZoneBonus * (zoneIndex / Math.max(1, top)) * 0.5;
   return (base + bonus) * g.charcoalEfficiency;

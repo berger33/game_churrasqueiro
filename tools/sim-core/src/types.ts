@@ -232,6 +232,40 @@ export interface EconomyTable {
   targets: Record<string, unknown>;
 }
 
+// ── Churrasqueiras (progression 1F → 2F → 3F → Fornalha) ───────────────────
+export interface ChurrasqueiraEvolution {
+  level: number;
+  nameKey: string;
+  descKey: string;
+  shortName: string;
+  slotsPerZone: number;
+  zoneCount: number;
+  heatBase: number;
+  charcoalBonus: number;
+  costCoins: number;
+  costEmbers?: number;
+}
+
+export interface ChurrasqueiraDef {
+  id: string;
+  index: number;
+  nameKey: string;
+  subtitleKey: string;
+  descKey: string;
+  tier: string;
+  humorTag: string;
+  unlockLevel: number;
+  unlockCostCoins: number;
+  fileiras: number;
+  visual: { style: string; material: string; color: string; chimney: boolean; brick: boolean };
+  evolutions: ChurrasqueiraEvolution[];
+}
+
+export interface ChurrasqueiraTable {
+  version: number;
+  churrasqueiras: ChurrasqueiraDef[];
+}
+
 // ── Raw bundle ──────────────────────────────────────────────────────────────
 
 export interface RawDataBundle {
@@ -241,6 +275,7 @@ export interface RawDataBundle {
   restaurants: RestaurantTable;
   upgrades: UpgradeTable;
   economy: EconomyTable;
+  churrasqueiras?: ChurrasqueiraTable;
 }
 
 export interface GameDatabase {
@@ -250,8 +285,10 @@ export interface GameDatabase {
   restaurants: RestaurantTable;
   upgrades: UpgradeTable;
   economy: EconomyTable;
+  churrasqueiras?: ChurrasqueiraTable;
   ingredientById: Map<string, Ingredient>;
   customerById: Map<string, CustomerDef>;
   restaurantByIndex: Map<number, RestaurantDef>;
   upgradeById: Map<string, UpgradeTrack>;
+  churrasqueiraById: Map<string, ChurrasqueiraDef>;
 }

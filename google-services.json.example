@@ -1,0 +1,30 @@
+{
+  "_comment": "TEMPLATE — nunca commite o real. Copie para google-services.json na raiz e preencha no Firebase Console > Project Settings > Android app.",
+  "project_info": {
+    "project_number": "REPLACE_FIREBASE_PROJECT_NUMBER",
+    "project_id": "churrasco-mestre-da-brasa-REPLACE",
+    "storage_bucket": "churrasco-mestre-da-brasa-REPLACE.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:REPLACE:android:REPLACE",
+        "android_client_info": {
+          "package_name": "com.berger.churrascomestredabrasa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "REPLACE_FIREBASE_API_KEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

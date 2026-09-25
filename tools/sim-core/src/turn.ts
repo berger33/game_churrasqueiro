@@ -1,6 +1,7 @@
 import { clamp } from './data.ts';
 import { Rng } from './rng.ts';
 import {
+  applyChurrasqueiraToStats,
   createFood,
   createGrill,
   deriveStats,
@@ -8,6 +9,7 @@ import {
   flipFood,
   grillSlotsFree,
   overallDoneness,
+  patchGrillForChurrasqueira,
   placeOnGrill,
   removeFromGrill,
   rewardTuning,
@@ -59,6 +61,9 @@ export interface TurnConfig {
     maxOrdersOnScreen: number;
     tipBase: number;
   }>;
+  /** Churrasqueira progression — overrides restaurant grill when present. */
+  churrasqueiraId?: string;
+  churrasqueiraLevel?: number;
 }
 
 export interface TurnCounters {
@@ -180,8 +185,17 @@ export class TurnSimulation {
     this.rng = new Rng(seed ^ 0x5eed);
     this.tuning = rewardTuning(db.economy);
     this.restaurant = db.restaurantByIndex.get(config.restaurantIndex) ?? db.restaurantByIndex.get(0)!;
-    this.stats = deriveStats(db, this.restaurant, config.upgradeLevels);
+    // base stats from restaurant + upgrades
+    let stats = deriveStats(db, this.restaurant, config.upgradeLevels);
+    // churrasqueira overrides (1F → 2F → 3F progression, data-driven)
+    if (config.churrasqueiraId) {
+      stats = applyChurrasqueiraToStats(stats, db, config.churrasqueiraId, config.churrasqueiraLevel ?? 1);
+    }
+    this.stats = stats;
     this.grill = createGrill(this.stats, db);
+    if (config.churrasqueiraId) {
+      patchGrillForChurrasqueira(this.grill, db, config.churrasqueiraId, config.churrasqueiraLevel ?? 1);
+    }
     this.timeLimit = config.overrides?.turnLengthSec ?? this.restaurant.turnLengthSec;
     this.spawnInterval = config.overrides?.spawnIntervalSec ?? 7.5;
     this.spawnTimer = 1.2;

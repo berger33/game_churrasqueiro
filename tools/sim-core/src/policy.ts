@@ -1,5 +1,6 @@
 import { clamp } from './data.ts';
 import { overallDoneness, type FoodRuntime, type TurnActions } from './turn.ts';
+import { effectiveHeat, runtimeZoneIndex } from './cooking.ts';
 import type { CustomerRuntime } from './turn.ts';
 import type { Ingredient } from './types.ts';
 import type { Rng } from './rng.ts';
@@ -159,29 +160,23 @@ export class SkillPolicy {
     }
   }
 
-  /** Lazily built zone-id → index lookup (avoids a linear scan every frame). */
-  private zoneIndexCache: Map<string, number> | null = null;
+  /**
+   * Runtime zone index for an ingredient's ideal zone id. Delegates to
+   * `runtimeZoneIndex()` so the policy agrees with the grill it is actually
+   * playing on — churrasqueiras can have fewer zones than `db.grill.zones`.
+   */
   private zoneIndex(a: TurnActions, id: string): number {
-    if (id === 'none') return -1;
-    if (!this.zoneIndexCache) {
-      this.zoneIndexCache = new Map();
-      for (const z of a.db.grill.zones) this.zoneIndexCache.set(z.id, z.index);
-    }
-    return this.zoneIndexCache.get(id) ?? -1;
+    return runtimeZoneIndex(a.grill, a.db, id);
   }
 
   /** How fast this item is currently cooking (doneness units per second). */
   private rateOf(a: TurnActions, f: FoodRuntime): number {
     if (f.zoneIndex < 0) return 0.1;
-    const zoneBase = a.db.grill.zones[f.zoneIndex]?.heatMultiplier ?? 1;
-    const top = a.grill.zones.length - 1;
-    const bonus =
-      f.zoneIndex === top
-        ? a.grill.stats.highZoneBonus
-        : a.grill.stats.highZoneBonus * (f.zoneIndex / Math.max(1, top)) * 0.5;
-    // Charcoal efficiency MUST be included or the compensation drifts and the
-    // player systematically serves early.
-    const heat = (zoneBase + bonus) * a.grill.charcoalEfficiency;
+    // Exactly the heat tickGrill cooks with (zone heat + upgrade bonus, times
+    // charcoal efficiency — omit the efficiency and the player serves early).
+    // Reading the data table's heatMultiplier instead ignored churrasqueira zone
+    // heat, so on an upgraded grill the policy aimed at the wrong flip time.
+    const heat = effectiveHeat(a.grill, f.zoneIndex, a.db);
     return (heat * f.ingredient.heatRate * a.grill.stats.heatRampRate) / f.ingredient.sideCookSec;
   }
 
