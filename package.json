@@ -9,6 +9,7 @@
     "node": ">=20"
   },
   "scripts": {
+    "typecheck": "tsc --noEmit",
     "validate": "node --experimental-strip-types tools/studio/validate-data.ts",
     "gen-schemas": "node tools/studio/gen-schemas.mjs",
     "check-schema": "node tools/studio/check-schemas.mjs",
@@ -33,6 +34,7 @@
   },
   "devDependencies": {
     "@napi-rs/canvas": "^1.0.9",
+    "@types/node": "^22.10.2",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "esbuild": "^0.28.2",

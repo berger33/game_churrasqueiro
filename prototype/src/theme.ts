@@ -425,8 +425,8 @@ function mixHex(a: string, b: string, t: number): string {
   // accept rgba(...) strings and blend numeric
   const pa = parse(a), pb = parse(b);
   const k = clamp01(t);
-  const ch = [0, 1, 2].map((i) => Math.round(pa[i] + (pb[i] - pa[i]) * k));
-  const al = pa[3] + (pb[3] - pa[3]) * k;
+  const ch = [0, 1, 2].map((i) => Math.round(pa[i]! + (pb[i]! - pa[i]!) * k));
+  const al = pa[3]! + (pb[3]! - pa[3]!) * k;
   return `rgba(${ch[0]},${ch[1]},${ch[2]},${al.toFixed(3)})`;
 }
 function parse(c: string): [number, number, number, number] {

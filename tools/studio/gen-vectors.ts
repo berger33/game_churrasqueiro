@@ -108,7 +108,17 @@ for (const ing of db.ingredients.items) {
         zoneHeatMultiplier: db.grill.zones[zi]!.heatMultiplier,
         stepSec: r9(STEP),
         derivedStats: {
-          heatRatePerSec: STATS.heatRatePerSec,
+          // Doneness gained per second on the side facing the coals. This is the
+          // exact coefficient tickGrill multiplies by dt:
+          //   rate = heat * ingredient.heatRate * stats.heatRampRate / ingredient.sideCookSec
+          // where heat = effectiveHeat(zone) (zone table value + high-zone bonus,
+          // scaled by charcoal efficiency). The C# runner recomputes it and asserts
+          // equality before replaying the trace.
+          // It previously read a `heatRatePerSec` field that does not exist on
+          // DerivedStats, so JSON.stringify silently dropped it from every vector.
+          heatRatePerSec: r9(
+            effectiveHeat(grill, zi, db) * ing.heatRate * STATS.heatRampRate / ing.sideCookSec
+          ),
           charcoalEfficiency: r9(grill.charcoalEfficiency),
           highZoneBonus: STATS.highZoneBonus
         }
@@ -181,7 +191,9 @@ for (const ing of db.ingredients.items) {
       ingredient: ing.id,
       perfectWindow: ing.perfectWindow,
       goodWindowPadding: db.grill.scoring.goodWindowPadding,
-      burnedCoinFactor: db.grill.scoring.burnedCoinFactor,
+      // No `burnedCoinFactor` here: there is no such field in any table, and burned
+      // food pays a hard zero (scoreItem → case 'burned': coins = 0), which the
+      // expectation rows below already pin down.
       burnedThreshold: db.ingredients.shared.burnedThreshold,
       minEvennessForPerfect: db.ingredients.shared.minEvennessForPerfect,
       target: (ing.perfectWindow[0]! + ing.perfectWindow[1]!) / 2,

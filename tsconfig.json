@@ -13,7 +13,8 @@
     "resolveJsonModule": true,
     "allowJs": false,
     "noEmit": true,
-    "types": []
+    "allowImportingTsExtensions": true,
+    "types": ["node"]
   },
   "include": ["tools/**/*.ts", "prototype/src/**/*.ts", "shared/**/*.ts"],
   "exclude": ["node_modules", "dist"]

@@ -94,7 +94,7 @@ export class SkillPolicy {
         if (!ing) continue;
         const f = a.spawn(ing as Ingredient);
         if (ing.cookMethod === 'prep') continue; // prepped off-grill
-        const zone = this.pickZoneFast(zones, slotsPerZone, ing.idealZone);
+        const zone = this.pickZoneFast(zones, slotsPerZone, this.zoneIndex(a, ing.idealZone));
         if (zone >= 0) a.place(f, zone);
       }
     }
@@ -185,9 +185,16 @@ export class SkillPolicy {
     return (heat * f.ingredient.heatRate * a.grill.stats.heatRampRate) / f.ingredient.sideCookSec;
   }
 
-  private pickZoneFast(zones: TurnActions['grill']['zones'], slotsPerZone: number, ideal: string): number {
-    let idealIdx = -1;
-    for (let i = 0; i < zones.length; i++) if (zones[i]!.id === ideal) idealIdx = i;
+  /**
+   * Zone choice for a freshly spawned item. `idealIdx` is the *resolved* zone
+   * index for the ingredient's `idealZone` id (`-1` when the ingredient has no
+   * preference, e.g. `none`). The runtime zone objects carry no id of their own:
+   * the id → index mapping lives in `db.grill.zones` and is resolved by
+   * `zoneIndex()`. Comparing against a field that does not exist made this a
+   * dead branch — every item was placed at random regardless of skill (measured:
+   * 31.9% ideal-zone hits at skill 0.55 versus a 33.3% chance baseline).
+   */
+  private pickZoneFast(zones: TurnActions['grill']['zones'], slotsPerZone: number, idealIdx: number): number {
     if (idealIdx >= 0 && this.rng.next() <= this.skill) {
       if (zones[idealIdx]!.items.length < slotsPerZone) return idealIdx;
       for (let i = zones.length - 1; i >= 0; i--) if (i !== idealIdx && zones[i]!.items.length < slotsPerZone) return i;

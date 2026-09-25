@@ -77,9 +77,12 @@ for (const a of achievements.achievements) {
   }
 }
 
+// One shape for both pools: a union here narrows `requiresIngredient` to `unknown`
+// after the `in` check, which then cannot be passed to `ingredientById.has`.
+type MissionDef = { id: string; stat: string; goal: number; requiresIngredient?: string };
 const missions = readJson('missions.json') as {
-  daily: { pool: { id: string; stat: string; goal: number; requiresIngredient?: string }[]; count: number };
-  weekly: { pool: { id: string; stat: string; goal: number }[]; count: number };
+  daily: { pool: MissionDef[]; count: number };
+  weekly: { pool: MissionDef[]; count: number };
 };
 if (missions.daily.pool.length < missions.daily.count) {
   fail('missions.json', `daily pool (${missions.daily.pool.length}) is smaller than the number of missions offered (${missions.daily.count})`);
@@ -89,7 +92,7 @@ if (missions.weekly.pool.length < missions.weekly.count) {
 }
 for (const m of [...missions.daily.pool, ...missions.weekly.pool]) {
   if (m.goal <= 0) fail('missions.json', `${m.id}: goal must be > 0`);
-  if ('requiresIngredient' in m && m.requiresIngredient && !db.ingredientById.has(m.requiresIngredient)) {
+  if (m.requiresIngredient && !db.ingredientById.has(m.requiresIngredient)) {
     fail('missions.json', `${m.id}: requiresIngredient "${m.requiresIngredient}" does not exist`);
   }
 }
