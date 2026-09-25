@@ -81,6 +81,10 @@ npm run proto             # design-verification prototype on http://0.0.0.0:5173
 | [16-PRIVACY.md](docs/16-PRIVACY.md) | LGPD/GDPR, data disclosure, consent |
 | [17-BACKLOG.md](docs/17-BACKLOG.md) | Prioritised backlog |
 | [18-STATUS.md](docs/18-STATUS.md) | What is built, what is verified, what is open |
+| [19-AUDITORIA_COMERCIAL.md](docs/19-AUDITORIA_COMERCIAL.md) | Commercial audit and what it changed (pt-BR) |
+| [20-AUDITORIA_PRIMEIRA_IMPRESSAO_UX.md](docs/20-AUDITORIA_PRIMEIRA_IMPRESSAO_UX.md) | First-impression / first-90-seconds UX audit (pt-BR) |
+| [21-5S_TEST_20.md](docs/21-5S_TEST_20.md) | Guided 5-second test, n=20 (pt-BR) |
+| [22-ARTE_2D_PLANO.md](docs/22-ARTE_2D_PLANO.md) | Professional 2D art plan: AI generation in batches of 10, cut-out pipeline, approval, integration (pt-BR) |
 
 ## Current status
 
