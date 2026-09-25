@@ -54,13 +54,18 @@ bundletool get-size total --bundle=build/churrasco.aab --dimensions=ABI
 
 ## 5. CI gates (fail the build)
 
-1. `npm run validate` — data integrity
-2. `npm test` — full QA suite
-3. `npm run sim` — economy guardrails
-4. `npm run sim:long` — pacing guardrails (nightly, not per-PR: ~7 min)
-5. Unity compile + EditMode tests
-6. AAB size gate (≤ 90 MB base)
-7. Asset registry check (no asset without a licence row)
+1. `npm run typecheck` — `tsc --noEmit`, strict. Catches references to fields that
+   do not exist, which is how the ideal-zone bug (`18-STATUS.md` §4.1) hid.
+2. `npm run validate` — data integrity
+3. `npm test` — full QA suite
+4. `npm run sim` — economy guardrails
+5. `npm run check-vectors` — the golden vectors still match the rules
+6. `npm run sim:long` — pacing guardrails (nightly, not per-PR: ~7 min)
+7. Unity compile + EditMode tests
+8. AAB size gate (≤ 90 MB base)
+9. Asset registry check (no asset without a licence row)
+
+> No `.github/workflows` file exists yet — these gates currently run by hand.
 
 ## 6. Versioning
 

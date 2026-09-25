@@ -2,6 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { readJson } from '../load-data.ts';
 
 const ads = readJson('ads.json') as {
+  mediation: Record<string, unknown>;
+  consent: Record<string, unknown>;
+  androidAppId: string;
+  iosAppId: string;
   units: Record<string, { debug: string; release: string; enabled?: boolean }>;
   rewardedPlacements: { id: string; cooldownMin: number; maxPerDay: number }[];
   interstitial: Record<string, unknown>;
@@ -39,7 +43,7 @@ class RewardTokenVault {
 class PlacementPolicy {
   private perDay = new Map<string, number>();
   private lastAt = new Map<string, number>();
-  constructor(private readonly cfg: { cooldownMin: number; maxPerDay: number }[]) {}
+  constructor(private readonly cfg: { id: string; cooldownMin: number; maxPerDay: number }[]) {}
   canShow(id: string, nowSec: number): boolean {
     const c = this.cfg.find((x) => x.id === id);
     if (!c) return false;

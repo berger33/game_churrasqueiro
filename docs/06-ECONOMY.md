@@ -103,19 +103,19 @@ rate as one who is away for 8 hours, which makes short absences strictly better 
 |---|---|---|
 | `turnsPerSession` | 3–5 | 4 (assumed) |
 | `firstUpgradeAffordableAfterTurns` | 1–2 | 1 |
-| `unlock:espetinho_rua` | 28–45 | 34 |
-| `unlock:trailer` | 72–115 | 90 |
-| `unlock:churrascaria_bairro` | 115–185 | 146 |
-| `unlock:churrascaria_premium` | 195–315 | 247 |
-| `unlock:festival` | 340–550 | 430 |
+| `unlock:espetinho_rua` | 28–45 | 32 |
+| `unlock:trailer` | 72–115 | 87 |
+| `unlock:churrascaria_bairro` | 115–185 | 143 |
+| `unlock:churrascaria_premium` | 195–315 | 243 |
+| `unlock:festival` | 340–550 | 445 |
 | `unlock:rede_nacional` | 950–1450 | 1180 |
-| `income:level5` | 9 000–14 000 | 11 122 |
-| `income:level15` | 36 000–56 000 | 44 669 |
-| `income:level30` | 78 000–122 000 | 97 761 |
-| `income:level50` | 98 000–152 000 | 123 278 |
-| `coinSpendRatio` | 0.70–0.99 | 0.740 |
-| `coinSpike` (max ÷ median turn) | ≤ 6 | 1.70 |
-| `perfectRateAtSkillMid` | 0.40–0.62 | 0.484 |
+| `income:level5` | 9 000–14 000 | 10 616 |
+| `income:level15` | 36 000–56 000 | 46 482 |
+| `income:level30` | 78 000–122 000 | 97 564 |
+| `income:level50` | 98 000–152 000 | 123 153 |
+| `coinSpendRatio` | 0.70–0.99 | 0.741 |
+| `coinSpike` (max ÷ median turn) | ≤ 6 | 1.69 |
+| `perfectRateAtSkillMid` | 0.40–0.62 | 0.557 |
 
 **15 of 15 met** on `restaurants` v6 + `economy` v11 (`npm run sim:long`, 1 500 turns, skill 0.55).
 
@@ -125,9 +125,13 @@ that legitimate tuning does not trip them.
 ### 5.1 Tuning lesson: never tune one sink alone
 
 Raising `churrascaria_bairro` from 12 000 to 15 000 coins made it unlock **faster**
-(turn 185 → 146). The simulation harness is a greedy spender: the coins it can no longer
-sink into a pricier restaurant go into upgrades instead, which raises income and speeds up
-everything downstream. This is recorded in `economy.json → targets._bandDerivationNote`.
+(turn 185 → 146 at the time). The simulation harness is a greedy spender: the coins it can no
+longer sink into a pricier restaurant go into upgrades instead, which raises income and speeds
+up everything downstream. This is recorded in `economy.json → targets._bandDerivationNote`.
+
+Re-measured after the policy fix in §5.3, the same establishment now lands at **turn 151** in
+the greedy report (143 in `sim:long`). The lesson is unchanged — it is the *reason* the band
+rule exists.
 
 > Slow pacing by reducing income, or by scaling **all** sinks together — never one sink alone.
 
@@ -139,25 +143,52 @@ roughly **10 % of all customers**. After the fix, customer loss at skill 0.30 fe
 **10.5 % → 0.4 %** and perfect rate rose **26.1 % → 34.5 %**. Every pacing number measured
 before that fix was invalid, and all of it had to be re-derived.
 
+Re-measured on the current rules (after §5.3): loss **0.7 %**, perfect rate **35.4 %**.
+
+### 5.3 Third bug: the ideal-zone mechanic never ran
+
+The skill policy chose zones with `zones[i].id === ideal`. Runtime zones are
+`{ index, heat, items }` — there is **no `id`** — so the comparison was always false and the
+branch was dead code. At skill ≤ 0.55 nothing else corrected the choice either, so items were
+placed at random: measured **31.9 %** ideal-zone hits against a **33.3 %** chance baseline for
+three zones.
+
+The project's own type-check would have caught it (`npm run typecheck`, added in the same
+change) — it had never been wired up, which is also why the two defects below survived.
+
+**Fix and effect:** resolve the zone id through `db.grill.zones` (the mapping `zoneIndex()`
+already implemented, used two lines further down). Ideal-zone hits at skill 0.55 rose
+**31.9 % → 68.2 %**, and the reference measurement moved:
+
+| | before | after |
+|---|---|---|
+| perfect rate @ skill 0.55 | 48.4 % | **55.7 %** |
+| coins/turn @ skill 0.55 | 712 | **793** |
+
+All 15 targets still pass on both horizons, so this was a *fidelity* correction rather than a
+rescue: the published numbers now describe the game as designed. Every figure in §5 and §7 was
+re-derived, the 98 golden vectors were regenerated, and `tools/studio/test/policy.test.ts` now
+asserts ideal-zone behaviour directly so the mechanic cannot silently stop running again.
+
 ## 7. Measured pacing
 
 1 500 turns at 12 turns/day:
 
 | Establishment | Turn | ≈ Day |
 |---|---|---|
-| Espetinho de Rua | 34 | 3 |
-| Trailer | 90 | 8 |
-| Churrascaria de Bairro | 146 | 12 |
-| Churrascaria Premium | 247 | 21 |
-| Festival | 430 | 36 |
+| Espetinho de Rua | 32 | 3 |
+| Trailer | 87 | 7 |
+| Churrascaria de Bairro | 143 | 12 |
+| Churrascaria Premium | 243 | 20 |
+| Festival | 445 | 37 |
 | Rede Nacional | 1180 | 98 |
 
-Coins per turn by tier: **879 → 2 846 → 7 345 → 8 036 → 7 917 → 10 339 → 11 823.**
-Income per day by level: **11 k (L5) → 45 k (L15) → 98 k (L30) → 123 k (L50).**
-Spend ratio **0.740**; earned 14 619 931 vs spent 10 822 120 over the campaign.
+Coins per turn by tier: **934 → 3 009 → 7 362 → 8 062 → 7 919 → 10 334 → 11 813.**
+Income per day by level: **10.6 k (L5) → 46.5 k (L15) → 97.6 k (L30) → 123.2 k (L50).**
+Spend ratio **0.741**; earned 14 607 368 vs spent 10 822 120 over the campaign.
 
 The first three establishments land inside the player's first fortnight — deliberate, since
-early retention is priority 2. The **430 → 1180 gap (≈ 62 days)** carries no new restaurant
+early retention is priority 2. The **445 → 1180 gap (≈ 61 days)** carries no new restaurant
 and is filled by the collection (37), achievements (58), prestige tracks, the region route,
 weekly events and the Brasa Pass. Whether that holds a mid-core player is **unvalidated**;
 it needs D30/D60 telemetry before V1.0 (see docs/18-STATUS.md §3).

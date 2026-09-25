@@ -1,6 +1,6 @@
 # 18 — Status Report
 
-**Snapshot:** 2026-09-17 · branch `arena/01a0b139-game-churrasqueiro`
+**Snapshot:** 2026-09-24 · branch `arena/01a0d63f-game_churrasqueiro`
 
 This report states plainly what is **done and verified**, what is **built but
 unverified here**, and what is **not built**. Anything marked ⚠ was not executed
@@ -42,8 +42,10 @@ canvas to a commercial, friendly, studio-quality presentation:
 - **Protype banner removed** from `index.html`; rounded-corner window chrome with
   warm outer glow replaces the plain black rectangle.
 
-All 135 sim-core tests and every validation gate still pass. The render smoke
-test drives ~44.9 M canvas ops without throwing.
+All sim-core tests and every validation gate still pass — now including a
+`tsc --noEmit` type-check gate, which had been configured but never wired to a
+script (see section 4.1). The render smoke test drives ~44.9 M canvas ops without
+throwing.
 
 ---
 
@@ -53,16 +55,17 @@ Every claim below was produced by a command run in this checkout.
 
 | Area | Check | Result |
 |---|---|---|
-| Unit tests | `npx vitest run` | **135 passed / 0 failed** (8 files) |
+| Unit tests | `npx vitest run` | **140 passed / 0 failed** (9 files) |
+| Type check | `npm run typecheck` | **OK — 0 errors.** `tsconfig.json` was strict (`strict`, `noUncheckedIndexedAccess`) but no script ever ran it: the first run reported **140 errors**, of which **15 were real code defects** (section 4.1) |
 | Localisation | `npm run check-l10n` | **OK** — 340 keys referenced by data, all translated in pt-BR (469 keys total); en-US / es-419 are declared 10.7 % stubs that fall back to pt-BR |
 | Data integrity | `npm run validate` | **OK** — 20 tables, 16 ingredients, 11 customers, 7 restaurants, 27 upgrade tracks, 58 achievements, 37 collection entries, 47 analytics events, 60 authored levels |
 | Data contracts | `npm run check-schema` | **OK** — 20/20 tables valid against `shared/schema`, and every contract rejects a broken copy of itself |
 | Contract drift | `npm run verify-schemas` | **OK** — 20 schemas in step with `shared/data` |
 | Short-horizon economy | `npm run sim` | **all 15 balance targets met** |
 | Long-horizon economy | `npm run sim:long` (1500 turns) | **all 15 balance targets met** — see §3 |
-| Economy report | `HORIZON=1500 npm run balance-report` | reaches **level 80**; income growth L5→L70 **×13.10** vs cost growth **×29.28** → costs outpace income, so purchases stay meaningful |
+| Economy report | `HORIZON=1500 npm run balance-report` | reaches **level 80**; income growth L5→L70 **×12.27** vs cost growth **×29.28** → costs outpace income, so purchases stay meaningful |
 | Unity data copy | `npm run verify-data-sync` | **OK — Assets/Data matches shared/data (20 tables)** |
-| Prototype bundle | `npx esbuild --bundle prototype/src/main.ts` | **135 kB, 0 errors** |
+| Prototype bundle | `npx esbuild --bundle prototype/src/main.ts` | **135 kB, 0 errors** — and the source now type-checks, which it never did |
 | Art coverage | `npm run check-art` | **OK** — 16 ingredients × 8 doneness levels + icons = **144 draws**, all painted |
 | Render smoke | `npm run check-render` | **OK** — real bundle driven through init, a drag, a flip and a full turn; **~45 M canvas ops, no exceptions** |
 | Prototype server | `node prototype/dev-server.mjs` | listening on `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
@@ -99,13 +102,22 @@ These were real defects, not test-formality failures:
    reward grew without bound; replaced with polynomial `100 · level^0.85`.
 5. **Endless levels were pre-generated at tier 0.** They are now generated lazily
    at the player's current tier.
+6. **The ideal-zone mechanic was dead code** — found by the new type-check gate,
+   not by a test. `pickZoneFast` compared `zones[i].id === ideal`, but runtime
+   zones are `{ index, heat, items }` and carry no `id`. Every grill item was
+   placed in a random zone: **31.9%** ideal-zone hits at skill 0.55 against a
+   **33.3%** chance baseline. Fixed, measured and guarded by a new test — see 4.1.
 
 ### What bug #1 and #2 did to the economy
 
 Both bugs destroyed roughly **10% of all customers** in simulation. After the
 fix, customer loss at skill 0.30 fell from **10.5% → 0.4%** and perfect rate rose
 **26.1% → 34.5%**. All earlier pacing measurements were therefore taken with a
-leak in place and had to be re-derived — see §3.
+leak in place and had to be re-derived — see section 3.
+
+A third defect (section 4.1) invalidated the numbers once more and they were
+re-derived again; on the current rules the same two figures read **0.7%** and
+**35.4%**.
 
 ---
 
@@ -134,16 +146,16 @@ until `dotnet build` passes in CI.
 
 | Establishment | Turn | ≈ Day (12 turns/day) |
 |---|---|---|
-| Espetinho de Rua | 34 | 3 |
-| Trailer | 90 | 8 |
-| Churrascaria de Bairro | 146 | 12 |
-| Churrascaria Premium | 247 | 21 |
-| Festival | 430 | 36 |
+| Espetinho de Rua | 32 | 3 |
+| Trailer | 87 | 7 |
+| Churrascaria de Bairro | 143 | 12 |
+| Churrascaria Premium | 243 | 20 |
+| Festival | 445 | 37 |
 | Rede Nacional | 1180 | 98 |
 
-Daily coin income: **L5 11,122 · L15 44,669 · L30 97,761 · L50 123,278.**
-Spend ratio **0.740**. Max ÷ median turn income **1.70**.
-Perfect rate at skill 0.55: **48.4%**.
+Daily coin income: **L5 10,616 · L15 46,482 · L30 97,564 · L50 123,153.**
+Spend ratio **0.741**. Max / median turn income **1.69**.
+Perfect rate at skill 0.55: **55.7%**.
 
 ### Two design findings recorded from tuning
 
@@ -161,21 +173,21 @@ numbers.
 ### Target checks (all PASS)
 
 `turnsPerSession` 4 (3–5) · `firstUpgradeAffordableAfterTurns` turn 1 (1–2) ·
-unlock pacing 34 / 90 / 146 / 247 / 430 / 1180 (bands 28–45, 72–115, 115–185,
-195–315, 340–550, 950–1450) · income L5 11,122 · L15 44,669 · L30 97,761 ·
-L50 123,278 · spend ratio 0.740 (0.70–0.99) · coin spike 1.70 (cap 6) ·
-perfect rate at skill 0.55 = 48.4% (40–62%).
+unlock pacing 32 / 87 / 143 / 243 / 445 / 1180 (bands 28–45, 72–115, 115–185,
+195–315, 340–550, 950–1450) · income L5 10,616 · L15 46,482 · L30 97,564 ·
+L50 123,153 · spend ratio 0.741 (0.70–0.99) · coin spike 1.69 (cap 6) ·
+perfect rate at skill 0.55 = 55.7% (40–62%).
 
 Skill curve on authored content (the difficulty contract):
 
 | skill | perfect | good | burned | lost | coins/turn |
 |---|---|---|---|---|---|
-| 0.30 | 34.5% | 65.4% | 0.2% | 0.4% | 648 |
-| 0.55 | 48.4% | — | 0.0% | — | — |
+| 0.30 | 35.4% | 64.5% | 0.1% | 0.7% | 671 |
+| 0.55 | 55.7% | 44.3% | 0.0% | 0.0% | 793 |
 
 ### Open balance item
 
-The 430 → 1180 gap is **750 turns (≈ 62 days) with no new establishment.** It is
+The 445 → 1180 gap is **735 turns (≈ 61 days) with no new establishment.** It is
 currently filled by the collection (37 entries), achievements (58), prestige
 tracks, the region route, weekly events and the Brasa Pass. **Unvalidated risk:**
 whether that is enough to hold a mid-core player through the gap. Needs real
@@ -192,6 +204,51 @@ fails the build if any achievement's goal exceeds the content that ships.
 Verified by re-introducing the bug: `npm run validate` reported
 `collection_all_mvp: goal 40 exceeds the 37 entries that ship — achievement is unreachable`.
 
+### 4.1 Three defects the type-check gate caught
+
+`tsconfig.json` has been strict since the project started, but no script ever ran
+it — `npm run typecheck` did not exist. Wiring it up (`@types/node`,
+`allowImportingTsExtensions`) surfaced **140 errors**: roughly 112 configuration
+noise (missing Node types, `.ts` import extensions under
+`--experimental-strip-types`) and **15 real code defects**. Three mattered:
+
+1. **The ideal-zone mechanic was dead code** (`tools/sim-core/src/policy.ts`).
+   `pickZoneFast` compared `zones[i].id === ideal`; runtime zones are
+   `{ index, heat, items }` and carry no `id`. The comparison was always false, so
+   every grill item went to a random zone — measured **31.9%** ideal-zone hits at
+   skill 0.55 against a **33.3%** chance baseline for three zones. The mapping the
+   code wanted already existed two lines below (`zoneIndex(a, id)`).
+
+   Fixing it moved the reference measurement from **48.4% → 55.7%** perfects at
+   skill 0.55 (**712 → 793** coins/turn). All 15 targets still pass on both
+   horizons, so this was a *fidelity* correction rather than a rescue: the
+   published numbers now describe the game as designed. Every figure in section 3
+   was re-derived, the 98 golden vectors were regenerated, and the two suites that
+   encode "skill matters" were tightened:
+   `tools/studio/test/policy.test.ts` is new and asserts ideal-zone behaviour
+   directly so the mechanic cannot silently stop running again, and
+   `cooking.test.ts` now separates skill by *quality* (perfect rate, coins) because
+   throughput saturates once the zone mechanic actually works — a clumsy player
+   keeps up with this customer flow, and both sides serve all 13–14 customers.
+
+2. **The prototype shaded every zone as the medium one** (`prototype/src/main.ts`).
+   It read `zone.heatMultiplier`, which exists only on the *data* zone; the runtime
+   zone stores `heat`, and the `?? 1` fallback hid the mistake. It now calls
+   `effectiveHeat()`, the same function `tickGrill` cooks with, so the zone the
+   player sees is the zone the food cooks in.
+
+3. **The golden-vector contract had holes** (`tools/studio/gen-vectors.ts`). Two
+   fields were written from paths that do not exist — `STATS.heatRatePerSec` and
+   `db.grill.scoring.burnedCoinFactor` — and `JSON.stringify` drops `undefined`
+   silently, so the file the C# port must satisfy never contained them.
+   `heatRatePerSec` is now the real per-second doneness rate `tickGrill` applies
+   (`heat * heatRate * heatRampRate / sideCookSec`), and the phantom
+   `burnedCoinFactor` reference is gone: burned food pays a hard zero, which the
+   expectation rows already pin down.
+
+None of the three failed a gate, because the gate that would have caught them did
+not exist. The new gate has teeth — reverting the policy fix makes it report the
+error and `policy.test.ts` fail with 36.2% / 33.6% against thresholds of 0.6 / 0.43.
 ### 18 dangling `$schema` references
 
 Every table in `shared/data` declared a `$schema` field pointing at
@@ -242,11 +299,13 @@ Written: `README`, `00-SPEC_AUDIT`, `01-ARCHITECTURE`, `02-GAME_DESIGN`,
 `08-LIVEOPS`, `09-ANALYTICS`, `10-AUDIO`, `11-QA`, `12-BUILD`, `13-RELEASE`,
 `14-ROADMAP`, `15-ASO`, `16-PRIVACY`, `17-BACKLOG`, `18-STATUS` (this file).
 
-**Reconciliation:** `06-ECONOMY.md` §5 (target table) and §7 (measured pacing) were
-drafted against older measurements and have been **updated to the verified v6/v11
-numbers**, including two new subsections: §5.1 records the sink-substitution
-finding, §5.2 records the two bug fixes that invalidated the earlier curve.
-No other document cites pacing or income figures — verified by grepping the whole
+**Reconciliation:** `06-ECONOMY.md` section 5 (target table) and section 7
+(measured pacing) were drafted against older measurements and have been **updated
+to the verified v6/v11 numbers**, including three subsections: 5.1 records the
+sink-substitution finding, 5.2 records the two bug fixes that invalidated the
+earlier curve, 5.3 records the ideal-zone defect and the re-derivation it forced.
+Every figure in `06-ECONOMY.md` and in this file was re-measured after that fix;
+no other document cites pacing or income figures — verified by grepping the whole
 `docs/` tree for the superseded values.
 
 ⚠ **Still unchecked:** docs 02–16 describe systems (audio, Unity, CI, store
@@ -267,6 +326,14 @@ specification. The prototype proves art *direction*, not the art *budget*.
 1. **Compile the C# core** (`dotnet build` in CI) and add golden-vector parity. — blocking for Unity work
 2. Write `TurnSimulation.cs`, `EconomyRules.cs`, `GameDatabase.cs`, `SaveSystem.cs`.
 3. Write the Unity scene layer and run the feel pass.
-4. `npm run gen-vectors` golden vectors.
-5. Confirm the 750-turn mid-game gap with telemetry before V1.0.
-6. Grow en-US / es-419 from 10.7 % stub to full coverage before any non-BR launch.
+4. **Add a CI workflow** so the gates run on every push instead of by hand:
+   `npm run typecheck`, `validate`, `test`, `sim`, `check-vectors`. `12-BUILD.md`
+   section 5 lists them, but no `.github/workflows` file exists.
+5. Confirm the 735-turn mid-game gap with telemetry before V1.0.
+6. Grow en-US / es-419 from 10.6 % stub to full coverage before any non-BR launch.
+7. Give `npm run check-shots` a budget that matches its cost: its final step pumps
+   10,800 frames of full-scene canvas work (~3.8 GB RSS) and did not finish within
+   15 minutes of wall clock in this sandbox, so a 300 s timeout kills it mid-run.
+   Every earlier step renders fine; only the result-screen tail is pathological.
+   Raise the timeout, or make the tail cheaper (it re-draws the whole scene at
+   60 fps for 180 simulated seconds).

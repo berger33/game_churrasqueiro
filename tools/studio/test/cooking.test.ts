@@ -300,12 +300,29 @@ describe('skill policy sanity', () => {
         sim.tick(1 / 30, (a) => policy.act(a));
       }
       const r = sim.result();
-      return { perfect: r.counters.perfectCooks, burned: r.counters.burnedFood, served: r.counters.customersServed };
+      return {
+        perfect: r.counters.perfectCooks,
+        burned: r.counters.burnedFood,
+        served: r.counters.customersServed,
+        lost: r.counters.customersLost,
+        coins: r.coins
+      };
     };
     const pro = run(1);
     const rookie = run(0.2);
+
     expect(pro.perfect).toBeGreaterThan(0);
-    expect(pro.perfect).toBeGreaterThan(rookie.perfect);
-    expect(pro.served).toBeGreaterThan(rookie.served);
+
+    // Quality, not throughput, is what separates skill at this level. Since the
+    // ideal-zone mechanic actually runs (see policy.test.ts), a clumsy player also
+    // keeps up with this customer flow — both sides serve all 13-14 customers — so
+    // an assertion on `served` can no longer tell the two apart. The gap that
+    // remains is large and stable across seeds: 21-22 perfects for the pro against
+    // 4-5 for the rookie, and roughly double the coins.
+    expect(pro.perfect).toBeGreaterThan(rookie.perfect * 3);
+    expect(pro.coins).toBeGreaterThan(rookie.coins * 1.5);
+    expect(pro.lost).toBe(0);
+    expect(rookie.lost).toBe(0);
+    expect(pro.served).toBe(rookie.served);
   });
 });

@@ -34,11 +34,16 @@ The cooking model, the scoring rules and the entire economy are implemented **on
 The Unity client ports the same rules (`Assets/Scripts/Sim/`). Parity is checked by
 `tools/studio/golden.test.ts` against checked-in vectors.
 
+`npm run typecheck` is a gate, not a suggestion: the ideal-zone defect in
+`tools/sim-core/src/policy.ts` (see `docs/18-STATUS.md` §4.1) survived two rounds of
+green tests precisely because the strict `tsconfig.json` was never wired to a script.
+
 ## Quick start (no Unity required)
 
 ```bash
 npm install
 
+npm run typecheck         # tsc --noEmit over tools/, prototype/ and shared/ (strict)
 npm run validate          # referential + semantic integrity of every data table
 npm run check-schema      # every table against its JSON Schema contract (+ negative pass)
 npm test                  # full automated QA suite (vitest)

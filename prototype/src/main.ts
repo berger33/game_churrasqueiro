@@ -13,7 +13,7 @@
  * Gameplay logic unchanged — runs the same sim-core rules as the Unity client.
  */
 import { createDatabase, validateDatabase } from '../../tools/sim-core/src/data.ts';
-import { overallDoneness, evenness, stageOf, type FoodRuntime } from '../../tools/sim-core/src/cooking.ts';
+import { overallDoneness, evenness, stageOf, effectiveHeat, type FoodRuntime } from '../../tools/sim-core/src/cooking.ts';
 import { TurnSimulation, type CustomerRuntime } from '../../tools/sim-core/src/turn.ts';
 import type { GameDatabase, Ingredient, RawDataBundle } from '../../tools/sim-core/src/types.ts';
 import { createL10n, type L10n, type L10nTable } from '../../tools/sim-core/src/l10n.ts';
@@ -637,7 +637,7 @@ class Game {
       c.fillStyle = 'rgba(14,8,5,0.85)';
       c.beginPath();
       c.moveTo(0, 460);
-      const hillPoints = [[40, 430], [80, 450], [130, 420], [190, 448], [240, 425], [290, 452], [340, 428], [390, 450], [W, 440]];
+      const hillPoints: [number, number][] = [[40, 430], [80, 450], [130, 420], [190, 448], [240, 425], [290, 452], [340, 428], [390, 450], [W, 440]];
       for (const [px, py] of hillPoints) c.lineTo(px, py);
       c.lineTo(W, H); c.lineTo(0, H); c.closePath();
       c.fill();
@@ -1049,7 +1049,7 @@ class Game {
   private drawChurrasqueira(
     ctx: CanvasRenderingContext2D,
     heroMode = false
-  ): void {
+  ): { fx: number; fy: number; fw: number; fh: number } {
     // Dimensions (slightly larger/centered in hero mode)
     const cx = heroMode ? W / 2 : W / 2;
     const cy = heroMode ? 400 : 0;
@@ -1402,7 +1402,11 @@ class Game {
   private drawFood(ctx: CanvasRenderingContext2D, f: FoodRuntime, x: number, y: number, scale: number): void {
     const d = overallDoneness(f);
     const ing = f.ingredient;
-    const heat = f.onGrill ? (this.sim.grill.zones[f.zoneIndex]?.heatMultiplier ?? 1) * this.sim.grill.charcoalEfficiency : 0.4;
+    // Effective heat of the zone the food sits in — the same value tickGrill cooks
+    // with. The runtime zone stores `heat` (the data table's `heatMultiplier` is a
+    // different object); reading `heatMultiplier` here always fell back to 1, so
+    // every zone was shaded as if it were the medium one.
+    const heat = f.onGrill ? effectiveHeat(this.sim.grill, f.zoneIndex, this.db) : 0.4;
 
     drawFoodArt(ctx, ing, x, y, {
       doneness: d,

@@ -31,6 +31,7 @@
         "zoneHeatMultiplier": 0.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.1,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -142,6 +143,7 @@
         "zoneHeatMultiplier": 1,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.181818182,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -253,6 +255,7 @@
         "zoneHeatMultiplier": 1.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.281818182,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -364,6 +367,7 @@
         "zoneHeatMultiplier": 0.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.201666667,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -475,6 +479,7 @@
         "zoneHeatMultiplier": 1,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.366666667,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -586,6 +591,7 @@
         "zoneHeatMultiplier": 1.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.568333333,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -697,6 +703,7 @@
         "zoneHeatMultiplier": 0.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.122222222,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -808,6 +815,7 @@
         "zoneHeatMultiplier": 1,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.222222222,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -919,6 +927,7 @@
         "zoneHeatMultiplier": 1.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.344444444,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -1030,6 +1039,7 @@
         "zoneHeatMultiplier": 0.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.144375,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -1141,6 +1151,7 @@
         "zoneHeatMultiplier": 1,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.2625,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -1252,6 +1263,7 @@
         "zoneHeatMultiplier": 1.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.406875,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -1363,6 +1375,7 @@
         "zoneHeatMultiplier": 0.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.0653125,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -1474,6 +1487,7 @@
         "zoneHeatMultiplier": 1,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.11875,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -1585,6 +1599,7 @@
         "zoneHeatMultiplier": 1.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.1840625,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -1696,6 +1711,7 @@
         "zoneHeatMultiplier": 0.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.11,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -1807,6 +1823,7 @@
         "zoneHeatMultiplier": 1,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.2,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -1918,6 +1935,7 @@
         "zoneHeatMultiplier": 1.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.31,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -2029,6 +2047,7 @@
         "zoneHeatMultiplier": 0.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.211538462,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -2156,6 +2175,7 @@
         "zoneHeatMultiplier": 1,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.384615385,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -2283,6 +2303,7 @@
         "zoneHeatMultiplier": 1.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.596153846,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -2410,6 +2431,7 @@
         "zoneHeatMultiplier": 0.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.183333333,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -2537,6 +2559,7 @@
         "zoneHeatMultiplier": 1,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.333333333,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -2664,6 +2687,7 @@
         "zoneHeatMultiplier": 1.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.516666667,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -2791,6 +2815,7 @@
         "zoneHeatMultiplier": 0.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.1375,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -2902,6 +2927,7 @@
         "zoneHeatMultiplier": 1,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.25,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -3013,6 +3039,7 @@
         "zoneHeatMultiplier": 1.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.3875,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -3124,6 +3151,7 @@
         "zoneHeatMultiplier": 0.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.061111111,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -3235,6 +3263,7 @@
         "zoneHeatMultiplier": 1,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.111111111,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -3346,6 +3375,7 @@
         "zoneHeatMultiplier": 1.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.172222222,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -3457,6 +3487,7 @@
         "zoneHeatMultiplier": 0.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.055,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -3568,6 +3599,7 @@
         "zoneHeatMultiplier": 1,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.1,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -3679,6 +3711,7 @@
         "zoneHeatMultiplier": 1.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.155,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -3790,6 +3823,7 @@
         "zoneHeatMultiplier": 0.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.049,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -3901,6 +3935,7 @@
         "zoneHeatMultiplier": 1,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.089090909,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -4012,6 +4047,7 @@
         "zoneHeatMultiplier": 1.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.138090909,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -4123,6 +4159,7 @@
         "zoneHeatMultiplier": 0.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.057894737,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -4234,6 +4271,7 @@
         "zoneHeatMultiplier": 1,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.105263158,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -4345,6 +4383,7 @@
         "zoneHeatMultiplier": 1.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.163157895,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -4456,6 +4495,7 @@
         "zoneHeatMultiplier": 0.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.0275,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -4567,6 +4607,7 @@
         "zoneHeatMultiplier": 1,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.05,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -4678,6 +4719,7 @@
         "zoneHeatMultiplier": 1.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.0775,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -4789,6 +4831,7 @@
         "zoneHeatMultiplier": 0.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.023375,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -4900,6 +4943,7 @@
         "zoneHeatMultiplier": 1,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.0425,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -5011,6 +5055,7 @@
         "zoneHeatMultiplier": 1.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": 0.065875,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -5122,6 +5167,7 @@
         "zoneHeatMultiplier": 0.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": null,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -5225,6 +5271,7 @@
         "zoneHeatMultiplier": 1,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": null,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -5328,6 +5375,7 @@
         "zoneHeatMultiplier": 1.55,
         "stepSec": 0.0625,
         "derivedStats": {
+          "heatRatePerSec": null,
           "charcoalEfficiency": 1,
           "highZoneBonus": 0
         }
@@ -12055,22 +12103,22 @@
         }
       },
       "expect": {
-        "coins": 516,
-        "xp": 74,
+        "coins": 628,
+        "xp": 85,
         "stars": 3,
         "failed": false,
         "finalTimeSec": 90,
         "counters": {
           "customersSpawned": 10,
-          "customersServed": 9,
+          "customersServed": 10,
           "customersLost": 0,
-          "ordersCompleted": 9,
+          "ordersCompleted": 10,
           "perfectCooks": 7,
-          "goodCooks": 5,
+          "goodCooks": 6,
           "burnedFood": 0,
-          "bestCombo": 12,
+          "bestCombo": 13,
           "flips": 13,
-          "itemsCooked": 12,
+          "itemsCooked": 13,
           "charcoalRefills": 0,
           "peakSimultaneousOrders": 2,
           "flawless": true
@@ -12095,8 +12143,8 @@
         }
       },
       "expect": {
-        "coins": 722,
-        "xp": 102,
+        "coins": 768,
+        "xp": 109,
         "stars": 3,
         "failed": false,
         "finalTimeSec": 99,
@@ -12105,8 +12153,8 @@
           "customersServed": 15,
           "customersLost": 0,
           "ordersCompleted": 15,
-          "perfectCooks": 6,
-          "goodCooks": 12,
+          "perfectCooks": 8,
+          "goodCooks": 10,
           "burnedFood": 0,
           "bestCombo": 18,
           "flips": 18,
@@ -12135,8 +12183,8 @@
         }
       },
       "expect": {
-        "coins": 1102,
-        "xp": 147,
+        "coins": 1267,
+        "xp": 156,
         "stars": 3,
         "failed": false,
         "finalTimeSec": 111,
@@ -12145,10 +12193,10 @@
           "customersServed": 13,
           "customersLost": 0,
           "ordersCompleted": 13,
-          "perfectCooks": 9,
-          "goodCooks": 11,
+          "perfectCooks": 12,
+          "goodCooks": 9,
           "burnedFood": 0,
-          "bestCombo": 15,
+          "bestCombo": 21,
           "flips": 28,
           "itemsCooked": 21,
           "charcoalRefills": 0,
@@ -12175,22 +12223,22 @@
         }
       },
       "expect": {
-        "coins": 1346,
-        "xp": 179,
-        "stars": 2,
+        "coins": 1501,
+        "xp": 194,
+        "stars": 3,
         "failed": false,
         "finalTimeSec": 113,
         "counters": {
           "customersSpawned": 17,
-          "customersServed": 15,
+          "customersServed": 16,
           "customersLost": 0,
-          "ordersCompleted": 15,
-          "perfectCooks": 9,
+          "ordersCompleted": 16,
+          "perfectCooks": 10,
           "goodCooks": 17,
           "burnedFood": 0,
-          "bestCombo": 21,
-          "flips": 36,
-          "itemsCooked": 27,
+          "bestCombo": 22,
+          "flips": 37,
+          "itemsCooked": 28,
           "charcoalRefills": 0,
           "peakSimultaneousOrders": 2,
           "flawless": true
@@ -12215,22 +12263,22 @@
         }
       },
       "expect": {
-        "coins": 521,
-        "xp": 71,
-        "stars": 2,
+        "coins": 651,
+        "xp": 89,
+        "stars": 3,
         "failed": false,
         "finalTimeSec": 90,
         "counters": {
-          "customersSpawned": 9,
-          "customersServed": 8,
+          "customersSpawned": 10,
+          "customersServed": 10,
           "customersLost": 0,
-          "ordersCompleted": 8,
-          "perfectCooks": 6,
+          "ordersCompleted": 10,
+          "perfectCooks": 8,
           "goodCooks": 5,
           "burnedFood": 0,
-          "bestCombo": 11,
-          "flips": 11,
-          "itemsCooked": 11,
+          "bestCombo": 13,
+          "flips": 13,
+          "itemsCooked": 13,
           "charcoalRefills": 0,
           "peakSimultaneousOrders": 2,
           "flawless": true
@@ -12255,24 +12303,24 @@
         }
       },
       "expect": {
-        "coins": 770,
-        "xp": 110,
-        "stars": 2,
+        "coins": 862,
+        "xp": 121,
+        "stars": 3,
         "failed": false,
         "finalTimeSec": 99,
         "counters": {
-          "customersSpawned": 15,
-          "customersServed": 13,
+          "customersSpawned": 16,
+          "customersServed": 15,
           "customersLost": 0,
-          "ordersCompleted": 13,
-          "perfectCooks": 12,
-          "goodCooks": 4,
+          "ordersCompleted": 15,
+          "perfectCooks": 13,
+          "goodCooks": 5,
           "burnedFood": 0,
-          "bestCombo": 16,
-          "flips": 17,
-          "itemsCooked": 16,
+          "bestCombo": 18,
+          "flips": 18,
+          "itemsCooked": 18,
           "charcoalRefills": 0,
-          "peakSimultaneousOrders": 3,
+          "peakSimultaneousOrders": 2,
           "flawless": true
         }
       }
@@ -12295,8 +12343,8 @@
         }
       },
       "expect": {
-        "coins": 1299,
-        "xp": 161,
+        "coins": 1272,
+        "xp": 158,
         "stars": 3,
         "failed": false,
         "finalTimeSec": 111,
@@ -12305,11 +12353,11 @@
           "customersServed": 14,
           "customersLost": 0,
           "ordersCompleted": 14,
-          "perfectCooks": 13,
-          "goodCooks": 9,
+          "perfectCooks": 12,
+          "goodCooks": 10,
           "burnedFood": 0,
           "bestCombo": 22,
-          "flips": 28,
+          "flips": 29,
           "itemsCooked": 22,
           "charcoalRefills": 0,
           "peakSimultaneousOrders": 2,
@@ -12335,21 +12383,21 @@
         }
       },
       "expect": {
-        "coins": 1359,
-        "xp": 186,
-        "stars": 2,
+        "coins": 1673,
+        "xp": 205,
+        "stars": 3,
         "failed": false,
         "finalTimeSec": 113,
         "counters": {
           "customersSpawned": 17,
-          "customersServed": 15,
+          "customersServed": 16,
           "customersLost": 0,
-          "ordersCompleted": 15,
-          "perfectCooks": 13,
-          "goodCooks": 13,
+          "ordersCompleted": 16,
+          "perfectCooks": 15,
+          "goodCooks": 12,
           "burnedFood": 0,
-          "bestCombo": 19,
-          "flips": 37,
+          "bestCombo": 27,
+          "flips": 38,
           "itemsCooked": 27,
           "charcoalRefills": 0,
           "peakSimultaneousOrders": 3,
@@ -12375,8 +12423,8 @@
         }
       },
       "expect": {
-        "coins": 727,
-        "xp": 99,
+        "coins": 742,
+        "xp": 101,
         "stars": 3,
         "failed": false,
         "finalTimeSec": 90,
@@ -12385,8 +12433,8 @@
           "customersServed": 10,
           "customersLost": 0,
           "ordersCompleted": 10,
-          "perfectCooks": 12,
-          "goodCooks": 1,
+          "perfectCooks": 13,
+          "goodCooks": 0,
           "burnedFood": 0,
           "bestCombo": 13,
           "flips": 13,
@@ -12415,8 +12463,8 @@
         }
       },
       "expect": {
-        "coins": 889,
-        "xp": 121,
+        "coins": 880,
+        "xp": 120,
         "stars": 3,
         "failed": false,
         "finalTimeSec": 99,
@@ -12425,8 +12473,8 @@
           "customersServed": 15,
           "customersLost": 0,
           "ordersCompleted": 15,
-          "perfectCooks": 16,
-          "goodCooks": 2,
+          "perfectCooks": 15,
+          "goodCooks": 3,
           "burnedFood": 0,
           "bestCombo": 18,
           "flips": 18,
@@ -12455,8 +12503,8 @@
         }
       },
       "expect": {
-        "coins": 1444,
-        "xp": 179,
+        "coins": 1441,
+        "xp": 178,
         "stars": 3,
         "failed": false,
         "finalTimeSec": 111,
@@ -12465,8 +12513,8 @@
           "customersServed": 14,
           "customersLost": 0,
           "ordersCompleted": 14,
-          "perfectCooks": 18,
-          "goodCooks": 4,
+          "perfectCooks": 19,
+          "goodCooks": 3,
           "burnedFood": 0,
           "bestCombo": 22,
           "flips": 29,
@@ -12495,8 +12543,8 @@
         }
       },
       "expect": {
-        "coins": 1923,
-        "xp": 234,
+        "coins": 1897,
+        "xp": 232,
         "stars": 3,
         "failed": false,
         "finalTimeSec": 113,
@@ -12505,12 +12553,12 @@
           "customersServed": 16,
           "customersLost": 0,
           "ordersCompleted": 16,
-          "perfectCooks": 24,
-          "goodCooks": 3,
+          "perfectCooks": 23,
+          "goodCooks": 5,
           "burnedFood": 0,
-          "bestCombo": 27,
+          "bestCombo": 28,
           "flips": 37,
-          "itemsCooked": 27,
+          "itemsCooked": 28,
           "charcoalRefills": 0,
           "peakSimultaneousOrders": 2,
           "flawless": true
