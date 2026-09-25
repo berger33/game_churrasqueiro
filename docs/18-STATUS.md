@@ -70,6 +70,7 @@ Every claim below was produced by a command run in this checkout.
 | Art coverage | `npm run check-art` | **OK** — 16 ingredients × 8 doneness levels + icons = **144 draws**, all painted |
 | Render smoke | `npm run check-render` | **OK** — real bundle driven through init, a drag, a flip and a full turn; **~45 M canvas ops, no exceptions** |
 | Prototype server | `node prototype/dev-server.mjs` | listening on `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
+| CI | `.github/workflows/ci.yml` + `npm run gates` | **added.** 12 per-PR gates, same command locally and on GitHub. First Actions run is the verification that ubuntu-latest can install `@napi-rs/canvas`. Nightly `sim:long` is `.github/workflows/nightly.yml`. Unity compile is still absent — no toolchain. |
 
 ### The localisation gate caught a §56 violation
 
@@ -373,12 +374,9 @@ specification. The prototype proves art *direction*, not the art *budget*.
 1. **Compile the C# core** (`dotnet build` in CI) and add golden-vector parity. — blocking for Unity work
 2. Write `TurnSimulation.cs`, `EconomyRules.cs`, `GameDatabase.cs`, `SaveSystem.cs`.
 3. Write the Unity scene layer and run the feel pass.
-4. **Add a CI workflow** so the gates run on every push instead of by hand:
-   `npm run typecheck`, `validate`, `test`, `sim`, `check-vectors`. `12-BUILD.md`
-   section 5 lists them, but no `.github/workflows` file exists.
-5. Confirm the 767-turn mid-game gap with telemetry before V1.0.
-6. Grow en-US / es-419 from 9.7 % stub to full coverage before any non-BR launch.
-7. Give `npm run check-shots` a budget that matches its cost: its final step pumps
+4. Confirm the 767-turn mid-game gap with telemetry before V1.0.
+5. Grow en-US / es-419 from 9.7 % stub to full coverage before any non-BR launch.
+6. Give `npm run check-shots` a budget that matches its cost: its final step pumps
    10,800 frames of full-scene canvas work (~3.8 GB RSS) and did not finish within
    15 minutes of wall clock in this sandbox, so a 300 s timeout kills it mid-run.
    Every earlier step renders fine; only the result-screen tail is pathological.

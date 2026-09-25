@@ -43,6 +43,7 @@ green tests precisely because the strict `tsconfig.json` was never wired to a sc
 ```bash
 npm install
 
+npm run gates             # the 12 per-PR CI gates, same list GitHub Actions runs
 npm run typecheck         # tsc --noEmit over tools/, prototype/ and shared/ (strict)
 npm run validate          # referential + semantic integrity of every data table
 npm run check-schema      # every table against its JSON Schema contract (+ negative pass)
@@ -87,8 +88,9 @@ See [docs/18-STATUS.md](docs/18-STATUS.md) for an honest, itemised account of wh
 implemented and verified versus what is still open. Short version:
 
 - **Implemented and verified here:** the complete data layer, the cooking/scoring/economy
-  rules, the level generator, the save system, the balance simulator with guardrails, and a
-  playable design-verification prototype.
+  rules, the level generator, the save system, the balance simulator with guardrails, a
+  playable design-verification prototype, and the per-PR CI gates (`npm run gates` /
+  `.github/workflows/ci.yml`).
 - **Implemented but not compilable in this environment:** the Unity C# client. The sandbox
   has no Unity Editor and no .NET SDK (Microsoft download endpoints are unreachable), so the
   C# has not been through a compiler. This is stated plainly rather than glossed over.

@@ -54,18 +54,35 @@ bundletool get-size total --bundle=build/churrasco.aab --dimensions=ABI
 
 ## 5. CI gates (fail the build)
 
-1. `npm run typecheck` — `tsc --noEmit`, strict. Catches references to fields that
-   do not exist, which is how the ideal-zone bug (`18-STATUS.md` §4.1) hid.
-2. `npm run validate` — data integrity
-3. `npm test` — full QA suite
-4. `npm run sim` — economy guardrails
-5. `npm run check-vectors` — the golden vectors still match the rules
-6. `npm run sim:long` — pacing guardrails (nightly, not per-PR: ~7 min)
-7. Unity compile + EditMode tests
-8. AAB size gate (≤ 90 MB base)
-9. Asset registry check (no asset without a licence row)
+The same list runs locally (`npm run gates`) and on every pull request /
+push to `main` (`.github/workflows/ci.yml`). A gate that only ran by hand
+is how the ideal-zone bug (`18-STATUS.md` §4.1) hid: `tsconfig.json` was
+strict, but nothing invoked `tsc`.
 
-> No `.github/workflows` file exists yet — these gates currently run by hand.
+**Per-PR** (`.github/workflows/ci.yml` → `npm run gates`):
+
+1. `npm run typecheck` — `tsc --noEmit`, strict
+2. `npm run validate` — data integrity
+3. `npm run check-schema` — every table against its contract, plus a negative pass
+4. `npm run verify-schemas` — schemas in step with `shared/data`
+5. `npm run check-l10n` — no missing keys, no literal pt-BR in data
+6. `npm run check-csharp-types` — generated C# types in step with the tables
+7. `npm run verify-data-sync` — `Assets/Data` matches `shared/data`
+8. `npm test` — full QA suite
+9. `npm run sim` — short-horizon economy guardrails
+10. `npm run check-vectors` — the golden vectors still match the rules
+11. `npm run check-art` — 16 ingredients × 8 doneness levels all paint
+12. `npm run check-render` — real prototype bundle driven through a full turn
+
+**Nightly** (`.github/workflows/nightly.yml`, 11:00 UTC / 08:00 BRT):
+
+- `npm run sim:long` — 1 500-turn pacing guardrails
+
+**Still not in CI** (blocked on a Unity toolchain and a signed build):
+
+- Unity compile + EditMode tests
+- AAB size gate (≤ 90 MB base)
+- Asset registry check (no asset without a licence row)
 
 ## 6. Versioning
 

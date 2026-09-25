@@ -1,0 +1,41 @@
+# Per-PR / per-push gates. These used to run by hand, which is how the
+# ideal-zone mechanic shipped as dead code (docs/18-STATUS.md §4.1):
+# tsconfig.json was strict, but no job ever ran `tsc`.
+#
+# The gate list lives in `tools/studio/run-gates.mjs` (`npm run gates`) so
+# local and CI cannot drift. Long-horizon pacing is `.github/workflows/nightly.yml`.
+# Unity compile is not in this file: there is no Unity toolchain here.
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  gates:
+    name: Studio gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Gates
+        run: npm run gates
