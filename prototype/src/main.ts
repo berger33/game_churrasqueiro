@@ -31,8 +31,8 @@ import type { GameDatabase, Ingredient, RawDataBundle } from '../../tools/sim-co
 import { createL10n, type L10n, type L10nTable } from '../../tools/sim-core/src/l10n.ts';
 import {
   C, DISPLAY, UI, avatar, brushedMetalGradient, checkIcon, clamp01, clockIcon, coinIcon,
-  drawBrickwork, drawCheckerFloor, drawWoodGrain, ease, flameIcon, font, glass, hex, lerp, mix,
-  outlinedText, panel, premiumButton, rgb, roundRectPath, shade, smoothstep, starIcon
+  drawBrickwork, drawCheckerFloor, drawEmberBloom, drawWoodGrain, ease, flameIcon, font, glass, hex, lerp, mix,
+  outlinedText, panel, preloadTextures, premiumButton, rgb, roundRectPath, shade, smoothstep, starIcon
 } from './theme.ts';
 import { drawFood as drawFoodArt, drawFoodIcon } from './foods.ts';
 import { audio } from './audio.ts';
@@ -300,6 +300,7 @@ class Game {
 
     this.resize(canvas);
     this.bindInput(canvas);
+    try { preloadTextures(); } catch {}
     this.screen = 'splash';
 
     let last = performance.now();
@@ -2417,6 +2418,8 @@ class Game {
       bloom.addColorStop(0.45, `rgba(255,120,40,${0.14 * heat})`);
       bloom.addColorStop(1, 'rgba(120,30,10,0)');
       ctx.fillStyle = bloom; ctx.beginPath(); ctx.ellipse(bloomX, bloomY, bloomR, bloomR * 0.42, 0, 0, Math.PI * 2); ctx.fill();
+      // atlas bloom (blur 7px) — opt-in fotoreal, falls back to radial in Node
+      drawEmberBloom(ctx, zx, y, zw, zoneH, heat);
       ctx.fillStyle='rgba(40,25,15,0.45)'; ctx.fillRect(zx,y+zoneH*0.55,zw,zoneH*0.5);
       const seed=z*97;
       for(let k=0;k<30;k++){

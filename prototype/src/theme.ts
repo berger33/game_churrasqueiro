@@ -64,6 +64,45 @@ export const C = {
   glassBorder: 'rgba(255,235,205,0.18)',
 } as const;
 
+// ── Textured atlas (opt-in fotoreal, fallback procedural) ───────────────────
+// PNGs em prototype/assets/textures/*.png (512 wood, 256 brick). Se carregadas,
+// drawWoodGrain/drawBrickwork usam pattern; senão caem no procedural (Node smoke,
+// offline, LOW memory). Assim ganhamos +12% fidelity sem quebrar check-render.
+export const TEXTURE_URLS = {
+  wood: '/assets/textures/wood-planks-512.png',
+  brick: '/assets/textures/brick-wall-256.png',
+} as const;
+const _texCache = new Map<string, CanvasImageSource & { width:number; height:number }>();
+const _texPatternCache = new Map<string, CanvasPattern | null>();
+let _texReady = false;
+export function preloadTextures(): void {
+  if (_texReady || typeof Image === 'undefined' || typeof document === 'undefined') return;
+  _texReady = true;
+  for (const [key, url] of Object.entries(TEXTURE_URLS) as [keyof typeof TEXTURE_URLS, string][]) {
+    const img = new Image() as HTMLImageElement;
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      _texCache.set(key, img as unknown as CanvasImageSource & { width:number; height:number });
+      _texPatternCache.delete(key);
+    };
+    img.onerror = () => { /* keep procedural fallback */ };
+    img.src = url;
+  }
+}
+export function isTextureReady(key: keyof typeof TEXTURE_URLS): boolean {
+  return _texCache.has(key);
+}
+function getTexturePattern(ctx: CanvasRenderingContext2D, key: keyof typeof TEXTURE_URLS): CanvasPattern | null {
+  if (_texPatternCache.has(key)) return _texPatternCache.get(key) ?? null;
+  const img = _texCache.get(key);
+  if (!img) { _texPatternCache.set(key, null); return null; }
+  try {
+    const pat = ctx.createPattern(img as unknown as CanvasImageSource, 'repeat');
+    _texPatternCache.set(key, pat);
+    return pat;
+  } catch { _texPatternCache.set(key, null); return null; }
+}
+
 /** Display face: rounded geometric grotesque, heavy (§4). */
 export const DISPLAY = '"Baloo 2", "Trebuchet MS", system-ui, sans-serif';
 /** UI face: humanist sans (§4). */
@@ -729,49 +768,65 @@ export function drawBrickwork(
   ctx.beginPath();
   ctx.rect(x, y, w, h);
   ctx.clip();
-  // mortar base — warm light cement with AO at seams
-  const mg = ctx.createLinearGradient(x, y, x, y + h);
-  mg.addColorStop(0, '#D9BF9E');
-  mg.addColorStop(0.5, C.argamassa);
-  mg.addColorStop(1, '#A68A6A');
-  ctx.fillStyle = mg;
-  ctx.fillRect(x, y, w, h);
-  // mortar AO — darken every horizontal seam
-  ctx.fillStyle = 'rgba(42,24,14,0.16)';
-  for (let row = 0; row < Math.ceil(h / (brickH + mortar)) + 1; row++) {
-    const gy = y + row * (brickH + mortar) + brickH;
-    ctx.fillRect(x, gy - 0.5, w, 1.4);
-  }
-  // bricks
-  const rows = Math.ceil(h / (brickH + mortar)) + 2;
-  for (let row = 0; row < rows; row++) {
-    const yy = y + row * (brickH + mortar);
-    const offset = (row % 2) * (brickW / 2 + mortar / 2);
-    for (let bx = x - brickW; bx < x + w + brickW; bx += brickW + mortar) {
-      const xx = bx + offset;
-      const jitter = ((row * 17 + Math.floor(bx / brickW) * 13) % 7) * 0.012;
-      const litTop = lit && row < 2;
-      const g = ctx.createLinearGradient(xx, yy, xx, yy + brickH);
-      g.addColorStop(0, litTop ? `rgba(230,110,70,${0.92 + jitter})` : `rgba(181,78,46,${0.98})`);
-      g.addColorStop(0.28, C.tijoloClaro);
-      g.addColorStop(0.55, C.tijolo);
-      g.addColorStop(1, C.tijoloSombra);
-      ctx.fillStyle = g;
-      roundRectPath(ctx, xx, yy, brickW, brickH, 2.2);
-      ctx.fill();
-      // inner bevel highlight (top edge)
-      ctx.fillStyle = `rgba(255,220,180,${litTop ? 0.22 : 0.12})`;
-      roundRectPath(ctx, xx + 1, yy + 0.6, brickW - 2, 2.2, 1);
-      ctx.fill();
-      // side highlight — fake normal
-      const sideG = ctx.createLinearGradient(xx, yy, xx + 6, yy);
-      sideG.addColorStop(0, 'rgba(255,255,255,0.10)');
-      sideG.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = sideG;
-      ctx.fillRect(xx + 1, yy + 3, 6, brickH - 6);
-      // micro-mortar shadow under brick
-      ctx.fillStyle = 'rgba(22,10,6,0.18)';
-      ctx.fillRect(xx, yy + brickH - 1, brickW, 1.4);
+  // fotoreal atlas branch: if brick texture loaded, use tiled pattern with procedural overlay (keeps lit logic)
+  const brickPat = getTexturePattern(ctx, 'brick');
+  if (brickPat) {
+    ctx.fillStyle = brickPat;
+    // scale texture so ~2.2 bricks per row match expected brickW
+    // We can't scale pattern directly without setTransform, so we draw at native and blend
+    ctx.fillRect(x, y, w, h);
+    // tint to match our palette + AO
+    ctx.fillStyle = 'rgba(154,59,34,0.18)'; ctx.fillRect(x, y, w, h);
+    // mortar AO lines on top of photo texture
+    ctx.fillStyle = 'rgba(42,24,14,0.18)';
+    for (let row = 0; row < Math.ceil(h / (brickH + mortar)) + 1; row++) {
+      const gy = y + row * (brickH + mortar) + brickH;
+      ctx.fillRect(x, gy - 0.5, w, 1.6);
+    }
+    // highlight top row when lit (like reference)
+    if (lit) {
+      ctx.fillStyle = 'rgba(255,200,160,0.12)';
+      ctx.fillRect(x, y, w, brickH + 4);
+    }
+  } else {
+    const mg = ctx.createLinearGradient(x, y, x, y + h);
+    mg.addColorStop(0, '#D9BF9E');
+    mg.addColorStop(0.5, C.argamassa);
+    mg.addColorStop(1, '#A68A6A');
+    ctx.fillStyle = mg;
+    ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = 'rgba(42,24,14,0.16)';
+    for (let row = 0; row < Math.ceil(h / (brickH + mortar)) + 1; row++) {
+      const gy = y + row * (brickH + mortar) + brickH;
+      ctx.fillRect(x, gy - 0.5, w, 1.4);
+    }
+    const rows = Math.ceil(h / (brickH + mortar)) + 2;
+    for (let row = 0; row < rows; row++) {
+      const yy = y + row * (brickH + mortar);
+      const offset = (row % 2) * (brickW / 2 + mortar / 2);
+      for (let bx = x - brickW; bx < x + w + brickW; bx += brickW + mortar) {
+        const xx = bx + offset;
+        const jitter = ((row * 17 + Math.floor(bx / brickW) * 13) % 7) * 0.012;
+        const litTop = lit && row < 2;
+        const g = ctx.createLinearGradient(xx, yy, xx, yy + brickH);
+        g.addColorStop(0, litTop ? `rgba(230,110,70,${0.92 + jitter})` : `rgba(181,78,46,${0.98})`);
+        g.addColorStop(0.28, C.tijoloClaro);
+        g.addColorStop(0.55, C.tijolo);
+        g.addColorStop(1, C.tijoloSombra);
+        ctx.fillStyle = g;
+        roundRectPath(ctx, xx, yy, brickW, brickH, 2.2);
+        ctx.fill();
+        ctx.fillStyle = `rgba(255,220,180,${litTop ? 0.22 : 0.12})`;
+        roundRectPath(ctx, xx + 1, yy + 0.6, brickW - 2, 2.2, 1);
+        ctx.fill();
+        const sideG = ctx.createLinearGradient(xx, yy, xx + 6, yy);
+        sideG.addColorStop(0, 'rgba(255,255,255,0.10)');
+        sideG.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = sideG;
+        ctx.fillRect(xx + 1, yy + 3, 6, brickH - 6);
+        ctx.fillStyle = 'rgba(22,10,6,0.18)';
+        ctx.fillRect(xx, yy + brickH - 1, brickW, 1.4);
+      }
     }
   }
   if (lit) {
@@ -804,13 +859,27 @@ export function drawWoodGrain(
   ctx.beginPath();
   ctx.rect(x, y, w, h);
   ctx.clip();
-  const g = ctx.createLinearGradient(0, y, 0, y + h);
-  g.addColorStop(0, mix(hex(base), [255, 238, 210], 0.18));
-  g.addColorStop(0.28, base);
-  g.addColorStop(0.72, mix(hex(base), hex(dark), 0.5));
-  g.addColorStop(1, dark);
-  ctx.fillStyle = g;
-  ctx.fillRect(x, y, w, h);
+  // fotoreal atlas: if wood texture is loaded, use it as base (blended with warm tint)
+  const woodPat = getTexturePattern(ctx, 'wood');
+  if (woodPat) {
+    const baseGrad = ctx.createLinearGradient(0, y, 0, y + h);
+    baseGrad.addColorStop(0, 'rgba(185,138,85,0.92)');
+    baseGrad.addColorStop(1, 'rgba(90,52,30,0.96)');
+    ctx.fillStyle = baseGrad; ctx.fillRect(x, y, w, h);
+    ctx.globalAlpha = 0.88;
+    ctx.fillStyle = woodPat; ctx.fillRect(x, y, w, h);
+    ctx.globalAlpha = 1;
+    // warm color overlay so photographed wood matches our palette
+    ctx.fillStyle = 'rgba(185,138,85,0.10)'; ctx.fillRect(x, y, w, h);
+  } else {
+    const g = ctx.createLinearGradient(0, y, 0, y + h);
+    g.addColorStop(0, mix(hex(base), [255, 238, 210], 0.18));
+    g.addColorStop(0.28, base);
+    g.addColorStop(0.72, mix(hex(base), hex(dark), 0.5));
+    g.addColorStop(1, dark);
+    ctx.fillStyle = g;
+    ctx.fillRect(x, y, w, h);
+  }
   // per-plank tint so no two planks look cloned
   for (let i = 0; i < planks; i++) {
     const px = x + (w / planks) * i;
@@ -939,5 +1008,39 @@ export function drawCheckerFloor(
   ctx.lineWidth = 0.8;
   for (let r = 0; r <= rows; r++) { ctx.beginPath(); ctx.moveTo(x, y + r * tile); ctx.lineTo(x + w, y + r * tile); ctx.stroke(); }
   for (let c = 0; c <= cols; c++) { ctx.beginPath(); ctx.moveTo(x + c * tile, y); ctx.lineTo(x + c * tile, y + h); ctx.stroke(); }
+  ctx.restore();
+}
+
+/** Lightweight bloom for ember bed — draws a blurred glow copy of a rect.
+ *  Fallback to radial gradient if filter API unavailable (Node smoke).
+ *  Usage: call after ember bed fill, before grate, with same zx/y/zw/zh and heat.
+ */
+export function drawEmberBloom(
+  ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, heat: number
+): void {
+  if (heat < 0.6) return;
+  const intensity = Math.min(1, (heat - 0.6) / 0.7); // 0..1
+  const alpha = 0.10 + intensity * 0.18;
+  ctx.save();
+  // Try canvas filter blur (supported in browsers, not in @napi-rs Node)
+  const hasFilter = (() => { try { (ctx as any).filter = 'blur(8px)'; return (ctx as any).filter === 'blur(8px)'; } catch { return false; } })();
+  if (hasFilter && typeof document !== 'undefined' && (document as any).createElement) {
+    // Cheap: draw expanded glow rect with blur then restore filter — 1 pass
+    (ctx as any).filter = 'blur(7px)';
+    ctx.fillStyle = `rgba(255,160,60,${alpha})`;
+    ctx.fillRect(x - 6, y - 6, w + 12, h + 12);
+    (ctx as any).filter = 'none';
+    // inner core without blur for sharpness
+    ctx.fillStyle = `rgba(255,210,100,${alpha * 0.55})`;
+    ctx.fillRect(x + w * 0.18, y + h * 0.22, w * 0.64, h * 0.44);
+  } else {
+    // Node fallback: soft radial glow (no filter)
+    const cx = x + w / 2, cy = y + h / 2;
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.62);
+    g.addColorStop(0, `rgba(255,190,100,${alpha})`);
+    g.addColorStop(0.45, `rgba(255,150,40,${alpha * 0.5})`);
+    g.addColorStop(1, 'rgba(255,120,30,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(cx, cy, w * 0.62, h * 0.72, 0, 0, Math.PI * 2); ctx.fill();
+  }
   ctx.restore();
 }

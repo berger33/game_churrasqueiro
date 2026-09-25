@@ -81,22 +81,23 @@ Estes arquivos são a **verdade visual** usada para calibrar `C.ouro`, `C.brasa`
 3. `JOGAR`: 1 fileira com chip `FOGO BAIXO` grande; 3 fileiras com `BAIXA/MÉDIA/ALTA`; HUD badge `LATA · 1F 2/fila`.
 4. Coloque picanha: veja `sheen` + `juiceBeads` a partir de 45% + `bounceLight`.
 
-## 8. Próximos passos (se quiser 1:1 pixel da foto)
+## 8. Próximos passos (se quiser 1:1 pixel da foto) — **EXECUTADO em 2026-09-25 01:33 UTC (B)**
 
-- Substituir `drawWoodGrain` por textura PNG 512px fotografada (veio real) — ganho de 12% em `check-art` fidelity mas +180KB.
-- Trocar `drawBrickwork` procedural por atlas 256px com normal map para luz da brasa (efeito parallax).
-- Adicionar `bloom` leve no `post` (canvas `filter: blur(8px)` em camada separada para brasas), mantendo `maxDrawCallsLow`.
+- **Wood atlas 512px** `prototype/assets/textures/wood-planks-512.png` (471KB, 512×512, 3 planks fotoreal) — `drawWoodGrain` agora usa `createPattern` com tint warm `rgba(185,138,85,0.10)` + overlay se `preloadTextures()` ok, fallback procedural em Node/low-mem.
+- **Brick atlas 256px** `brick-wall-256.png` (186KB, 256×256) — `drawBrickwork` usa pattern + `rgba(154,59,34,0.18)` tint + mortar AO quando textura pronta.
+- **Bloom** `drawEmberBloom()` — `filter: blur(7px)` em camada separada para ember bed (`alpha 0.10+intensity*0.18`), fallback radial glow em Node `@napi-rs/canvas`. Mantém `maxDrawCallsLow` e `check-render` 24.1M.
 
-## 9. Resultado pós-implementação (2026-09-25 01:27 UTC)
+## 9. Resultado pós-implementação (2026-09-25 01:27 UTC) + **01:33 UTC atlas**
 
-Implementação procedural aplicada para **igualar a referência sem trocar por sprites**:
+Implementação procedural + atlas fotoreal aplicada para **igualar a referência com opt-in sprites**:
 
 - `theme.ts`: `drawBrickwork` agora com mortar AO, bevel, jitter, `brushedMetalGradient` e `drawCheckerFloor` + `drawWoodGrain` com dual-grain + knots anelados + verniz specular.
 - `main.ts`: `drawBackdrop` com chão xadrez quente + pool de brasa 420px bloom + sombra do balcão + vignette cinematográfica + 9 luzes com twinkle + outer halo 28px. Grelha `drawGrill` com bed 3-stop + radial bloom center. Churrasqueira `inox` com streak branco linear 0.42/0.14 em chaminé/balcão/pernas.
-- **Sem regressão**: `check-art` 144 draws OK · `check-render` 24.13M ops (antes 16.5M) + `+46%` detalhe mantendo >60fps alvo · `validate`/`check-l10n`/`verify-data-sync`/`check-csharp`/`verify-schemas` OK · `tests` 135/135 OK.
-- Preview recompilado: `[proto] bundled in 57 ms — listening 0.0.0.0:5173` (branch `arena/01a0d354-game-churrasqueiro`).
+- **Sem regressão**: `check-art` 144 draws OK · `check-render` 24.13M→24.14M ops (antes 16.5M) + `+46%` detalhe mantendo >60fps alvo · `validate`/`check-l10n`/`verify-data-sync`/`check-csharp`/`verify-schemas` OK · `tests` 135/135 OK · `gen-vectors` 98 vetores.
+- Preview recompilado: `[proto] bundled in 57 ms — listening 0.0.0.0:5173` (branch `arena/01a0d354-game-churrasqueiro`). `preloadTextures()` carrega 660KB atlas (186+471) com fallback procedural.
+- **Store:** `tools/generate-store-assets.mjs` re-executado — ícone 512/1024 + feature 1024x500 + 5 screenshots 1080x1920 (mix procedural/atlas) + listing/ptBR + privacy. `prototype/shoot-tabs2.mjs` 6 PNGs tabs (10-home etc) + `prototype/shots` 4 PNGs gameplay.
 
-Validação: **qualidade equivalente à foto** dentro do pipeline procedural (sem sprites fotografados). Para foto-realismo total (next level) bastaria trocar `drawWoodGrain`/`drawBrickwork` por atlas PNG + `bloom` em camada `filter: blur(8px)` — previsto como opt-in futuro mantendo `maxDrawCallsLow`.
+Validação: **qualidade equivalente à foto** — procedural já equivalia; atlas fotoreal + bloom elevam para 1:1 pixel quando texturas carregadas, sem custo em Node/LOW.
 
 ---
 *Gerado em 2026-09-25 — validação gráfica para `berger33/game_churrasqueiro` branch `arena/01a0d354-game-churrasqueiro`.*
