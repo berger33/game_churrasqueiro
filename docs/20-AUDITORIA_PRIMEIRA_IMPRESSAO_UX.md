@@ -49,6 +49,14 @@
 - 4/5 leram “Sem anúncios” e citaram positivamente ✅
 - 2/5 tentaram tocar nos 3 pratos hero (affordance falsa) ⚠️
 
+> **Status (2026-09-25) — achados do FTUE resolvidos no FTUE de 6 passos (docs/05 §4):**
+> mão vetorial em arco bancada → grelha em loop de 0,9 s (`coach.handLoopSec`) · quebra de linha
+> que nunca parte palavras · `PULAR` 48 px após 2 s + `tutorial_skip` (P1 #8) · `TOQUE PARA VIRAR`
+> só com o lado dourado, anel de progresso antes · no passo 2 o prato não é arrastável (tap = virar,
+> sem arrasto acidental) · cards de pedido 40 px mais baixos durante o FTUE · nada queima no turno
+> roteirizado. O overlay antigo usava `destination-out` no canvas principal, o que apagava a cena
+> dentro do spotlight; agora é um véu com furos (even-odd).
+
 ### 5.0 – 20s FTUE Passo 1: colocar
 Spotlight `destination-out` 140×70 na bancada, mão `👆` + ring pulsante `rgba(255,220,160,0.3+0.3*pulse)`, card “ARRASTE A LINGUIÇA PARA A BRASA” + `Passo 1/3` + dots.
 - ✅ Escurece 55% (`rgba(6,3,2,0.55)`) exceto spotlight — atenção 10/10. Ring pulsa 3.5Hz é chamativo sem ser agressivo.

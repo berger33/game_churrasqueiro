@@ -122,6 +122,14 @@ Tabs:
 
 **Métrica alvo:** `tutorial_complete` >85% em D0, `tutorial_abandon{step}` <5% por step.
 
+> **Atualização (2026-09-25):** o script acima (3 passos, `meta.ftueStep`) foi substituído pelos
+> **6 passos de docs/05-UX_FLOW.md §4**, implementados no protótipo: turno roteirizado com
+> linguiça na lata de 1 fileira, máscara de input, prompt de virar só com o lado dourado, prato
+> guiado que não passa do ponto nem queima, PERFEITO + moedas voando até o contador, pedido
+> livre no passo 5, e o passo 6 na Home (Grelha Maior). Regras em `tools/sim-core/src/tutorial.ts`,
+> dados em `shared/data/tutorial.json`, 22 testes em `tools/studio/test/tutorial.test.ts`.
+> Medido: primeiro PERFEITO em 16,1 s, passo 6 em 38,3 s, 0 erros seguindo só a mão.
+
 ---
 
 ## 7. Primeira impressão (0-60s)

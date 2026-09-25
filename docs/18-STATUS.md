@@ -1,11 +1,51 @@
 # 18 — Status Report
 
-**Snapshot:** 2026-09-25 · branch `arena/01a0d703-game-churrasqueiro`
-(PR #4 fast-forwarded, then churrasqueira purchase wired into the economy sim — see §4.2 and docs/06-ECONOMY.md §5.4)
+**Snapshot:** 2026-09-25 · branch `arena/01a0d72a-game-churrasqueiro`
+(PR #5 fast-forwarded, then the six-step FTUE — see "FTUE" below and docs/05-UX_FLOW.md §4.
+Before that: churrasqueira purchase wired into the economy sim — §4.2 and docs/06-ECONOMY.md §5.4)
 
 This report states plainly what is **done and verified**, what is **built but
 unverified here**, and what is **not built**. Anything marked ⚠ was not executed
 in this environment and must be re-run before it is trusted.
+
+---
+
+## FTUE — the six-step first run (docs/05-UX_FLOW.md §4)
+
+The prototype's first run was a 3-step overlay bolted onto an ordinary turn: random customers
+ordered food that was not on the bench, step 1 completed on *pickup*, step 3 on *any*
+PERFEITO, the FTUE only finished if a PERFEITO happened, the result card still offered the ad,
+the bonus and share, it emitted no analytics, and the spotlight used `destination-out` on the
+main canvas — which erased the scene inside the hole. The shot harness had to seed
+`ftueDone` to get past it.
+
+**Now** (all six steps of 05 §4, splash → title → FTUE → Home → JOGAR):
+
+- `shared/data/tutorial.json` (table 22) — the script and every tunable; `npm run validate`
+  checks its ids, l10n keys, analytics coverage, coach thresholds and that a fresh install can
+  afford step 6 from guaranteed income (263 ≥ 180).
+- `tools/sim-core/src/tutorial.ts` — `TutorialDirector` (steps + analytics + resume),
+  `TutorialTurn` (scripted customers, input masking, the guided-plate hold), coach rules.
+  `tools/sim-core/src/analytics.ts` — the event contract. `TurnSimulation` gained
+  `autoSpawn: false`, `spawnScriptedCustomer()` and `endAfter()` (defaults unchanged; the
+  golden vectors did not move).
+- `tools/studio/test/tutorial.test.ts` — 22 tests, including a bot that plays using only what
+  the hand points at: first PERFEITO at 14.4 s, steps 1–5 in 30.8 s, and it still gets its
+  PERFEITO when it hesitates 20 s before every action.
+- Prototype: scripted turn, overlay (`prototype/src/ftue.ts`), simplified result card, step 6
+  on Home, a live coin counter with coins flying to it, and an analytics recorder
+  (`__churrascoAnalytics`). A fresh install now starts at `newPlayerState()` (0 coins, level 1)
+  instead of a demo purse, and every turn credits `levels.json` rewards like `run-sim` does.
+- `check-render` and `check-shots` play the FTUE by following the hand and assert the funnel;
+  `check-render` also backgrounds and skips a second install.
+
+**Found while building it (fixed):** the FTUE could deadlock in step 2 (a plate left long
+enough evens out, and a "does a flip help" rule then refused the flip); step-5 plates could
+burn in a loop for a slow player; the result card's hit boxes sat ~140 px below its drawn
+buttons (INÍCIO / PRÓXIMO / DOBRAR / share only worked by accident); PERFEITO! floats were
+drawn at the bench, because a served plate is no longer on the grill; and a
+customers-served check in `reactToEvents` could never fire, because serves happen between
+frames.
 
 ---
 
@@ -56,20 +96,20 @@ Every claim below was produced by a command run in this checkout.
 
 | Area | Check | Result |
 |---|---|---|
-| Unit tests | `npx vitest run` | **174 passed / 0 failed** (11 files) |
+| Unit tests | `npx vitest run` | **197 passed / 0 failed** (13 files — `tutorial.test.ts` adds 22) |
 | Type check | `npm run typecheck` | **OK — 0 errors.** `tsconfig.json` was strict (`strict`, `noUncheckedIndexedAccess`) but no script ever ran it: the first run reported **140 errors**, of which **15 were real code defects** (section 4.1) |
-| Localisation | `npm run check-l10n` | **OK** — 376 keys referenced by data, all translated in pt-BR (514 keys total); en-US / es-419 are declared 9.7 % stubs that fall back to pt-BR |
-| Data integrity | `npm run validate` | **OK** — 21 tables (incl. `churrasqueiras`), 16 ingredients, 11 customers, 7 restaurants, 27 upgrade tracks, 58 achievements, 37 collection entries, 47 analytics events, 60 authored levels |
-| Data contracts | `npm run check-schema` | **OK** — 21/21 tables valid against `shared/schema`, and every contract rejects a broken copy of itself |
-| Contract drift | `npm run verify-schemas` | **OK** — 21 schemas in step with `shared/data` |
+| Localisation | `npm run check-l10n` | **OK** — 380 keys referenced by data, all translated in pt-BR (514 keys total; the six text-heavy `ui.tut.1–6` gave way to the FTUE's short prompts); en-US / es-419 are declared 10.5 % stubs that fall back to pt-BR |
+| Data integrity | `npm run validate` | **OK** — 22 tables (incl. `churrasqueiras`, `tutorial`), 16 ingredients, 11 customers, 7 restaurants, 27 upgrade tracks, 58 achievements, 37 collection entries, 48 analytics events, 6 FTUE steps, 60 authored levels |
+| Data contracts | `npm run check-schema` | **OK** — 22/22 tables valid against `shared/schema`, and every contract rejects a broken copy of itself |
+| Contract drift | `npm run verify-schemas` | **OK** — 22 schemas in step with `shared/data` |
 | Short-horizon economy | `npm run sim` | **all balance targets met** (grill:fornalha skipped — needs long horizon) |
 | Long-horizon economy | `npm run sim:long` (1500 turns) | **18/18 balance targets met** — see §3 |
 | Economy report | `HORIZON=1500 npm run balance-report` | reaches **level 80**; income growth L5→L70 **×12.27** vs cost growth **×29.28** → costs outpace income, so purchases stay meaningful |
-| Unity data copy | `npm run verify-data-sync` | **OK — Assets/Data matches shared/data (21 tables)** |
-| Prototype bundle | `npx esbuild --bundle prototype/src/main.ts` | **135 kB, 0 errors** — and the source now type-checks, which it never did |
+| Unity data copy | `npm run verify-data-sync` | **OK — Assets/Data matches shared/data (22 tables)** |
+| Prototype bundle | `npx esbuild --bundle prototype/src/main.ts` | **290 kB unminified (251 kB before the FTUE), 0 errors** — and the source now type-checks, which it never did |
 | Art coverage | `npm run check-art` | **OK** — 16 ingredients × 8 doneness levels + icons = **144 draws**, all painted |
-| Render smoke | `npm run check-render` | **OK** — real bundle driven through init, a drag, a flip and a full turn; **~45 M canvas ops, no exceptions** |
-| Shot harness | `npm run check-shots` | **OK — 6.6 s.** 5 real PNGs (splash, home/JOGAR, empty grill, cooking, result). 161 painted frames, 980 sim-only ticks. 60 s self-budget. The old tail was 10 800 full-scene draws (~3.8 GB RSS / 300 s timeout). |
+| Render smoke | `npm run check-render` | **OK, 4 s** — real bundle through the whole FTUE (played by following the hand: 8 events in order, 0 misses), step 6, an ordinary turn to the result, then a second install that is backgrounded (`tutorial_abandon` once) and skipped (`tutorial_skip` → Home); **~38 M canvas ops, no exceptions** |
+| Shot harness | `npm run check-shots` | **OK — ~6 s.** 13 real PNGs: a fresh install (splash, title, FTUE steps 1 / 2-waiting / 2 / 3 / 4, FTUE result, step 6 on Home), then a relaunch that must open on Home (home, empty grill, cooking, result). Asserts the FTUE funnel from `__churrascoAnalytics` — first PERFEITO 16.1 s, step 6 at 38.3 s (< 60 s), 0 misses. 193 painted frames, ~1 390 sim-only ticks, 60 s self-budget. |
 | Prototype server | `node prototype/dev-server.mjs` | listening on `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
 | CI | `.github/workflows/ci.yml` + `npm run gates` | **green on ubuntu-latest (28 s), 13 gates.** `check-shots` is in the per-PR list (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. Unity compile is still absent — no toolchain. |
 
@@ -377,7 +417,13 @@ specification. The prototype proves art *direction*, not the art *budget*.
 3. Write the Unity scene layer and run the feel pass.
 4. Confirm the 767-turn mid-game gap with telemetry before V1.0.
 5. Grow en-US / es-419 from 9.7 % stub to full coverage before any non-BR launch.
-6. **Prototype FTUE** — rewrite the 6-step first-run so it matches the splash →
-   home → JOGAR path the shot harness now drives. (`npm run check-shots` is done:
-   sim catch-up at the 0.1s dt cap with `__churrascoSkipDraw`, 60s self-budget,
-   PNGs of splash / home / empty grill / cooking / result.)
+6. ~~**Prototype FTUE**~~ — **done** (see "FTUE" at the top and docs/05 §4). Follow-ups:
+   - Port `tools/sim-core/src/tutorial.ts` + `tutorial.json` to the Unity `TutorialDirector`
+     (BACKLOG #5); the C# data class is already generated (`Tutorial.g.cs`).
+   - `SaveGame` v3 should carry `progress.tutorial` (`TutorialState`); today only the
+     prototype persists it (localStorage meta).
+   - Found, not fixed: `gen-schemas.mjs` enum `OVERRIDES` never apply — they are keyed
+     `items[].category` but looked up as `items.category`, so e.g. ingredient `sides` is
+     `integer` instead of the intended enum `[1, 2, 4]`.
+   - Found, not fixed: the Home daily-strip hit box (y 188–268) sits below the drawn strip
+     (y 80–188), the same class of bug the result card had.
