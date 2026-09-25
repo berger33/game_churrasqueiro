@@ -64,7 +64,9 @@ strict, but nothing invoked `tsc`.
 1. `npm run typecheck` — `tsc --noEmit`, strict
 2. `npm run validate` — data integrity
 3. `npm run check-schema` — every table against its contract, plus a negative pass
-4. `npm run verify-schemas` — schemas in step with `shared/data`
+4. `npm run verify-schemas` — schemas in step with `shared/data`, and every hand-authored
+   enum override in `gen-schemas.mjs` names a field that exists (a path that matches nothing
+   is how all of them once silently never applied)
 5. `npm run check-l10n` — no missing keys, no literal pt-BR in data
 6. `npm run check-csharp-types` — generated C# types in step with the tables
 7. `npm run verify-data-sync` — `Assets/Data` matches `shared/data`
@@ -72,7 +74,8 @@ strict, but nothing invoked `tsc`.
 9. `npm run sim` — short-horizon economy guardrails
 10. `npm run check-vectors` — the golden vectors still match the rules
 11. `npm run check-art` — 16 ingredients × 8 doneness levels all paint
-12. `npm run check-render` — real prototype bundle driven through a full turn
+12. `npm run check-render` — real prototype bundle driven through the FTUE, Home's daily
+    calendar (the strip opens it, `RESGATAR` pays once per day, ✕ closes it) and a full turn
 13. `npm run check-shots` — real PNGs of splash → home → play → result. Sim
     catch-up at the 0.1s dt cap with draw skipped; do not pump 10 800 full-scene
     frames and do not raise the timeout to hide that.

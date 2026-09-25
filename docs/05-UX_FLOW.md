@@ -160,6 +160,14 @@ grill, rejected or non-PERFEITO serves, and burns.
 from step 1 (reported steps are not re-sent). Step 6 only counts once the turn's result is
 saved; if the app died in the wind-down, the turn replays too.
 
+**Persistence.** The director's `TutorialState` lives in the save: `SaveGame` v3 carries
+`progress.tutorial` (`null` until the first launch creates it) and `progress.ftueDone`
+(finished or skipped — it always wins on restore, so nobody redoes the first run). Restore with
+`restoreTutorialState(table, progress.tutorial, progress.ftueDone)`. A save written before v3
+belongs to someone who has already played, so the v2 → v3 migration marks the FTUE done
+(`tools/studio/test/save.test.ts`). The prototype keeps the same two fields in its
+localStorage meta (`churrasco_meta_v2`).
+
 **Measured** (`npm run check-shots`, a driver that only follows the hand, 0.6 s reaction):
 first PERFEITO at 16.1 s, `tutorial_complete` at 32.9 s, step 6 bought at 38.3 s, 0 misses.
 The sim-level bot in `tools/studio/test/tutorial.test.ts` finishes steps 1–5 in 30.8 s, and

@@ -122,6 +122,13 @@ so cold start after the first run is faster still.
 - Cloud save seam exists (`ICloudSave`) but is not implemented — see
   [00-SPEC_AUDIT.md](00-SPEC_AUDIT.md#5-scope-decisions-for-the-commercial-mvp-84).
 
+Schema history (`SAVE_SCHEMA_VERSION` = 3):
+
+| Version | Adds | Migration from the previous version |
+|---|---|---|
+| v2 | `player.churrasqueiraId`, `player.churrasqueiraLevels` | grants the starter `lata_valente` at level 1 |
+| v3 | `progress.tutorial` (`TutorialState \| null`), `progress.ftueDone` | the FTUE counts as done — a pre-v3 save belongs to someone who already played (05-UX_FLOW §4.3) |
+
 All of this is implemented and unit-tested in `tools/sim-core/src/save.ts`; the C# port is
 `Assets/Scripts/Platform/SaveService.cs`.
 

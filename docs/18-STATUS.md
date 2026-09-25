@@ -1,12 +1,41 @@
 # 18 — Status Report
 
 **Snapshot:** 2026-09-25 · branch `arena/01a0d72a-game-churrasqueiro`
-(PR #5 fast-forwarded, then the six-step FTUE — see "FTUE" below and docs/05-UX_FLOW.md §4.
-Before that: churrasqueira purchase wired into the economy sim — §4.2 and docs/06-ECONOMY.md §5.4)
+(PR #5 fast-forwarded, then the six-step FTUE — see "FTUE" below and docs/05-UX_FLOW.md §4 —
+then its follow-ups: see "FTUE follow-ups" below. Before that: churrasqueira purchase wired
+into the economy sim — §4.2 and docs/06-ECONOMY.md §5.4)
 
 This report states plainly what is **done and verified**, what is **built but
 unverified here**, and what is **not built**. Anything marked ⚠ was not executed
 in this environment and must be re-run before it is trusted.
+
+---
+
+## FTUE follow-ups (§7 item 6)
+
+- **Schema enum overrides now apply.** `gen-schemas.mjs` keyed them `items[].category` but
+  looked them up as `items.category` (and nested objects lost their parent path), so not one
+  hand-authored enum had ever reached a schema: ingredient `sides` was `integer` instead of
+  `[1, 2, 4]`, employee rarity lacked `epic`, upgrade `currency` lacked `embers`. Paths are now
+  built the way the overrides spell them, `null` means *open vocabulary* (plain `string`, no
+  auto-detected enum — voice sets, upgrade categories, store product types), and the
+  generator exits 1 on an override path that matches no field, so `verify-schemas` catches the
+  next typo. `sides: 3` is now rejected by `check-schema`.
+- **Home's daily calendar works.** The strip's hit box was the empty gap under it (y 188–268
+  vs a strip drawn at y 80–188). The calendar modal was worse: day cards were hit-tested at the
+  strip's x positions (the middle of "Dia 1" missed), `RESGATAR` had no hit box at all, ✕ was
+  hit-tested 40 px above the panel, and the seventh card and ✕ hung off the panel's edge. Both
+  now draw and hit-test from one layout (`dailyStripLayout()` / `dailyModalLayout()`, the
+  `resultLayout()` pattern). Making `RESGATAR` work exposed that nothing limited claims to
+  one per day — a whole week could be claimed in seconds — so claims are once per calendar day
+  (`lastClaimISO`), a finished 7-day cycle restarts the next day, and each claim sends
+  `daily_reward{day_index, streak}` (09-ANALYTICS §2). `check-render` taps the gap (nothing),
+  the strip (opens), `RESGATAR` twice and the next day's card (pays 250 once) and ✕ (closes).
+- **`SaveGame` v3 carries the FTUE:** `progress.tutorial` (`TutorialState | null`) and
+  `progress.ftueDone`, restored with `restoreTutorialState(table, tutorial, ftueDone)`. A pre-v3
+  save belongs to someone who has already played, so the migration marks the FTUE done
+  (03-TECH_DESIGN §6, 05-UX_FLOW §4.3). Five new tests in `save.test.ts`, including a director
+  that survives serialise → deserialise mid-run and never re-sends a reported step.
 
 ---
 
@@ -96,7 +125,7 @@ Every claim below was produced by a command run in this checkout.
 
 | Area | Check | Result |
 |---|---|---|
-| Unit tests | `npx vitest run` | **197 passed / 0 failed** (13 files — `tutorial.test.ts` adds 22) |
+| Unit tests | `npx vitest run` | **202 passed / 0 failed** (13 files — `tutorial.test.ts` adds 22, `save.test.ts` 5 for `SaveGame` v3) |
 | Type check | `npm run typecheck` | **OK — 0 errors.** `tsconfig.json` was strict (`strict`, `noUncheckedIndexedAccess`) but no script ever ran it: the first run reported **140 errors**, of which **15 were real code defects** (section 4.1) |
 | Localisation | `npm run check-l10n` | **OK** — 380 keys referenced by data, all translated in pt-BR (514 keys total; the six text-heavy `ui.tut.1–6` gave way to the FTUE's short prompts); en-US / es-419 are declared 10.5 % stubs that fall back to pt-BR |
 | Data integrity | `npm run validate` | **OK** — 22 tables (incl. `churrasqueiras`, `tutorial`), 16 ingredients, 11 customers, 7 restaurants, 27 upgrade tracks, 58 achievements, 37 collection entries, 48 analytics events, 6 FTUE steps, 60 authored levels |
@@ -108,7 +137,7 @@ Every claim below was produced by a command run in this checkout.
 | Unity data copy | `npm run verify-data-sync` | **OK — Assets/Data matches shared/data (22 tables)** |
 | Prototype bundle | `npx esbuild --bundle prototype/src/main.ts` | **290 kB unminified (251 kB before the FTUE), 0 errors** — and the source now type-checks, which it never did |
 | Art coverage | `npm run check-art` | **OK** — 16 ingredients × 8 doneness levels + icons = **144 draws**, all painted |
-| Render smoke | `npm run check-render` | **OK, 4 s** — real bundle through the whole FTUE (played by following the hand: 8 events in order, 0 misses), step 6, an ordinary turn to the result, then a second install that is backgrounded (`tutorial_abandon` once) and skipped (`tutorial_skip` → Home); **~38 M canvas ops, no exceptions** |
+| Render smoke | `npm run check-render` | **OK, 4 s** — real bundle through the whole FTUE (played by following the hand: 8 events in order, 0 misses), step 6, Home's daily calendar (strip → modal → `RESGATAR` pays once → ✕), an ordinary turn to the result, then a second install that is backgrounded (`tutorial_abandon` once) and skipped (`tutorial_skip` → Home); **~38 M canvas ops, no exceptions** |
 | Shot harness | `npm run check-shots` | **OK — ~6 s.** 13 real PNGs: a fresh install (splash, title, FTUE steps 1 / 2-waiting / 2 / 3 / 4, FTUE result, step 6 on Home), then a relaunch that must open on Home (home, empty grill, cooking, result). Asserts the FTUE funnel from `__churrascoAnalytics` — first PERFEITO 16.1 s, step 6 at 38.3 s (< 60 s), 0 misses. 193 painted frames, ~1 390 sim-only ticks, 60 s self-budget. |
 | Prototype server | `node prototype/dev-server.mjs` | listening on `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
 | CI | `.github/workflows/ci.yml` + `npm run gates` | **green on ubuntu-latest (28 s), 13 gates.** `check-shots` is in the per-PR list (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. Unity compile is still absent — no toolchain. |
@@ -420,10 +449,7 @@ specification. The prototype proves art *direction*, not the art *budget*.
 6. ~~**Prototype FTUE**~~ — **done** (see "FTUE" at the top and docs/05 §4). Follow-ups:
    - Port `tools/sim-core/src/tutorial.ts` + `tutorial.json` to the Unity `TutorialDirector`
      (BACKLOG #5); the C# data class is already generated (`Tutorial.g.cs`).
-   - `SaveGame` v3 should carry `progress.tutorial` (`TutorialState`); today only the
-     prototype persists it (localStorage meta).
-   - Found, not fixed: `gen-schemas.mjs` enum `OVERRIDES` never apply — they are keyed
-     `items[].category` but looked up as `items.category`, so e.g. ingredient `sides` is
-     `integer` instead of the intended enum `[1, 2, 4]`.
-   - Found, not fixed: the Home daily-strip hit box (y 188–268) sits below the drawn strip
-     (y 80–188), the same class of bug the result card had.
+   - ~~`SaveGame` v3 should carry `progress.tutorial`~~ — **done** (see "FTUE follow-ups").
+   - ~~`gen-schemas.mjs` enum `OVERRIDES` never apply~~ — **fixed and guarded**.
+   - ~~The Home daily-strip hit box sits below the drawn strip~~ — **fixed**, with the
+     calendar modal's three hit-box bugs and the unlimited claims it was hiding.
