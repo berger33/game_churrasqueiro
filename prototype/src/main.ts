@@ -10,7 +10,8 @@
  *    3 mecânicas em rotação, frenesi, roleta, desafio de precisão
  *  - HUD: barra XP, streak chamas, missões, carvão, combo, moedas, brasas
  *  - Menu principal: Home como hub vivo (não menu morto) + 5 abas
- *  - Tutorial: 6 passos em 60s, celebração, impossível falhar no primeiro perfeito
+ *  - Tutorial: 6 passos em 60s (docs/05 §4), celebração, impossível falhar —
+ *    regras em tools/sim-core/src/tutorial.ts, roteiro em shared/data/tutorial.json
  *  - Primeira impressão: splash 1.2s + title com CTA respirando + hint
  *  - Retenção D0-D30: streak com graça, daily 7 dias, missões, eventos semanais,
  *    roleta tempo-limitado, bônus de retorno 2h, coleção, rota, prestígio
@@ -21,7 +22,7 @@
  *    (HORA DA BRASA / ROLETA / DESAFIO DO CHEF) por tempo limitado (15s).
  *    Se perder, volta no próximo ciclo — sempre há algo novo a esperar.
  *
- * Mantém 100% das regras sim-core (mesma simulação validada em 135 testes).
+ * Mantém 100% das regras sim-core (mesma simulação validada em `npm test`).
  */
 
 import { createDatabase, validateDatabase } from '../../tools/sim-core/src/data.ts';
@@ -29,6 +30,15 @@ import { overallDoneness, evenness, stageOf, effectiveHeat, type FoodRuntime } f
 import { TurnSimulation, type CustomerRuntime } from '../../tools/sim-core/src/turn.ts';
 import type { GameDatabase, Ingredient, RawDataBundle } from '../../tools/sim-core/src/types.ts';
 import { createL10n, type L10n, type L10nTable } from '../../tools/sim-core/src/l10n.ts';
+import { checkAnalyticsEvent, type AnalyticsEvent, type AnalyticsTaxonomy, type AnalyticsValue } from '../../tools/sim-core/src/analytics.ts';
+import {
+  TutorialDirector, TutorialTurn, flipReady, restoreTutorialState,
+  type CoachAction, type TutorialState, type TutorialTable
+} from '../../tools/sim-core/src/tutorial.ts';
+import {
+  arcPoint, contains, dragLoop, drawHand, drawHoleRing, drawProgressRing, drawPrompt, drawScrim,
+  drawSkipButton, drawStepDots, pad, tapLoop, type Pt, type Rect
+} from './ftue.ts';
 import {
   C, DISPLAY, UI, avatar, brushedMetalGradient, checkIcon, clamp01, clockIcon, coinIcon,
   drawBrickwork, drawCheckerFloor, drawEmberBloom, drawWoodGrain, ease, flameIcon, font, glass, hex, lerp, mix,
@@ -65,7 +75,22 @@ interface Drag {
   startX: number; startY: number;
   moved: boolean;
   startTime: number;
+  /** FTUE masking: the plate stays put (a tap can still flip it). */
+  locked?: boolean;
 }
+/** Coins travelling from a served plate to the HUD counter (docs/02 §11: "coins fly to the counter"). */
+interface CoinFlight {
+  x0: number; y0: number;
+  delay: number; t: number; dur: number;
+  value: number;
+  /** Last coin of the FTUE's guided serve: landing completes step 4. */
+  ftueLast: boolean;
+}
+interface AnalyticsRecord { name: string; params: Record<string, AnalyticsValue>; atMs: number; valid: boolean }
+/** docs/20: order cards drop 40 px during the FTUE so the thumb does not cover the drag target. */
+const FTUE_ORDER_DROP = 40;
+/** HUD coin counter — where flying coins land. */
+const HUD_COIN = { x: 28, y: 30 };
 
 // ── Churrasqueira progression ───────────────────────────────────────────────
 interface ChurrEvolutionSpec {
@@ -111,8 +136,14 @@ interface Meta {
   bestCombo: number;
   totalPerfect: number;
   collection: string[]; // ingredient ids discovered
+  /** True once the FTUE is finished or skipped. Old saves only carry this flag. */
   ftueDone: boolean;
+  /** Mirrors `tutorial.step` (99 = done) for tools that read the old field. */
   ftueStep: number;
+  /** TutorialDirector state (tools/sim-core/src/tutorial.ts). */
+  tutorial?: TutorialState;
+  /** Levels whose first-clear bonus has been paid (run-sim's `cleared_<id>` counters). */
+  clearedLevels: string[];
   bonusReady: BonusType | null;
   bonusExpiresAt: number; // performance.now() monotonic, 0 = no bonus
   wheelSpins: number;
@@ -128,11 +159,15 @@ function todayISO(): string {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 function loadMeta(): Meta {
+  // A fresh install is sim-core's `newPlayerState()`: 0 coins, level 1, the free
+  // 1-zone grill. (This used to be a demo purse — 420 coins, level 2 — which hid
+  // whether the FTUE could pay for its own step-6 upgrade. It can: see
+  // `tutorial.json` and the "step 6 unreachable" rule in validate-data.ts.)
   const fallback: Meta = {
-    coins: 420, embers: 12, xp: 18, level: 2, streak: 1, longestStreak: 1,
+    coins: 0, embers: 0, xp: 0, level: 1, streak: 1, longestStreak: 1,
     lastLoginISO: todayISO(), lastClaimDay: 0, turnsPlayed: 0, bestCombo: 0,
-    totalPerfect: 0, collection: ['linguica_toscana','pao_de_alho'], ftueDone: false,
-    ftueStep: 0, bonusReady: null, bonusExpiresAt: 0, wheelSpins: 1, lastWheelSpinISO: '',
+    totalPerfect: 0, collection: [], ftueDone: false,
+    ftueStep: 0, clearedLevels: [], bonusReady: null, bonusExpiresAt: 0, wheelSpins: 1, lastWheelSpinISO: '',
     upgrades: { grill_size: 0 }, graceUsed: false,
     churrasqueiraId: 'lata_valente', churrasqueiraLv: { lata_valente: 1 }
   };
@@ -141,7 +176,12 @@ function loadMeta(): Meta {
     const raw = localStorage.getItem('churrasco_meta_v2');
     if (!raw) return fallback;
     const j = JSON.parse(raw) as Partial<Meta>;
-    const merged: Meta = { ...fallback, ...j, upgrades: { ...fallback.upgrades, ...(j.upgrades ?? {}) }, churrasqueiraLv: { ...fallback.churrasqueiraLv, ...(j.churrasqueiraLv ?? {}) } };
+    const merged: Meta = {
+      ...fallback, ...j,
+      upgrades: { ...fallback.upgrades, ...(j.upgrades ?? {}) },
+      churrasqueiraLv: { ...fallback.churrasqueiraLv, ...(j.churrasqueiraLv ?? {}) },
+      clearedLevels: Array.isArray(j.clearedLevels) ? j.clearedLevels.filter((x): x is string => typeof x === 'string') : []
+    };
     if (!merged.churrasqueiraId) merged.churrasqueiraId = fallback.churrasqueiraId;
     if (!merged.churrasqueiraLv[merged.churrasqueiraId]) merged.churrasqueiraLv[merged.churrasqueiraId] = 1;
     return merged;
@@ -188,7 +228,10 @@ class Game {
   private screen: Screen = 'splash';
   private homeTab: HomeTab = 'home';
   private levelIndex = 0;
-  private levels: { id: string; restaurantIndex: number; turnLengthSec: number; spawnIntervalSec: number; patienceScalar: number; difficultyScalar: number; maxOrdersOnScreen: number }[] = [];
+  private levels: {
+    id: string; restaurantIndex: number; turnLengthSec: number; spawnIntervalSec: number; patienceScalar: number;
+    difficultyScalar: number; maxOrdersOnScreen: number; rewards: { coins: number; firstClearBonus: { coins: number } };
+  }[] = [];
 
   private meta: Meta = loadMeta();
 
@@ -196,7 +239,13 @@ class Game {
   private floats: FloatText[] = [];
   private drag: Drag | null = null;
   private pointer = { x: 0, y: 0, down: false };
-  private lastResult: { coins: number; xp: number; stars: number; perfect: number; burned: number; combo: number } | null = null;
+  private lastResult: {
+    coins: number; xp: number; stars: number; perfect: number; burned: number; combo: number;
+    /** levels.json reward (+ first-clear bonus) credited on top of the turn's own coins. */
+    levelCoins: number;
+    /** The FTUE's scripted turn: a simplified card — no ads, no bonus, no share (docs/05 §4). */
+    ftue: boolean;
+  } | null = null;
   private flash = 0;
   private comboPulse = 0;
   private bannerText = '';
@@ -221,7 +270,23 @@ class Game {
   private bonusOfferT = 0; // countdown window on result screen
   private offlinePopup: { coins: number; minutes: number } | null = null;
   private dailyModalOpen = false;
-  private ftueHandT = 0;
+
+  // FTUE (docs/05-UX_FLOW.md §4) — rules live in tools/sim-core/src/tutorial.ts
+  private tutorialTable!: TutorialTable;
+  private tutorial!: TutorialDirector;
+  /** The scripted turn (steps 1–5) while it runs; null otherwise. */
+  private ftue: TutorialTurn | null = null;
+  private ftueIdle = 0;          // seconds since the last input during the scripted turn
+  private ftueNudge = 0;         // 1 → 0 after a blocked action (ring shake)
+  private ftueHintKey = '';      // the hand's current target, for the prompt ping
+  private ftueHintSince = 0;     // when that target appeared (animation phase)
+  private ftueRewardWait = 0;    // step-4 fallback timer when no coin flight carries the reward
+  private coinFlights: CoinFlight[] = [];
+  private hudCoinsLanded = 0;    // turn coins that already reached the HUD counter
+  private coinPulse = 0;
+  private lastServePos: Pt | null = null;
+  private analyticsTax: AnalyticsTaxonomy | null = null;
+  private readonly analyticsLog: AnalyticsRecord[] = [];
 
   // Home scroll (for shop overflow etc)
   private homeScrollY = 0;
@@ -266,6 +331,28 @@ class Game {
       saveMeta(this.meta);
     }
 
+    // FTUE: restore the director. A save that says "done" always wins, so a
+    // returning player never redoes it (old saves only carry `ftueDone`).
+    this.tutorialTable = (await fetch('/data/tutorial.json').then((r) => r.json())) as TutorialTable;
+    try {
+      this.analyticsTax = (await fetch('/data/analytics.json').then((r) => r.json())) as AnalyticsTaxonomy;
+    } catch {
+      this.analyticsTax = null; // the recorder still logs; it just cannot check the contract
+    }
+    (globalThis as unknown as { __churrascoAnalytics?: AnalyticsRecord[] }).__churrascoAnalytics = this.analyticsLog;
+    this.tutorial = new TutorialDirector(
+      this.tutorialTable,
+      restoreTutorialState(this.tutorialTable, this.meta.tutorial, this.meta.ftueDone),
+      (e) => this.track(e)
+    );
+    // Step 6 is only valid once the scripted turn's result is saved. If the app
+    // died in the wind-down, the turn replays (reported steps are not re-sent).
+    if (this.tutorial.current?.screen === 'home' && !this.meta.clearedLevels.includes(this.tutorialTable.turn.levelId)) {
+      this.tutorial.restartTurn();
+    }
+    this.saveTutorial();
+    this.bindLifecycle();
+
     // Daily streak logic: if new day, advance streak with grace
     const today = todayISO();
     if (this.meta.lastLoginISO !== today) {
@@ -288,6 +375,11 @@ class Game {
         this.offlinePopup = { coins: Math.round(mins * (6 + this.meta.level * 2.2)), minutes: mins };
       }
       this.dailyModalOpen = true;
+    }
+    // Nothing pops over the FTUE (docs/05 §4: no more than one panel deep).
+    if (!this.tutorial.done) {
+      this.offlinePopup = null;
+      this.dailyModalOpen = false;
     }
 
     // Bonus cadence: after every 2 turns offer a bonus
@@ -416,27 +508,231 @@ class Game {
     const chName = this.activeChurr() ? this.l10n.t(this.activeChurr()!.nameKey) : '';
     const evoData = this.activeEvo();
     const evoShort = evoData ? this.l10n.t(evoData.nameKey) : '';
-    // FTUE: only show 1 ingredient at first
-    if (!this.meta.ftueDone) {
-      this.unlocked = this.db.ingredients.items.filter(i => i.id === 'linguica_toscana');
-    } else {
-      this.unlocked = this.db.ingredients.items.filter(
-        (i) => i.unlock.restaurantIndex <= restaurant.index && i.cookMethod === 'grill'
-      ).slice(0, 8);
-    }
+    this.unlocked = this.db.ingredients.items.filter(
+      (i) => i.unlock.restaurantIndex <= restaurant.index && i.cookMethod === 'grill'
+    ).slice(0, 8);
+    this.ftue = null;
+    this.beginTurnScreen();
+    this.banner(`${chName ? chName.toUpperCase() + ' · ' : ''}${lvl.id}${evoShort ? ' · ' + evoShort : ''}`);
+  }
+
+  private beginTurnScreen(): void {
     this.screen = 'play';
     this.bgCache = null;
-    this.banner(`${chName ? chName.toUpperCase() + ' · ' : ''}${lvl.id}${evoShort ? ' · ' + evoShort : ''}`);
-    this.ftueHandT = 0;
+    this.coinFlights = [];
+    this.hudCoinsLanded = 0;
+    this.lastServePos = null;
+  }
+
+  // ── FTUE (docs/05-UX_FLOW.md §4) ──────────────────────────────────────────
+  /** Where the splash leads: the FTUE's scripted turn starts from the title; everything else from Home. */
+  private afterSplash(): Screen {
+    return this.tutorial.done || this.tutorial.current?.screen === 'home' ? 'home' : 'title';
+  }
+
+  /** Steps 1–5: one scripted turn — level_001's first clear — on the free 1-zone grill. */
+  private startFtueTurn(): void {
+    const t = this.tutorialTable;
+    const idx = Math.max(0, this.levels.findIndex((l) => l.id === t.turn.levelId));
+    const lvl = this.levels[idx]!;
+    this.levelIndex = idx;
+    this.ftue = new TutorialTurn(this.db, t, this.tutorial, {
+      restaurantIndex: lvl.restaurantIndex,
+      upgradeLevels: this.meta.upgrades,
+      churrasqueiraLevel: 1,
+      seed: 20260917
+    });
+    this.sim = this.ftue.sim;
+    this.unlocked = [this.ftue.ingredient];
+    this.ftueIdle = 0;
+    this.ftueNudge = 0;
+    this.ftueHintKey = '';
+    this.ftueRewardWait = 0;
+    this.beginTurnScreen();
+    this.saveTutorial();
+  }
+
+  /** The FTUE's own result card is up (between step 5 and step 6). */
+  private ftueResultActive(): boolean {
+    return this.screen === 'result' && !!this.lastResult?.ftue && !this.tutorial.done;
+  }
+
+  /** True while Home shows step 6 (spotlight on the upgrade card, everything else masked). */
+  private homeFtueActive(): boolean {
+    return this.screen === 'home' && !this.ftue && this.tutorial.current?.screen === 'home';
+  }
+
+  private saveTutorial(): void {
+    this.meta.tutorial = this.tutorial.state;
+    this.meta.ftueDone = this.tutorial.done;
+    this.meta.ftueStep = this.tutorial.done ? 99 : this.tutorial.state.step;
+    saveMeta(this.meta);
+  }
+
+  /** PULAR: straight to Home, no reward, no hard feelings (docs/20 "liberdade"). */
+  private skipTutorial(): void {
+    if (!this.tutorial.skip()) return;
+    const inTurn = !!this.ftue;
+    this.ftue = null;
+    this.saveTutorial();
+    audio.play('uiBack');
+    if (inTurn) {
+      if (this.sizzleBed) { this.sizzleBed.stop(); this.sizzleBed = null; }
+      this.screen = 'home';
+      this.homeTab = 'home';
+      this.particles = [];
+      this.floats = [];
+      this.coinFlights = [];
+    }
+  }
+
+  /**
+   * PULAR is offered after skip.showAfterSec — but not in the scripted turn's
+   * 1.2 s wind-down, where skipping would throw away the reward just earned.
+   */
+  private ftueSkipAvailable(): boolean {
+    return this.tutorial.canSkip && (!this.ftue || this.ftue.step?.screen === 'play');
+  }
+
+  /** The skip chip's hit rect (≥ 44 px, docs/21), top-right where the pause button lives outside the FTUE. */
+  private skipRect(): Rect {
+    const s = Math.max(44, this.tutorialTable.skip.hitSizePx);
+    return { x: W - 8 - Math.max(s, 62), y: 8, w: Math.max(s, 62), h: s };
+  }
+
+  /** A blocked action: shake the ring, soft tick — never an error buzz on a first-time player. */
+  private ftueBlocked(): void {
+    this.ftueNudge = 1;
+    audio.play('uiTap');
+  }
+
+  /** `tutorial_abandon` when the app is backgrounded or closed mid-FTUE (docs/05 §4). */
+  private bindLifecycle(): void {
+    const onHide = (): void => {
+      if (this.tutorial && !this.tutorial.done && this.tutorial.abandon()) this.saveTutorial();
+    };
+    const doc = globalThis.document as (Document & { visibilityState?: string }) | undefined;
+    if (doc && typeof doc.addEventListener === 'function') {
+      doc.addEventListener('visibilitychange', () => { if (doc.visibilityState === 'hidden') onHide(); });
+    }
+    const win = globalThis as unknown as { addEventListener?: (t: string, f: () => void) => void };
+    if (typeof win.addEventListener === 'function') win.addEventListener('pagehide', onHide);
+  }
+
+  /**
+   * Analytics recorder: every event is checked against analytics.json and
+   * undeclared parameters are dropped (docs/09 §1). Exposed as
+   * `globalThis.__churrascoAnalytics` so the harness can assert the funnel.
+   */
+  private track(e: AnalyticsEvent): void {
+    let params = { ...e.params };
+    let problems: string[] = [];
+    if (this.analyticsTax) {
+      problems = checkAnalyticsEvent(this.analyticsTax, e);
+      const def = this.analyticsTax.events.find((d) => d.name === e.name);
+      if (def) params = Object.fromEntries(Object.entries(params).filter(([k]) => k in def.params));
+      if (problems.length) console.warn(`[analytics] ${problems.join('; ')}`);
+    }
+    this.analyticsLog.push({ name: e.name, params, atMs: Math.round(this.now * 1000), valid: problems.length === 0 });
+  }
+
+  /** Is the hand visible for this coach action? Guided steps: whenever there is something to do. Step 5: only after idle. */
+  private ftueHandVisible(hint: CoachAction): boolean {
+    const ftue = this.ftue;
+    if (!ftue || hint.kind === 'wait') return false;
+    const step = ftue.step;
+    if (!step || step.screen !== 'play') return false;
+    return ftue.guided || this.ftueIdle >= this.tutorialTable.coach.idleHintSec;
+  }
+
+  /** Screen positions the hand travels between for a coach action. */
+  private ftueHandPath(hint: CoachAction): { from: Pt; to: Pt | null } | null {
+    switch (hint.kind) {
+      case 'place': {
+        const b = this.benchItemRect(0);
+        const zone = this.sim.grill.zones[hint.zoneIndex];
+        const slot = zone ? zone.items.length : 0;
+        return { from: { x: b.x + b.w / 2, y: b.y + b.h / 2 - 4 }, to: { x: this.slotX(hint.zoneIndex, slot), y: this.zoneY(hint.zoneIndex) } };
+      }
+      case 'flip':
+        return { from: this.foodScreenPos(hint.food), to: null };
+      case 'serve': {
+        const r = this.orderCardRect(this.visibleIndexOf(hint.customer));
+        return { from: this.foodScreenPos(hint.food), to: { x: r.x + r.w / 2, y: r.y + r.h / 2 } };
+      }
+      case 'discard': {
+        const p = this.foodScreenPos(hint.food);
+        return { from: p, to: { x: p.x, y: BENCH_TOP + 30 } };
+      }
+      default:
+        return null;
+    }
+  }
+
+  private updateFtue(dt: number): void {
+    const ftue = this.ftue!;
+    this.ftueIdle += dt;
+    this.ftueNudge = Math.max(0, this.ftueNudge - dt * 2.5);
+    const hint = ftue.coach();
+    const visible = this.ftueHandVisible(hint);
+    const key = visible ? `${hint.kind}:${'food' in hint && hint.food ? hint.food.uid : ''}` : '';
+    if (key && key !== this.ftueHintKey) {
+      this.ftueHintSince = this.now;
+      if (ftue.guided) audio.play('uiTap'); // the prompt appearing is itself feedback
+    }
+    this.ftueHintKey = key;
+    // Step 4 normally ends when the flying coins land; never let it hang without them.
+    if (ftue.step?.completesOn === 'reward_landed' && !this.coinFlights.some((c) => c.ftueLast)) {
+      this.ftueRewardWait += dt;
+      if (this.ftueRewardWait > 1.2) this.ftueRewardLanded();
+    } else {
+      this.ftueRewardWait = 0;
+    }
+    // Safety limit reached with the lesson unfinished (player walked away): replay, never fail.
+    if (this.sim.finished && ftue.step?.screen === 'play') this.startFtueTurn();
+    this.publishFtue(hint, visible);
+  }
+
+  private ftueRewardLanded(): void {
+    if (this.ftue?.rewardLanded()) {
+      this.coinPulse = 1;
+      this.saveTutorial();
+    }
+  }
+
+  /** Read-only view for harnesses: what the hand points at, in screen space. */
+  private publishFtue(hint: CoachAction | null, visible: boolean): void {
+    const g = globalThis as unknown as { __churrascoFtue?: unknown };
+    const step = this.tutorial.current;
+    if (!step || (!this.ftue && !this.homeFtueActive() && !this.ftueResultActive())) { g.__churrascoFtue = null; return; }
+    let hand: { kind: string; from: Pt; to: Pt | null } | null = null;
+    if (this.ftueResultActive()) {
+      const b = this.resultLayout().cont; // the card's only way forward
+      hand = { kind: 'continue', from: { x: b.x + b.w / 2, y: b.y + b.h / 2 }, to: null };
+    } else if (this.homeFtueActive()) {
+      const r = this.homeUpgradeRect(this.tutorialTable.upgradeTrackId);
+      hand = { kind: 'upgrade', from: { x: r.x + r.w / 2, y: r.y + r.h / 2 }, to: null };
+    } else if (hint && visible) {
+      const path = this.ftueHandPath(hint);
+      if (path) hand = { kind: hint.kind, ...path };
+    }
+    g.__churrascoFtue = {
+      screen: this.screen, step: step.id, index: step.index, hand,
+      canSkip: this.ftueSkipAvailable(), skip: this.skipRect(), misses: this.tutorial.state.misses
+    };
   }
 
   // ── Update ────────────────────────────────────────────────────────────────
   private update(dt: number): void {
     this.now += dt;
+    // Read-only views for the Node harnesses (shoot.mjs / render-smoke.mjs).
+    const dbg = globalThis as unknown as { __churrascoScreen?: Screen; __churrascoFtue?: unknown };
+    dbg.__churrascoScreen = this.screen;
+    if (!this.ftue && !this.homeFtueActive() && !this.ftueResultActive()) dbg.__churrascoFtue = null;
     if (this.screen === 'splash') {
       this.splashT += dt;
       if (this.splashT > 1.45) {
-        this.screen = this.meta.ftueDone ? 'home' : 'title';
+        this.screen = this.afterSplash();
         this.splashT = 0;
       }
       this.updateEffects(dt);
@@ -444,6 +740,10 @@ class Game {
     }
     if (this.screen === 'result') {
       this.resultT += dt;
+      if (this.ftueResultActive()) {
+        this.tutorial.tick(dt); // the first result card counts toward the 60 s
+        this.publishFtue(null, false);
+      }
       if (this.meta.bonusReady) this.bonusOfferT += dt;
       this.updateEffects(dt);
       return;
@@ -483,15 +783,21 @@ class Game {
     }
     if (this.screen !== 'play') {
       this.updateEffects(dt);
-      if (this.screen === 'home' || this.screen === 'title') this.ftueHandT += dt;
+      if (this.homeFtueActive()) {
+        this.tutorial.tick(dt);
+        this.ftueNudge = Math.max(0, this.ftueNudge - dt * 2.5);
+        this.publishFtue(null, false);
+      }
       return;
     }
 
     // PLAY tick
     const before = { ...this.sim.counters };
-    this.sim.tick(dt);
+    if (this.ftue) this.ftue.tick(dt);
+    else this.sim.tick(dt);
     this.reactToEvents(before);
-    this.ftueHandT += dt;
+    this.updateCoinFlights(dt);
+    if (this.ftue) this.updateFtue(dt);
 
     if (this.sizzleBed) {
       const zones = this.sim.grill.zones;
@@ -511,8 +817,11 @@ class Game {
   private reactToEvents(before: TurnSimulation['counters']): void {
     for (const ev of this.sim.events) {
       if (ev.type === 'perfect') {
-        const p = this.foodScreenPos(ev.food);
-        this.float(p.x, p.y - 20, this.l10n.t('ui.quality.perfect'), C.ouroLight, 28);
+        // A served plate has already left the grill: celebrate where it landed,
+        // not at the bench (foodScreenPos falls back there for off-grill food).
+        const p = ev.food.onGrill ? this.foodScreenPos(ev.food) : this.servePoint();
+        // ~170 px of 28 px display text: keep the float's centre far enough from the edges.
+        this.float(Math.max(110, Math.min(W - 110, p.x)), p.y - 20, this.l10n.t('ui.quality.perfect'), C.ouroLight, 28);
         this.burst(p.x, p.y, 18, C.chamaCore, 'spark');
         this.ring(p.x, p.y);
         this.confettiBurst(p.x, p.y, 10);
@@ -525,13 +834,11 @@ class Game {
           this.meta.collection.push(ev.food.ingredient.id);
           saveMeta(this.meta);
         }
-        // FTUE: after first perfect, advance
-        if (!this.meta.ftueDone && this.meta.ftueStep === 2) {
-          this.meta.ftueStep = 3;
-        }
       } else if (ev.type === 'serve') {
         if (ev.quality === 'good') audio.play('good');
         audio.play('coin');
+        if (ev.customer.state === 'served') audio.play('serve');
+        if (ev.coins > 0) this.launchCoins(this.servePoint(), ev.coins);
       } else if (ev.type === 'spawn') {
         audio.play(ev.customer.def.isVip ? 'vipArrive' : 'orderIn');
       } else if (ev.type === 'burned') {
@@ -555,16 +862,63 @@ class Game {
       }
     }
     this.sim.events.length = 0;
+    // (A customersServed-vs-`before` check used to live here. Serves happen in
+    // the input handler, between frames, so it never fired; the 'serve' event
+    // above is what actually marks a finished order.)
+    void before;
+  }
 
-    if (this.sim.counters.customersServed > before.customersServed) {
-      this.burst(W - 40, 60, 10, C.ouroLight, 'coin');
-      audio.play('serve');
+  /** Where the last plate was dropped (clamped clear of the HUD), or mid-screen. */
+  private servePoint(): Pt {
+    const p = this.lastServePos ?? { x: W / 2, y: 200 };
+    return { x: Math.max(40, Math.min(W - 40, p.x)), y: Math.max(150, p.y) };
+  }
+
+  /** Coins fly from the plate to the HUD counter; the counter ticks up as each one lands. */
+  private launchCoins(from: Pt, coins: number): void {
+    const ftueReward = !!this.ftue && this.ftue.step?.completesOn === 'reward_landed' && !this.coinFlights.some((c) => c.ftueLast);
+    const n = ftueReward ? 7 : 4;
+    const each = coins / n;
+    for (let i = 0; i < n; i++) {
+      this.coinFlights.push({
+        x0: from.x + (Math.random() - 0.5) * 26, y0: from.y + (Math.random() - 0.5) * 18,
+        delay: i * 0.07, t: 0, dur: 0.72, value: each, ftueLast: ftueReward && i === n - 1
+      });
     }
+  }
+
+  private updateCoinFlights(dt: number): void {
+    for (let i = this.coinFlights.length - 1; i >= 0; i--) {
+      const c = this.coinFlights[i]!;
+      c.t += dt;
+      if (c.t < c.delay + c.dur) continue;
+      this.coinFlights.splice(i, 1);
+      this.hudCoinsLanded += c.value;
+      this.coinPulse = 1;
+      if (i === 0 || c.ftueLast) audio.play('coin');
+      if (c.ftueLast) this.ftueRewardLanded();
+    }
+    this.coinPulse = Math.max(0, this.coinPulse - dt * 3);
   }
 
   private finishTurn(): void {
     const r = this.sim.result();
-    this.meta.coins += r.coins;
+    const wasFtue = !!this.ftue;
+    this.ftue = null;
+    // levels.json rewards, exactly as run-sim credits them: the level reward every
+    // turn, its first-clear bonus once. The prototype never paid these, so a
+    // fresh install could not afford the FTUE's step-6 upgrade (180) — run-sim's
+    // `firstUpgradeAffordableAfterTurns = 1` is measured with them included.
+    const lvl = this.levels[this.levelIndex];
+    let levelCoins = 0;
+    if (lvl) {
+      levelCoins = lvl.rewards.coins;
+      if (!this.meta.clearedLevels.includes(lvl.id)) {
+        levelCoins += lvl.rewards.firstClearBonus.coins;
+        this.meta.clearedLevels.push(lvl.id);
+      }
+    }
+    this.meta.coins += r.coins + levelCoins;
     this.meta.xp += r.xp;
     this.meta.bestCombo = Math.max(this.meta.bestCombo, r.counters.bestCombo);
     this.meta.turnsPlayed++;
@@ -588,12 +942,6 @@ class Game {
         this.banner(`${this.l10n.t(candidate.nameKey).toUpperCase()} desbloqueou!`);
       }
     }
-    // unlock next ingredient discovery after ftue
-    if (!this.meta.ftueDone && r.counters.perfectCooks >= 1) {
-      this.meta.ftueDone = true;
-      this.meta.ftueStep = 99;
-      this.meta.collection = ['linguica_toscana','pao_de_alho','queijo_coalho'];
-    }
     // bonus cadence: every 2 turns
     if (this.meta.turnsPlayed % 2 === 0) {
       const types: BonusType[] = this.meta.level < 4 ? ['frenzy','wheel'] : ['frenzy','wheel','chef'];
@@ -602,11 +950,14 @@ class Game {
     } else {
       this.meta.bonusReady = null;
     }
-    saveMeta(this.meta);
+    this.saveTutorial(); // also persists meta — coins and the FTUE step land together
     this.lastResult = {
       coins: r.coins, xp: r.xp, stars: r.stars,
-      perfect: r.counters.perfectCooks, burned: r.counters.burnedFood, combo: r.counters.bestCombo
+      perfect: r.counters.perfectCooks, burned: r.counters.burnedFood, combo: r.counters.bestCombo,
+      levelCoins, ftue: wasFtue
     };
+    this.coinFlights = [];
+    this.hudCoinsLanded = 0;
     this.screen = 'result';
     this.resultT = 0;
     if (this.sizzleBed) { this.sizzleBed.stop(); this.sizzleBed = null; }
@@ -633,7 +984,7 @@ class Game {
     this.meta.coins += bonus;
     this.meta.xp += 40;
     saveMeta(this.meta);
-    this.lastResult = { coins: bonus, xp: 40, stars: 3, perfect: this.frenzyScore, burned: 0, combo: Math.min(20, this.frenzyScore) };
+    this.lastResult = { coins: bonus, xp: 40, stars: 3, perfect: this.frenzyScore, burned: 0, combo: Math.min(20, this.frenzyScore), levelCoins: 0, ftue: false };
     this.screen = 'result';
     this.resultT = 0;
     this.banner(`Frenesi: +${bonus} moedas!`);
@@ -755,7 +1106,14 @@ class Game {
   }
   private orderCardRect(i: number): { x: number; y: number; w: number; h: number } {
     const w = 128; const gap = 8;
-    return { x: 10 + (i % 3) * (w + gap), y: 70 + Math.floor(i / 3) * 64, w, h: 58 };
+    const drop = this.ftue ? FTUE_ORDER_DROP : 0;
+    return { x: 10 + (i % 3) * (w + gap), y: 70 + drop + Math.floor(i / 3) * 64, w, h: 58 };
+  }
+  /** Home upgrade teaser cards — one rect for drawing, hit-testing and the step-6 spotlight. */
+  private homeUpgradeRect(id: string): Rect {
+    const cardW = (W - 36) / 2;
+    const idx = id === 'grill_heat' ? 1 : 0;
+    return { x: 14 + idx * (cardW + 8), y: 460, w: cardW, h: 52, r: 16 };
   }
 
   // ── Input ─────────────────────────────────────────────────────────────────
@@ -816,13 +1174,27 @@ class Game {
       if (this.screen === 'splash') {
         // P0: toque em qualquer lugar após 0.2s acelera imediatamente (TTI 2.3→0.9s)
         if (this.splashT > 0.2) this.splashT = 1.2;
-        if (this.splashT > 0.5) { this.screen = this.meta.ftueDone ? 'home' : 'title'; }
+        if (this.splashT > 0.5) { this.screen = this.afterSplash(); }
         return;
       }
       if (this.screen === 'title') {
         audio.play('uiTap');
-        if (!this.meta.ftueDone) this.requestNextLevel();
+        if (this.afterSplash() === 'title') this.startFtueTurn();
         else this.screen = 'home';
+        return;
+      }
+      if (this.screen === 'home' && this.homeFtueActive()) {
+        // Step 6: only the spotlit upgrade card (and PULAR) respond.
+        if (this.ftueSkipAvailable() && contains(this.skipRect(), p)) { this.skipTutorial(); return; }
+        const target = this.tutorialTable.upgradeTrackId;
+        if (this.hitHomeUpgrade(p) === target && this.buyUpgrade(target, p)) {
+          this.tutorial.report('upgrade_bought');
+          this.saveTutorial();
+          this.confettiBurst(p.x, p.y, 26);
+          this.flash = 0.35;
+        } else {
+          this.ftueBlocked();
+        }
         return;
       }
       if (this.screen === 'home') {
@@ -913,17 +1285,7 @@ class Game {
         // Upgrade quick-buy — shifted to 460
         const upg = this.hitHomeUpgrade(p);
         if (upg) {
-          const cost = this.upgradeCost(upg);
-          if (this.meta.coins >= cost) {
-            this.meta.coins -= cost;
-            this.meta.upgrades[upg] = (this.meta.upgrades[upg] ?? 0) + 1;
-            saveMeta(this.meta);
-            this.burst(p.x, p.y, 12, C.ouroLight, 'spark');
-            audio.play('levelUp');
-          } else {
-            audio.play('uiError');
-            this.float(p.x, p.y-20, 'Moedas insuficientes', C.telha, 14);
-          }
+          this.buyUpgrade(upg, p);
           return;
         }
         // Collection teaser -> switch to collection tab — now 528..598
@@ -936,6 +1298,14 @@ class Game {
       }
       if (this.screen === 'result') {
         const hit = this.hitResult(p);
+        if (hit === 'continue') {
+          // FTUE: the only way out of the first result card is Home, where step 6 waits.
+          this.screen = 'home';
+          this.homeTab = 'home';
+          audio.play('uiTap');
+          return;
+        }
+        if (this.lastResult?.ftue) return;
         if (hit === 'bonus') {
           if (this.meta.bonusReady === 'frenzy') this.startFrenzy();
           else if (this.meta.bonusReady === 'wheel') this.startWheel();
@@ -1005,20 +1375,19 @@ class Game {
       }
 
       // PLAY screen interactions below
-      // P0: pular tutorial — top-direito após 3s (liberdade)
-      if (!this.meta.ftueDone && this.now > 3 && p.x > W-44 && p.y < 46) {
-        this.meta.ftueDone = true; this.meta.ftueStep = 99; saveMeta(this.meta);
-        audio.play('uiBack'); this.float(W/2, H/2, 'Tutorial pulado', C.creme, 14);
-        return;
+      const ftue = this.ftue;
+      if (ftue) {
+        // PULAR — 48 px, after skip.showAfterSec (docs/21: 2 s), where the pause button lives otherwise.
+        if (this.ftueSkipAvailable() && contains(this.skipRect(), p)) { this.skipTutorial(); return; }
+        this.ftueIdle = 0;
       }
-      // FTUE hand consumes first taps
       for (let i = 0; i < this.unlocked.length; i++) {
         const r = this.benchItemRect(i);
         if (p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h) {
-          const food = this.sim.takeFromStock(this.unlocked[i]!);
+          const food = ftue ? ftue.take() : this.sim.takeFromStock(this.unlocked[i]!);
+          if (!food) { this.ftueBlocked(); return; } // masked: the bench is not part of this step
           this.drag = { food, fromBench: true, x: p.x, y: p.y, startX: p.x, startY: p.y, moved: false, startTime: performance.now() };
           audio.play('uiTap');
-          if (!this.meta.ftueDone && this.meta.ftueStep === 0) this.meta.ftueStep = 1;
           return;
         }
       }
@@ -1027,20 +1396,23 @@ class Game {
         if (!f.onGrill || f.served) continue;
         const pos = this.foodScreenPos(f);
         if (Math.abs(p.x - pos.x) < 32 && Math.abs(p.y - pos.y) < 28) {
-          this.drag = { food: f, fromBench: false, x: p.x, y: p.y, startX: p.x, startY: p.y, moved: false, startTime: performance.now() };
+          // FTUE masking: a plate only lifts when serving or moving it is what the step allows.
+          const locked = !!ftue && !ftue.allows('serve', f) && !ftue.allows('move', f);
+          this.drag = { food: f, fromBench: false, x: p.x, y: p.y, startX: p.x, startY: p.y, moved: false, startTime: performance.now(), locked };
           return;
         }
       }
 
       if (p.y > GRILL_BOTTOM + 4 && p.y < GRILL_BOTTOM + 48) {
+        if (ftue && !ftue.allows('refill')) return;
         if (this.sim.refillCharcoal()) {
           this.banner(this.l10n.t('ui.hud.charcoal'));
           this.burst(W / 2, GRILL_BOTTOM + 18, 14, C.chama, 'spark');
           audio.play('place');
         }
       }
-      // pause button (top right small)
-      if (p.x > W-44 && p.y < 56 && p.y > 8) {
+      // pause button (top right small) — replaced by PULAR during the FTUE
+      if (!ftue && p.x > W-44 && p.y < 56 && p.y > 8) {
         this.screen = 'home';
         audio.play('uiBack');
       }
@@ -1050,9 +1422,8 @@ class Game {
       const p = toLocal(e);
       this.pointer = { ...p, down: this.pointer.down };
       if (this.drag) {
-        this.drag.x = p.x;
-        this.drag.y = p.y;
         if (Math.hypot(p.x - this.drag.startX, p.y - this.drag.startY) > 6) this.drag.moved = true;
+        if (!this.drag.locked) { this.drag.x = p.x; this.drag.y = p.y; }
       }
     });
 
@@ -1063,42 +1434,70 @@ class Game {
       this.drag = null;
       const held = (performance.now() - d.startTime) / 1000;
 
+      const ftue = this.ftue;
       // P0: flip só em tap rápido (<0.35s) sem arrasto — evita confundir com drag
       if (!d.moved && !d.fromBench && d.food.onGrill && held < 0.35) {
-        if (this.sim.flip(d.food)) {
+        const flipped = ftue ? ftue.flip(d.food) : this.sim.flip(d.food);
+        if (flipped) {
           const pos = this.foodScreenPos(d.food);
           this.burst(pos.x, pos.y + 10, 10, C.chama, 'spark');
           this.float(pos.x, pos.y - 22, this.l10n.t('ui.feedback.flip'), C.creme, 15);
           audio.play('flip');
-          if (!this.meta.ftueDone && this.meta.ftueStep === 1) this.meta.ftueStep = 2;
+          if (ftue) this.saveTutorial();
+        } else if (ftue && ftue.guided) {
+          this.ftueBlocked(); // too early — the ring is still filling
         }
+        return;
+      }
+      if (d.locked) {
+        // Dragging a plate the step does not let go of: it stays put.
+        if (d.moved) { this.tutorial.miss(); this.ftueBlocked(); }
         return;
       }
       // long-press serve removido (P0: 4 gestos → 3) — só drag-to-customer serve agora
 
-      for (let i = 0; i < this.sim.customers.length; i++) {
-        const c = this.sim.customers[i]!;
-        if (c.state !== 'waiting') continue;
-        const r = this.orderCardRect(this.visibleIndexOf(c));
-        if (d.x >= r.x - 8 && d.x <= r.x + r.w + 8 && d.y >= r.y - 8 && d.y <= r.y + r.h + 8) {
-          this.tryServe(d.food, c);
-          return;
+      if (!(ftue && d.fromBench)) {
+        for (let i = 0; i < this.sim.customers.length; i++) {
+          const c = this.sim.customers[i]!;
+          if (c.state !== 'waiting') continue;
+          const r = this.orderCardRect(this.visibleIndexOf(c));
+          if (d.x >= r.x - 8 && d.x <= r.x + r.w + 8 && d.y >= r.y - 8 && d.y <= r.y + r.h + 8) {
+            this.lastServePos = { x: d.x, y: d.y };
+            this.tryServe(d.food, c);
+            return;
+          }
         }
       }
 
       if (d.y > GRILL_TOP - 4 && d.y < GRILL_BOTTOM + 4) {
         const z = this.zoneAt(d.y);
         if (z >= 0) {
-          const ok = d.fromBench ? this.sim.place(d.food, z) : this.sim.move(d.food, z);
-          if (ok) audio.play('place');
-          else {
+          if (ftue && !d.fromBench && !ftue.allows('move', d.food)) {
+            this.tutorial.miss(); // step 3: the plate goes to the customer, not back on the coals
+            this.ftueBlocked();
+            return;
+          }
+          const ok = d.fromBench
+            ? (ftue ? ftue.place(d.food, z) : this.sim.place(d.food, z))
+            : (ftue ? ftue.move(d.food, z) : this.sim.move(d.food, z));
+          if (ok) {
+            audio.play('place');
+            if (ftue) this.saveTutorial();
+          } else {
             this.float(d.x, d.y, this.l10n.t('ui.quality.grillFull'), C.telha, 14);
             audio.play('uiError');
+            // TutorialTurn already counted the miss; just put the item back.
+            if (ftue && d.fromBench) this.sim.discard(d.food);
           }
+          return;
         }
-        return;
       }
 
+      if (ftue) {
+        // A bench item that missed the grill goes back to the bench; a plate dropped on it is binned.
+        if (d.fromBench || d.y > BENCH_TOP - 20) ftue.discard(d.food);
+        return;
+      }
       if (d.y > BENCH_TOP - 20) {
         this.sim.discard(d.food);
       }
@@ -1119,10 +1518,8 @@ class Game {
     return p.x > 24 && p.x < W-24 && p.y > 272 && p.y < 348;
   }
   private hitHomeUpgrade(p: {x:number;y:number}): string | null {
-    // upgrade teaser now at 460-512 after churrasqueira showcase (2 cards)
-    if (p.y < 458 || p.y > 518) return null;
-    if (p.x > 14 && p.x < W/2 - 6) return 'grill_size';
-    if (p.x > W/2 + 6 && p.x < W - 14) return 'grill_heat';
+    // upgrade teaser at 460-512 after the churrasqueira showcase (2 cards), with a little slop
+    for (const id of ['grill_size', 'grill_heat']) if (contains(this.homeUpgradeRect(id), p, 4)) return id;
     return null;
   }
   private hitDailyClaim(p: {x:number;y:number}): number | null {
@@ -1136,20 +1533,53 @@ class Game {
     }
     return null;
   }
-  private hitResult(p: {x:number;y:number}): 'home'|'next'|'double'|'bonus'|'share'|null {
-    // bonus banner 15s window near top of result card
-    if (this.meta.bonusReady && this.bonusOfferT < 15) {
-      if (p.y > 500 && p.y < 560 && p.x > 30 && p.x < W-30) return 'bonus';
-    }
-    // share at y ~560-580
-    if (p.y > 585 && p.y < 615 && Math.abs(p.x - W/2) < 90) return 'share';
-    // double at y ~ 500-540
-    if (p.y > 632 && p.y < 690) {
-      if (p.x < W/2) return 'home';
-      return 'next';
-    }
-    if (p.y > 610 && p.y < 632 && Math.abs(p.x - W/2) < 70) return 'double';
+  /**
+   * Result card geometry at rest — shared by drawResult and hitResult. The two
+   * used to disagree: the hit boxes sat ~140 px below the drawn buttons, so
+   * INÍCIO / PRÓXIMO / DOBRAR / share only worked by accident.
+   */
+  private resultLayout(): { cx: number; cy: number; cw: number; ch: number; bonus: Rect; double: Rect; home: Rect; next: Rect; share: Rect; cont: Rect } {
+    // The FTUE card drops the bonus / DOBRAR / share rows, so it is shorter.
+    const cw = 340, ch = this.lastResult?.ftue ? 290 : 382, cx = W / 2 - cw / 2, cy = 96;
+    const bw = 146, bh = 52;
+    return {
+      cx, cy, cw, ch,
+      bonus: { x: cx + 10, y: cy + 300, w: cw - 20, h: 46 },
+      double: { x: W / 2 - 78, y: cy + ch - 22, w: 156, h: 28 },
+      home: { x: cx + 14, y: cy + ch + 16, w: bw, h: bh },
+      next: { x: cx + cw - 14 - bw, y: cy + ch + 16, w: bw, h: bh },
+      share: { x: W / 2 - 78, y: cy + ch + 78, w: 156, h: 22 },
+      cont: { x: W / 2 - 110, y: cy + ch + 16, w: 220, h: 56 }
+    };
+  }
+
+  private hitResult(p: {x:number;y:number}): 'home'|'next'|'double'|'bonus'|'share'|'continue'|null {
+    const L = this.resultLayout();
+    if (this.lastResult?.ftue) return contains(L.cont, p, 6) ? 'continue' : null;
+    if (this.meta.bonusReady && this.bonusOfferT < 15 && contains(L.bonus, p)) return 'bonus';
+    if (contains(L.double, p, 6)) return 'double';
+    if (contains(L.home, p, 4)) return 'home';
+    if (contains(L.next, p, 4)) return 'next';
+    if (contains(L.share, p, 6)) return 'share';
     return null;
+  }
+
+  /** Home quick-buy. Logs `upgrade_purchase` — the funnel's first_upgrade (analytics.json). */
+  private buyUpgrade(id: string, p: Pt): boolean {
+    const cost = this.upgradeCost(id);
+    if (!Number.isFinite(cost) || this.meta.coins < cost) {
+      audio.play('uiError');
+      this.float(p.x, p.y - 20, 'Moedas insuficientes', C.telha, 14);
+      return false;
+    }
+    this.meta.coins -= cost;
+    const level = (this.meta.upgrades[id] ?? 0) + 1;
+    this.meta.upgrades[id] = level;
+    saveMeta(this.meta);
+    this.track({ name: 'upgrade_purchase', params: { track_id: id, level, cost_coins: cost } });
+    this.burst(p.x, p.y, 12, C.ouroLight, 'spark');
+    audio.play('levelUp');
+    return true;
   }
 
   private upgradeCost(id: string): number {
@@ -1174,7 +1604,8 @@ class Game {
       this.float(W / 2, 300, this.l10n.t('ui.quality.nobodyAsked'), C.telha, 15);
       return;
     }
-    const scored = this.sim.serve(customer, food);
+    const scored = this.ftue ? this.ftue.serve(customer, food) : this.sim.serve(customer, food);
+    if (this.ftue) this.saveTutorial();
     if (!scored) {
       this.float(W / 2, 300, this.l10n.t('ui.quality.wrongOrder'), C.telha, 15);
       return;
@@ -1415,9 +1846,10 @@ class Game {
     this.drawOrders(ctx);
     this.drawParticles(ctx);
     this.drawFloats(ctx);
-    if (this.drag) this.drawDragged(ctx);
+    if (this.drag && !this.drag.locked) this.drawDragged(ctx);
     this.drawHud(ctx);
-    if (!this.meta.ftueDone) this.drawFtueOverlay(ctx);
+    this.drawCoinFlights(ctx);
+    if (this.ftue) this.drawFtueOverlay(ctx);
     if (this.bannerLife>0) this.drawBanner(ctx);
     if (this.flash>0) {
       const f=ctx.createRadialGradient(W/2,GRILL_TOP+120,40,W/2,GRILL_TOP+120,W);
@@ -1457,17 +1889,18 @@ class Game {
     ctx.save(); ctx.scale(breathe2,breathe2);
     premiumButton(ctx,bx,by,bw,bh,{variant:'primary'});
     ctx.restore();
-    const label = this.meta.ftueDone ? 'CONTINUAR' : this.l10n.t('ui.action.play');
+    const firstRun = !this.tutorial.done;
+    const label = firstRun ? this.l10n.t('ui.action.play') : this.l10n.t('ui.action.continue');
     outlinedText(ctx,label,W/2,by+bh/2+2,C.perola,26,{outline:3, weight:800});
     const pulse=0.3+0.4*Math.sin(this.now*2.8);
     ctx.globalAlpha=pulse;
-    outlinedText(ctx, this.meta.ftueDone ? 'Toque para ir ao quintal' : this.l10n.t('ui.title.tapToStart'),W/2,598,C.creme,13,{weight:600, family:UI, outline:2});
+    outlinedText(ctx, firstRun ? this.l10n.t('ui.title.tapToStart') : 'Toque para ir ao quintal',W/2,598,C.creme,13,{weight:600, family:UI, outline:2});
     ctx.globalAlpha=1;
     // sub hint plus retention teaser
     ctx.font=font(11,600,UI); ctx.textAlign='center'; ctx.fillStyle='rgba(244,231,211,0.55)';
-    if (!this.meta.ftueDone) {
-      ctx.fillText('60s para o primeiro PERFEITO! · Sem anúncios',W/2,640);
-      ctx.fillText('Arraste da bancada para a brasa',W/2,656);
+    if (firstRun) {
+      // The promise only — no instructions: the FTUE teaches by doing (BACKLOG #5).
+      ctx.fillText(this.l10n.t('ui.title.promise'),W/2,640);
     } else {
       ctx.fillText(`Nível ${this.meta.level} · ${this.meta.coins.toLocaleString(this.l10n.locale)} moedas · ${this.meta.embers} brasas`,W/2,640);
       ctx.fillText('Volte amanhã e ganhe o baú do 7º dia!',W/2,656);
@@ -1830,6 +2263,7 @@ class Game {
       ctx.font=font(10,700,UI); ctx.textAlign='center'; ctx.fillStyle='rgba(244,231,211,0.45)';
       ctx.fillText('Convide amigos → ganhe 50 Brasas · Código: BRASA42  |  Compartilhar',W/2, H-86);
     }
+    if (this.homeFtueActive()) this.drawHomeFtueOverlay(ctx);
   }
 
   private drawHomeHeader(ctx: CanvasRenderingContext2D): void {
@@ -2073,11 +2507,18 @@ class Game {
     panel(ctx,8,8,W-16,52,{r:22, top:'rgba(30,20,14,0.72)', bottom:'rgba(16,10,6,0.72)', border:'rgba(255,214,160,0.22)', borderWidth:1.5, shadow:18, innerGlow:true});
     ctx.textBaseline='middle';
     // coins
+    const ftue=!!this.ftue;
     const coinX=18, coinY=30;
-    coinIcon(ctx,coinX+10,coinY,9);
-    ctx.font=font(14,900,DISPLAY); ctx.textAlign='left'; ctx.fillStyle=C.ouroLight;
-    ctx.shadowColor='rgba(0,0,0,0.5)'; ctx.shadowBlur=4; ctx.fillText(this.meta.coins.toLocaleString(loc),coinX+24,coinY); ctx.shadowBlur=0;
+    // Live counter: coins already earned this turn tick in as they land (step 4).
+    coinIcon(ctx,coinX+10,coinY,9*(1+0.35*this.coinPulse));
+    ctx.font=font(14+3*this.coinPulse,900,DISPLAY); ctx.textAlign='left'; ctx.fillStyle=C.ouroLight;
+    ctx.shadowColor='rgba(0,0,0,0.5)'; ctx.shadowBlur=4; ctx.fillText((this.meta.coins+Math.round(this.hudCoinsLanded)).toLocaleString(loc),coinX+24,coinY); ctx.shadowBlur=0;
     ctx.font=font(8,700,UI); ctx.fillStyle='rgba(244,231,211,0.55)'; ctx.fillText(`XP ${this.meta.xp}/${xpForLevel(this.meta.level)}`,coinX+24,coinY+12);
+    if (ftue) {
+      // No clock in the FTUE — six step dots instead (no "Passo x/6" text).
+      drawStepDots(ctx, W/2, 30, this.tutorialTable.steps.length, this.tutorial.state.step, this.now);
+      return;
+    }
     // timer ring + churrasqueira badge below (shows 1F → 3F progression)
     const left=Math.max(0,sim.timeLeft);
     const frac=sim.timeLimit>0? clamp01(left/sim.timeLimit):0;
@@ -2494,7 +2935,12 @@ class Game {
     const even=evenness(f);
     const hh=(ing.sides>=4?17:25)*scale;
     outlinedText(ctx,this.stageLabel(f,stage).toUpperCase(),x,y+hh/2+14,f.burned?C.telha:even<0.6?C.ambar:'rgba(244,231,211,0.85)',10,{weight:800, family:UI, outline:3});
-    if(even<0.6 && !f.burned){
+    // In the FTUE the label follows the coach (docs/20: "espere dourar → toque"),
+    // and the guided steps leave it to the overlay's prompt.
+    const flipHint = this.ftue
+      ? !this.ftue.guided && flipReady(this.db, this.tutorialTable, f)
+      : even < 0.6 && !f.burned;
+    if(flipHint){
       outlinedText(ctx,this.l10n.t('ui.feedback.flipHint'),x,y+hh/2+25,C.ambar,9,{weight:700, family:UI, outline:2.5});
     }
   }
@@ -2593,78 +3039,116 @@ class Game {
     ctx.globalAlpha=1;
   }
 
-  // FTUE overlay
+  // FTUE overlay (steps 1–5). What to point at comes from TutorialTurn.coach();
+  // this only decides how it looks. Step 1 has no words at all — the hand does it.
   private drawFtueOverlay(ctx: CanvasRenderingContext2D): void {
-    const step=this.meta.ftueStep;
-    if (step>=3 || this.sim.timeLeft<2) return;
-    // dark scrim except spotlight
-    ctx.fillStyle='rgba(6,3,2,0.55)'; ctx.fillRect(0,0,W,H);
-    // spotlight area depends on step
-    let sx=W/2, sy=BENCH_TOP+40, sw=160, sh=70, msg='';
-    if (step===0) { sx= W/2; sy=BENCH_TOP+44; sw=140; sh=70; msg=this.l10n.t('ui.tut.1'); }
-    else if (step===1) { // after placed, tell to flip
-      // spotlight on first food on grill
-      const foods=this.sim.foods.filter(f=>f.onGrill);
-      if (foods.length>0) {
-        const p=this.foodScreenPos(foods[0]!); sx=p.x; sy=p.y; sw=86; sh=86; msg=this.l10n.t('ui.tut.3');
-      } else { sx=W/2; sy=GRILL_TOP+80; sw=220; sh=60; msg=this.l10n.t('ui.tut.1');}
-    } else if (step===2) {
-      // serve hint
-      sx=W/2; sy=140; sw=260; sh=60; msg=this.l10n.t('ui.tut.5');
+    const ftue = this.ftue;
+    if (!ftue) return;
+    const step = ftue.step;
+    const t = this.now;
+    if (step && step.screen === 'play') {
+      const hint = ftue.coach();
+      const visible = this.ftueHandVisible(hint);
+      const path = visible ? this.ftueHandPath(hint) : null;
+      if (ftue.guided && step.completesOn !== 'reward_landed') {
+        const holes = this.ftueHoles(step.completesOn, hint);
+        drawScrim(ctx, W, H, holes, 0.58);
+        holes.forEach((h, i) => drawHoleRing(ctx, h, t + i * 0.4, this.ftueNudge));
+        if (hint.kind === 'wait' && hint.food) {
+          // Not ready yet: the ring fills instead of a prompt ("espere dourar", docs/20).
+          const pos = this.foodScreenPos(hint.food);
+          drawProgressRing(ctx, pos.x, pos.y, 40, hint.progress, t, this.ftueNudge);
+        }
+        if (step.hintKey && path) {
+          const text = this.l10n.t(step.hintKey);
+          if (hint.kind === 'serve') {
+            drawPrompt(ctx, text, W / 2, GRILL_TOP - 26, 340, t);
+          } else {
+            const x = Math.max(130, Math.min(W - 130, path.from.x));
+            drawPrompt(ctx, text, x, path.from.y - 76, 300, t);
+          }
+        }
+      }
+      if (path) this.drawFtueHand(ctx, hint, path, t - this.ftueHintSince);
     }
-    // cutout
-    ctx.save(); ctx.globalCompositeOperation='destination-out';
-    roundRectPath(ctx,sx-sw/2,sy-sh/2,sw,sh,14); ctx.fillStyle='rgba(0,0,0,1)'; ctx.fill(); ctx.restore();
-    // hand animation — vector (no emoji, never ☐)
-    const handX = step===0 ? sx + Math.sin(this.now*2.2)*6 : sx;
-    const handY = sy + (step===0? 18: -6) + Math.sin(this.now*2.8)*4;
-    ctx.save(); ctx.translate(handX, handY);
-    ctx.shadowColor='rgba(0,0,0,0.6)'; ctx.shadowBlur=10;
-    // palm
-    ctx.fillStyle=C.perola; roundRectPath(ctx,-14,-10,28,22,8); ctx.fill();
-    ctx.strokeStyle='rgba(0,0,0,0.18)'; ctx.lineWidth=1.2; ctx.stroke();
-    // finger (index) pointing
-    ctx.fillStyle=C.perola; roundRectPath(ctx,-6,-28,12,20,6); ctx.fill(); ctx.stroke();
-    // thumb
-    ctx.save(); ctx.translate(10,2); ctx.rotate(0.45);
-    roundRectPath(ctx,-6,-10,12,16,6); ctx.fillStyle=C.perola; ctx.fill(); ctx.stroke();
-    ctx.restore();
-    // knuckle line
-    ctx.fillStyle='rgba(0,0,0,0.12)'; ctx.fillRect(-10,-2,20,2);
-    ctx.restore(); ctx.shadowBlur=0;
-    // pulsing ring around spotlight
-    const pulse=0.5+0.5*Math.sin(this.now*3.5);
-    ctx.strokeStyle=`rgba(255,220,160,${0.3+0.3*pulse})`; ctx.lineWidth=2+1.5*pulse;
-    roundRectPath(ctx,sx-sw/2-4,sy-sh/2-4,sw+8,sh+8,16); ctx.stroke();
-    // message card
-    panel(ctx,W/2-150, H-170,300,56,{r:16, top:'rgba(44,32,24,0.98)', bottom:'rgba(22,15,10,0.98)', border:C.ouro, borderWidth:1.5, shadow:16});
-    ctx.font=font(12,800,UI); ctx.textAlign='center'; ctx.fillStyle=C.perola;
-    // wrap text
-    const words=msg.split(' ');
-    let line1='',line2='';
-    for(const w of words){ if((line1+w).length<28) line1+=w+' '; else line2+=w+' '; }
-    ctx.fillText(line1.trim(),W/2,H-156);
-    if(line2.trim()) ctx.fillText(line2.trim(),W/2,H-140);
-    // progress
-    ctx.font=font(10,700,UI); ctx.fillStyle='rgba(244,231,211,0.5)';
-    ctx.fillText(`Passo ${Math.min(3,step+1)}/3`,W/2,H-122);
-    for(let i=0;i<3;i++){
-      ctx.fillStyle= i<=step? C.ouroLight : 'rgba(255,255,255,0.2)';
-      ctx.beginPath(); ctx.arc(W/2-12+i*12, H-110,4,0,Math.PI*2); ctx.fill();
+    this.drawFtueSkip(ctx);
+  }
+
+  /** Spotlight holes: exactly the things the current step is about. */
+  private ftueHoles(on: string, hint: CoachAction): Rect[] {
+    const plate = this.ftue?.plate;
+    const plateHole = (): Rect => {
+      const p = plate ? this.foodScreenPos(plate) : { x: W / 2, y: this.zoneY(0) };
+      return { x: p.x - 48, y: p.y - 42, w: 96, h: 84, r: 22 };
+    };
+    if (on === 'placed') {
+      return [
+        pad({ ...this.benchItemRect(0), r: 12 }, 6),
+        { x: 40, y: GRILL_TOP - 6, w: W - 80, h: GRILL_BOTTOM - GRILL_TOP + 12, r: 18 }
+      ];
     }
-    // skip — aparece após 3s (P0: liberdade)
-    if(this.now > 3){
-      const bx=W-44, by=18, bw=36, bh=28;
-      glass(ctx,bx,by,bw,bh,{alpha:0.18, border:'rgba(255,214,160,0.22)'});
-      ctx.font=font(14,800,UI); ctx.textAlign='center'; ctx.fillStyle='rgba(244,231,211,0.9)';
-      ctx.fillText('✕',bx+bw/2, by+19);
-      ctx.font=font(8,700,UI); ctx.fillStyle='rgba(244,231,211,0.55)'; ctx.fillText('PULAR',bx+bw/2, by+26);
+    if (on === 'served' && hint.kind === 'serve') {
+      return [plateHole(), pad({ ...this.orderCardRect(this.visibleIndexOf(hint.customer)), r: 14 }, 6)];
+    }
+    return [plateHole()];
+  }
+
+  private drawFtueHand(ctx: CanvasRenderingContext2D, hint: CoachAction, path: { from: Pt; to: Pt | null }, since: number): void {
+    const loop = this.tutorialTable.coach.handLoopSec;
+    if (path.to) {
+      // Drag demo: grab, arc to the target (~900 ms), release, fade — on a loop.
+      const ph = dragLoop(since, loop);
+      const at = arcPoint(path.from, path.to, ph.u);
+      const ing = hint.kind === 'place' ? this.ftue?.ingredient : 'food' in hint ? hint.food?.ingredient : undefined;
+      if (ph.carrying && ing) {
+        ctx.save(); ctx.globalAlpha = 0.8 * ph.alpha;
+        drawFoodIcon(ctx, ing, at.x, at.y - 4, 34);
+        ctx.restore();
+      }
+      drawHand(ctx, at.x + 4, at.y + 6, ph.press, ph.alpha);
+    } else {
+      const tp = tapLoop(since);
+      drawHand(ctx, path.from.x + 6, path.from.y + 6 - tp.lift, tp.press);
+    }
+  }
+
+  private drawFtueSkip(ctx: CanvasRenderingContext2D): void {
+    if (!this.ftueSkipAvailable()) return;
+    const shownFor = this.tutorial.elapsedMs / 1000 - this.tutorialTable.skip.showAfterSec;
+    drawSkipButton(ctx, this.skipRect(), this.l10n.t(this.tutorialTable.skip.labelKey), clamp01(shownFor / 0.4));
+  }
+
+  /** Step 6 on Home: only the upgrade card is lit; the rest is dimmed and masked. */
+  private drawHomeFtueOverlay(ctx: CanvasRenderingContext2D): void {
+    const t = this.now;
+    const step = this.tutorial.current;
+    const card = pad(this.homeUpgradeRect(this.tutorialTable.upgradeTrackId), 6);
+    drawScrim(ctx, W, H, [card], 0.7);
+    drawHoleRing(ctx, card, t, this.ftueNudge);
+    drawStepDots(ctx, W / 2, card.y - 84, this.tutorialTable.steps.length, step?.index ?? 6, t);
+    if (step?.hintKey) drawPrompt(ctx, this.l10n.t(step.hintKey), W / 2, card.y - 46, 340, t);
+    const tp = tapLoop(t);
+    drawHand(ctx, card.x + card.w / 2 + 6, card.y + card.h / 2 + 8 - tp.lift, tp.press);
+    this.drawFtueSkip(ctx);
+  }
+
+  private drawCoinFlights(ctx: CanvasRenderingContext2D): void {
+    for (const c of this.coinFlights) {
+      const u = (c.t - c.delay) / c.dur;
+      if (u <= 0) continue;
+      const k = ease.inOutCubic(clamp01(u));
+      const at = arcPoint({ x: c.x0, y: c.y0 }, HUD_COIN, k, 50);
+      ctx.save();
+      ctx.shadowColor = 'rgba(255,200,90,0.7)'; ctx.shadowBlur = 8;
+      coinIcon(ctx, at.x, at.y, 8 - 2 * k);
+      ctx.restore();
     }
   }
 
   private drawResult(ctx: CanvasRenderingContext2D): void {
     const r=this.lastResult!;
     const t=this.resultT;
+    const L=this.resultLayout();
     this.drawParticles(ctx);
     ctx.fillStyle='rgba(6,3,2,0.82)'; ctx.fillRect(0,0,W,H);
     if(r.stars>=2){
@@ -2678,9 +3162,8 @@ class Game {
       ctx.restore();
     }
     const enter=ease.outBack(clamp01(t/0.5));
-    const cw=340,cx=W/2-cw/2;
-    const cy=96 + (1-enter)*90;
-    const ch=382;
+    const {cw,cx,ch}=L;
+    const cy=L.cy + (1-enter)*90;
     const cardGlow=ctx.createRadialGradient(W/2,cy+ch/2,40,W/2,cy+ch/2,300);
     cardGlow.addColorStop(0,r.stars===3?'rgba(231,194,74,0.22)':'rgba(224,86,31,0.18)'); cardGlow.addColorStop(1,'rgba(224,86,31,0)');
     ctx.fillStyle=cardGlow; ctx.fillRect(0,0,W,H);
@@ -2699,23 +3182,42 @@ class Game {
       ctx.save(); ctx.translate(W/2+(i-1)*58,cy+108); ctx.scale(sc,sc);
       starIcon(ctx,0,0,24,{filled:earned, glow:earned}); ctx.restore();
     }
-    const rows: [string,string,string][]=[
-      [this.l10n.t('ui.result.coins'),`+${r.coins.toLocaleString(this.l10n.locale)}`,C.ouroLight],
-      [this.l10n.t('ui.result.perfect'),String(r.perfect),C.chamaCore],
-      [this.l10n.t('ui.result.burned'),String(r.burned), r.burned>0? C.telha:'rgba(244,231,211,0.5)'],
-      [this.l10n.t('ui.result.bestCombo'),`×${r.combo}`,C.brasaHot],
-      [this.l10n.t('ui.result.xp'),`+${r.xp.toLocaleString(this.l10n.locale)}`,C.perola],
-    ];
+    const loc=this.l10n.locale;
+    const rows: [string,string,string][]=[[this.l10n.t('ui.result.coins'),`+${r.coins.toLocaleString(loc)}`,C.ouroLight]];
+    if (r.levelCoins>0) rows.push([this.l10n.t('ui.result.levelBonus'),`+${r.levelCoins.toLocaleString(loc)}`,C.ouroLight]);
+    rows.push([this.l10n.t('ui.result.perfect'),String(r.perfect),C.chamaCore]);
+    // The first card only shows what the FTUE taught: burning and combos come later (docs/05 §5).
+    if (!r.ftue) {
+      rows.push([this.l10n.t('ui.result.burned'),String(r.burned), r.burned>0? C.telha:'rgba(244,231,211,0.5)']);
+      rows.push([this.l10n.t('ui.result.bestCombo'),`×${r.combo}`,C.brasaHot]);
+    }
+    rows.push([this.l10n.t('ui.result.xp'),`+${r.xp.toLocaleString(loc)}`,C.perola]);
+    const rowH = rows.length>5 ? 23 : 26;
     rows.forEach(([k,v,col],i)=>{
       const st=clamp01((t-0.9-i*0.08)/0.25);
       if(st<=0) return;
-      const y=cy+164+i*26;
+      const y=cy+164+i*rowH;
       const slide=(1-ease.outCubic(st))*22;
       ctx.globalAlpha=st;
       ctx.strokeStyle='rgba(255,214,160,0.08)'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(cx+28,y-10); ctx.lineTo(cx+cw-28,y-10); ctx.stroke();
       ctx.font=font(13,700,UI); ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillStyle='rgba(244,231,211,0.7)'; ctx.fillText(k,cx+32-slide,y);
       ctx.textAlign='right'; ctx.fillStyle=col; ctx.font=font(16,900,DISPLAY); ctx.shadowColor='rgba(0,0,0,0.4)'; ctx.shadowBlur=4; ctx.fillText(v,cx+cw-32+slide,y); ctx.shadowBlur=0; ctx.globalAlpha=1;
     });
+
+    const btnT=clamp01((t-1.4)/0.35);
+    if (r.ftue) {
+      // docs/05 §4: no store, no ads, no pass — one way forward, to Home and step 6.
+      if (btnT>0) {
+        const b=L.cont;
+        const pulse=1+Math.sin(this.now*2.6)*0.025;
+        ctx.save(); ctx.globalAlpha=btnT;
+        ctx.translate(b.x+b.w/2,b.y+b.h/2); ctx.scale(pulse,pulse); ctx.translate(-(b.x+b.w/2),-(b.y+b.h/2));
+        premiumButton(ctx,b.x,b.y,b.w,b.h,{variant:'primary'});
+        outlinedText(ctx,this.l10n.t('ui.action.continue'),b.x+b.w/2,b.y+b.h/2+2,C.perola,20,{outline:3, weight:900});
+        ctx.restore();
+      }
+      return;
+    }
 
     // Bonus offer banner (time-limited)
     if (this.meta.bonusReady && this.bonusOfferT < 15) {
@@ -2738,28 +3240,26 @@ class Game {
     }
 
     // Buttons
-    const btnT=clamp01((t-1.4)/0.35);
     if(btnT>0){
-      const bw=146,bh=52;
+      const {home,next,double,share}=L;
       // left: home
       ctx.save(); ctx.globalAlpha=btnT;
-      panel(ctx,cx+14,cy+ch+16,bw,bh,{r:16, top:'rgba(44,32,24,0.98)', bottom:'rgba(28,18,12,0.98)', border:'rgba(255,214,160,0.2)', shadow:12});
-      outlinedText(ctx,'INÍCIO',cx+14+bw/2,cy+ch+42,C.creme,14,{outline:2, weight:800});
+      panel(ctx,home.x,home.y,home.w,home.h,{r:16, top:'rgba(44,32,24,0.98)', bottom:'rgba(28,18,12,0.98)', border:'rgba(255,214,160,0.2)', shadow:12});
+      outlinedText(ctx,'INÍCIO',home.x+home.w/2,home.y+26,C.creme,14,{outline:2, weight:800});
       // right: próximo
-      const rx=cx+cw-14-bw, ry=cy+ch+16;
-      premiumButton(ctx,rx,ry,bw,bh,{variant: r.stars===3? 'gold':'primary'});
-      outlinedText(ctx,this.l10n.t('ui.action.next'),rx+bw/2,ry+bh/2+2,C.perola,16,{outline:2, weight:900});
+      premiumButton(ctx,next.x,next.y,next.w,next.h,{variant: r.stars===3? 'gold':'primary'});
+      outlinedText(ctx,this.l10n.t('ui.action.next'),next.x+next.w/2,next.y+next.h/2+2,C.perola,16,{outline:2, weight:900});
       ctx.restore();
       // double button above — gold CTA (P0: comunica valor, sem emoji ☐)
       ctx.save(); ctx.globalAlpha=btnT;
-      premiumButton(ctx,W/2-78,cy+ch-22,156,28,{variant:'gold'});
-      outlinedText(ctx,'DOBRAR 2×',W/2,cy+ch-8,C.perola,12,{outline:2, weight:900});
+      premiumButton(ctx,double.x,double.y,double.w,double.h,{variant:'gold'});
+      outlinedText(ctx,'DOBRAR 2×',W/2,double.y+14,C.perola,12,{outline:2, weight:900});
       ctx.restore();
       // share — sem emoji
       ctx.save(); ctx.globalAlpha=btnT;
-      glass(ctx,W/2-78,cy+ch+78,156,22,{alpha:0.14, border:'rgba(110,200,120,0.3)'});
+      glass(ctx,share.x,share.y,share.w,share.h,{alpha:0.14, border:'rgba(110,200,120,0.3)'});
       ctx.font=font(10,700,UI); ctx.fillStyle=C.verdeClaro; ctx.textAlign='center';
-      ctx.fillText('Compartilhar & convidar',W/2,cy+ch+89);
+      ctx.fillText('Compartilhar & convidar',W/2,share.y+11);
       ctx.restore();
     }
     if(t>1.6){

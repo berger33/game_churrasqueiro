@@ -12,9 +12,17 @@
  * `__churrascoSkipDraw` set, and only rasterizes the frame we are about to
  * write. Do not "fix" a slow run by raising the timeout.
  *
- * Flow matches the current UI: splash → home (JOGAR) → play → result.
- * First-run title is skipped by seeding `ftueDone` in localStorage — the
- * live path after FTUE.
+ * Flow — a fresh install, then a relaunch, exactly as a player meets it:
+ *
+ *   first launch   splash → title → FTUE steps 1–5 (one PNG per step, played by
+ *                  following the tutorial hand) → simplified result → Home,
+ *                  step 6 (buy the spotlit upgrade)
+ *   relaunch       splash → Home (the FTUE must not repeat) → JOGAR → turn →
+ *                  result
+ *
+ * It also asserts the FTUE's analytics funnel (`__churrascoAnalytics`): every
+ * event in order, every event valid against analytics.json, zero misses, and
+ * the whole first run under the 60 s of docs/05-UX_FLOW.md §4.
  *
  * Usage: node prototype/shoot.mjs
  */
@@ -101,22 +109,8 @@ globalThis.fetch = async (url) => {
   return { ok: true, status: 200, json: async () => JSON.parse(body), text: async () => body };
 };
 
-// Post-FTUE home (JOGAR), not the first-run title. lastLoginISO = today so the
-// daily-reward modal does not steal the play tap.
-const today = (() => {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-})();
+// A fresh install: empty storage. The relaunch below re-uses this same store.
 const ls = Object.create(null);
-ls.churrasco_meta_v2 = JSON.stringify({
-  coins: 820, embers: 12, xp: 40, level: 3, streak: 2, longestStreak: 2,
-  lastLoginISO: today, lastClaimDay: 1, turnsPlayed: 3, bestCombo: 3,
-  totalPerfect: 2, collection: ['linguica_toscana', 'pao_de_alho'],
-  ftueDone: true, ftueStep: 99, bonusReady: null, bonusExpiresAt: 0,
-  wheelSpins: 1, lastWheelSpinISO: '',
-  upgrades: { grill_size: 0 }, graceUsed: false,
-  churrasqueiraId: 'lata_valente', churrasqueiraLv: { lata_valente: 1 }
-});
 globalThis.localStorage = {
   getItem: (k) => (Object.prototype.hasOwnProperty.call(ls, k) ? ls[k] : null),
   setItem: (k, v) => { ls[k] = String(v); },
@@ -211,25 +205,153 @@ process.on('unhandledRejection', (e) => {
 });
 
 const wall0 = Date.now();
+const screen = () => globalThis.__churrascoScreen;
+const ftue = () => globalThis.__churrascoFtue;
+const meta = () => JSON.parse(ls.churrasco_meta_v2 ?? '{}');
+function assert(cond, msg) { if (!cond) throw new Error(`[shoot] ${msg}`); }
 
+/** Advance the sim (unpainted) until `pred` holds. */
+async function waitFor(pred, maxSec, what) {
+  for (let t = 0; t < maxSec; t += 0.1) {
+    if (pred()) return;
+    await advance(0.1, { paint: false });
+  }
+  throw new Error(`[shoot] timed out waiting for ${what} — screen=${screen()} ftue=${JSON.stringify(ftue())}`);
+}
+
+/** What a finger does for one hand demonstration: a tap, or press → arc → release. */
+async function act(hand) {
+  const { from, to } = hand;
+  pointer('pointerdown', from.x, from.y);
+  await advance(0.05, { paint: false });
+  if (to) {
+    pointer('pointermove', (from.x + to.x) / 2, (from.y + to.y) / 2);
+    await advance(0.05, { paint: false });
+    pointer('pointermove', to.x, to.y);
+    await advance(0.05, { paint: false });
+    pointer('pointerup', to.x, to.y);
+  } else {
+    pointer('pointerup', from.x, from.y);
+  }
+  await advance(0.05, { paint: false });
+}
+
+/** A player who reads nothing: wait for the hand, react after 0.6 s, do what it shows. */
+async function followHand(until, maxSec, what) {
+  let seen = '';
+  let seenAt = 0;
+  for (let t = 0; t < maxSec; t += 0.1) {
+    if (until()) return;
+    const hand = ftue()?.hand;
+    const key = hand ? `${hand.kind}@${Math.round(hand.from.x)},${Math.round(hand.from.y)}` : '';
+    if (key !== seen) { seen = key; seenAt = t; }
+    if (hand && t - seenAt >= 0.6) { await act(hand); seen = ''; }
+    await advance(0.1, { paint: false });
+  }
+  throw new Error(`[shoot] FTUE stalled before ${what} — screen=${screen()} ftue=${JSON.stringify(ftue())}`);
+}
+const handIs = (kind) => () => ftue()?.hand?.kind === kind;
+
+// ═══ First launch (fresh install) ════════════════════════════════════════════
 await import(pathToFileURL(BUNDLE).href);
 await waitForLoop();
+const firstRunLog = globalThis.__churrascoAnalytics;
 
 // 1. Splash (auto-advance is 1.45s; we snapshot it, then skip with a tap).
 await advance(0.35, { paint: true });
 await shot('01-splash');
 
-// 2. Tap-to-skip splash → home. JOGAR lives on the home hero card (y 272–348).
+// 2. A fresh install lands on the title, not Home.
 tap(210, 400);
 await advance(0.4, { paint: true });
-await shot('02-home');
+assert(screen() === 'title', `fresh install should reach the title, got ${screen()}`);
+await shot('02-title');
 
-// 3. JOGAR
+// 3. JOGAR → FTUE step 1: the hand arcs bench → grill with a linguiça. No text.
+tap(210, 554);
+await advance(0.05, { paint: false });
+assert(screen() === 'play' && ftue()?.step === 'place', `JOGAR should start FTUE step 1, got ${screen()}/${ftue()?.step}`);
+await advance(0.75, { paint: false }); // mid-arc, carrying the linguiça
+await shot('03-ftue-place');
+await followHand(() => ftue()?.step === 'flip', 10, 'step 2');
+
+// 4. Step 2 before the side browns: the ring fills — "espere dourar", no prompt yet.
+await advance(2.5, { paint: false });
+assert(!ftue()?.hand, 'the flip prompt must wait for a browned side (docs/20)');
+await shot('04-ftue-wait');
+
+// 5. Side browned: TOQUE PARA VIRAR.
+await waitFor(handIs('flip'), 15, 'the flip prompt');
+await advance(0.25, { paint: false }); // the press of the tap demo
+await shot('05-ftue-flip');
+await followHand(() => ftue()?.step === 'serve', 5, 'step 3');
+
+// 6. Near perfect: ARRASTE PARA O CLIENTE — the card dropped 40 px (docs/20).
+await waitFor(handIs('serve'), 20, 'the serve prompt');
+await advance(0.75, { paint: false });
+await shot('06-ftue-serve');
+await followHand(() => ftue()?.step === 'perfect', 5, 'step 4');
+
+// 7. PERFEITO! and the coins flying to the counter.
+await advance(0.3, { paint: false });
+await shot('07-ftue-perfect');
+
+// 8. Step 5 alone (the hand only returns after idle), then the simplified card.
+await followHand(() => screen() === 'result', 60, 'the FTUE result');
+await advance(2.2, { paint: false });
+await shot('08-ftue-result');
+
+// 9. CONTINUAR → Home, step 6: only the upgrade card is lit.
+await followHand(() => screen() === 'home', 5, 'Home');
+await advance(0.1, { paint: false });
+assert(screen() === 'home' && ftue()?.step === 'upgrade', `CONTINUAR should open Home at step 6, got ${screen()}/${ftue()?.step}`);
+await advance(0.5, { paint: false });
+await shot('09-ftue-upgrade');
+await followHand(() => !ftue(), 10, 'the end of the FTUE');
+await advance(0.3, { paint: false });
+
+// ── The funnel, as analytics saw it ──────────────────────────────────────────
+const names = firstRunLog.map((e) => (e.name === 'tutorial_step' ? `step:${e.params.step}` : e.name));
+const expected = ['tutorial_start', 'step:place', 'step:flip', 'step:serve', 'step:perfect', 'tutorial_complete', 'upgrade_purchase', 'step:upgrade'];
+assert(JSON.stringify(names) === JSON.stringify(expected), `FTUE analytics: ${names.join(' → ')}`);
+assert(firstRunLog.every((e) => e.valid), `event outside analytics.json: ${JSON.stringify(firstRunLog.filter((e) => !e.valid))}`);
+const complete = firstRunLog.find((e) => e.name === 'tutorial_complete');
+assert(complete.params.misses === 0, `following the hand cost ${complete.params.misses} misses — the hand is misleading`);
+const lastStep = firstRunLog.at(-1);
+assert(lastStep.params.elapsed_ms < 60_000, `first run took ${lastStep.params.elapsed_ms} ms (docs/05 §4: under 60 s)`);
+const purchase = firstRunLog.find((e) => e.name === 'upgrade_purchase');
+const m = meta();
+assert(m.ftueDone === true && m.tutorial?.step === 7, 'FTUE should be persisted as done');
+assert(m.totalPerfect >= 1, 'the guided serve should have been PERFEITO');
+assert(m.upgrades?.grill_size === 1 && purchase.params.track_id === 'grill_size', 'step 6 should buy grill_size');
+assert(m.clearedLevels?.includes('level_001'), 'the FTUE turn is level_001\'s first clear');
+console.log(`[shoot] FTUE ${names.join(' → ')}`);
+console.log(`[shoot] FTUE first PERFEITO at ${(firstRunLog.find((e) => e.params.step === 'serve').params.elapsed_ms / 1000).toFixed(1)}s, ` +
+  `complete at ${(complete.params.duration_ms / 1000).toFixed(1)}s, upgrade at ${(lastStep.params.elapsed_ms / 1000).toFixed(1)}s, ` +
+  `misses ${complete.params.misses}, coins left ${m.coins}`);
+
+// ═══ Relaunch: same storage, fresh module instance ═══════════════════════════
+listeners.clear();
+rafQueue.length = 0;
+await import(pathToFileURL(BUNDLE).href + '?relaunch=1');
+await waitForLoop();
+const relaunchLog = globalThis.__churrascoAnalytics;
+assert(relaunchLog !== firstRunLog, 'relaunch should run a new game instance');
+
+// 10. splash → Home directly; the FTUE does not repeat.
+await advance(0.35, { paint: false });
+tap(210, 400);
+await advance(0.4, { paint: true });
+assert(screen() === 'home' && !ftue(), `relaunch should open Home, got ${screen()} ftue=${JSON.stringify(ftue())}`);
+await shot('10-home');
+
+// 11. JOGAR
 tap(210, 310);
 await advance(0.8, { paint: true });
-await shot('03-turn-empty');
+assert(screen() === 'play', `JOGAR should start a turn, got ${screen()}`);
+await shot('11-turn-empty');
 
-// 4. Place several items so the grill is populated
+// 12. Place several items so the grill is populated
 const drops = [[60, 660, 210, 250], [150, 660, 210, 330], [240, 660, 210, 410]];
 for (const [sx, sy, tx, ty] of drops) {
   pointer('pointerdown', sx, sy);
@@ -244,12 +366,14 @@ for (const [sx, sy, tx, ty] of drops) {
 
 // Cook into the browning range (sim only — do not raster 26s at 60 fps).
 await advance(8, { paint: false });
-await shot('04-grill-cooking');
+await shot('12-grill-cooking');
 
-// 5. First restaurant turn is 90s. We have already spent ~10s on the grill;
-//    another 90s of sim is past the result screen without 10 800 draws.
+// 13. First restaurant turn is 90s. We have already spent ~10s on the grill;
+//     another 90s of sim is past the result screen without 10 800 draws.
 await advance(90, { paint: false });
-await shot('05-result');
+assert(screen() === 'result', `turn should end on the result screen, got ${screen()}`);
+await shot('13-result');
+assert(!relaunchLog.some((e) => e.name.startsWith('tutorial_')), 'no tutorial events after the FTUE is done');
 
 const ms = Date.now() - wall0;
 console.log(`[shoot] frames written to prototype/shots/`);
@@ -257,3 +381,4 @@ console.log(`[shoot] painted=${paintedFrames} skipped=${skippedFrames} wall=${(m
 if (ms > BUDGET_MS) {
   throw new Error(`check-shots too slow: ${ms}ms (budget ${BUDGET_MS}ms) — make the tail cheaper, do not raise the timeout`);
 }
+process.exit(0);

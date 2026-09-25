@@ -28,8 +28,8 @@ const GATES = [
   ['sim', 'short-horizon economy guardrails'],
   ['check-vectors', 'golden vectors still match the rules'],
   ['check-art', '16 ingredients × 8 doneness levels all paint'],
-  ['check-render', 'real prototype bundle driven through a full turn'],
-  ['check-shots', 'real PNGs of splash, home, play, result — sim catch-up, not 10 800 draws']
+  ['check-render', 'real prototype bundle: the FTUE played by following the hand, skip/abandon, a full turn'],
+  ['check-shots', 'real PNGs of the first run (FTUE steps 1-6) and the relaunch path — sim catch-up, not 10 800 draws']
 ];
 
 let failed = 0;
