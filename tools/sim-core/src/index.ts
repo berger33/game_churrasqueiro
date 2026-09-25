@@ -6,3 +6,5 @@ export * from './turn.ts';
 export * from './policy.ts';
 export * from './economy.ts';
 export * from './save.ts';
+export * from './analytics.ts';
+export * from './tutorial.ts';

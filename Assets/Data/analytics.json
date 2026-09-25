@@ -1,7 +1,7 @@
 {
   "$schema": "schema/analytics.schema.json",
   "_comment": "Analytics taxonomy (spec §59-§61). Validated by tools/studio/validate-data.ts: every event logged in code must exist here, and no event may declare a PII parameter.",
-  "version": 4,
+  "version": 5,
   "provider": "firebase_analytics",
   "piiPolicy": {
     "forbiddenParams": ["email", "name", "phone", "cpf", "address", "device_id_raw", "ip", "gps", "user_name"],
@@ -18,9 +18,10 @@
   "events": [
     { "name": "first_open", "trigger": "first launch after install", "params": { "locale": "string", "device_tier": "string" } },
     { "name": "tutorial_start", "trigger": "FTUE begins", "params": { "variant": "string" } },
-    { "name": "tutorial_step", "trigger": "each guided step", "params": { "step": "string", "step_index": "long", "elapsed_ms": "long" } },
-    { "name": "tutorial_complete", "trigger": "FTUE finished", "params": { "duration_ms": "long", "misses": "long" } },
+    { "name": "tutorial_step", "trigger": "each guided step completed (once per install, never re-sent on resume)", "params": { "step": "string", "step_index": "long", "elapsed_ms": "long" } },
+    { "name": "tutorial_complete", "trigger": "FTUE core loop done: step 5 of docs/05 section 4 (step 6, the first upgrade, follows on Home as tutorial_step)", "params": { "duration_ms": "long", "misses": "long" } },
     { "name": "tutorial_abandon", "trigger": "app closed during FTUE", "params": { "step": "string", "step_index": "long" } },
+    { "name": "tutorial_skip", "trigger": "player tapped PULAR during the FTUE (docs/21: visible after 2 s)", "params": { "step": "string", "step_index": "long", "elapsed_ms": "long" } },
     { "name": "session_start", "trigger": "app foregrounded", "params": { "days_since_install": "long", "session_index": "long", "is_returning": "boolean" } },
     { "name": "session_end", "trigger": "app backgrounded", "params": { "session_length_ms": "long", "turns_played": "long" } },
     { "name": "level_start", "trigger": "turn begins", "params": { "level_id": "string", "restaurant_index": "long", "difficulty": "string" } },

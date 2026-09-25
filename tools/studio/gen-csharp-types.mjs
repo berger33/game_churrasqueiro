@@ -29,7 +29,7 @@ const CHECK = process.argv.includes('--check');
 const MODELLED = [
   'ingredients.json', 'grill.json', 'customers.json', 'restaurants.json',
   'upgrades.json', 'economy.json', 'levels.json', 'employees.json',
-  'collection.json', 'pass.json', 'churrasqueiras.json'
+  'collection.json', 'pass.json', 'churrasqueiras.json', 'tutorial.json'
 ];
 
 const pascal = (s) => s

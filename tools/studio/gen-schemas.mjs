@@ -64,7 +64,8 @@ const OVERRIDES = {
   'events.json': { title: 'Live events' },
   'collection.json': { title: 'Collection' },
   'employees.json': { title: 'Employees', enums: { 'roles[].rarity': ['common', 'uncommon', 'rare', 'epic'] } },
-  'remoteconfig_defaults.json': { title: 'Remote Config defaults' }
+  'remoteconfig_defaults.json': { title: 'Remote Config defaults' },
+  'tutorial.json': { title: 'FTUE script (six-step first run, docs/05-UX_FLOW.md section 4)', minItems: { steps: 6 } }
 };
 
 /**

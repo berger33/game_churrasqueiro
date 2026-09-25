@@ -60,6 +60,12 @@ export interface TurnConfig {
     vipChance: number;
     maxOrdersOnScreen: number;
     tipBase: number;
+    /**
+     * `false` = no customer ever arrives on the spawn cadence; the caller admits
+     * them with `spawnScriptedCustomer`. The FTUE's scripted turn uses this
+     * (docs/05-UX_FLOW.md §4) so the first order is always the one being taught.
+     */
+    autoSpawn: boolean;
   }>;
   /** Churrasqueira progression — overrides restaurant grill when present. */
   churrasqueiraId?: string;
@@ -200,7 +206,36 @@ export class TurnSimulation {
     }
     this.timeLimit = config.overrides?.turnLengthSec ?? this.restaurant.turnLengthSec;
     this.spawnInterval = config.overrides?.spawnIntervalSec ?? 7.5;
-    this.spawnTimer = 1.2;
+    // An infinite timer never reaches zero, so tick() stays byte-identical for
+    // every normal turn and the golden vectors cannot move.
+    this.spawnTimer = config.overrides?.autoSpawn === false ? Number.POSITIVE_INFINITY : 1.2;
+  }
+
+  /**
+   * Admit a customer with a fixed order. No dice are rolled, so the turn's RNG
+   * stream is untouched. Lines are "any doneness" (`target` 0) and duplicate
+   * ingredients collapse, exactly as the random spawner does.
+   */
+  spawnScriptedCustomer(customerId: string, ingredientIds: readonly string[], patienceSec: number): CustomerRuntime {
+    const def = this.db.customerById.get(customerId);
+    if (!def) throw new Error(`spawnScriptedCustomer: unknown customer "${customerId}"`);
+    const lines: OrderLine[] = [];
+    for (const id of ingredientIds) {
+      if (!this.db.ingredientById.has(id)) throw new Error(`spawnScriptedCustomer: unknown ingredient "${id}"`);
+      if (lines.some((l) => l.ingredientId === id)) continue;
+      lines.push({ ingredientId: id, target: 0, fulfilledBy: [] });
+    }
+    if (lines.length === 0) throw new Error('spawnScriptedCustomer: empty order');
+    return this.admit(def, lines, Math.max(1, patienceSec));
+  }
+
+  /**
+   * Bring the end of the turn forward to `sec` from now — never later than it
+   * already is. The FTUE closes its scripted turn this way once the last order
+   * lands (the 1.2 s wind-down of docs/05-UX_FLOW.md §3).
+   */
+  endAfter(sec: number): void {
+    this.timeLimit = Math.min(this.timeLimit, this.time + Math.max(0, sec));
   }
 
   // ── Player / policy actions ────────────────────────────────────────────────
@@ -544,6 +579,11 @@ export class TurnSimulation {
       (p.baseSeconds + p.perItemSeconds * lines.length) * def.patienceMultiplier * this.stats.patienceMult * patienceScale
     );
 
+    return this.admit(def, lines, patience);
+  }
+
+  /** Shared bookkeeping for every arrival, random or scripted. */
+  private admit(def: CustomerDef, lines: OrderLine[], patience: number): CustomerRuntime {
     const c: CustomerRuntime = {
       uid: this.uid++,
       def,
