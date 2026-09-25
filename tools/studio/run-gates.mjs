@@ -10,7 +10,7 @@
  * Unity compile / AAB size / asset-registry are not here because this
  * environment has no Unity toolchain (docs/12-BUILD.md §5).
  */
-import { spawnSync } from 'node:child_process';
+import { execSync } from 'node:child_process';
 
 const GATES = [
   ['typecheck', 'strict tsc — the gate that caught the dead ideal-zone mechanic'],
@@ -27,7 +27,6 @@ const GATES = [
   ['check-render', 'real prototype bundle driven through a full turn']
 ];
 
-const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 let failed = 0;
 
 console.log('── CHURRASCO! CI gates ─────────────────────────────────────────');
@@ -37,13 +36,13 @@ console.log('');
 for (const [id, why] of GATES) {
   console.log(`── ${id}  ${'─'.repeat(Math.max(0, 50 - id.length))}`);
   console.log(`   ${why}`);
-  const r = spawnSync(npm, ['run', id], {
-    stdio: 'inherit',
-    env: process.env,
-    shell: false
-  });
-  const code = r.status ?? 1;
-  if (code !== 0) {
+  try {
+    // shell:true so this matches `run: npm run X` in GitHub Actions.
+    // spawnSync('npm', …, {shell:false}) exited 9 on ubuntu-latest —
+    // npm is a corepack shim, not a real executable.
+    execSync(`npm run ${id}`, { stdio: 'inherit', env: process.env });
+  } catch (err) {
+    const code = /** @type {NodeJS.ErrnoException & {status?: number}} */ (err).status ?? 1;
     console.error(`FAIL  ${id}  (exit ${code})`);
     failed++;
     process.exit(code);
