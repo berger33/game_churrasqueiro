@@ -189,7 +189,9 @@ export class TurnSimulation {
     let stats = deriveStats(db, this.restaurant, config.upgradeLevels);
     // churrasqueira overrides (1F → 2F → 3F progression, data-driven)
     if (config.churrasqueiraId) {
-      stats = applyChurrasqueiraToStats(stats, db, config.churrasqueiraId, config.churrasqueiraLevel ?? 1);
+      stats = applyChurrasqueiraToStats(
+        stats, db, config.churrasqueiraId, config.churrasqueiraLevel ?? 1, this.restaurant
+      );
     }
     this.stats = stats;
     this.grill = createGrill(this.stats, db);

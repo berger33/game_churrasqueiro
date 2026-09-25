@@ -36,6 +36,7 @@ namespace Churrasco.Core.Generated
 
     public sealed class EconomyTargets
     {
+        public EconomyTargetsChurrasqueiraUnlockPacingTurns ChurrasqueiraUnlockPacingTurns { get; set; }
         public List<double> CoinSpendRatio { get; set; }
         public EconomyTargetsDailyCoinIncomeAtLevel DailyCoinIncomeAtLevel { get; set; }
         public List<int> FirstUpgradeAffordableAfterTurns { get; set; }
@@ -63,6 +64,13 @@ namespace Churrasco.Core.Generated
         public List<int> 30 { get; set; }
         public List<int> 5 { get; set; }
         public List<int> 50 { get; set; }
+    }
+
+    public sealed class EconomyTargetsChurrasqueiraUnlockPacingTurns
+    {
+        public List<int> FornalhaDragaoManso { get; set; }
+        public List<int> ParrillaChefCisma { get; set; }
+        public List<int> ZeDaEsquina { get; set; }
     }
 
     public sealed class EconomyReward

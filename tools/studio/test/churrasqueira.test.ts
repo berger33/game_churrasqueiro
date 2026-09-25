@@ -20,7 +20,7 @@ import { generateLevels } from '../gen-levels.ts';
 import { TurnSimulation, type TurnCounters } from '../../sim-core/src/turn.ts';
 import { SkillPolicy } from '../../sim-core/src/policy.ts';
 import { Rng } from '../../sim-core/src/rng.ts';
-import { effectiveHeat, runtimeZoneIndex } from '../../sim-core/src/cooking.ts';
+import { churrasqueiraZoneHeat, effectiveHeat, runtimeZoneIndex } from '../../sim-core/src/cooking.ts';
 
 const { db } = loadAndValidate();
 const LEVELS = generateLevels([[0, 12]]).levels;
@@ -116,7 +116,7 @@ describe('churrasqueira overrides reach the turn', () => {
         expect(sim.grill.zones.length).toBe(evo.zoneCount);
         expect(sim.stats.slotsPerZone).toBe(evo.slotsPerZone);
         expect(sim.stats.charcoalDurationSec).toBeCloseTo(db.grill.charcoal.baseDurationSec * (1 + (evo.charcoalBonus ?? 0)), 9);
-        expect(sim.grill.zones[0]!.heat).toBeCloseTo(evo.heatBase, 9);
+        expect(sim.grill.zones[0]!.heat).toBeCloseTo(churrasqueiraZoneHeat(evo, 0, db), 9);
         // Zones heat up monotonically from the cool end to the hot end…
         for (let i = 1; i < sim.grill.zones.length; i++) {
           expect(sim.grill.zones[i]!.heat).toBeGreaterThan(sim.grill.zones[i - 1]!.heat);
@@ -151,5 +151,46 @@ describe('skill policy plays every churrasqueira', () => {
       const r = playTurns(ch.id, 3, 0.55, 4);
       expect(r.customersServed).toBeGreaterThan(0);
     }
+  });
+});
+
+describe('churrasqueira zone heat', () => {
+  it('cooks the 1-zone starter at heatBase so the FTUE is slow and hard to burn', () => {
+    const lata = CHURRASQUEIRAS[0]!;
+    expect(lata.evolutions[0]!.zoneCount).toBe(1);
+    expect(churrasqueiraZoneHeat(lata.evolutions[0]!, 0, db)).toBe(lata.evolutions[0]!.heatBase);
+  });
+
+  it('caps the fornalha so a hotter grill is not an incinerator', () => {
+    const fornalha = CHURRASQUEIRAS.find((c) => c.id === 'fornalha_dragao_manso')!;
+    const evo3 = fornalha.evolutions[2]!;
+    for (let i = 0; i < evo3.zoneCount; i++) {
+      expect(churrasqueiraZoneHeat(evo3, i, db)).toBeLessThanOrEqual(1.7);
+    }
+    // The old heatBase + 0.85·t ramp peaked at 2.47 and burned 20% of a campaign.
+    expect(evo3.heatBase + 0.85).toBeGreaterThan(1.7);
+  });
+});
+
+describe('churrasqueira keeps additive upgrades', () => {
+  it('grill_size still adds slots on top of the equipped evolution', () => {
+    const ch = CHURRASQUEIRAS[0]!;
+    const evo = ch.evolutions[0]!;
+    const base = makeSim(ch.id, evo.level, 0);
+    const bumped = new TurnSimulation(
+      db,
+      {
+        restaurantIndex: 0,
+        levelId: 't',
+        upgradeLevels: { grill_size: 2 },
+        seed: 1,
+        churrasqueiraId: ch.id,
+        churrasqueiraLevel: evo.level
+      },
+      1
+    );
+    expect(base.stats.slotsPerZone).toBe(evo.slotsPerZone);
+    expect(bumped.stats.slotsPerZone).toBe(evo.slotsPerZone + 2);
+    expect(bumped.stats.zoneCount).toBe(evo.zoneCount);
   });
 });

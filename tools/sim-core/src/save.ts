@@ -1,5 +1,5 @@
 import type { PlayerState } from './economy.ts';
-import { newPlayerState } from './economy.ts';
+import { newPlayerState, STARTER_CHURRASQUEIRA_ID } from './economy.ts';
 
 /**
  * Save system (spec §57 / §58).
@@ -12,7 +12,7 @@ import { newPlayerState } from './economy.ts';
  *   and offline earnings clamped instead of being farmed.
  */
 
-export const SAVE_SCHEMA_VERSION = 1;
+export const SAVE_SCHEMA_VERSION = 2;
 
 export interface DailyState {
   streak: number;
@@ -169,6 +169,13 @@ export function migrate(save: SaveGame, fromVersion: number): SaveGame {
   if (!out.daily) out.daily = defaultDaily();
   if (!out.settings) out.settings = defaultSettings();
   if (!out.progress) out.progress = defaultProgress();
+  // v2: equipped grill. Pre-v2 saves had no churrasqueira fields; grant the starter.
+  if (!out.player.churrasqueiraId) out.player.churrasqueiraId = STARTER_CHURRASQUEIRA_ID;
+  if (!out.player.churrasqueiraLevels) {
+    out.player.churrasqueiraLevels = { [out.player.churrasqueiraId]: 1 };
+  } else if (!out.player.churrasqueiraLevels[out.player.churrasqueiraId]) {
+    out.player.churrasqueiraLevels[out.player.churrasqueiraId] = 1;
+  }
   out.schemaVersion = SAVE_SCHEMA_VERSION;
   return out;
 }

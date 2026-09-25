@@ -383,34 +383,6 @@ class Game {
     // next locked
     return [...this.churrasqueiras].sort((a,b)=>a.index-b.index).find((c)=> c.index > ownedIdx);
   }
-  private applyChurrasqueiraToSim(): void {
-    const ch = this.activeChurr();
-    const evo = this.activeEvo();
-    if (!ch || !evo) return;
-    // Override derived stats and zones
-    this.sim.grill.stats.zoneCount = evo.zoneCount;
-    this.sim.grill.stats.slotsPerZone = evo.slotsPerZone;
-    // charcoal bonus is multiplicative on base duration
-    this.sim.grill.stats.charcoalDurationSec = this.db.grill.charcoal.baseDurationSec * (1 + (evo.charcoalDurationBonus ?? 0));
-    // small tip/xp bonuses from evolutions (stack on top of derived)
-    const tipBonus = (evo.extraTipBonus ?? 0);
-    const xpBonus = (evo.extraXpBonus ?? 0);
-    if (tipBonus) this.sim.grill.stats.tipMult += tipBonus;
-    if (xpBonus) this.sim.grill.stats.xpMult += xpBonus;
-    // Recreate zones with heat distribution based on heatBase
-    const zones: { index: number; heat: number; items: FoodRuntime[] }[] = [];
-    for (let i = 0; i < evo.zoneCount; i++) {
-      let heat = evo.heatBase;
-      // spread heat across zones: linear ramp up to +0.6 for top zone when multi-zone
-      if (evo.zoneCount > 1) {
-        const ramp = (i / (evo.zoneCount - 1)) * 0.85;
-        heat += ramp;
-      }
-      zones.push({ index: i, heat, items: [] });
-    }
-    (this.sim.grill as any).zones = zones;
-  }
-
   private requestNextLevel(): void {
     const lvl = this.levels[this.levelIndex] ?? this.levels[this.levels.length - 1]!;
     const actForTurn = this.activeChurr();
@@ -434,8 +406,7 @@ class Game {
       },
       20260917 + this.levelIndex
     );
-    // Apply churrasqueira progression (overrides restaurant grill) — kept for HUD/grelha visual sync; TurnSimulation already applied same via cooking.ts
-    this.applyChurrasqueiraToSim();
+    // Grill heat/slots come from TurnSimulation (churrasqueiraId/Level above).
     const restaurant = this.db.restaurantByIndex.get(lvl.restaurantIndex)!;
     const chName = this.activeChurr() ? this.l10n.t(this.activeChurr()!.nameKey) : '';
     const evoData = this.activeEvo();

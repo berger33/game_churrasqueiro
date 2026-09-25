@@ -23,7 +23,7 @@ const requiredFiles = [
   'ingredients.json', 'grill.json', 'customers.json', 'restaurants.json', 'upgrades.json',
   'economy.json', 'employees.json', 'achievements.json', 'missions.json', 'events.json',
   'collection.json', 'regions.json', 'route.json', 'pass.json', 'iap.json', 'ads.json',
-  'analytics.json', 'performance.json', 'remoteconfig_defaults.json'
+  'analytics.json', 'performance.json', 'remoteconfig_defaults.json', 'churrasqueiras.json'
 ];
 
 for (const f of requiredFiles) {

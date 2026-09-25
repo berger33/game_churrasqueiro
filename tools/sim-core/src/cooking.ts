@@ -58,17 +58,34 @@ export function deriveStats(db: GameDatabase, restaurant: RestaurantDef, levels:
   };
 }
 
-/** Apply churrasqueira evolution overrides on top of restaurant-derived stats (data-driven 1F→2F→3F). */
-export function applyChurrasqueiraToStats(stats: DerivedStats, db: GameDatabase, churrasqueiraId: string, evoLevel: number): DerivedStats {
+/**
+ * Apply churrasqueira evolution overrides on top of restaurant-derived stats
+ * (data-driven 1F→2F→3F). The equipped grill *replaces* the restaurant's
+ * hardware (zones, base slots, charcoal bonus) but additive upgrades
+ * (`grill_size`, `charcoal_duration`) still stack — otherwise buying those
+ * tracks would be a dead sink the moment a churrasqueira is equipped.
+ */
+export function applyChurrasqueiraToStats(
+  stats: DerivedStats,
+  db: GameDatabase,
+  churrasqueiraId: string,
+  evoLevel: number,
+  restaurant?: RestaurantDef
+): DerivedStats {
   const ch = db.churrasqueiraById?.get(churrasqueiraId);
   if (!ch) return stats;
   const evo = ch.evolutions.find(e => e.level === evoLevel) ?? ch.evolutions[0];
   if (!evo) return stats;
+  const extraSlots = restaurant ? Math.max(0, stats.slotsPerZone - restaurant.grill.slotsPerZone) : 0;
+  const baseCharcoal = db.grill.charcoal.baseDurationSec;
+  const extraCharcoal = restaurant
+    ? (stats.charcoalDurationSec / baseCharcoal) - 1 - restaurant.grill.charcoalDurationBonus
+    : 0;
   return {
     ...stats,
-    slotsPerZone: evo.slotsPerZone,
+    slotsPerZone: evo.slotsPerZone + extraSlots,
     zoneCount: evo.zoneCount,
-    charcoalDurationSec: db.grill.charcoal.baseDurationSec * (1 + (evo.charcoalBonus ?? 0))
+    charcoalDurationSec: baseCharcoal * (1 + (evo.charcoalBonus ?? 0) + extraCharcoal)
   };
 }
 
@@ -163,25 +180,50 @@ export function createGrill(stats: DerivedStats, db: GameDatabase): GrillRuntime
   return { zones, charcoalT: 0, charcoalEfficiency: 1, refilling: 0, stats };
 }
 
-/** Patch grill zones heat to match churrasqueira evolution (heatBase + ramp). */
+/**
+ * Hard cap on a churrasqueira zone. Default `high` is 1.55; going much past
+ * that turns the "premium grill" into an incinerator. Measured on the old
+ * `heatBase + 0.85·t` ramp: fornalha evo 3 peaked at 2.47, campaign burn
+ * 20.3 %, lost customers 11.4 %, L15/L30 income 20 % below the 3-zone curve.
+ */
+export const CHURRASQUEIRA_HEAT_CAP = 1.7;
+
+/**
+ * Zone heat for an equipped evolution.
+ *
+ * - 1-zone (FTUE lata): cooks at `heatBase` so the starter is slow and hard to burn.
+ * - n-zone: the default table profile (0.55 / 1.0 / 1.55) remapped by relative
+ *   position, scaled by `heatBase`. A hotter grill is a hotter *profile*, not
+ *   a hotter floor plus a fixed 0.85 add on top.
+ */
+export function churrasqueiraZoneHeat(
+  evo: { zoneCount: number; heatBase: number },
+  zoneIndex: number,
+  db: GameDatabase
+): number {
+  const n = evo.zoneCount;
+  if (n <= 1) return evo.heatBase;
+  const table = db.grill.zones;
+  if (table.length === 0) return evo.heatBase;
+  const tIndex = Math.round(zoneIndex * (table.length - 1) / (n - 1));
+  const profile = table[tIndex]?.heatMultiplier ?? 1;
+  return Math.min(CHURRASQUEIRA_HEAT_CAP, profile * evo.heatBase);
+}
+
+/** Patch grill zones heat to match churrasqueira evolution. */
 export function patchGrillForChurrasqueira(grill: GrillRuntime, db: GameDatabase, churrasqueiraId: string, evoLevel: number): void {
   const ch = db.churrasqueiraById?.get(churrasqueiraId);
   if (!ch) return;
   const evo = ch.evolutions.find(e => e.level === evoLevel) ?? ch.evolutions[0];
   if (!evo) return;
-  // recreate zones array with correct count/heat, preserving items where possible (but turn start has no items)
   const newZones: GrillRuntime['zones'] = [];
   for (let i = 0; i < evo.zoneCount; i++) {
-    let heat = evo.heatBase;
-    if (evo.zoneCount > 1) heat += (i / (evo.zoneCount - 1)) * 0.85;
-    // try to keep existing items if same index (for mid-turn migration not needed)
     const old = grill.zones[i];
-    newZones.push({ index: i, heat, items: old ? [...old.items] : [] });
+    newZones.push({ index: i, heat: churrasqueiraZoneHeat(evo, i, db), items: old ? [...old.items] : [] });
   }
   grill.zones = newZones;
-  // also ensure stats reflect evo
   grill.stats.zoneCount = evo.zoneCount;
-  grill.stats.slotsPerZone = evo.slotsPerZone;
+  // slotsPerZone is already set by applyChurrasqueiraToStats (evo base + grill_size).
 }
 
 /**

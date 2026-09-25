@@ -1,7 +1,7 @@
 # 18 — Status Report
 
-**Snapshot:** 2026-09-25 · branch `arena/01a0d6dd-game-churrasqueiro`
-(integrates PR #3 + the previously un-PR'd `arena/01a0d354` graphics/commercial work — see section 4.2)
+**Snapshot:** 2026-09-25 · branch `arena/01a0d703-game-churrasqueiro`
+(PR #4 fast-forwarded, then churrasqueira purchase wired into the economy sim — see §4.2 and docs/06-ECONOMY.md §5.4)
 
 This report states plainly what is **done and verified**, what is **built but
 unverified here**, and what is **not built**. Anything marked ⚠ was not executed
@@ -56,14 +56,14 @@ Every claim below was produced by a command run in this checkout.
 
 | Area | Check | Result |
 |---|---|---|
-| Unit tests | `npx vitest run` | **162 passed / 0 failed** (10 files) |
+| Unit tests | `npx vitest run` | **174 passed / 0 failed** (11 files) |
 | Type check | `npm run typecheck` | **OK — 0 errors.** `tsconfig.json` was strict (`strict`, `noUncheckedIndexedAccess`) but no script ever ran it: the first run reported **140 errors**, of which **15 were real code defects** (section 4.1) |
 | Localisation | `npm run check-l10n` | **OK** — 376 keys referenced by data, all translated in pt-BR (514 keys total); en-US / es-419 are declared 9.7 % stubs that fall back to pt-BR |
 | Data integrity | `npm run validate` | **OK** — 21 tables (incl. `churrasqueiras`), 16 ingredients, 11 customers, 7 restaurants, 27 upgrade tracks, 58 achievements, 37 collection entries, 47 analytics events, 60 authored levels |
 | Data contracts | `npm run check-schema` | **OK** — 21/21 tables valid against `shared/schema`, and every contract rejects a broken copy of itself |
 | Contract drift | `npm run verify-schemas` | **OK** — 21 schemas in step with `shared/data` |
-| Short-horizon economy | `npm run sim` | **all 15 balance targets met** |
-| Long-horizon economy | `npm run sim:long` (1500 turns) | **all 15 balance targets met** — see §3 |
+| Short-horizon economy | `npm run sim` | **all balance targets met** (grill:fornalha skipped — needs long horizon) |
+| Long-horizon economy | `npm run sim:long` (1500 turns) | **18/18 balance targets met** — see §3 |
 | Economy report | `HORIZON=1500 npm run balance-report` | reaches **level 80**; income growth L5→L70 **×12.27** vs cost growth **×29.28** → costs outpace income, so purchases stay meaningful |
 | Unity data copy | `npm run verify-data-sync` | **OK — Assets/Data matches shared/data (21 tables)** |
 | Prototype bundle | `npx esbuild --bundle prototype/src/main.ts` | **135 kB, 0 errors** — and the source now type-checks, which it never did |
@@ -142,21 +142,28 @@ until `dotnet build` passes in CI.
 
 ## 3. Long-horizon economy — verified
 
-**15 of 15 balance targets met** on the current data (`restaurants` v6,
-`economy` v11). Measured over a 1500-turn campaign at skill 0.55:
+**18 of 18 balance targets met** on the current data (`restaurants` v6,
+`economy` v12). Measured over a 1500-turn campaign playing the owned grill:
 
 | Establishment | Turn | ≈ Day (12 turns/day) |
 |---|---|---|
 | Espetinho de Rua | 32 | 3 |
-| Trailer | 87 | 7 |
-| Churrascaria de Bairro | 143 | 12 |
+| Trailer | 89 | 7 |
+| Churrascaria de Bairro | 147 | 12 |
 | Churrascaria Premium | 243 | 20 |
-| Festival | 445 | 37 |
-| Rede Nacional | 1180 | 98 |
+| Festival | 418 | 35 |
+| Rede Nacional | 1185 | 99 |
 
-Daily coin income: **L5 10,616 · L15 46,482 · L30 97,564 · L50 123,153.**
-Spend ratio **0.741**. Max / median turn income **1.69**.
-Perfect rate at skill 0.55: **55.7%**.
+| Churrasqueira | Turn | ≈ Day |
+|---|---|---|
+| Zé da Esquina | 7 | 1 |
+| Parrilla Chef Cisma | 45 | 4 |
+| Fornalha Dragão Manso | 90 | 8 |
+
+Daily coin income: **L5 10,793 · L15 41,115 · L30 98,262 · L50 115,926.**
+Spend ratio **0.741**. Max / median turn income **1.70**.
+Perfect rate at skill 0.55 (default grill, difficulty contract): **55.7%**.
+Campaign burn on the owned-grill path: **5.7%** (was 20.3% before the heat cap).
 
 ### Two design findings recorded from tuning
 
@@ -174,10 +181,9 @@ numbers.
 ### Target checks (all PASS)
 
 `turnsPerSession` 4 (3–5) · `firstUpgradeAffordableAfterTurns` turn 1 (1–2) ·
-unlock pacing 32 / 87 / 143 / 243 / 445 / 1180 (bands 28–45, 72–115, 115–185,
-195–315, 340–550, 950–1450) · income L5 10,616 · L15 46,482 · L30 97,564 ·
-L50 123,153 · spend ratio 0.741 (0.70–0.99) · coin spike 1.69 (cap 6) ·
-perfect rate at skill 0.55 = 55.7% (40–62%).
+unlock pacing 32 / 89 / 147 / 243 / 418 / 1185 · grill path 7 / 45 / 90 ·
+income L5 10,793 · L15 41,115 · L30 98,262 · L50 115,926 · spend ratio 0.741
+(0.70–0.99) · coin spike 1.70 (cap 6) · perfect rate at skill 0.55 = 55.7% (40–62%).
 
 Skill curve on authored content (the difficulty contract):
 
@@ -188,7 +194,7 @@ Skill curve on authored content (the difficulty contract):
 
 ### Open balance item
 
-The 445 → 1180 gap is **735 turns (≈ 61 days) with no new establishment.** It is
+The 418 → 1185 gap is **767 turns (≈ 64 days) with no new establishment.** It is
 currently filled by the collection (37 entries), achievements (58), prestige
 tracks, the region route, weekly events and the Brasa Pass. **Unvalidated risk:**
 whether that is enough to hold a mid-core player through the gap. Needs real
@@ -280,10 +286,15 @@ unchanged and all 15 balance targets still pass on both horizons.
 grill × evolution; against the pre-fix policy **5 of them fail** (the crash on the
 1-/2-zone grills, the heat estimate on the 3-zone ones).
 
-**Design observation (not a defect):** at skill 0.30 the top grill
-(`fornalha_dragao_manso`, heatBase 1.42) yields ~12 % fewer perfect cooks than the
-default grill — a hotter grill is harder to control. Worth a deliberate decision:
-is the premium grill meant to reward skill or to be strictly better?
+**Design observation, now a defect, now fixed:** at skill 0.30 the top grill
+(`fornalha_dragao_manso`, heatBase 1.42) yielded ~12 % fewer perfects than the
+default grill. Wiring it into the campaign sim made the real cost visible:
+the `heatBase + 0.85·t` ramp peaked at 2.47 (default `high` is 1.55), campaign
+burn **20.3 %**, lost customers **11.4 %**, L15/L30 income 20 % below band.
+The premium grill was an incinerator. `churrasqueiraZoneHeat()` now uses the
+default zone profile × `heatBase`, capped at 1.70. Re-measured burn **5.7 %**.
+A hotter grill still rewards skill (high zone 1.70 vs 1.55); it no longer
+deletes 1 in 5 plates.
 
 ### 18 dangling `$schema` references
 
@@ -362,16 +373,12 @@ specification. The prototype proves art *direction*, not the art *budget*.
 1. **Compile the C# core** (`dotnet build` in CI) and add golden-vector parity. — blocking for Unity work
 2. Write `TurnSimulation.cs`, `EconomyRules.cs`, `GameDatabase.cs`, `SaveSystem.cs`.
 3. Write the Unity scene layer and run the feel pass.
-4. **Wire churrasqueira progression into the economy sim.** `run-sim.ts` still plays
-   every turn on the restaurant's default grill, so the 15 balance targets say
-   nothing about the grill the player actually owns (they start on the 1-zone
-   `lata_valente`). Add the purchase/evolution sink and re-measure pacing.
-5. **Add a CI workflow** so the gates run on every push instead of by hand:
+4. **Add a CI workflow** so the gates run on every push instead of by hand:
    `npm run typecheck`, `validate`, `test`, `sim`, `check-vectors`. `12-BUILD.md`
    section 5 lists them, but no `.github/workflows` file exists.
-6. Confirm the 735-turn mid-game gap with telemetry before V1.0.
-7. Grow en-US / es-419 from 9.7 % stub to full coverage before any non-BR launch.
-8. Give `npm run check-shots` a budget that matches its cost: its final step pumps
+5. Confirm the 767-turn mid-game gap with telemetry before V1.0.
+6. Grow en-US / es-419 from 9.7 % stub to full coverage before any non-BR launch.
+7. Give `npm run check-shots` a budget that matches its cost: its final step pumps
    10,800 frames of full-scene canvas work (~3.8 GB RSS) and did not finish within
    15 minutes of wall clock in this sandbox, so a 300 s timeout kills it mid-run.
    Every earlier step renders fine; only the result-screen tail is pathological.

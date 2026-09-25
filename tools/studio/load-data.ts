@@ -21,13 +21,9 @@ export function loadDatabase(): GameDatabase {
     customers: readJson('customers.json') as RawDataBundle['customers'],
     restaurants: readJson('restaurants.json') as RawDataBundle['restaurants'],
     upgrades: readJson('upgrades.json') as RawDataBundle['upgrades'],
-    economy: readJson('economy.json') as RawDataBundle['economy']
+    economy: readJson('economy.json') as RawDataBundle['economy'],
+    churrasqueiras: readJson('churrasqueiras.json') as RawDataBundle['churrasqueiras']
   };
-  // churrasqueiras is optional but when present enables 1F→2F→3F progression validation
-  try {
-    const ch = readJson('churrasqueiras.json') as RawDataBundle['churrasqueiras'];
-    if (ch) (raw as any).churrasqueiras = ch;
-  } catch {}
   cached = createDatabase(raw as RawDataBundle);
   return cached;
 }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-25T01:09:59.332Z",
+  "generatedAt": "2026-09-25T05:40:38.325Z",
   "source": "shared/data",
   "files": {
     "achievements.json": {
@@ -27,8 +27,8 @@
       "bytes": 5918
     },
     "economy.json": {
-      "sha256": "f5136ae451b13f0022e2363f649c43ce194475140f18b944b1d78a49a1f8aa68",
-      "bytes": 6495
+      "sha256": "c20dda5f72e99c175fcda0d9bea4f043cbc8b8f361c6fbd1c056fbd12c0b1375",
+      "bytes": 7308
     },
     "employees.json": {
       "sha256": "f26f360cd0bef72a53538346ecc2fa386d9ecc930963cf150584b2b015323488",

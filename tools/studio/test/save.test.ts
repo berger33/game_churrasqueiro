@@ -93,6 +93,18 @@ describe('migration', () => {
     const migrated = migrate(s, 1);
     expect(migrated.player.coins).toBe(999);
   });
+
+  it('grants the starter grill to a pre-v2 save that had none', () => {
+    const s = newSave('install-v1', NOW);
+    const player = { ...s.player } as { churrasqueiraId?: string; churrasqueiraLevels?: Record<string, number> };
+    delete player.churrasqueiraId;
+    delete player.churrasqueiraLevels;
+    s.player = player as typeof s.player;
+    const migrated = migrate(s, 1);
+    expect(migrated.schemaVersion).toBe(SAVE_SCHEMA_VERSION);
+    expect(migrated.player.churrasqueiraId).toBe('lata_valente');
+    expect(migrated.player.churrasqueiraLevels['lata_valente']).toBe(1);
+  });
 });
 
 describe('clock tampering', () => {

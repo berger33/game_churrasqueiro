@@ -109,12 +109,18 @@ export function validateDatabase(db: GameDatabase): string[] {
       });
       // monotonic unlock levels
       if (ch.unlockLevel < 1) problems.push(`churrasqueira ${ch.id}: unlockLevel must be >=1`);
+      const evo1 = ch.evolutions[0];
+      if (evo1 && evo1.costCoins !== 0) problems.push(`churrasqueira ${ch.id}: evolution 1 must cost 0 (granted on unlock)`);
     }
     // indices contiguous 0..n-1
     const sorted = [...indices].sort((a,b)=>a-b);
     sorted.forEach((v,i)=> { if (v!==i) problems.push(`churrasqueira indices must be contiguous from 0 (found ${v} at ${i})`); });
     // fileiras monotonic non-decreasing by index
     const byIdx = [...db.churrasqueiras.churrasqueiras].sort((a,b)=>a.index-b.index);
+    const starter = byIdx[0];
+    if (starter && (starter.unlockCostCoins !== 0 || starter.unlockLevel !== 1)) {
+      problems.push(`churrasqueira ${starter.id}: starter (index 0) must be free at level 1`);
+    }
     for (let i=1;i<byIdx.length;i++) {
       if (byIdx[i]!.fileiras < byIdx[i-1]!.fileiras) problems.push(`churrasqueira ${byIdx[i]!.id}: fileiras must not decrease vs previous tier`);
       if (byIdx[i]!.unlockLevel <= byIdx[i-1]!.unlockLevel) problems.push(`churrasqueira ${byIdx[i]!.id}: unlockLevel must increase`);
