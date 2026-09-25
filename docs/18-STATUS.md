@@ -36,6 +36,43 @@ in this environment and must be re-run before it is trusted.
   save belongs to someone who has already played, so the migration marks the FTUE done
   (03-TECH_DESIGN §6, 05-UX_FLOW §4.3). Five new tests in `save.test.ts`, including a director
   that survives serialise → deserialise mid-run and never re-sends a reported step.
+- **The FTUE in C#, and the C# core compiled for the first time** (§7 items 1 and 6).
+  `Assets/Scripts/Core/Tutorial.cs` ports `tutorial.ts` — `TutorialState` / `TutorialStates`
+  (new, finished, restore), `TutorialDirector` (steps + the five analytics events),
+  `TutorialCoachRules` (browned / flip-ready / serve-ready / ring progress / the hold, and the
+  hand: `ForStep` for guided steps, `Next` for free play) and `TutorialMask` — and
+  `Analytics.cs` ports the event contract. Only `TutorialTurn`'s glue is left: it owns a
+  `TurnSimulation`, which has no C# port yet. A port nobody compiles is a draft, so there is a
+  new gate, `npm run check-csharp` (14th, CI): it builds `Assets/Scripts/Core` as Unity
+  would (netstandard2.1, C# 9, nullable, warnings as errors) and runs `tools/csharp/parity`.
+  - **Compiling found 42 errors** in code that had never met a compiler: the generator emitted
+    `public List<int> 15 { get; set; }` for number-keyed objects and four classes with a member
+    named after the class (CS0542); `GameData.cs` declared a generic property and validated
+    customer fields that do not exist; `Rules.cs` called `Math.Floor` on an `int`. Fixed at the
+    source: objects keyed by data (ids, levels) are now `Dictionary<string, T>`, root classes
+    are `<Stem>Table`, the JSON seam takes `(json, Type)`.
+  - **Binding every table losslessly** (13 tables, 3 413 values — each deserialised with unknown
+    keys rejected, serialised back and compared) found three more: `RAW_MAX` was Pascal-cased to
+    `RAWMAX` (would bind as 0, and `StageOf` would call everything burned), `"prepSec": 2.0`
+    was typed `int` (System.Text.Json refuses it), and optionality was counted per parent instead
+    of per array element, so `isVip`, present on one customer of eleven, serialised `false` back
+    onto the other ten.
+  - **Replaying the golden vectors** found two rules that disagreed with the TypeScript:
+    `StageOf` had no "rare" band, and `ScoreItem` used `Math.Round` (halves to even) — an
+    espetinho misto worth 24.5 coins paid 24 in C# and 25 in the reference. Reading `Rules.cs`
+    against `cooking.ts` found a third no vector covers yet: `EffectiveHeat` ignored the runtime
+    zone heat a churrasqueira sets. All fixed. Result: cooking 48/48, scoring 32/32, effective heat
+    1/1; the other 5 economy vectors and the 12 full turns are reported as waiting for
+    `EconomyRules.cs` / `TurnSimulation.cs`.
+  - **The FTUE vectors** (`tools/golden/tutorial-vectors.json`, new, 44, written by
+    `gen-vectors.ts` from the shipping TypeScript): six director scenarios (including resume,
+    skip at exactly 2 000 ms and a half-millisecond that must round up), 15 restores, a coach grid
+    of 146 plates, the hand over two recorded FTUE runs (120 samples) plus eight free-play edge
+    cases, masking for every step × action (392 rows), and the analytics contract. All agree on
+    the first run.
+  - This sandbox has no .NET SDK, so `check-csharp` reports SKIP here and CI runs it. During
+    development the core was compiled and the parity runner executed with a Roslyn compiler
+    hosted in-process (scratch tooling, not committed); CI uses the real SDK.
 
 ---
 
@@ -140,7 +177,8 @@ Every claim below was produced by a command run in this checkout.
 | Render smoke | `npm run check-render` | **OK, 4 s** — real bundle through the whole FTUE (played by following the hand: 8 events in order, 0 misses), step 6, Home's daily calendar (strip → modal → `RESGATAR` pays once → ✕), an ordinary turn to the result, then a second install that is backgrounded (`tutorial_abandon` once) and skipped (`tutorial_skip` → Home); **~38 M canvas ops, no exceptions** |
 | Shot harness | `npm run check-shots` | **OK — ~6 s.** 13 real PNGs: a fresh install (splash, title, FTUE steps 1 / 2-waiting / 2 / 3 / 4, FTUE result, step 6 on Home), then a relaunch that must open on Home (home, empty grill, cooking, result). Asserts the FTUE funnel from `__churrascoAnalytics` — first PERFEITO 16.1 s, step 6 at 38.3 s (< 60 s), 0 misses. 193 painted frames, ~1 390 sim-only ticks, 60 s self-budget. |
 | Prototype server | `node prototype/dev-server.mjs` | listening on `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
-| CI | `.github/workflows/ci.yml` + `npm run gates` | **green on ubuntu-latest (28 s), 13 gates.** `check-shots` is in the per-PR list (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. Unity compile is still absent — no toolchain. |
+| C# core | `npm run check-csharp` | **CI: builds `Assets/Scripts/Core` (netstandard2.1, C# 9, warnings as errors) and 139 parity checks agree** — 13 tables bind losslessly, `GameData.Load` clean, cooking 48/48, scoring 32/32, effective heat, 44 FTUE vectors; 17 economy/turn vectors listed as not ported. **Here: SKIP** (no .NET SDK); verified during development with an in-process Roslyn compiler |
+| CI | `.github/workflows/ci.yml` + `npm run gates` | **14 gates on ubuntu-latest** (`check-csharp` added, with `actions/setup-dotnet` 8.0). `check-shots` is in the per-PR list (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. The Unity-side layer is still not compiled — no Unity toolchain. |
 
 ### The localisation gate caught a §56 violation
 
@@ -197,17 +235,19 @@ re-derived again; on the current rules the same two figures read **0.7%** and
 
 | Deliverable | State | Why it is unverified |
 |---|---|---|
-| Unity C# client (`Assets/Scripts/Core/Types.cs`, `CookingRules.cs`) | Hand-written port of the tested TypeScript rules | **No C# toolchain in this sandbox.** `dotnet`, `mono`, `mcs`, `csc`, `java` and `unity` are all absent and every Microsoft/.NET endpoint is unreachable (SSL_ERROR_SYSCALL / HTTP 000), so nothing can be installed. |
-| `Assets/Scripts/Core/{TurnSimulation,EconomyRules,GameDatabase,SaveSystem}.cs` | **Not yet written** | Sequenced after the port is compile-checked. |
+| Unity-side C# (`Assets/Scripts/Services/{AdService,BillingService,SecureConfig}.cs`) | Hand-written against `UnityEngine` | **No Unity toolchain.** `check-csharp` compiles only the engine-free `Assets/Scripts/Core` (see §1); these files reference `UnityEngine` and have never been compiled. |
+| `Assets/Scripts/Core/{TurnSimulation,EconomyRules,SaveSystem}.cs` | **Not yet written** | The compile + parity gate now exists (`check-csharp`); 17 golden vectors (5 economy, 12 full turns) are waiting for these ports. `TutorialTurn`'s C# glue waits for `TurnSimulation.cs`. |
 | Unity layer (`GrillView`, `FoodView`, `CustomerCardView`, `TurnFlow`) | **Not yet written** | Needs the Editor to iterate on feel. |
 | Unity localisation (load `shared/l10n`, resolve `*Key`) | **Not yet written** | The TS resolver (`tools/sim-core/src/l10n.ts`) is tested; the C# port is not. |
 | `Packages/manifest.json`, `ProjectSettings/` | **Not yet written** | Needs the Unity Editor to generate authoritative values. |
-| Golden-vector parity (TS ↔ C#) | **Not yet written** | Blocked on a C# compiler. |
+| Golden-vector parity (TS ↔ C#) | **Partial — in CI** | Cooking, scoring, effective heat and the FTUE agree (§1, `check-csharp`); economy and full-turn parity arrive with their ports. |
 | Final art assets, recorded audio, VFX | **Not present** | The prototype renders procedurally on canvas and synthesises its feedback with WebAudio (`prototype/src/audio.ts`). Both are placeholders, as allowed for a design-verification prototype — none of it ships (§82). See `10-AUDIO.md` §6 for which cues are wired. |
 | Firebase / AdMob / IAP live integration | **Config only** | Requires real project credentials and a signed build. IDs are `REPLACE_IN_SECURE_CONFIG`; only Google **test** units are wired. |
 
-**The C# code has never been compiled.** Treat it as a specification-shaped draft
-until `dotnet build` passes in CI.
+**The engine-free C# core compiles in CI and is parity-checked against the TypeScript**
+(`check-csharp`, since the FTUE follow-ups). Its first compile found 42 errors and its first
+replay two wrong rules — a reminder of what "hand-written port, never compiled" was worth.
+The Unity-side files above are still in that state.
 
 ---
 
@@ -441,14 +481,18 @@ specification. The prototype proves art *direction*, not the art *budget*.
 
 ## 7. What to do next
 
-1. **Compile the C# core** (`dotnet build` in CI) and add golden-vector parity. — blocking for Unity work
-2. Write `TurnSimulation.cs`, `EconomyRules.cs`, `GameDatabase.cs`, `SaveSystem.cs`.
+1. ~~**Compile the C# core** (`dotnet build` in CI) and add golden-vector parity~~ — **done**:
+   `npm run check-csharp` (gate 14), 139 checks agree (see "FTUE follow-ups").
+2. Write `TurnSimulation.cs`, `EconomyRules.cs`, `SaveSystem.cs` (v3, with `progress.tutorial`)
+   — `check-csharp` will pick up the 17 economy / full-turn vectors they unlock; port the
+   churrasqueira functions (`applyChurrasqueiraToStats`, `churrasqueiraZoneHeat`,
+   `patchGrillForChurrasqueira`, `runtimeZoneIndex`) with them, then `TutorialTurn`'s glue.
 3. Write the Unity scene layer and run the feel pass.
 4. Confirm the 767-turn mid-game gap with telemetry before V1.0.
 5. Grow en-US / es-419 from 9.7 % stub to full coverage before any non-BR launch.
 6. ~~**Prototype FTUE**~~ — **done** (see "FTUE" at the top and docs/05 §4). Follow-ups:
-   - Port `tools/sim-core/src/tutorial.ts` + `tutorial.json` to the Unity `TutorialDirector`
-     (BACKLOG #5); the C# data class is already generated (`Tutorial.g.cs`).
+   - ~~Port `tutorial.ts` to the Unity `TutorialDirector`~~ — **done** (`Assets/Scripts/Core/
+     Tutorial.cs`, 44 FTUE vectors agree); `TutorialTurn`'s glue follows `TurnSimulation.cs`.
    - ~~`SaveGame` v3 should carry `progress.tutorial`~~ — **done** (see "FTUE follow-ups").
    - ~~`gen-schemas.mjs` enum `OVERRIDES` never apply~~ — **fixed and guarded**.
    - ~~The Home daily-strip hit box sits below the drawn strip~~ — **fixed**, with the

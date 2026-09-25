@@ -87,7 +87,11 @@ point is visible in the funnel.
 The script is data (`shared/data/tutorial.json`), the rules are engine-free and tested
 (`tools/sim-core/src/tutorial.ts`: `TutorialDirector`, `TutorialTurn`, the coach rules), and
 the prototype only draws them (`prototype/src/main.ts` + `prototype/src/ftue.ts`). The Unity
-`TutorialDirector` (01-ARCHITECTURE) ports the TypeScript 1:1.
+`TutorialDirector` (01-ARCHITECTURE) ports the TypeScript 1:1 in `Assets/Scripts/Core/Tutorial.cs`
+— director, restore, coach rules, the hand, masking — and `npm run check-csharp` replays 44
+vectors from the TypeScript against it (`tools/golden/tutorial-vectors.json`, including two
+recorded FTUE runs). Only `TutorialTurn`'s glue is not ported: it owns a `TurnSimulation`,
+which has no C# port yet.
 
 **Path.** First launch: splash → title (`JOGAR`) → steps 1–5 as **one scripted turn** →
 a simplified result card (`CONTINUAR` only) → Home, where step 6 waits. Relaunch: splash →

@@ -79,6 +79,14 @@ strict, but nothing invoked `tsc`.
 13. `npm run check-shots` — real PNGs of splash → home → play → result. Sim
     catch-up at the 0.1s dt cap with draw skipped; do not pump 10 800 full-scene
     frames and do not raise the timeout to hide that.
+14. `npm run check-csharp` — the engine-free C# core (`Assets/Scripts/Core`) compiles
+    the way Unity will compile it — `tools/csharp/core`: netstandard2.1, C# 9, nullable,
+    warnings as errors — and `tools/csharp/parity` replays the TypeScript against it:
+    every generated table class binds its table losslessly, `GameData.Load` is clean, and
+    `tools/golden/vectors.json` + `tools/golden/tutorial-vectors.json` agree to 1e-9.
+    Vectors whose C# port does not exist yet (`EconomyRules.cs`, `TurnSimulation.cs`) are
+    listed as *not ported*, never silently passed. Needs the .NET 8 SDK: CI installs it
+    (`actions/setup-dotnet`); a machine without one reports `SKIP`, CI never does.
 
 **Nightly** (`.github/workflows/nightly.yml`, 11:00 UTC / 08:00 BRT):
 
@@ -86,7 +94,8 @@ strict, but nothing invoked `tsc`.
 
 **Still not in CI** (blocked on a Unity toolchain and a signed build):
 
-- Unity compile + EditMode tests
+- Unity compile of the engine-dependent layer (`Assets/Scripts/Services`, scenes) +
+  EditMode tests — the engine-free core is gate 14
 - AAB size gate (≤ 90 MB base)
 - Asset registry check (no asset without a licence row)
 

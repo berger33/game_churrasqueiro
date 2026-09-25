@@ -16,7 +16,7 @@ Every item states its **done** condition — "funciona mas falta polimento" is n
 | 2 | Real art for the grill scene: grill, 3 zone treatments, 6 food silhouettes, 4 customer types | L | No grey boxes anywhere in the turn screen; style bible colours and outlines honoured |
 | 3 | Drag/flip/serve feel pass in Unity (haptics, squash-and-stretch, trail, sizzle) | M | 3 test players report the flip feels "satisfying" unprompted |
 | 4 | Audio pass for the turn (sizzle, flip, chop, ding, coin, charcoal) | M | All 9 SFX in §2 of docs/10-AUDIO.md trigger correctly with ducking |
-| 5 | Tutorial (6 steps) in Unity — port `tools/sim-core/src/tutorial.ts` + `shared/data/tutorial.json` (the prototype FTUE is done, docs/05 §4). Skippable after 2 s, per docs/20–21 (was "non-skippable", see 05 §4.2) | M | A new player completes a perfect serve with zero text explanation — the prototype proves it with a driver that only follows the hand (0 misses, first PERFEITO at 16 s) |
+| 5 | Tutorial (6 steps) in Unity — the rules are ported (`Assets/Scripts/Core/Tutorial.cs`, 44 FTUE vectors agree in `check-csharp`); left: `TutorialTurn`'s glue (needs `TurnSimulation.cs`) and the overlay in the scene. Skippable after 2 s, per docs/20–21 (was "non-skippable", see 05 §4.2) | M | A new player completes a perfect serve with zero text explanation — the prototype proves it with a driver that only follows the hand (0 misses, first PERFEITO at 16 s) |
 | 6 | `SaveSystem` wired to `Application.persistentDataPath` + atomic write | S | Kill the app mid-turn, reopen, state is intact and no crash |
 
 ## Next — vertical slice (V0.3 → V0.4)
@@ -30,7 +30,7 @@ Every item states its **done** condition — "funciona mas falta polimento" is n
 | 11 | Analytics SDK integration (Firebase) with the 48-event taxonomy | M | Every event in `analytics.json` fires in a debug build and appears in DebugView |
 | 12 | Ads + IAP integration (test units / test products only) | L | All 8 rewarded placements, interstitial policy and 5 products work against test IDs |
 | 13 | Performance pass against `performance.json` budgets | M | LOW/MEDIUM/HIGH profiles each hold their frame-rate and draw-call budget |
-| 14 | Golden-vector parity test in CI | M | `npm run gen-vectors` output matches the C# runner bit-for-bit |
+| 14 | Golden-vector parity test in CI — **in CI** as `npm run check-csharp` (cooking, scoring, heat, FTUE); economy and full turns follow their ports | M | `npm run gen-vectors` output matches the C# runner bit-for-bit |
 
 ## Later — polish, content, LiveOps (V0.5 → V1.0)
 

@@ -70,6 +70,15 @@ The Unity EditMode test `SimParityTests` replays the same seeds and asserts the 
 If the C# drifts, the test names the first divergent tick. **This is the mechanism that stops
 the verified rules and the shipped rules from becoming two different games.**
 
+**What runs today** (no Unity needed): `npm run gen-vectors` writes `tools/golden/vectors.json`
+(cooking, scoring, economy, full turns) and `tools/golden/tutorial-vectors.json` (the FTUE), and
+`npm run check-csharp` — a CI gate — builds `Assets/Scripts/Core` as netstandard2.1 / C# 9 and
+replays them with `tools/csharp/parity` to 1e-9. Vectors for code that has no C# port yet
+(`EconomyRules.cs`, `TurnSimulation.cs`) are reported as not ported. Two porting rules the
+first run taught: round with `MathUtil.RoundHalfUp` (JavaScript's `Math.round`), never
+`Math.Round` (halves to even); and the generated table classes need case-insensitive binding
+(Newtonsoft's default; `PropertyNameCaseInsensitive` in System.Text.Json).
+
 ## 4. Frame budget
 
 Target 60 FPS on HIGH/MEDIUM, 30 FPS on LOW (§2).
