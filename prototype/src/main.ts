@@ -67,6 +67,36 @@ interface Drag {
   startTime: number;
 }
 
+// ── Churrasqueira progression ───────────────────────────────────────────────
+interface ChurrEvolutionSpec {
+  level: number;
+  nameKey: string;
+  descKey: string;
+  shortName: string;
+  slotsPerZone: number;
+  zoneCount: number;
+  heatBase: number;
+  charcoalDurationBonus: number;
+  costCoins: number;
+  costEmbers?: number;
+  extraTipBonus?: number;
+  extraXpBonus?: number;
+}
+interface ChurrasqueiraSpec {
+  id: string;
+  index: number;
+  nameKey: string;
+  subtitleKey: string;
+  descKey: string;
+  tier: string;
+  humorTag: string;
+  unlockLevel: number;
+  unlockCostCoins: number;
+  fileiras: number;
+  visual: { style: string; material: string; color: string; chimney: boolean; brick: boolean };
+  evolutions: ChurrEvolutionSpec[];
+}
+
 // ── Meta persistence (localStorage, offline-first) ───────────────────────────
 interface Meta {
   coins: number;
@@ -89,6 +119,8 @@ interface Meta {
   lastWheelSpinISO: string;
   upgrades: Record<string, number>;
   graceUsed: boolean;
+  churrasqueiraId: string;
+  churrasqueiraLv: Record<string, number>; // 1..3 per churrasqueira id
 }
 
 function todayISO(): string {
@@ -101,14 +133,18 @@ function loadMeta(): Meta {
     lastLoginISO: todayISO(), lastClaimDay: 0, turnsPlayed: 0, bestCombo: 0,
     totalPerfect: 0, collection: ['linguica_toscana','pao_de_alho'], ftueDone: false,
     ftueStep: 0, bonusReady: null, bonusExpiresAt: 0, wheelSpins: 1, lastWheelSpinISO: '',
-    upgrades: { grill_size: 0 }, graceUsed: false
+    upgrades: { grill_size: 0 }, graceUsed: false,
+    churrasqueiraId: 'lata_valente', churrasqueiraLv: { lata_valente: 1 }
   };
   try {
     if (typeof localStorage === 'undefined') return fallback;
     const raw = localStorage.getItem('churrasco_meta_v2');
     if (!raw) return fallback;
     const j = JSON.parse(raw) as Partial<Meta>;
-    return { ...fallback, ...j, upgrades: { ...fallback.upgrades, ...(j.upgrades ?? {}) } };
+    const merged: Meta = { ...fallback, ...j, upgrades: { ...fallback.upgrades, ...(j.upgrades ?? {}) }, churrasqueiraLv: { ...fallback.churrasqueiraLv, ...(j.churrasqueiraLv ?? {}) } };
+    if (!merged.churrasqueiraId) merged.churrasqueiraId = fallback.churrasqueiraId;
+    if (!merged.churrasqueiraLv[merged.churrasqueiraId]) merged.churrasqueiraLv[merged.churrasqueiraId] = 1;
+    return merged;
   } catch { return fallback; }
 }
 function saveMeta(m: Meta): void {
@@ -190,6 +226,10 @@ class Game {
   // Home scroll (for shop overflow etc)
   private homeScrollY = 0;
 
+  // Churrasqueiras (data-driven)
+  private churrasqueiras: ChurrasqueiraSpec[] = [];
+  private churrasqueiraHintT = 0;
+
   async init(canvas: HTMLCanvasElement): Promise<void> {
     const raw = await this.loadData();
     this.db = createDatabase(raw);
@@ -199,6 +239,24 @@ class Game {
 
     const levels = await fetch('/data/levels.json').then((r) => r.json());
     this.levels = levels.levels;
+
+    // Churrasqueiras progression — data-driven
+    try {
+      const rawChurr = await fetch('/data/churrasqueiras.json').then((r) => r.json());
+      this.churrasqueiras = (rawChurr.churrasqueiras ?? []) as ChurrasqueiraSpec[];
+    } catch {
+      // fallback to single 3-zone if offline
+      this.churrasqueiras = [];
+    }
+    // migrate meta: clamp churrasqueiraId to known ids
+    if (this.churrasqueiras.length > 0) {
+      const ids = this.churrasqueiras.map((c) => c.id);
+      if (!ids.includes(this.meta.churrasqueiraId)) this.meta.churrasqueiraId = ids[0]!;
+      for (const c of this.churrasqueiras) {
+        if (!this.meta.churrasqueiraLv[c.id]) this.meta.churrasqueiraLv[c.id] = c.id === this.meta.churrasqueiraId ? 1 : 0;
+      }
+      saveMeta(this.meta);
+    }
 
     // Daily streak logic: if new day, advance streak with grace
     const today = todayISO();
@@ -275,6 +333,75 @@ class Game {
     };
   }
 
+  // ── Churrasqueira helpers ─────────────────────────────────────────────────
+  private churrasqueiraById(id: string): ChurrasqueiraSpec | undefined {
+    return this.churrasqueiras.find((c) => c.id === id);
+  }
+  private activeChurr(): ChurrasqueiraSpec | undefined {
+    const found = this.churrasqueiraById(this.meta.churrasqueiraId);
+    return found ?? this.churrasqueiras[0];
+  }
+  private activeEvo(): ChurrEvolutionSpec | undefined {
+    const ch = this.activeChurr();
+    if (!ch) return undefined;
+    const lv = this.meta.churrasqueiraLv[ch.id] ?? 1;
+    return ch.evolutions.find((e) => e.level === lv) ?? ch.evolutions[0];
+  }
+  private isChurrUnlocked(id: string): boolean {
+    const ch = this.churrasqueiraById(id);
+    if (!ch) return false;
+    if (this.meta.level < ch.unlockLevel) return false;
+    if (ch.unlockCostCoins > 0 && this.meta.coins < ch.unlockCostCoins) return false;
+    // embers cost ignored for lock check
+    return true;
+  }
+  private canAffordEvolve(): { affordable: boolean; cost: number; embers: number; next?: ChurrEvolutionSpec } {
+    const ch = this.activeChurr();
+    const evo = this.activeEvo();
+    if (!ch || !evo) return { affordable: false, cost: Infinity, embers: 0 };
+    const lv = this.meta.churrasqueiraLv[ch.id] ?? 1;
+    const next = ch.evolutions.find((e) => e.level === lv + 1);
+    if (!next) return { affordable: false, cost: Infinity, embers: 0, next: undefined };
+    const aff = this.meta.coins >= next.costCoins && (next.costEmbers ?? 0) <= this.meta.embers;
+    return { affordable: aff, cost: next.costCoins, embers: next.costEmbers ?? 0, next };
+  }
+  private nextChurrasqueiraToUnlock(): ChurrasqueiraSpec | undefined {
+    const ownedIdx = this.activeChurr()?.index ?? -1;
+    for (const ch of [...this.churrasqueiras].sort((a,b)=>a.index-b.index)) {
+      if (ch.index <= ownedIdx) continue;
+      if (this.meta.level >= ch.unlockLevel) return ch;
+    }
+    // next locked
+    return [...this.churrasqueiras].sort((a,b)=>a.index-b.index).find((c)=> c.index > ownedIdx);
+  }
+  private applyChurrasqueiraToSim(): void {
+    const ch = this.activeChurr();
+    const evo = this.activeEvo();
+    if (!ch || !evo) return;
+    // Override derived stats and zones
+    this.sim.grill.stats.zoneCount = evo.zoneCount;
+    this.sim.grill.stats.slotsPerZone = evo.slotsPerZone;
+    // charcoal bonus is multiplicative on base duration
+    this.sim.grill.stats.charcoalDurationSec = this.db.grill.charcoal.baseDurationSec * (1 + (evo.charcoalDurationBonus ?? 0));
+    // small tip/xp bonuses from evolutions (stack on top of derived)
+    const tipBonus = (evo.extraTipBonus ?? 0);
+    const xpBonus = (evo.extraXpBonus ?? 0);
+    if (tipBonus) this.sim.grill.stats.tipMult += tipBonus;
+    if (xpBonus) this.sim.grill.stats.xpMult += xpBonus;
+    // Recreate zones with heat distribution based on heatBase
+    const zones: { index: number; heat: number; items: FoodRuntime[] }[] = [];
+    for (let i = 0; i < evo.zoneCount; i++) {
+      let heat = evo.heatBase;
+      // spread heat across zones: linear ramp up to +0.6 for top zone when multi-zone
+      if (evo.zoneCount > 1) {
+        const ramp = (i / (evo.zoneCount - 1)) * 0.85;
+        heat += ramp;
+      }
+      zones.push({ index: i, heat, items: [] });
+    }
+    (this.sim.grill as any).zones = zones;
+  }
+
   private requestNextLevel(): void {
     const lvl = this.levels[this.levelIndex] ?? this.levels[this.levels.length - 1]!;
     this.sim = new TurnSimulation(
@@ -294,7 +421,11 @@ class Game {
       },
       20260917 + this.levelIndex
     );
+    // Apply churrasqueira progression (overrides restaurant grill)
+    this.applyChurrasqueiraToSim();
     const restaurant = this.db.restaurantByIndex.get(lvl.restaurantIndex)!;
+    const chName = this.activeChurr() ? this.l10n.t(this.activeChurr()!.nameKey) : '';
+    const evoShort = this.activeEvo()?.shortName ?? '';
     // FTUE: only show 1 ingredient at first
     if (!this.meta.ftueDone) {
       this.unlocked = this.db.ingredients.items.filter(i => i.id === 'linguica_toscana');
@@ -305,7 +436,7 @@ class Game {
     }
     this.screen = 'play';
     this.bgCache = null;
-    this.banner(`${this.l10n.t(restaurant.nameKey).toUpperCase()} · ${lvl.id}`);
+    this.banner(`${chName ? chName.toUpperCase() + ' · ' : ''}${lvl.id}${evoShort ? ' · ' + evoShort : ''}`);
     this.ftueHandT = 0;
   }
 
@@ -448,11 +579,24 @@ class Game {
     this.meta.bestCombo = Math.max(this.meta.bestCombo, r.counters.bestCombo);
     this.meta.turnsPlayed++;
     // level up check
+    let leveledUp = false;
     while (levelProgress(this.meta.xp, this.meta.level) >= 1) {
       this.meta.xp -= xpForLevel(this.meta.level);
       this.meta.level++;
+      leveledUp = true;
       this.confettiBurst(W/2, 200, 30);
       audio.play('levelUp');
+    }
+    // churrasqueira unlock notification on level up (1F → 2F → 3F → Fornalha)
+    if (leveledUp && this.churrasqueiras.length>0) {
+      const ownedIdx = this.activeChurr()?.index ?? -1;
+      const candidate = [...this.churrasqueiras].sort((a,b)=>a.index-b.index).find(c=> c.index>ownedIdx && this.meta.level >= c.unlockLevel);
+      if (candidate) {
+        // show banner next frame via banner stored? we set a hint for result screen
+        this.churrasqueiraHintT = 3.5; // used in drawResult to show card
+        // also bump coins a tiny gift for progression feel
+        this.banner(`${this.l10n.t(candidate.nameKey).toUpperCase()} desbloqueou!`);
+      }
     }
     // unlock next ingredient discovery after ftue
     if (!this.meta.ftueDone && r.counters.perfectCooks >= 1) {
@@ -702,10 +846,64 @@ class Game {
           }
           return;
         }
-        // Play button
+        // Play button — hero card
         if (this.hitHomePlay(p)) {
           audio.play('uiTap');
           this.requestNextLevel();
+          return;
+        }
+        // Churrasqueira showcase — 356..450
+        if (p.y > 350 && p.y < 458 && p.x > 12 && p.x < W-12) {
+          // CTA region is right side 76x30 at W-92, but tapping anywhere on card attempts action
+          const ch = this.activeChurr();
+          const evolveInfo = this.canAffordEvolve();
+          const atMax = !evolveInfo.next;
+          const nextCh = this.nextChurrasqueiraToUnlock();
+          // If at max, try to unlock next churrasqueira
+          if (atMax && nextCh && nextCh.id !== ch?.id) {
+            if (this.meta.level < nextCh.unlockLevel) {
+              audio.play('uiError');
+              this.float(W/2, 380, `Desbloqueia no nível ${nextCh.unlockLevel}`, C.ambar, 14);
+            } else {
+              const cost = nextCh.unlockCostCoins ?? 0;
+              if (this.meta.coins >= cost) {
+                this.meta.coins -= cost;
+                this.meta.churrasqueiraId = nextCh.id;
+                if (!this.meta.churrasqueiraLv[nextCh.id]) this.meta.churrasqueiraLv[nextCh.id]=1;
+                saveMeta(this.meta);
+                this.burst(p.x,p.y,18, C.ouroLight, 'confetti');
+                audio.play('levelUp');
+                const name = this.l10n.t(nextCh.nameKey);
+                this.float(W/2, 360, `Desbloqueou: ${name}!`, C.verdeClaro, 18);
+              } else {
+                audio.play('uiError');
+                this.float(W/2,380,`Falta ${(cost - this.meta.coins).toLocaleString(this.l10n.locale)} moedas`, C.telha, 14);
+              }
+            }
+          } else if (evolveInfo.next) {
+            if (evolveInfo.affordable) {
+              this.meta.coins -= evolveInfo.cost;
+              this.meta.embers -= evolveInfo.embers;
+              const cid = ch!.id;
+              this.meta.churrasqueiraLv[cid] = (this.meta.churrasqueiraLv[cid] ?? 1) + 1;
+              saveMeta(this.meta);
+              this.burst(p.x,p.y,16, (ch?.visual.color ?? C.ouroLight), 'spark');
+              audio.play('levelUp');
+              const nxt = evolveInfo.next!;
+              this.float(W/2, 380, `Evoluiu: ${nxt.shortName}!`, C.ouroLight, 18);
+              // tiny hint about fileiras if zoneCount increased
+              if (nxt.zoneCount > (this.activeEvo()?.zoneCount ?? 1)) {
+                setTimeout(()=> this.float(W/2, 400, `+1 fileira desbloqueada!`, C.verdeClaro, 14), 400);
+              }
+            } else {
+              audio.play('uiError');
+              if (this.meta.coins < evolveInfo.cost) this.float(W/2,380, `Moedas insuficientes`, C.telha, 14);
+              else this.float(W/2,380, `Falta ${evolveInfo.embers} brasas`, C.telha, 14);
+            }
+          } else {
+            audio.play('uiTap');
+            this.float(W/2,380, `No limite — pronta para a próxima churrasqueira!`, C.perola, 13);
+          }
           return;
         }
         // Daily strip
@@ -714,15 +912,15 @@ class Game {
           audio.play('uiTap');
           return;
         }
-        // Bonus card (drawn at 592,68)
-        if (this.meta.bonusReady && p.y > 585 && p.y < 670 && p.x > 12 && p.x < W-12) {
+        // Bonus card (drawn at 608,68 — overlaps event when active)
+        if (this.meta.bonusReady && p.y > 600 && p.y < 680 && p.x > 12 && p.x < W-12) {
           audio.play('uiTap');
           if (this.meta.bonusReady === 'frenzy') this.startFrenzy();
           else if (this.meta.bonusReady === 'wheel') this.startWheel();
           else if (this.meta.bonusReady === 'chef') this.startFrenzy();
           return;
         }
-        // Upgrade quick-buy
+        // Upgrade quick-buy — shifted to 460
         const upg = this.hitHomeUpgrade(p);
         if (upg) {
           const cost = this.upgradeCost(upg);
@@ -738,8 +936,8 @@ class Game {
           }
           return;
         }
-        // Collection teaser -> switch to collection tab
-        if (p.y > 430 && p.y < 510 && p.x > 12 && p.x < W-12) {
+        // Collection teaser -> switch to collection tab — now 528..598
+        if (p.y > 520 && p.y < 600 && p.x > 12 && p.x < W-12) {
           if (p.x < W/2) { this.homeTab = 'collection'; } else { this.homeTab = 'missions'; }
           audio.play('uiTap');
           return;
@@ -819,7 +1017,7 @@ class Game {
       // PLAY screen interactions below
       // P0: pular tutorial — top-direito após 3s (liberdade)
       if (!this.meta.ftueDone && this.now > 3 && p.x > W-44 && p.y < 46) {
-        this.meta.ftueDone = true; this.meta.ftueStep = 99; this.saveMeta();
+        this.meta.ftueDone = true; this.meta.ftueStep = 99; saveMeta(this.meta);
         audio.play('uiBack'); this.float(W/2, H/2, 'Tutorial pulado', C.creme, 14);
         return;
       }
@@ -928,11 +1126,11 @@ class Game {
     return tabs[idx] ?? null;
   }
   private hitHomePlay(p: {x:number;y:number}): boolean {
-    return p.x > 24 && p.x < W-24 && p.y > 280 && p.y < 352;
+    return p.x > 24 && p.x < W-24 && p.y > 272 && p.y < 348;
   }
   private hitHomeUpgrade(p: {x:number;y:number}): string | null {
-    // upgrade teaser at y ~360-420, two cards
-    if (p.y < 360 || p.y > 422) return null;
+    // upgrade teaser now at 460-512 after churrasqueira showcase (2 cards)
+    if (p.y < 458 || p.y > 518) return null;
     if (p.x > 14 && p.x < W/2 - 6) return 'grill_size';
     if (p.x > W/2 + 6 && p.x < W - 14) return 'grill_heat';
     return null;
@@ -1277,30 +1475,40 @@ class Game {
       return;
     }
 
-    // CTA Play card — hero (only on Início)
+    // CTA Play card — hero (only on Início) — now shows churrasqueira atual
     const cardY=272;
-    const cardH=86;
+    const cardH=76;
     panel(ctx,12,cardY,W-24,cardH,{r:22, top:'rgba(58,42,30,0.98)', bottom:'rgba(24,16,10,0.98)', border:'rgba(255,214,160,0.28)', borderWidth:1.5, shadow:20, glowTop:'rgba(255,220,160,0.22)'});
-    // accent bar
+    // accent bar — color from churrasqueira
+    const chAccent = this.activeChurr()?.visual.color ?? C.chama;
     const acc=ctx.createLinearGradient(12,cardY+14, W-12, cardY+14);
-    acc.addColorStop(0,'rgba(224,86,31,0)'); acc.addColorStop(0.5,C.chama); acc.addColorStop(1,'rgba(224,86,31,0)');
+    acc.addColorStop(0,'rgba(224,86,31,0)'); acc.addColorStop(0.5,chAccent); acc.addColorStop(1,'rgba(224,86,31,0)');
     ctx.fillStyle=acc; ctx.fillRect(32, cardY+14, W-64, 2);
-    // restaurant icon placeholder & text
-    const restaurant = this.db.restaurantByIndex.get(0)!;
     const lvl = this.levels[this.levelIndex] ?? this.levels[0]!;
+    const actCh = this.activeChurr();
+    const actEvo = this.activeEvo();
     ctx.textAlign='left'; ctx.textBaseline='middle';
-    ctx.font=font(10,800,UI); ctx.fillStyle='rgba(244,231,211,0.6)';
-    ctx.fillText(this.l10n.t(restaurant.nameKey).toUpperCase(), 28, cardY+30);
-    outlinedText(ctx, lvl.id.toUpperCase(), 28, cardY+50, C.perola, 18, { outline:2, weight:900, align:'left' });
-    ctx.font=font(11,600,UI); ctx.fillStyle='rgba(244,231,211,0.55)';
-    ctx.fillText('Toque para cozinhar — turno de 90s · 2 pedidos',28, cardY+68);
+    if (actCh && actEvo) {
+      ctx.font=font(9,800,UI); ctx.fillStyle='rgba(244,231,211,0.62)';
+      ctx.fillText(`${this.l10n.t(actCh.nameKey).toUpperCase()} · ${actEvo.zoneCount} ${actEvo.zoneCount>1?'FILEIRAS':'FILEIRA'} · ${actEvo.slotsPerZone} cortes/fila`, 28, cardY+28);
+      outlinedText(ctx, `${lvl.id.toUpperCase()} · ${this.l10n.t(actCh.subtitleKey).toUpperCase()}`, 28, cardY+46, C.perola, 14, { outline:2, weight:900, align:'left' });
+      ctx.font=font(10,600,UI); ctx.fillStyle='rgba(244,231,211,0.55)';
+      ctx.fillText(actEvo.shortName + ' · Toque para cozinhar — 90s',28, cardY+62);
+    } else {
+      const restaurant = this.db.restaurantByIndex.get(0)!;
+      ctx.font=font(10,800,UI); ctx.fillStyle='rgba(244,231,211,0.6)';
+      ctx.fillText(this.l10n.t(restaurant.nameKey).toUpperCase(), 28, cardY+30);
+      outlinedText(ctx, lvl.id.toUpperCase(), 28, cardY+50, C.perola, 18, { outline:2, weight:900, align:'left' });
+      ctx.font=font(11,600,UI); ctx.fillStyle='rgba(244,231,211,0.55)';
+      ctx.fillText('Toque para cozinhar — turno de 90s · 2 pedidos',28, cardY+68);
+    }
     // play button on card right
-    premiumButton(ctx, W-114, cardY+22, 88, 44, { variant:'primary' });
-    outlinedText(ctx,'JOGAR', W-70, cardY+44, C.perola, 16, { outline:2, weight:900 });
+    premiumButton(ctx, W-114, cardY+18, 88, 42, { variant:'primary' });
+    outlinedText(ctx,'JOGAR', W-70, cardY+39, C.perola, 16, { outline:2, weight:900 });
     // xp progress small inside card bottom
     const need = xpForLevel(this.meta.level);
     const prog = levelProgress(this.meta.xp, this.meta.level);
-    const barX=28, barY=cardY+74, barW=W-56, barH=6;
+    const barX=28, barY=cardY+66, barW=W-56, barH=5;
     roundRectPath(ctx,barX,barY,barW,barH,barH/2); ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.fill();
     if (prog>0) {
       roundRectPath(ctx,barX,barY,Math.max(barH,barW*prog),barH,barH/2);
@@ -1309,8 +1517,164 @@ class Game {
       ctx.fillStyle=g; ctx.fill();
     }
 
-    // Upgrade teaser (2 cards)
-    const uy=370;
+    // ── Churrasqueira showcase card ───────────────────────────────────────
+    // This is the primary progression UX: 1 fileira → 2 → 3 → Fornalha
+    const showcaseY = 356;
+    const showcaseH = 94;
+    const showcaseActCh = this.activeChurr();
+    const showcaseActEvo = this.activeEvo();
+    const nextAvail = this.nextChurrasqueiraToUnlock();
+    const evolveInfo = this.canAffordEvolve();
+    // Card background uses churrasqueira color tint
+    const tint = showcaseActCh?.visual.color ?? '#8A5A33';
+    panel(ctx,12,showcaseY,W-24,showcaseH,{r:18, top:'rgba(58,42,30,0.98)', bottom:'rgba(28,18,12,0.98)', border: tint, borderWidth:1.6, shadow:16, innerGlow:true, glowTop:'rgba(255,220,160,0.18)'});
+    // left preview thumbnail (mini grill)
+    const thumbX = 24, thumbY = showcaseY+14, thumbW = 72, thumbH = 66;
+    // thumbnail bg
+    roundRectPath(ctx,thumbX,thumbY,thumbW,thumbH,12); ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.fill();
+    ctx.save(); roundRectPath(ctx,thumbX,thumbY,thumbW,thumbH,12); ctx.clip();
+    // draw miniature grill based on style
+    const style = showcaseActCh?.visual.style ?? 'lata';
+    // subtle gradient for thumb
+    const tg = ctx.createLinearGradient(thumbX,thumbY,thumbX,thumbY+thumbH);
+    if (style === 'lata') { tg.addColorStop(0,'#7A4A2E'); tg.addColorStop(1,'#4B2A18'); }
+    else if (style === 'chapa') { tg.addColorStop(0,'#5A5E62'); tg.addColorStop(1,'#2A2E33'); }
+    else if (style === 'inox') { tg.addColorStop(0,'#D8E2E8'); tg.addColorStop(1,'#8FA0AF'); }
+    else { tg.addColorStop(0,'#8B5A2B'); tg.addColorStop(1,'#3A2510'); }
+    ctx.fillStyle=tg; ctx.fillRect(thumbX,thumbY,thumbW,thumbH);
+    // fileiras lines inside thumb
+    const evoForThumb = showcaseActEvo;
+    if (evoForThumb) {
+      const fCount = evoForThumb.zoneCount;
+      for(let i=0;i<fCount;i++){
+        const y = thumbY + 10 + (thumbH-20) * (i / Math.max(1,fCount-1)) * (fCount>1?1:0) + (fCount===1? (thumbH/2-4):0);
+        const hh = fCount===1? 26 : (thumbH-20)/fCount - 4;
+        const gyThumb = fCount===1 ? thumbY + thumbH/2 - hh/2 : thumbY+10 + i*((thumbH-20)/fCount);
+        // ember glow
+        ctx.fillStyle = i===fCount-1 || fCount===1 ? 'rgba(255,120,40,0.85)' : i===1 ? 'rgba(255,180,80,0.55)' : 'rgba(210,90,30,0.45)';
+        roundRectPath(ctx,thumbX+8,gyThumb,thumbW-16,hh,4); ctx.fill();
+        // grate lines
+        ctx.strokeStyle='rgba(0,0,0,0.35)'; ctx.lineWidth=1;
+        for(let gx=thumbX+12; gx<thumbX+thumbW-12; gx+=8){ ctx.beginPath(); ctx.moveTo(gx,gyThumb+2); ctx.lineTo(gx,gyThumb+hh-2); ctx.stroke(); }
+        // label zone
+        if (fCount>1){
+          ctx.font=font(7,800,UI); ctx.fillStyle='rgba(0,0,0,0.55)'; ctx.textAlign='center';
+          const labels=['BAIXA','MÉDIA','ALTA']; ctx.fillText(labels[i] ?? `F${i+1}`, thumbX+thumbW/2, gyThumb+hh/2+2);
+        }
+      }
+    }
+    // chimney or not
+    if (showcaseActCh?.visual.chimney){
+      ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.fillRect(thumbX+thumbW-18, thumbY-2, 10, 8);
+      ctx.fillStyle='#8B7A62'; roundRectPath(ctx,thumbX+thumbW-18,thumbY-6,10,8,2); ctx.fill();
+      // smoke puff
+      ctx.fillStyle='rgba(220,210,195,0.22)'; ctx.beginPath(); ctx.arc(thumbX+thumbW-13, thumbY-10, 4+Math.sin(this.now*2)*1,0,Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+    ctx.strokeStyle='rgba(255,214,160,0.16)'; ctx.lineWidth=1; roundRectPath(ctx,thumbX,thumbY,thumbW,thumbH,12); ctx.stroke();
+    // texts next to thumb
+    const tx = thumbX+thumbW+12;
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.font=font(8,800,UI); ctx.fillStyle='rgba(244,231,211,0.6)';
+    ctx.fillText('CHURRASQUEIRA', tx, showcaseY+24);
+    // tier badge
+    if (showcaseActCh){
+      const tierLabel = { quintal:'QUINTAL', comercial:'COMERCIAL', chef:'CHEF', fornalha:'FORNALHA' }[showcaseActCh.tier] ?? showcaseActCh.tier.toUpperCase();
+      const badgeW = tierLabel.length*6+10;
+      glass(ctx, tx+82, showcaseY+14, badgeW, 14, { alpha:0.18, border: tint });
+      ctx.font=font(7,900,UI); ctx.textAlign='center'; ctx.fillStyle=tint; ctx.fillText(tierLabel, tx+82+badgeW/2, showcaseY+23);
+      ctx.textAlign='left';
+    }
+    if (showcaseActCh && showcaseActEvo){
+      ctx.font=font(12,900,UI); ctx.fillStyle=C.perola;
+      const short = showcaseActEvo.shortName;
+      const name = this.l10n.t(showcaseActCh.nameKey);
+      ctx.fillText(`${name} — ${short}`, tx, showcaseY+42);
+      ctx.font=font(10,600,UI); ctx.fillStyle='rgba(244,231,211,0.58)';
+      const fileiraTxt = showcaseActEvo.zoneCount===1 ? '1 fileira só' : `${showcaseActEvo.zoneCount} fileiras`;
+      ctx.fillText(`${fileiraTxt} · ${showcaseActEvo.slotsPerZone}/fila · ${this.l10n.t(this.activeChurr()!.descKey).slice(0,32)}`, tx, showcaseY+56);
+      // evolution dots + progress
+      const evoIdx = (this.meta.churrasqueiraLv[showcaseActCh.id] ?? 1) - 1;
+      for(let i=0;i<3;i++){
+        const cx = tx + i*16, cy = showcaseY+70;
+        const done = i < evoIdx;
+        const cur = i === evoIdx;
+        ctx.fillStyle = done ? C.ouroLight : cur ? tint : 'rgba(255,255,255,0.14)';
+        ctx.beginPath(); ctx.arc(cx,cy,6,0,Math.PI*2); ctx.fill();
+        if (done || cur) { ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.font=font(7,900,UI); ctx.textAlign='center'; ctx.fillText(done?'✓':'●',cx,cy+2); ctx.textAlign='left'; }
+        if (cur){ ctx.strokeStyle=tint; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(cx,cy,8,0,Math.PI*2); ctx.stroke(); }
+        if (i<2){
+          ctx.strokeStyle='rgba(255,255,255,0.12)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(cx+7,cy); ctx.lineTo(cx+9,cy); ctx.stroke();
+        }
+      }
+      ctx.font=font(8,700,UI); ctx.fillStyle='rgba(244,231,211,0.5)';
+      ctx.fillText(`Evolução ${evoIdx+1}/3`, tx+52, showcaseY+73);
+    }
+    // CTA on right side of showcase
+    const ctaX = W-92, ctaY = showcaseY+22, ctaW = 76, ctaH = 30;
+    const canEvolveNow = evolveInfo.next && evolveInfo.affordable;
+    const atMax = !evolveInfo.next;
+    // decide label
+    let ctaLabel = '', ctaSub = '', ctaVariant: 'primary'|'gold'|'ghost' = 'primary';
+    let ctaEnabled = false;
+    if (atMax) {
+      // check if next churrasqueira unlockable
+      if (nextAvail && this.meta.level >= nextAvail.unlockLevel && nextAvail.id !== showcaseActCh!.id) {
+        // show unlock next churrasqueira
+        ctaLabel = 'DESBLOQUEAR';
+        ctaSub = nextAvail ? this.l10n.t(nextAvail.nameKey).slice(0,12) : '';
+        ctaVariant = 'gold';
+        ctaEnabled = this.meta.coins >= (nextAvail.unlockCostCoins ?? 0);
+      } else if (nextAvail && this.meta.level < nextAvail.unlockLevel) {
+        ctaLabel = 'BLOQUEADA';
+        ctaSub = `Nv ${nextAvail.unlockLevel}`;
+        ctaVariant = 'ghost';
+      } else {
+        ctaLabel = 'NO LIMITE';
+        ctaSub = '★ MAX';
+        ctaVariant = 'ghost';
+      }
+    } else if (evolveInfo.next) {
+      ctaLabel = 'EVOLUIR';
+      ctaSub = `${evolveInfo.cost.toLocaleString(this.l10n.locale)}`;
+      ctaVariant = canEvolveNow ? 'primary' : 'ghost';
+      ctaEnabled = evolveInfo.affordable;
+    }
+    // draw button bg as panel-like
+    if (ctaVariant==='primary') {
+      premiumButton(ctx, ctaX, ctaY, ctaW, ctaH, { variant:'primary' });
+    } else if (ctaVariant==='gold') {
+      premiumButton(ctx, ctaX, ctaY, ctaW, ctaH, { variant:'gold' });
+    } else {
+      panel(ctx, ctaX, ctaY, ctaW, ctaH, { r:12, top:'rgba(44,32,24,0.9)', bottom:'rgba(22,15,10,0.9)', border:'rgba(255,214,160,0.14)', borderWidth:1, shadow:6 });
+      ctx.fillStyle='rgba(244,231,211,0.45)'; ctx.textAlign='center'; ctx.font=font(7,700,UI); ctx.fillText(ctaSub, ctaX+ctaW/2, ctaY+21);
+    }
+    ctx.textAlign='center';
+    if (ctaVariant!=='ghost'){
+      ctx.font=font(9,900,UI); ctx.fillStyle=C.perola; ctx.fillText(ctaLabel, ctaX+ctaW/2, ctaY+13);
+      if (ctaSub) { ctx.font=font(8,700,UI); ctx.fillStyle= canEvolveNow || ctaVariant==='gold' ? C.ouroLight : 'rgba(244,231,211,0.5)'; ctx.fillText(ctaVariant==='gold'? ctaSub : `${ctaSub}`, ctaX+ctaW/2, ctaY+22); }
+    } else {
+      ctx.font=font(8,900,UI); ctx.fillStyle='rgba(244,231,211,0.55)'; ctx.fillText(ctaLabel, ctaX+ctaW/2, ctaY+12);
+    }
+    // tiny hint below CTA: if affordable pulse
+    if (canEvolveNow) {
+      const pulse = 0.5+0.5*Math.sin(this.now*3.5);
+      ctx.globalAlpha=0.5+0.3*pulse; ctx.fillStyle=C.ouro; ctx.beginPath(); ctx.arc(ctaX+ctaW-6, ctaY+6, 4,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+    }
+    // secondary hint if next churrasqueira locked by level
+    if (atMax && nextAvail && this.meta.level < nextAvail.unlockLevel){
+      ctx.font=font(8,600,UI); ctx.fillStyle='rgba(244,231,211,0.42)'; ctx.textAlign='center';
+      ctx.fillText(`Libera no nível ${nextAvail.unlockLevel}`, ctaX+ctaW/2, ctaY+42);
+    } else if (!atMax && evolveInfo.next && !canEvolveNow){
+      ctx.font=font(8,600,UI); ctx.fillStyle='rgba(244,231,211,0.42)'; ctx.textAlign='center';
+      ctx.fillText(`Falta ${(evolveInfo.cost - this.meta.coins).toLocaleString(this.l10n.locale)}`, ctaX+ctaW/2, ctaY+42);
+    }
+    // hint line under showcase
+    ctx.font=font(9,600,UI); ctx.textAlign='center'; ctx.fillStyle='rgba(244,231,211,0.42)';
+    ctx.fillText(showcaseActCh?.visual.style==='lata' ? 'Comece com 1 fileira — menos é mais no fogo baixo' : 'Cada fileira é um fogo diferente — arraste para o ponto certo', W/2, showcaseY+showcaseH+10);
+
+    // Upgrade teaser (2 cards) — now below showcase, compact
+    const uy=460;
     const cardW=(W-36)/2;
     for (const [idx,id] of (['grill_size','grill_heat'] as const).entries()) {
       const x=14+ idx*(cardW+8);
@@ -1318,13 +1682,13 @@ class Game {
       const lvlU=this.meta.upgrades[id] ?? 0;
       const cost=this.upgradeCost(id);
       const canAfford=this.meta.coins>=cost && lvlU < (track?.maxLevel ?? 99);
-      panel(ctx,x,uy,cardW,56,{r:16, top: canAfford? 'rgba(70,52,28,0.98)':'rgba(44,32,24,0.92)', bottom: canAfford? 'rgba(38,26,14,0.98)':'rgba(22,15,10,0.92)', border: canAfford? C.ouro : 'rgba(255,214,160,0.16)', borderWidth: canAfford?1.5:1, shadow:10, innerGlow:true});
+      panel(ctx,x,uy,cardW,52,{r:16, top: canAfford? 'rgba(70,52,28,0.98)':'rgba(44,32,24,0.92)', bottom: canAfford? 'rgba(38,26,14,0.98)':'rgba(22,15,10,0.92)', border: canAfford? C.ouro : 'rgba(255,214,160,0.16)', borderWidth: canAfford?1.5:1, shadow:10, innerGlow:true});
       if (canAfford) {
         ctx.fillStyle='rgba(231,194,74,0.12)';
-        roundRectPath(ctx,x,uy,cardW,56,16); ctx.fill();
+        roundRectPath(ctx,x,uy,cardW,52,16); ctx.fill();
       }
       // icon — vector
-      ctx.save(); ctx.translate(x+22, uy+28);
+      ctx.save(); ctx.translate(x+22, uy+26);
       ctx.fillStyle= canAfford? C.ouroLight : C.madeiraPinho;
       ctx.beginPath(); ctx.arc(0,0,14,0,Math.PI*2); ctx.fill();
       if(idx===0) flameIcon(ctx,0,1,8,true);
@@ -1337,11 +1701,11 @@ class Game {
       if(nm.length>16){ ctx.font=font(10,800,UI); ctx.fillText(nm.slice(0,16), x+40, uy+14); ctx.fillText(nm.slice(16,30), x+40, uy+22); }
       else { ctx.font=font(11,800,UI); ctx.fillText(nm, x+40, uy+18); }
       ctx.font=font(10,700,UI); ctx.fillStyle= canAfford? C.ouroLight : 'rgba(244,231,211,0.55)';
-      ctx.fillText(lvlU>= (track?.maxLevel ?? 99) ? 'MÁX' : `${cost.toLocaleString(this.l10n.locale)}`, x+40, uy+34);
+      ctx.fillText(lvlU>= (track?.maxLevel ?? 99) ? 'MÁX' : `${cost.toLocaleString(this.l10n.locale)}`, x+40, uy+32);
       if (canAfford) {
-        ctx.font=font(9,800,UI); ctx.fillStyle=C.ouroLight; ctx.fillText('COMPRAR →', x+40, uy+46);
+        ctx.font=font(9,800,UI); ctx.fillStyle=C.ouroLight; ctx.fillText('COMPRAR →', x+40, uy+44);
       } else {
-        ctx.font=font(9,600,UI); ctx.fillStyle='rgba(244,231,211,0.4)'; ctx.fillText(`Nv ${lvlU}/${track?.maxLevel ?? '?'}`, x+40, uy+46);
+        ctx.font=font(9,600,UI); ctx.fillStyle='rgba(244,231,211,0.4)'; ctx.fillText(`Nv ${lvlU}/${track?.maxLevel ?? '?'}`, x+40, uy+44);
       }
       if (canAfford) {
         // dot
@@ -1351,11 +1715,11 @@ class Game {
       }
     }
     // small hint
-    ctx.font=font(10,600,UI); ctx.textAlign='center'; ctx.fillStyle='rgba(244,231,211,0.45)';
-    ctx.fillText('Toque no card para melhorar — cada nível muda a churrasqueira',W/2, uy+64);
+    ctx.font=font(9,600,UI); ctx.textAlign='center'; ctx.fillStyle='rgba(244,231,211,0.4)';
+    ctx.fillText('Melhorias extras — a churrasqueira já cuida do fogo',W/2, uy+62);
 
-    // Collection + Missions grid (2 cards)
-    const gy=440;
+    // Collection + Missions grid (2 cards) — pushed down
+    const gy=528;
     // collection
     panel(ctx,14,gy,(W-36)/2,70,{r:18, top:'rgba(44,32,24,0.96)', bottom:'rgba(22,15,10,0.96)', border:'rgba(255,214,160,0.18)', shadow:10, innerGlow:true, glowTop:'rgba(255,220,170,0.16)'});
     ctx.textAlign='left';
@@ -1385,22 +1749,25 @@ class Game {
       ctx.fillStyle=g; ctx.fill();
     }
 
-    // Event banner (weekly)
-    panel(ctx,14,520,W-28,62,{r:18, top:'rgba(58,42,30,0.98)', bottom:'rgba(28,18,12,0.98)', border: C.brasa, borderWidth:1.5, shadow:14, innerGlow:true, glowTop:'rgba(224,86,31,0.2)'});
-    // live dot — P1 contraste WCAG (verdeClaro 3.1:1 → #A7D67A 5.2:1 + borda branca)
-    ctx.fillStyle='#A7D67A'; ctx.beginPath(); ctx.arc(30,536,6,0,Math.PI*2); ctx.fill();
-    ctx.strokeStyle='rgba(255,255,255,0.85)'; ctx.lineWidth=1.2; ctx.stroke();
-    ctx.shadowColor='#A7D67A'; ctx.shadowBlur=8; ctx.fillStyle='#A7D67A'; ctx.fill(); ctx.shadowBlur=0;
-    ctx.font=font(10,800,UI); ctx.fillStyle='#A7D67A'; ctx.textAlign='left'; ctx.fillText('AO VIVO',46,536);
-    ctx.font=font(8,700,UI); ctx.fillStyle='rgba(244,231,211,0.6)'; ctx.fillText('SEGUNDA DA LINGUIÇA · 1.5×',46,548);
-    ctx.font=font(13,900,DISPLAY); ctx.fillStyle=C.perola; ctx.fillText('Sirva 30 linguiças → ganhe Brasas!',26,572);
-    // rewards preview
-    glass(ctx,W-78,538,56,28,{ alpha:0.22, border:C.ouro });
-    coinIcon(ctx,W-66,552,9); ctx.font=font(12,900,UI); ctx.textAlign='left'; ctx.fillStyle=C.ouroLight; ctx.fillText('900',W-54,553);
+    // Event banner (weekly) — shifted down due to churrasqueira showcase; bonus takes priority
+    if (!this.meta.bonusReady) {
+      const ebY = 608;
+      panel(ctx,14,ebY,W-28,62,{r:18, top:'rgba(58,42,30,0.98)', bottom:'rgba(28,18,12,0.98)', border: C.brasa, borderWidth:1.5, shadow:14, innerGlow:true, glowTop:'rgba(224,86,31,0.2)'});
+      // live dot — P1 contraste WCAG (verdeClaro 3.1:1 → #A7D67A 5.2:1 + borda branca)
+      ctx.fillStyle='#A7D67A'; ctx.beginPath(); ctx.arc(30,ebY+16,6,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,0.85)'; ctx.lineWidth=1.2; ctx.stroke();
+      ctx.shadowColor='#A7D67A'; ctx.shadowBlur=8; ctx.fillStyle='#A7D67A'; ctx.fill(); ctx.shadowBlur=0;
+      ctx.font=font(10,800,UI); ctx.fillStyle='#A7D67A'; ctx.textAlign='left'; ctx.fillText('AO VIVO',46,ebY+16);
+      ctx.font=font(8,700,UI); ctx.fillStyle='rgba(244,231,211,0.6)'; ctx.fillText('SEGUNDA DA LINGUIÇA · 1.5×',46,ebY+28);
+      ctx.font=font(13,900,DISPLAY); ctx.fillStyle=C.perola; ctx.fillText('Sirva 30 linguiças → ganhe Brasas!',26,ebY+52);
+      // rewards preview
+      glass(ctx,W-78,ebY+18,56,28,{ alpha:0.22, border:C.ouro });
+      coinIcon(ctx,W-66,ebY+32,9); ctx.font=font(12,900,UI); ctx.textAlign='left'; ctx.fillStyle=C.ouroLight; ctx.fillText('900',W-54,ebY+33);
+    }
 
-    // Bonus card if ready
+    // Bonus card if ready — occupies event spot when active
     if (this.meta.bonusReady) {
-      const by=592;
+      const by = 608;
       const isFrenzy=this.meta.bonusReady==='frenzy';
       const isWheel=this.meta.bonusReady==='wheel';
       panel(ctx,14,by,W-28,68,{r:18, top: isFrenzy? 'rgba(76,42,18,0.98)' : 'rgba(44,32,56,0.98)', bottom: isFrenzy? 'rgba(40,18,6,0.98)':'rgba(20,14,28,0.98)', border: isFrenzy? C.chama : C.ouro, borderWidth:2, shadow:18, innerGlow:true});
@@ -1681,11 +2048,11 @@ class Game {
     ctx.font=font(14,900,DISPLAY); ctx.textAlign='left'; ctx.fillStyle=C.ouroLight;
     ctx.shadowColor='rgba(0,0,0,0.5)'; ctx.shadowBlur=4; ctx.fillText(this.meta.coins.toLocaleString(loc),coinX+24,coinY); ctx.shadowBlur=0;
     ctx.font=font(8,700,UI); ctx.fillStyle='rgba(244,231,211,0.55)'; ctx.fillText(`XP ${this.meta.xp}/${xpForLevel(this.meta.level)}`,coinX+24,coinY+12);
-    // timer ring
+    // timer ring + churrasqueira badge below (shows 1F → 3F progression)
     const left=Math.max(0,sim.timeLeft);
     const frac=sim.timeLimit>0? clamp01(left/sim.timeLimit):0;
     const urgent=frac<0.25;
-    ctx.save(); ctx.translate(W/2,30);
+    ctx.save(); ctx.translate(W/2,24);
     if (urgent) {
       const gg=ctx.createRadialGradient(0,0,7,0,0,24);
       gg.addColorStop(0,`rgba(192,68,46,${0.3+Math.sin(this.now*8)*0.15})`); gg.addColorStop(1,'rgba(192,68,46,0)');
@@ -1696,7 +2063,18 @@ class Game {
     ctx.lineWidth=4.5; ctx.lineCap='round'; ctx.shadowColor=ctx.strokeStyle as string; ctx.shadowBlur=8;
     ctx.beginPath(); ctx.arc(0,0,14,-Math.PI/2,-Math.PI/2+Math.PI*2*frac); ctx.stroke(); ctx.shadowBlur=0;
     ctx.restore();
-    outlinedText(ctx, `${Math.floor(left/60)}:${String(Math.floor(left%60)).padStart(2,'0')}`,W/2,30, urgent? C.telha : C.perola,12,{outline:2, weight:800});
+    outlinedText(ctx, `${Math.floor(left/60)}:${String(Math.floor(left%60)).padStart(2,'0')}`,W/2,24, urgent? C.telha : C.perola,12,{outline:2, weight:800});
+    // churrasqueira badge under timer — crucial feedback da progressão
+    const chHud = this.activeChurr();
+    const evoHud = this.activeEvo();
+    if (chHud && evoHud) {
+      const tierLbl = { lata:'LATA', chapa:'CHAPA', inox:'INOX', fornalha:'FORNALHA', brick:'TIJOLO' }[chHud.visual.style] ?? chHud.tier.slice(0,5).toUpperCase();
+      const txt = `${tierLbl} · ${evoHud.zoneCount}F ${evoHud.slotsPerZone}/fila`;
+      const tw = txt.length*5.2 + 14;
+      glass(ctx, W/2 - tw/2, 36, tw, 14, { alpha:0.18, border: chHud.visual.color });
+      ctx.font=font(7,800,UI); ctx.textAlign='center'; ctx.fillStyle= chHud.visual.color;
+      ctx.fillText(txt, W/2, 44);
+    }
     // combo / perfects
     if (sim.combo>1) {
       const pop=1+this.comboPulse*0.3;
@@ -1772,33 +2150,88 @@ class Game {
   }
 
   private drawChurrasqueira(ctx: CanvasRenderingContext2D, heroMode=false): void {
+    const act = !heroMode ? this.activeChurr() : (this.churrasqueiras[0] ?? this.activeChurr());
+    const style = act?.visual.style ?? 'brick';
+    const accent = act?.visual.color ?? '#8A5A33';
     const cx=W/2;
-    const overallW= heroMode? 320 : GRILL_BODY_W+28;
+    // lata is narrower, fornalha XL is wider
+    let overallW = heroMode? 320 : GRILL_BODY_W+28;
+    if (!heroMode) {
+      if (style==='lata') overallW = GRILL_BODY_W - 18;
+      else if (style==='fornalha') overallW = GRILL_BODY_W + 36;
+      else if (style==='inox') overallW = GRILL_BODY_W + 10;
+    }
     const overallX=cx-overallW/2;
     const topY= heroMode? 260 : GRILL_TOP-CHIMNEY_H-12;
     const baseY= heroMode? 470 : GRILL_BOTTOM+72;
     ctx.save();
     ctx.fillStyle='rgba(0,0,0,0.55)'; ctx.beginPath(); ctx.ellipse(cx,baseY+8,overallW*0.55,18,0,0,Math.PI*2); ctx.fill();
     const chimX=overallX+22; const chimY=topY;
-    ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.fillRect(chimX+4,chimY+4,CHIMNEY_W,CHIMNEY_H+8);
-    drawBrickwork(ctx,chimX,chimY,CHIMNEY_W,CHIMNEY_H,{brickH:12, lit:true});
-    const capG=ctx.createLinearGradient(0,chimY-8,0,chimY+6);
-    capG.addColorStop(0,'#D4C3A8'); capG.addColorStop(1,'#8B7A62');
-    ctx.fillStyle=capG; roundRectPath(ctx,chimX-6,chimY-8,CHIMNEY_W+12,10,3); ctx.fill();
-    if(!heroMode || this.screen==='title'){
-      for(let i=0;i<3;i++){
-        const t=(this.now*0.6+i*0.8)%3;
-        const sy=chimY-10-t*22; const sx=chimX+CHIMNEY_W/2+Math.sin(this.now+i)*6;
-        ctx.fillStyle=`rgba(220,210,195,${0.22*(1-t/3)})`;
-        ctx.beginPath(); ctx.arc(sx,sy,6+t*3,0,Math.PI*2); ctx.fill();
+    const hasChimney = act?.visual.chimney ?? (style!=='lata');
+    if (hasChimney) {
+      ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.fillRect(chimX+4,chimY+4,CHIMNEY_W,CHIMNEY_H+8);
+      if (style==='fornalha') {
+        // fornalha dragon: darker brick taller
+        drawBrickwork(ctx,chimX,chimY,CHIMNEY_W,CHIMNEY_H+10,{brickH:12, lit:true});
+        // dragon mans tail badge on chimney
+        ctx.fillStyle='rgba(30,16,10,0.85)'; ctx.beginPath(); ctx.arc(chimX+CHIMNEY_W+6, chimY+18, 8,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle=C.ouroLight; ctx.font=font(8,900,UI); ctx.textAlign='center'; ctx.fillText('♨',chimX+CHIMNEY_W+6,chimY+21);
+      } else if (style==='inox') {
+        // inox chimney metallic
+        const mg=ctx.createLinearGradient(chimX,0,chimX+CHIMNEY_W,0);
+        mg.addColorStop(0,'#A8B5BF'); mg.addColorStop(0.5,'#E6EEF4'); mg.addColorStop(1,'#7E8F9E');
+        ctx.fillStyle=mg; roundRectPath(ctx,chimX,chimY,CHIMNEY_W,CHIMNEY_H,4); ctx.fill();
+        ctx.strokeStyle='rgba(255,255,255,0.35)'; ctx.lineWidth=1; ctx.stroke();
+      } else {
+        drawBrickwork(ctx,chimX,chimY,CHIMNEY_W,CHIMNEY_H,{brickH:12, lit:true});
+      }
+      const capG=ctx.createLinearGradient(0,chimY-8,0,chimY+6);
+      capG.addColorStop(0,'#D4C3A8'); capG.addColorStop(1,'#8B7A62');
+      ctx.fillStyle=capG; roundRectPath(ctx,chimX-6,chimY-8,CHIMNEY_W+12,10,3); ctx.fill();
+      if(!heroMode || this.screen==='title'){
+        for(let i=0;i<3;i++){
+          const t=(this.now*0.6+i*0.8)%3;
+          const sy=chimY-10-t*22; const sx=chimX+CHIMNEY_W/2+Math.sin(this.now+i)*6;
+          ctx.fillStyle=`rgba(220,210,195,${0.22*(1-t/3)})`;
+          ctx.beginPath(); ctx.arc(sx,sy,6+t*3,0,Math.PI*2); ctx.fill();
+        }
+      }
+    } else {
+      // lata without chimney: small smoke from drum top
+      if(!heroMode || this.screen==='title'){
+        for(let i=0;i<2;i++){
+          const t=(this.now*0.7+i*0.9)%2.5;
+          const sy=(GRILL_TOP-22)-t*18; const sx=cx+Math.sin(this.now*1.2+i)*8;
+          ctx.fillStyle=`rgba(180,170,160,${0.18*(1-t/2.5)})`;
+          ctx.beginPath(); ctx.arc(sx,sy,5+t*2,0,Math.PI*2); ctx.fill();
+        }
       }
     }
     const counterH=COUNTER_H;
     const counterY= heroMode? 300 : GRILL_TOP-counterH;
-    const cG=ctx.createLinearGradient(0,counterY,0,counterY+counterH);
-    cG.addColorStop(0,'#5E4E42'); cG.addColorStop(0.4,'#3E322A'); cG.addColorStop(1,'#2A201A');
-    ctx.fillStyle=cG; roundRectPath(ctx,overallX-6,counterY,overallW+12,counterH,4); ctx.fill();
-    ctx.fillStyle='rgba(255,220,180,0.15)'; ctx.fillRect(overallX-4,counterY+1,overallW+8,2);
+    // counter material varies
+    if (style==='lata') {
+      const cG=ctx.createLinearGradient(0,counterY,0,counterY+counterH);
+      cG.addColorStop(0,'#8A6B4A'); cG.addColorStop(1,'#5A3D28');
+      ctx.fillStyle=cG; roundRectPath(ctx,overallX-6,counterY,overallW+12,counterH,4); ctx.fill();
+      // lata dent mark
+      ctx.fillStyle='rgba(0,0,0,0.18)'; ctx.beginPath(); ctx.ellipse(overallX+30,counterY+6,10,4,0.3,0,Math.PI*2); ctx.fill();
+    } else if (style==='inox') {
+      const cG=ctx.createLinearGradient(0,counterY,0,counterY+counterH);
+      cG.addColorStop(0,'#E8EEF2'); cG.addColorStop(0.5,'#BFCBD5'); cG.addColorStop(1,'#8E9EAD');
+      ctx.fillStyle=cG; roundRectPath(ctx,overallX-6,counterY,overallW+12,counterH,4); ctx.fill();
+      ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.fillRect(overallX+10,counterY+2,overallW-14,2);
+    } else if (style==='chapa') {
+      const cG=ctx.createLinearGradient(0,counterY,0,counterY+counterH);
+      cG.addColorStop(0,'#6B6F73'); cG.addColorStop(0.4,'#3A3E42'); cG.addColorStop(1,'#1E2226');
+      ctx.fillStyle=cG; roundRectPath(ctx,overallX-6,counterY,overallW+12,counterH,4); ctx.fill();
+      ctx.fillStyle='rgba(255,220,180,0.12)'; ctx.fillRect(overallX-4,counterY+1,overallW+8,2);
+    } else {
+      const cG=ctx.createLinearGradient(0,counterY,0,counterY+counterH);
+      cG.addColorStop(0,'#5E4E42'); cG.addColorStop(0.4,'#3E322A'); cG.addColorStop(1,'#2A201A');
+      ctx.fillStyle=cG; roundRectPath(ctx,overallX-6,counterY,overallW+12,counterH,4); ctx.fill();
+      ctx.fillStyle='rgba(255,220,180,0.15)'; ctx.fillRect(overallX-4,counterY+1,overallW+8,2);
+    }
     const fx=overallX+16; const fy=counterY+counterH; const fw=overallW-32; const fh= heroMode?120 : GRILL_BOTTOM-(counterY+counterH);
     ctx.fillStyle='#0A0503'; roundRectPath(ctx,fx,fy,fw,fh,8); ctx.fill();
     const intG=ctx.createLinearGradient(0,fy,0,fy+fh);
@@ -1831,20 +2264,72 @@ class Game {
       ctx.fillStyle='rgba(20,14,10,0.75)'; ctx.fillRect(fx+8,grateY-2,fw-16,2); ctx.fillRect(fx+8,grateY+fh*0.2,fw-16,2); ctx.restore();
       roundRectPath(ctx,fx+6,fy+6,fw-12,fh-12,6); ctx.strokeStyle='rgba(0,0,0,0.6)'; ctx.lineWidth=2; ctx.stroke();
     }
-    drawBrickwork(ctx,overallX,counterY,16,baseY-counterY,{brickH:16, lit:true});
-    drawBrickwork(ctx,overallX+overallW-16,counterY,16,baseY-counterY,{brickH:16, lit:true});
-    drawBrickwork(ctx,fx,fy-10,fw,12,{brickH:10, lit:true});
-    const skirtY=fy+fh;
-    drawBrickwork(ctx,fx-4,skirtY,fw+8,baseY-skirtY,{brickH:14, lit:false});
+    // base supports vary per style
+    if (style==='lata') {
+      // tripod rebar legs for lata — cheap, charmosa
+      ctx.strokeStyle='#3A2A1E'; ctx.lineWidth=4; ctx.lineCap='round';
+      const legTopY = counterY+8, legBotY = baseY+4;
+      for (const lx of [overallX+22, overallX+overallW-22, overallX+overallW/2]) {
+        // skip middle on 1 fileira to hint instability humor
+        const isMid = lx===overallX+overallW/2;
+        const offsetX = isMid && !heroMode ? 18 : 0;
+        ctx.beginPath(); ctx.moveTo(lx, legTopY); ctx.lineTo(lx+offsetX, legBotY); ctx.stroke();
+        // foot pad
+        ctx.fillStyle='#2A1A12'; ctx.beginPath(); ctx.ellipse(lx+offsetX, legBotY, 8,3,0,0,Math.PI*2); ctx.fill();
+      }
+      // lata badge: “LATA” stamp
+      ctx.fillStyle='rgba(255,255,255,0.08)'; ctx.font=font(8,900,UI); ctx.textAlign='center';
+      ctx.fillText('LATA 18L', cx, baseY-10);
+    } else if (style==='inox') {
+      // inox tubular legs, reflective
+      const legG = ctx.createLinearGradient(0,counterY,0,baseY);
+      legG.addColorStop(0,'#D0D8DF'); legG.addColorStop(0.5,'#A0ADB9'); legG.addColorStop(1,'#7A8795');
+      for (const lx of [overallX+18, overallX+overallW-18]) {
+        ctx.fillStyle=legG; roundRectPath(ctx,lx-6,counterY+6,12,baseY-counterY-2,4); ctx.fill();
+        ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.fillRect(lx-5,counterY+8,2, baseY-counterY-8);
+      }
+      // side shelf in inox
+      glass(ctx, overallX+overallW+2, counterY+18, 18, 40, { alpha:0.18, border:'rgba(200,210,220,0.45)' });
+    } else if (style==='chapa') {
+      // chapa commercial: metal frame + side table
+      ctx.fillStyle='#2A2E33'; roundRectPath(ctx,overallX,counterY,16,baseY-counterY,3); ctx.fill();
+      roundRectPath(ctx,overallX+overallW-16,counterY,16,baseY-counterY,3); ctx.fill();
+      ctx.fillStyle='#3D4247'; ctx.fillRect(overallX+overallW, counterY+14, 14, 10);
+      ctx.fillStyle='rgba(255,255,255,0.08)'; ctx.fillRect(overallX+overallW, counterY+24, 14, 2);
+      // heat badge
+      ctx.fillStyle=accent; ctx.font=font(7,900,UI); ctx.textAlign='center'; ctx.fillText('CHAPA', overallX+overallW+7, counterY+22);
+    } else {
+      // fornalha and classic brick
+      drawBrickwork(ctx,overallX,counterY,16,baseY-counterY,{brickH:16, lit:true});
+      drawBrickwork(ctx,overallX+overallW-16,counterY,16,baseY-counterY,{brickH:16, lit:true});
+      drawBrickwork(ctx,fx,fy-10,fw,12,{brickH:10, lit:true});
+      const skirtY=fy+fh;
+      drawBrickwork(ctx,fx-4,skirtY,fw+8,baseY-skirtY,{brickH:14, lit:false});
+    }
     const plinthG=ctx.createLinearGradient(0,baseY-10,0,baseY+6);
     plinthG.addColorStop(0,'#BDAA90'); plinthG.addColorStop(1,'#7A6853');
-    ctx.fillStyle=plinthG; roundRectPath(ctx,overallX-10,baseY-4,overallW+20,10,3); ctx.fill();
+    // lata has no plinth, inox has metallic plinth, others stone
+    if (style==='lata') {
+      ctx.fillStyle='rgba(0,0,0,0.25)'; roundRectPath(ctx,overallX-4,baseY-2,overallW+8,6,2); ctx.fill();
+    } else if (style==='inox') {
+      const mg=ctx.createLinearGradient(0,baseY-8,0,baseY+6);
+      mg.addColorStop(0,'#E8EEF2'); mg.addColorStop(1,'#8FA0B5');
+      ctx.fillStyle=mg; roundRectPath(ctx,overallX-10,baseY-4,overallW+20,10,4); ctx.fill();
+    } else {
+      ctx.fillStyle=plinthG; roundRectPath(ctx,overallX-10,baseY-4,overallW+20,10,3); ctx.fill();
+    }
     ctx.restore();
   }
 
   private drawGrill(ctx: CanvasRenderingContext2D): void {
     const n=this.zoneCount();
-    const overallW=GRILL_BODY_W+28;
+    // overallW matches style width when not hero
+    const actG = this.activeChurr();
+    const styleG = actG?.visual.style ?? 'brick';
+    let overallW=GRILL_BODY_W+28;
+    if (styleG==='lata') overallW = GRILL_BODY_W - 18;
+    else if (styleG==='fornalha') overallW = GRILL_BODY_W + 36;
+    else if (styleG==='inox') overallW = GRILL_BODY_W + 10;
     const overallX=W/2-overallW/2;
     const counterY=GRILL_TOP-14;
     const fx=overallX+16; const fy=counterY+14; const fw=overallW-32; const fh=GRILL_BOTTOM-fy;
@@ -1853,8 +2338,9 @@ class Game {
     const zoneH=fh/n;
     for(let z=0;z<n;z++){
       const y=fy+zoneH*z;
-      const zone=this.db.grill.zones[z]!;
-      const heat=zone.heatMultiplier*efficiency;
+      const simZone = (this.sim.grill.zones[z] ?? this.db.grill.zones[z]) as any;
+      const heat = (simZone?.heat ?? 1) * efficiency;
+      // label for each fileira — crucial for 1 vs 3 progression
       const zx=fx+6, zw=fw-12;
       // warm base fill so coals glow even when clipped
       ctx.save(); roundRectPath(ctx,zx,y+3,zw,zoneH-6,6); ctx.clip();
@@ -1898,7 +2384,19 @@ class Game {
       ctx.fillStyle='rgba(20,14,10,0.7)'; ctx.fillRect(zx+4,y+zoneH*0.25,zw-8,2); ctx.fillRect(zx+4,y+zoneH*0.7,zw-8,2);
       ctx.restore();
       roundRectPath(ctx,zx,y+2,zw,zoneH-4,6); ctx.strokeStyle='rgba(0,0,0,0.6)'; ctx.lineWidth=2; ctx.stroke();
-      for(let e=0;e<zone.embers;e++) flameIcon(ctx,overallX+8+e*12,y+zoneH-12,5,heat>0.9);
+      // zone label chips (1 fileira shows big “FOGO BAIXO”, 3 shows BAIXA/MÉDIA/ALTA)
+      const labels = n===1? ['FOGO BAIXO'] : n===2? ['BRASA BAIXA','BRASA ALTA'] : ['BAIXA','MÉDIA','ALTA'];
+      const lab = labels[z] ?? `F${z+1}`;
+      const labW = lab.length*6 + 14;
+      ctx.save();
+      glass(ctx, zx+8, y+6, labW, 14, { alpha:0.22, border: heat>1.1? C.chama : heat>0.85? C.ambar : 'rgba(255,220,160,0.28)' });
+      ctx.font=font(7,900,UI); ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillStyle= heat>1.1? C.chamaCore : heat>0.85? C.ambar : 'rgba(244,231,211,0.8)';
+      ctx.fillText(lab, zx+8+labW/2, y+13);
+      ctx.restore();
+      // small fire icons left
+      const dbZone = this.db.grill.zones[z] as any;
+      for(let e=0; e<(dbZone?.embers ?? 0); e++) flameIcon(ctx,overallX+8+e*12,y+zoneH-12,5,heat>0.9);
     }
     for(const f of this.sim.foods){
       if(!f.onGrill || f.served) continue;

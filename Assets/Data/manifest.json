@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-17T15:47:36.115Z",
+  "generatedAt": "2026-09-25T01:00:59.456Z",
   "source": "shared/data",
   "files": {
     "achievements.json": {
@@ -13,6 +13,10 @@
     "analytics.json": {
       "sha256": "e7b78c0aa4ad97a2b4c5bfdb8948f442b436ecdc408f1e988914b4218781db4a",
       "bytes": 9172
+    },
+    "churrasqueiras.json": {
+      "sha256": "dfd97e52e1cdf5955670baf516facc57b1e2ae6cbda65e76ebc6e5af248df404",
+      "bytes": 6442
     },
     "collection.json": {
       "sha256": "a1d97536f01cd9e5376c9323704f0a282df77190733cfb4aebd968d805f16cb0",
