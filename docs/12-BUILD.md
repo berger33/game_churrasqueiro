@@ -85,7 +85,8 @@ strict, but nothing invoked `tsc`.
     every generated table class binds its table losslessly, `GameData.Load` is clean, and
     `tools/golden/vectors.json` + `tools/golden/tutorial-vectors.json` agree to 1e-9.
     Vectors whose C# port does not exist yet (`EconomyRules.cs`, `TurnSimulation.cs`) are
-    listed as *not ported*, never silently passed. Needs the .NET 8 SDK: CI installs it
+    listed as *not ported*, never silently passed. On GitHub the report is also posted as a
+    check annotation on the PR. Needs the .NET 8 SDK: CI installs it
     (`actions/setup-dotnet`); a machine without one reports `SKIP`, CI never does.
 
 **Nightly** (`.github/workflows/nightly.yml`, 11:00 UTC / 08:00 BRT):
