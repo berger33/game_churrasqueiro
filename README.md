@@ -85,6 +85,7 @@ npm run proto             # design-verification prototype on http://0.0.0.0:5173
 | [20-AUDITORIA_PRIMEIRA_IMPRESSAO_UX.md](docs/20-AUDITORIA_PRIMEIRA_IMPRESSAO_UX.md) | First-impression / first-90-seconds UX audit (pt-BR) |
 | [21-5S_TEST_20.md](docs/21-5S_TEST_20.md) | Guided 5-second test, n=20 (pt-BR) |
 | [22-ARTE_2D_PLANO.md](docs/22-ARTE_2D_PLANO.md) | Professional 2D art plan: AI generation in batches of 10, cut-out pipeline, approval, integration (pt-BR) |
+| [23-PLANO_IMPLEMENTACAO.md](docs/23-PLANO_IMPLEMENTACAO.md) | Step-by-step implementation and improvement plan: phases, gates, progress log (pt-BR) |
 
 ## Current status
 
