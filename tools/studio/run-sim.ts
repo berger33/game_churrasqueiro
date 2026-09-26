@@ -392,7 +392,11 @@ export function checkTargets(
     const id = `unlock:${rid}`;
     const turn = report.turnsToUnlock[rid];
     if (turn === undefined) {
-      if (LONG_HORIZON_CHECKS.has(id) && horizon < raw[0]) {
+      // Banda que ainda não terminou quando o run acaba não é violação, é horizonte curto (o
+      // degrau pode cair no último turno da janela). Quem decide o
+      // "longo" aqui é a própria banda, não uma lista mantida à mão (conteúdo novo sumiria do gate
+      // com um FAIL injusto, ou ficava fora do gate sem ninguém perceber).
+      if (horizon < raw[1]) {
         checks.push(skipIfShort(id, 'not reached in this run'));
       } else {
         checks.push({ id, pass: false, detail: 'never unlocked during the simulated run' });
@@ -447,7 +451,7 @@ export function checkTargets(
       const id = `grill:${rid}`;
       const turn = report.turnsToUnlockGrill[rid];
       if (turn === undefined) {
-        if (horizon < raw[0]) {
+        if (horizon < raw[1]) {
           checks.push(skipIfShort(id, 'not reached in this run'));
         } else {
           checks.push({ id, pass: false, detail: 'never unlocked during the simulated run' });

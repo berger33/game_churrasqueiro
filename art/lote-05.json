@@ -1,0 +1,166 @@
+{
+  "_comment": "Lote 05 — reforço da maminha (o build-runtime só exporta comida inteira, ver docs/22 §6.5/§7.1) e escada de churrasqueiras sob o padrão único de perspectiva/leito (shared/data/grill.json → art). As grelhas entram medidas pela régua do jogo (tools/art/check-grill-geometry.mjs): a fornalha aprovada no lote 04 NÃO comporta as 9 vagas (faixas de 40 px para comida de 54 px) e é repintada aqui; as duas grelhas de aço recusadas no lote 04 são refeitas com guia derivado dos dados. Prompts e medições: art/prompts/lote-05.md.",
+  "batch": "lote-05",
+  "date": "2026-09-26",
+  "sourceDir": "art/source/lote-05",
+  "assets": [
+    {
+      "source": "food_maminha.png",
+      "mode": "grid",
+      "cols": 2,
+      "rows": 3,
+      "category": "food",
+      "subject": "maminha",
+      "label": "Maminha (reforço: a célula 6)",
+      "cells": [
+        "raw",
+        "rare",
+        "medium",
+        "well",
+        "burned",
+        "served"
+      ],
+      "states": [
+        "raw",
+        "rare",
+        "medium",
+        "well",
+        "burned"
+      ],
+      "out": "Assets/Art/Sprites/Food"
+    },
+    {
+      "source": "spr_grill_fornalha_dragao_manso_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "fornalha_dragao_manso",
+      "evo": 1,
+      "category": "grill",
+      "name": "spr_grill_fornalha_dragao_manso_evo1",
+      "label": "Fornalha e1 'Tijolo Refratário' 3×3",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "warn",
+        "note": "É a arte que o dono aprovou no lote 04 — e que a régua reprovou: faixas de 37–40 px para comida de 54 px, 9 pratos se sobreporiam entre as fileiras. Não foi repintada: foi conformada ×1,64 na vertical (boca 3,27:1 → 2,00:1, faixa 40 → 60 px, topo 0°). Julgar aqui é julgar o alongamento, não o desenho."
+      }
+    },
+    {
+      "source": "spr_grill_ze_da_esquina_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "ze_da_esquina",
+      "evo": 1,
+      "category": "grill",
+      "name": "spr_grill_ze_da_esquina_evo1",
+      "label": "Chapa e1 'Dois Corações' 2×2",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok",
+        "note": "Pintada no alvo: boca 2,77:1 contra 2,75:1 pedidos, sem conform (×1,008). Chapa de 4 vagas ok."
+      }
+    },
+    {
+      "source": "spr_grill_parrilla_chef_cisma_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "parrilla_chef_cisma",
+      "evo": 1,
+      "category": "grill",
+      "name": "spr_grill_parrilla_chef_cisma_evo1",
+      "label": "Inox e1 'Inox Brilhando' 3×2",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "warn",
+        "note": "O modelo entregou a boca em 2,24:1 (pedida 1,83:1) e o conform abriu as faixas em ×1,22; ficou 11,3° de topo, dentro do limite de 12°. É a mais arbitrada das três — se quiser, regenere."
+      }
+    }
+  ],
+  "compare": [
+    "spr_grill_lata_valente_evo1"
+  ],
+  "preview": {
+    "background": "bg_restaurant_espetinho_rua",
+    "grill": "spr_grill_fornalha_dragao_manso_evo1",
+    "onGrill": [
+      [
+        "spr_food_picanha_medium",
+        0.26,
+        0.17,
+        86
+      ],
+      [
+        "spr_food_contra_file_rare",
+        0.5,
+        0.17,
+        86
+      ],
+      [
+        "spr_food_linguica_toscana_medium",
+        0.74,
+        0.17,
+        86
+      ],
+      [
+        "spr_food_maminha_medium",
+        0.26,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_coracao_frango_medium",
+        0.5,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_asinha_frango_medium",
+        0.74,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_pao_de_alho_raw",
+        0.26,
+        0.83,
+        86
+      ],
+      [
+        "spr_food_queijo_coalho_medium",
+        0.5,
+        0.83,
+        86
+      ],
+      [
+        "spr_food_fraldinha_medium",
+        0.74,
+        0.83,
+        86
+      ]
+    ],
+    "benchItems": [
+      [
+        "spr_food_maminha_raw",
+        62
+      ],
+      [
+        "spr_food_contra_file_raw",
+        62
+      ],
+      [
+        "spr_food_pao_de_alho_raw",
+        62
+      ]
+    ],
+    "orders": [
+      [
+        "spr_char_customer_vizinho",
+        [
+          "spr_food_maminha_served",
+          "spr_food_pao_de_alho_served"
+        ],
+        0.8
+      ]
+    ],
+    "_note": "as 9 vagas da fornalha ocupadas ao tamanho real de comida (86 px) — é isto que o padrão garante"
+  }
+}

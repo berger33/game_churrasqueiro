@@ -1,7 +1,9 @@
 import { clamp } from './data.ts';
 import { Rng } from './rng.ts';
 import {
+  applyCharcoalTypeToStats,
   applyChurrasqueiraToStats,
+  charcoalRefillCost,
   createFood,
   createGrill,
   deriveStats,
@@ -70,6 +72,12 @@ export interface TurnConfig {
   /** Churrasqueira progression — overrides restaurant grill when present. */
   churrasqueiraId?: string;
   churrasqueiraLevel?: number;
+  /**
+   * Tipo de carvão equipado (`comum` / `vegetal` / `briquete`). Ausente ou sem
+   * correspondência = o jogo pré-escada: 1,00x de duração, 1,00x de temperatura e
+   * o `refillCostCoins` da tabela. É o que deixa os vetores dourados parados.
+   */
+  charcoalType?: string;
 }
 
 export interface TurnCounters {
@@ -84,6 +92,8 @@ export interface TurnCounters {
   flips: number;
   itemsCooked: number;
   charcoalRefills: number;
+  /** Moedas gastas em recarga de carvão durante o turno (dreno da bolsa do turno). */
+  charcoalSpend?: number;
   peakSimultaneousOrders: number;
   flawless: boolean;
 }
@@ -106,6 +116,8 @@ export interface TurnResult {
   stars: number;
   combo: number;
   counters: TurnCounters;
+  /** Moedas que o carvão comeu no turno; `applyTurnResult` lança como spend. */
+  charcoalSpend?: number;
   durationSec: number;
   failed: boolean;
   events: TurnEvent[];
@@ -158,6 +170,8 @@ export class TurnSimulation {
   combo = 0;
   coins = 0;
   xp = 0;
+  /** Ver `refillCharcoal`: soma do que o carvão custou neste turno. */
+  charcoalSpend = 0;
   private uid = 1;
   private nextSpawnCount = 0;
   private uidCounter = 1;
@@ -199,7 +213,9 @@ export class TurnSimulation {
         stats, db, config.churrasqueiraId, config.churrasqueiraLevel ?? 1, this.restaurant
       );
     }
-    this.stats = stats;
+    // O carvão por cima das duas camadas: é a única coisa que multiplica a brasa
+    // depois de grelha e restaurante já terem conversado (cooking.ts explica o porquê).
+    this.stats = applyCharcoalTypeToStats(stats, db, config.charcoalType);
     this.grill = createGrill(this.stats, db);
     if (config.churrasqueiraId) {
       patchGrillForChurrasqueira(this.grill, db, config.churrasqueiraId, config.churrasqueiraLevel ?? 1);
@@ -263,11 +279,26 @@ export class TurnSimulation {
     return ok;
   }
 
+  /**
+   * Recarrega a brasa. O preço do tipo sai da bolsa do próprio turno: se não
+   * houver moeda para pagar, a recarga sai do fundo de cozinha e é grátis — a
+   * escolha de carvão nunca trava o loop nem pune quem está quebrado (docs/23).
+   */
   refillCharcoal(): boolean {
     if (this.refillTimer > 0) return false;
+    const cost = charcoalRefillCost(this.db, this.config.charcoalType);
+    if (cost > 0 && this.coins >= cost) {
+      this.coins -= cost;
+      this.charcoalSpend += cost;
+    }
     this.refillTimer = this.db.grill.charcoal.refillTimeSec;
     this.grill.refilling = this.refillTimer;
     return true;
+  }
+
+  /** Preço da próxima recarga com o tipo atual (para HUD e política). */
+  get charcoalRefillCostCoins(): number {
+    return charcoalRefillCost(this.db, this.config.charcoalType);
   }
 
   serveDelayed(customer: CustomerRuntime, food: FoodRuntime, delaySec: number): void {
@@ -509,7 +540,8 @@ export class TurnSimulation {
       xp: this.xp,
       stars,
       combo: this.counters.bestCombo,
-      counters: { ...this.counters },
+      counters: { ...this.counters, ...(this.charcoalSpend ? { charcoalSpend: this.charcoalSpend } : {}) },
+      charcoalSpend: this.charcoalSpend,
       durationSec: this.time,
       failed: stars === 0 && this.counters.customersLost > served,
       events: this.events

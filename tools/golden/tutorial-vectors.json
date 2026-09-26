@@ -4,7 +4,7 @@
  "note": "FTUE vectors (tools/sim-core/src/tutorial.ts, analytics.ts) for TS <-> C# parity; replayed by tools/csharp/parity. Regenerate with `npm run gen-vectors`. Never edit by hand.",
  "dataVersions": {
   "tutorial": 1,
-  "analytics": 5,
+  "analytics": 6,
   "ingredients": 5
  },
  "epsilon": 1e-9,

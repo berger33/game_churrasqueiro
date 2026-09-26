@@ -9,7 +9,7 @@
     "noFakeScarcity": true,
     "noDisguisedAds": true,
     "restoreAlwaysAvailable": true,
-    "starterPackShownAfterTurns": 4,
+    "starterPackShownAfterTurns": 7,
     "starterPackShownAfterFirstUpgrade": true,
     "purchaseCooldownAfterAnyPurchaseHours": 24
   },
@@ -43,7 +43,7 @@
       "analyticsTier": "utility"
     },
     {
-      "id": "brasa.coins.small.v1",
+      "id": "brasa.embers.small.v1",
       "type": "consumable",
       "nameKey": "iap.embers.small.name",
       "descKey": "iap.embers.small.desc",
@@ -52,7 +52,7 @@
       "analyticsTier": "currency_small"
     },
     {
-      "id": "brasa.coins.medium.v1",
+      "id": "brasa.embers.medium.v1",
       "type": "consumable",
       "nameKey": "iap.embers.medium.name",
       "descKey": "iap.embers.medium.desc",
@@ -61,7 +61,7 @@
       "analyticsTier": "currency_medium"
     },
     {
-      "id": "brasa.coins.large.v1",
+      "id": "brasa.embers.large.v1",
       "type": "consumable",
       "nameKey": "iap.embers.large.name",
       "descKey": "iap.embers.large.desc",
@@ -89,9 +89,9 @@
     }
   ],
   "emberValueTableBRL": [
-    { "productId": "brasa.coins.small.v1", "brl": 4.9, "embers": 120 },
-    { "productId": "brasa.coins.medium.v1", "brl": 14.9, "embers": 400 },
-    { "productId": "brasa.coins.large.v1", "brl": 39.9, "embers": 1200 }
+    { "productId": "brasa.embers.small.v1", "brl": 4.9, "embers": 120 },
+    { "productId": "brasa.embers.medium.v1", "brl": 14.9, "embers": 400 },
+    { "productId": "brasa.embers.large.v1", "brl": 39.9, "embers": 1200 }
   ],
   "receiptValidation": {
     "mode": "google_play_billing_v7",

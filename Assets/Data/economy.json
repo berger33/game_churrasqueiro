@@ -57,28 +57,13 @@
     "_curvesNote": "levelUpCoins(level) = round(base * level^exponent). A geometric curve here was measured to pay 10.3M coins at level 47 (see docs/06-ECONOMY.md \"exponential blow-up\"); polynomial keeps level rewards in the same order of magnitude as turn income."
   },
   "idle": {
-    "coinsPerMinuteByRestaurant": [
-      0,
-      6,
-      16,
-      42,
-      96,
-      210,
-      430
-    ],
-    "xpPerMinuteByRestaurant": [
-      0,
-      0.4,
-      1.0,
-      2.4,
-      5.0,
-      9.0,
-      16.0
-    ],
+    "coinsPerMinuteByRestaurant": [0, 6, 16, 42, 96, 170, 180, 186, 192, 198],
+    "xpPerMinuteByRestaurant": [0, 0.4, 1.0, 2.4, 5.0, 9.0, 16.0, 17.0, 18.0, 19.0],
     "maxOfflineHours": 8,
     "rampInMinutes": 20,
     "adDoubleAvailable": true,
-    "minCollectIntervalMin": 30
+    "minCollectIntervalMin": 30,
+    "_comment": "Moeda offline por minuto por índice de restaurante (0 no quintal: sem idle antes do primeiro upgrade de fila). Regra que a curva obedece desde a escada de 10 telas: uma noite de 8 h com o `gerente` no máximo rende no máximo 1,75 dia da renda ativa daquele andar — conferido em tools/studio/test/economy.test.ts. Os índices 0-4 são a curva antiga medida (0/6/16/42/96) e já cabiam na regra. O índice 5 estava em 1,79 e os índices 6-9 seguiam dobrando (430/860/1 720/3 440) porque a extensão da escada herdou a razão antiga da tabela de 7 valores — e a renda ativa é horizontal por design depois do L30 (ver `_incomePlateauNote`), então dobrar o offline não dá progressão ao jogador, dá número maior na tela. Medido antes do corte: uma noite no `cozinha_do_campeao` pagava 17,08 dias de renda ativa (29,37 com o gerente no topo), ou seja, o jogo ótimo era dormir; agora 1,69. O XP tinha o buraco ao contrário: a tabela parava no índice 6 e cais/orla/campeão recebiam moeda e zero XP por noite, porque o `?? 0` da leitura engolia a linha que não existia em silêncio — as três telas novas valem 17/18/19 xp por minuto."
   },
   "dailyReward": {
     "cycleDays": 7,
@@ -170,13 +155,37 @@
         4,
         12
       ],
+      "grelha_de_praca": [
+        2,
+        7
+      ],
+      "espeto_do_neno": [
+        12,
+        32
+      ],
       "parrilla_chef_cisma": [
         32,
-        60
+        62
+      ],
+      "tambor_vertical": [
+        42,
+        90
       ],
       "fornalha_dragao_manso": [
         70,
-        115
+        120
+      ],
+      "parrilla_do_cais": [
+        140,
+        260
+      ],
+      "fornalha_da_orla": [
+        240,
+        430
+      ],
+      "cozinha_do_campeao": [
+        390,
+        720
       ]
     },
     "restaurantUnlockPacingTurns": {
@@ -238,5 +247,6 @@
     "_spendRatioNote": "The harness is a deliberately greedy spender, so a ratio near 1.0 is the desired outcome (no coin accumulation). The LOWER bound is the real guardrail: it catches sinks that are too cheap or income that is too high, i.e. inflation.",
     "_incomePlateauNote": "L30 and L50 income are deliberately close (measured 95.4k vs 96.7k at skill 0.55). Level difficulty is capped at d=1.0, so after level 30 income is stable and progression becomes horizontal: restaurants, collection, prestige tracks and cosmetics rather than raw coin income. Pushing coin income past L30 would only put bigger numbers on screen without adding decisions.",
     "_bandDerivationNote": "Bands are +-20% around the measured curve above; they are regression guards, not aspirational targets. Raising restaurant coin costs alone does NOT slow pacing: the greedy harness spends the coins it cannot sink into a pricier restaurant on upgrades instead, raising income (sink substitution). Measured: raising bairro 12k->15k moved its unlock from turn 185 to 146, i.e. faster. Slow pacing by reducing income or by scaling ALL sinks together, never one sink alone."
-  }
+  },
+  "_ladderNote": "Bandas de destravamento das 10 churrasqueiras, em turnos, medidas na simulação longa (LONG_HORIZON=1500, `npm run sim:long`) depois do redesenho da escada: 3 / 7 / 19 / 50 / 61 / 95 / 184 / 309 / 509 para as nove compras depois da grelha inicial. Antes havia três compras (7 / 45 / 90) e o resto do jogo sem nada de grelha para almejar. As janelas são largas de propósito: o portão do topo é o nível (26 / 36 / 46) e a tela, não a moeda — a escada inteira de grelhas custa 1,39 milhão, 9,7% dos 14,4 milhões ganhos no run."
 }

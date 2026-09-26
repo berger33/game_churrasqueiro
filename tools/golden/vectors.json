@@ -4,9 +4,9 @@
   "note": "Golden vectors for TS <-> C# parity. Regenerate with `npm run gen-vectors`. Never edit by hand.",
   "dataVersions": {
     "ingredients": 5,
-    "grill": 3,
+    "grill": 5,
     "economy": 12,
-    "restaurants": 6,
+    "restaurants": 7,
     "upgrades": 3
   },
   "epsilon": 1e-9,
@@ -14,7 +14,8 @@
     "cooking": 48,
     "scoring": 32,
     "economy": 6,
-    "turns": 12
+    "turns": 12,
+    "rng": 6
   },
   "cooking": [
     {
@@ -11879,8 +11880,11 @@
             16,
             42,
             96,
-            210,
-            430
+            170,
+            180,
+            186,
+            192,
+            198
           ],
           "xpPerMinuteByRestaurant": [
             0,
@@ -11889,12 +11893,16 @@
             2.4,
             5,
             9,
-            16
+            16,
+            17,
+            18,
+            19
           ],
           "maxOfflineHours": 8,
           "rampInMinutes": 20,
           "adDoubleAvailable": true,
-          "minCollectIntervalMin": 30
+          "minCollectIntervalMin": 30,
+          "_comment": "Moeda offline por minuto por índice de restaurante (0 no quintal: sem idle antes do primeiro upgrade de fila). Regra que a curva obedece desde a escada de 10 telas: uma noite de 8 h com o `gerente` no máximo rende no máximo 1,75 dia da renda ativa daquele andar — conferido em tools/studio/test/economy.test.ts. Os índices 0-4 são a curva antiga medida (0/6/16/42/96) e já cabiam na regra. O índice 5 estava em 1,79 e os índices 6-9 seguiam dobrando (430/860/1 720/3 440) porque a extensão da escada herdou a razão antiga da tabela de 7 valores — e a renda ativa é horizontal por design depois do L30 (ver `_incomePlateauNote`), então dobrar o offline não dá progressão ao jogador, dá número maior na tela. Medido antes do corte: uma noite no `cozinha_do_campeao` pagava 17,08 dias de renda ativa (29,37 com o gerente no topo), ou seja, o jogo ótimo era dormir; agora 1,69. O XP tinha o buraco ao contrário: a tabela parava no índice 6 e cais/orla/campeão recebiam moeda e zero XP por noite, porque o `?? 0` da leitura engolia a linha que não existia em silêncio — as três telas novas valem 17/18/19 xp por minuto."
         },
         "upgradeLevels": {},
         "nowSec": 1000000
@@ -11988,42 +11996,42 @@
           {
             "restaurantIndex": 6,
             "elapsedSec": 60,
-            "coins": 226,
+            "coins": 95,
             "xp": 8,
             "capped": false
           },
           {
             "restaurantIndex": 6,
             "elapsedSec": 300,
-            "coins": 1344,
+            "coins": 563,
             "xp": 50,
             "capped": false
           },
           {
             "restaurantIndex": 6,
             "elapsedSec": 1200,
-            "coins": 8600,
+            "coins": 3600,
             "xp": 320,
             "capped": false
           },
           {
             "restaurantIndex": 6,
             "elapsedSec": 3600,
-            "coins": 25800,
+            "coins": 10800,
             "xp": 960,
             "capped": false
           },
           {
             "restaurantIndex": 6,
             "elapsedSec": 14400,
-            "coins": 103200,
+            "coins": 43200,
             "xp": 3840,
             "capped": false
           },
           {
             "restaurantIndex": 6,
             "elapsedSec": 36000,
-            "coins": 206400,
+            "coins": 86400,
             "xp": 7680,
             "capped": true
           }
@@ -12563,6 +12571,626 @@
           "peakSimultaneousOrders": 2,
           "flawless": true
         }
+      }
+    }
+  ],
+  "rng": [
+    {
+      "id": "rng.stream.0",
+      "input": {
+        "seed": 0
+      },
+      "expect": {
+        "draws": [
+          0.35888998,
+          0.105903261,
+          0.675290479,
+          0.917934559,
+          0.10157715,
+          0.301002924,
+          0.024990354,
+          0.466384648,
+          0.433126145,
+          0.54748999,
+          0.509718393,
+          0.30710506,
+          0.898383548,
+          0.339482442,
+          0.102338994,
+          0.248065626
+        ],
+        "ints": [
+          1,
+          5,
+          1,
+          4,
+          6,
+          5,
+          5,
+          6,
+          6,
+          3,
+          1,
+          2
+        ],
+        "ranges": [
+          3.388751064,
+          1.418931416,
+          2.597728135,
+          1.987366974,
+          0.452308489,
+          -1.591763603
+        ],
+        "chances": [
+          false,
+          true,
+          true,
+          false,
+          false,
+          false,
+          true,
+          false,
+          true,
+          false,
+          true,
+          false
+        ],
+        "weights": [
+          2,
+          1,
+          4,
+          4,
+          4,
+          1,
+          4,
+          4,
+          1,
+          4,
+          4,
+          1,
+          1,
+          4
+        ],
+        "emptyWeights": [
+          -1,
+          -1
+        ],
+        "picks": [
+          "d",
+          "d",
+          "a",
+          "b",
+          "a",
+          "c",
+          "d",
+          "a"
+        ],
+        "shuffled": [
+          7,
+          5,
+          1,
+          4,
+          3,
+          6,
+          8,
+          2
+        ],
+        "after": 0.216820053
+      }
+    },
+    {
+      "id": "rng.stream.1",
+      "input": {
+        "seed": 1
+      },
+      "expect": {
+        "draws": [
+          0.627073941,
+          0.002735721,
+          0.52744704,
+          0.981050967,
+          0.968377898,
+          0.281103503,
+          0.612838861,
+          0.720743141,
+          0.425796952,
+          0.994822946,
+          0.455271127,
+          0.488788317,
+          0.138933583,
+          0.403744765,
+          0.247523896,
+          0.154493135
+        ],
+        "ints": [
+          3,
+          0,
+          2,
+          5,
+          2,
+          1,
+          0,
+          2,
+          4,
+          5,
+          2,
+          1
+        ],
+        "ranges": [
+          1.448777867,
+          0.77649417,
+          2.050657043,
+          -1.343115813,
+          1.825686391,
+          0.224816098
+        ],
+        "chances": [
+          false,
+          false,
+          true,
+          false,
+          true,
+          true,
+          false,
+          true,
+          true,
+          false,
+          false,
+          true
+        ],
+        "weights": [
+          2,
+          1,
+          4,
+          4,
+          1,
+          4,
+          4,
+          4,
+          2,
+          4,
+          4,
+          4,
+          4,
+          4
+        ],
+        "emptyWeights": [
+          -1,
+          -1
+        ],
+        "picks": [
+          "d",
+          "d",
+          "a",
+          "a",
+          "d",
+          "b",
+          "d",
+          "c"
+        ],
+        "shuffled": [
+          3,
+          2,
+          6,
+          7,
+          4,
+          1,
+          5,
+          8
+        ],
+        "after": 0.163012815
+      }
+    },
+    {
+      "id": "rng.stream.4242",
+      "input": {
+        "seed": 4242
+      },
+      "expect": {
+        "draws": [
+          0.546706134,
+          0.278608789,
+          0.931236917,
+          0.507222466,
+          0.66877828,
+          0.287878973,
+          0.259688982,
+          0.401422797,
+          0.34415431,
+          0.587722955,
+          0.731207154,
+          0.75445428,
+          0.607607801,
+          0.994159,
+          0.337131751,
+          0.751201659
+        ],
+        "ints": [
+          6,
+          1,
+          4,
+          0,
+          1,
+          1,
+          0,
+          1,
+          0,
+          1,
+          3,
+          3
+        ],
+        "ranges": [
+          0.894979898,
+          0.451443589,
+          3.040933441,
+          -0.333047687,
+          -1.751097202,
+          2.625973202
+        ],
+        "chances": [
+          true,
+          false,
+          false,
+          true,
+          false,
+          true,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false
+        ],
+        "weights": [
+          4,
+          4,
+          4,
+          1,
+          4,
+          4,
+          1,
+          2,
+          4,
+          1,
+          4,
+          4,
+          4,
+          1
+        ],
+        "emptyWeights": [
+          -1,
+          -1
+        ],
+        "picks": [
+          "d",
+          "d",
+          "d",
+          "c",
+          "a",
+          "d",
+          "d",
+          "b"
+        ],
+        "shuffled": [
+          1,
+          6,
+          3,
+          5,
+          4,
+          2,
+          8,
+          7
+        ],
+        "after": 0.600149743
+      }
+    },
+    {
+      "id": "rng.stream.987654321",
+      "input": {
+        "seed": 987654321
+      },
+      "expect": {
+        "draws": [
+          0.951440304,
+          0.13489633,
+          0.015306074,
+          0.913934855,
+          0.62910387,
+          0.377114376,
+          0.436124587,
+          0.397273088,
+          0.260882628,
+          0.564032237,
+          0.978453407,
+          0.723278279,
+          0.964915647,
+          0.29723265,
+          0.071642327,
+          0.199824507
+        ],
+        "ints": [
+          5,
+          6,
+          1,
+          3,
+          0,
+          1,
+          6,
+          5,
+          2,
+          5,
+          2,
+          2
+        ],
+        "ranges": [
+          -0.018514858,
+          -0.22867629,
+          -2.17687616,
+          -0.835693974,
+          0.860965183,
+          -2.433348645
+        ],
+        "chances": [
+          false,
+          false,
+          true,
+          true,
+          false,
+          true,
+          true,
+          true,
+          false,
+          false,
+          false,
+          true
+        ],
+        "weights": [
+          4,
+          4,
+          4,
+          4,
+          4,
+          1,
+          1,
+          2,
+          4,
+          4,
+          4,
+          4,
+          2,
+          2
+        ],
+        "emptyWeights": [
+          -1,
+          -1
+        ],
+        "picks": [
+          "b",
+          "a",
+          "a",
+          "a",
+          "b",
+          "d",
+          "a",
+          "d"
+        ],
+        "shuffled": [
+          8,
+          2,
+          7,
+          5,
+          6,
+          1,
+          3,
+          4
+        ],
+        "after": 0.861375033
+      }
+    },
+    {
+      "id": "rng.stream.4294967295",
+      "input": {
+        "seed": 4294967295
+      },
+      "expect": {
+        "draws": [
+          0.896422614,
+          0.189478257,
+          0.715652678,
+          0.944059909,
+          0.845236432,
+          0.539139999,
+          0.680497739,
+          0.475572096,
+          0.135857739,
+          0.988444598,
+          0.871467452,
+          0.189348459,
+          0.343686635,
+          0.738684873,
+          0.47599199,
+          0.75671168
+        ],
+        "ints": [
+          6,
+          0,
+          1,
+          2,
+          6,
+          6,
+          5,
+          5,
+          0,
+          0,
+          3,
+          1
+        ],
+        "ranges": [
+          -0.654037856,
+          -2.381626589,
+          0.228986219,
+          -0.977162027,
+          0.58677478,
+          0.107073758
+        ],
+        "chances": [
+          true,
+          false,
+          false,
+          false,
+          true,
+          true,
+          false,
+          false,
+          true,
+          true,
+          true,
+          false
+        ],
+        "weights": [
+          4,
+          4,
+          1,
+          4,
+          4,
+          4,
+          4,
+          4,
+          2,
+          4,
+          4,
+          1,
+          4,
+          4
+        ],
+        "emptyWeights": [
+          -1,
+          -1
+        ],
+        "picks": [
+          "d",
+          "a",
+          "d",
+          "a",
+          "a",
+          "c",
+          "c",
+          "c"
+        ],
+        "shuffled": [
+          1,
+          8,
+          5,
+          7,
+          4,
+          3,
+          2,
+          6
+        ],
+        "after": 0.323265933
+      }
+    },
+    {
+      "id": "rng.stream.-7",
+      "input": {
+        "seed": -7
+      },
+      "expect": {
+        "draws": [
+          0.433067334,
+          0.325395767,
+          0.5442695,
+          0.480189994,
+          0.048719558,
+          0.041189807,
+          0.267963463,
+          0.206198046,
+          0.867785705,
+          0.83012133,
+          0.121253921,
+          0.037251533,
+          0.050161179,
+          0.207439749,
+          0.115601525,
+          0.605211506
+        ],
+        "ints": [
+          0,
+          3,
+          1,
+          5,
+          2,
+          0,
+          4,
+          0,
+          6,
+          5,
+          5,
+          3
+        ],
+        "ranges": [
+          -0.369275007,
+          0.198682014,
+          -2.468141374,
+          0.531823841,
+          0.741982702,
+          1.583581764
+        ],
+        "chances": [
+          false,
+          true,
+          true,
+          false,
+          false,
+          false,
+          true,
+          false,
+          true,
+          false,
+          true,
+          true
+        ],
+        "weights": [
+          1,
+          1,
+          4,
+          4,
+          4,
+          1,
+          1,
+          4,
+          4,
+          1,
+          4,
+          2,
+          4,
+          4
+        ],
+        "emptyWeights": [
+          -1,
+          -1
+        ],
+        "picks": [
+          "a",
+          "a",
+          "d",
+          "b",
+          "c",
+          "d",
+          "c",
+          "c"
+        ],
+        "shuffled": [
+          5,
+          8,
+          1,
+          7,
+          3,
+          6,
+          2,
+          4
+        ],
+        "after": 0.791215641
       }
     }
   ]

@@ -1,0 +1,113 @@
+{
+  "_comment": "Lote 10 — a grelha a gás, sexta vez. Ele aprovou as duas do lote 09 e mandou refazer só esta: \"somente a gás precisa ser refeita. As outras estão aprovadas\" (2026-09-26). Diagnóstico que o lote trouxe: caixa vista de frente lê planta, e \"olhe para dentro da caixa\" esmaga o vão (geometria, não teimosia do modelo); a inclinação que funciona num objeto de caixa é o rolo do quadro inteiro + o vão na parede frontal. Quatro candidatas medidas (A, B, r6, r7); a adotada é a r7. Prompts em art/prompts/lote-10.md. Nada entra no runtime sem aprovação dele.",
+  "batch": "lote-10",
+  "date": "2026-09-26",
+  "sourceDir": "art/source/lote-10",
+  "assets": [
+    {
+      "source": "spr_grill_fornalha_dragao_manso_evo1_r7.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "fornalha_dragao_manso",
+      "evo": 1,
+      "category": "grill",
+      "name": "spr_grill_fornalha_dragao_manso_evo1",
+      "label": "A gás, wide de quatro queimadores: corpo guinado 15°, capô baixo aberto, vão na PAREDE FRONTAL (3×3, 2:1, boca a −7,2°, recorte 0,74)",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok",
+        "note": "Ronda 7 da identidade (sexta reprovação dele em quatro lotes). As três réguas do padrão passam juntas pela primeira vez *com* a câmera que ele pede: boca 2:1 com faixa de 60 px por fileira, recorte 0,74 e vão inclinado −7,2° (a lata carimbada mede −8,6°). O que destravou foi trocar duas coisas no meu próprio texto: (1) o vão deixa de ser \"a cama de brasa vista de cima\" e passa a ser \"a janela recortada na parede frontal da caixa, como a porta de um forno\" — um plano vertical não fecha quando a câmera sobe, e foi a elevação de 25–30° que esmagou a boca em A (3,84:1) e B (4,59:1); (2) a rotação do quadro vira ordem explícita e numérica (\"8°, não opcional, e o chão das rodas sobe para a direita\"), porque com o corpo guinado a boca de um objeto em yaw fica de nível sozinha — foi assim que a r6, lindíssima, mediu −3,6°. Alternativas na mesa: A (capô fechado, vão mais fundo que largo), B (tampa a 45°, boca 4,59:1 — fora do padrão) e r6 (a mais tridimensional das quatro, vão a −3,6° e recorte 0,60)."
+      }
+    }
+  ],
+  "compare": [
+    "spr_grill_tambor_vertical_evo1",
+    "spr_grill_lata_valente_evo1",
+    "spr_grill_grelha_de_praca_evo1"
+  ],
+  "preview": {
+    "background": "bg_restaurant_churrascaria_bairro",
+    "grill": "spr_grill_fornalha_dragao_manso_evo1",
+    "_note": "prévia no leito real do motor, 3×3 = 9 pratos de 86 px: é a grelha que reprova desde o lote 07 por boca rasa; se a comida couber com o corpo guinado, a profundidade saiu sem pagar a boca.",
+    "onGrill": [
+      [
+        "spr_food_picanha_medium",
+        0.26,
+        0.166667,
+        86
+      ],
+      [
+        "spr_food_contra_file_rare",
+        0.5,
+        0.166667,
+        86
+      ],
+      [
+        "spr_food_linguica_toscana_medium",
+        0.74,
+        0.166667,
+        86
+      ],
+      [
+        "spr_food_maminha_well",
+        0.26,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_fraldinha_medium",
+        0.5,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_asinha_frango_medium",
+        0.74,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_coracao_frango_medium",
+        0.26,
+        0.833333,
+        86
+      ],
+      [
+        "spr_food_queijo_coalho_medium",
+        0.5,
+        0.833333,
+        86
+      ],
+      [
+        "spr_food_legumes_grelhados_medium",
+        0.74,
+        0.833333,
+        86
+      ]
+    ],
+    "benchItems": [
+      [
+        "spr_food_picanha_raw",
+        62
+      ],
+      [
+        "spr_food_contra_file_raw",
+        62
+      ],
+      [
+        "spr_food_maminha_raw",
+        62
+      ]
+    ],
+    "orders": [
+      [
+        "spr_char_customer_influencer",
+        [
+          "spr_food_picanha_served",
+          "spr_food_linguica_toscana_served"
+        ],
+        0.55
+      ]
+    ]
+  }
+}

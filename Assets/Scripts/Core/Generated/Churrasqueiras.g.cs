@@ -24,7 +24,6 @@ namespace Churrasco.Core.Generated
         public string DescKey { get; set; }
         public List<ChurrasqueirasChurrasqueirasEvolutions> Evolutions { get; set; }
         public int Fileiras { get; set; }
-        public string HumorTag { get; set; }
         public string Id { get; set; }
         public int Index { get; set; }
         public string NameKey { get; set; }
@@ -52,7 +51,7 @@ namespace Churrasco.Core.Generated
         public double HeatBase { get; set; }
         public int Level { get; set; }
         public string NameKey { get; set; }
-        public string ShortName { get; set; }
+        public string ShortNameKey { get; set; }
         public int SlotsPerZone { get; set; }
         public int ZoneCount { get; set; }
     }

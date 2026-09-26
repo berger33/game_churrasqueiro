@@ -681,6 +681,32 @@ for (const v of tDirector) {
   }
 }
 
+// ── 6. RNG stream ───────────────────────────────────────────────────────────
+// Os 12 vetores de turno só significam alguma coisa se o `Rng` bater bit a bit: é a única parte
+// do port que depende de aritmética de 32 bits (`Math.imul`, `>>> 0`, o `|| fallback` do seed).
+// Um bit fora e a falha aparece como "coins 628 ≠ 631", doze vetores depois, sem dizer onde
+// começou. Então o stream é congelado *antes* da simulação que o consome — e o seed 0 entra de
+// propósito, porque é o único caso que exercita o fallback `0x9e3779b9`.
+const rng: Vec[] = [];
+for (const seed of [0, 1, 4242, 987654321, 4294967295, -7]) {
+  const r = new Rng(seed);
+  rng.push({
+    id: `rng.stream.${seed}`,
+    input: { seed },
+    expect: {
+      draws: Array.from({ length: 16 }, () => r9(r.next())),
+      ints: Array.from({ length: 12 }, () => r.int(0, 6)),
+      ranges: Array.from({ length: 6 }, () => r9(r.range(-2.5, 3.5))),
+      chances: Array.from({ length: 12 }, () => r.chance(0.37)),
+      weights: Array.from({ length: 14 }, () => r.pickWeighted([0, 3, 1.5, 0, 7])),
+      emptyWeights: [r.pickWeighted([]), r.pickWeighted([0, 0, 0])],
+      picks: Array.from({ length: 8 }, () => r.pick(['a', 'b', 'c', 'd'])),
+      shuffled: r.shuffled([1, 2, 3, 4, 5, 6, 7, 8]),
+      after: r9(r.next())
+    }
+  });
+}
+
 // ── Write ───────────────────────────────────────────────────────────────────
 const doc = {
   version: 1,
@@ -694,11 +720,14 @@ const doc = {
     upgrades: db.upgrades.version
   },
   epsilon: 1e-9,
-  counts: { cooking: cooking.length, scoring: scoring.length, economy: economy.length, turns: turns.length },
+  counts: {
+    cooking: cooking.length, scoring: scoring.length, economy: economy.length, turns: turns.length, rng: rng.length
+  },
   cooking,
   scoring,
   economy,
-  turns
+  turns,
+  rng
 };
 
 // A step that does not survive serialisation would silently break parity with
@@ -748,7 +777,7 @@ if (CHECK) {
     console.error('[golden] Run `npm run gen-vectors`, review the diff, then commit.');
     process.exit(1);
   }
-  const total = cooking.length + scoring.length + economy.length + turns.length;
+  const total = cooking.length + scoring.length + economy.length + turns.length + rng.length;
   console.log(`[golden] OK — ${total} vectors + ${tutorialTotal} FTUE vectors unchanged`);
   process.exit(0);
 }
@@ -756,8 +785,8 @@ if (CHECK) {
 mkdirSync(join(import.meta.dirname, '..', 'golden'), { recursive: true });
 writeFileSync(OUT, json);
 writeFileSync(OUT_TUTORIAL, tutorialJson);
-const total = cooking.length + scoring.length + economy.length + turns.length;
+const total = cooking.length + scoring.length + economy.length + turns.length + rng.length;
 console.log(`[golden] wrote tools/golden/vectors.json and tools/golden/tutorial-vectors.json`);
-console.log(`[golden] cooking ${cooking.length} · scoring ${scoring.length} · economy ${economy.length} · turns ${turns.length}`);
+console.log(`[golden] cooking ${cooking.length} · scoring ${scoring.length} · economy ${economy.length} · turns ${turns.length} · rng ${rng.length}`);
 console.log(`[golden] FTUE: director ${tDirector.length} · restore ${tRestore.length} · coach ${tCoach.length} · hand ${tHand.length} · mask ${tMask.length} · analytics ${tAnalytics.length}`);
 console.log(`[golden] total ${total} + ${tutorialTotal} vectors`);

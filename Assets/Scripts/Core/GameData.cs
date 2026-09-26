@@ -31,6 +31,7 @@ namespace Churrasco.Core
         public UpgradesTable Upgrades = null!;
         public EconomyTable Economy = null!;
         public LevelsTable Levels = null!;
+        public ChurrasqueirasTable Churrasqueiras = null!;
 
         private readonly Dictionary<string, IngredientsItems> _ingredientById =
             new Dictionary<string, IngredientsItems>(StringComparer.Ordinal);
@@ -40,6 +41,8 @@ namespace Churrasco.Core
             new Dictionary<int, RestaurantsRestaurants>();
         private readonly Dictionary<string, UpgradesTracks> _upgradeById =
             new Dictionary<string, UpgradesTracks>(StringComparer.Ordinal);
+        private readonly Dictionary<string, ChurrasqueirasChurrasqueiras> _churrasqueiraById =
+            new Dictionary<string, ChurrasqueirasChurrasqueiras>(StringComparer.Ordinal);
 
         public IngredientsItems? IngredientById(string id) =>
             _ingredientById.TryGetValue(id, out var v) ? v : null;
@@ -53,10 +56,14 @@ namespace Churrasco.Core
         public UpgradesTracks? UpgradeById(string id) =>
             _upgradeById.TryGetValue(id, out var v) ? v : null;
 
+        public ChurrasqueirasChurrasqueiras? ChurrasqueiraById(string id) =>
+            id != null && _churrasqueiraById.TryGetValue(id, out var v) ? v : null;
+
         public IEnumerable<IngredientsItems> AllIngredients => _ingredientById.Values;
         public IEnumerable<CustomersCustomers> AllCustomers => _customerById.Values;
         public IEnumerable<RestaurantsRestaurants> AllRestaurants => _restaurantByIndex.Values;
         public IEnumerable<UpgradesTracks> AllUpgrades => _upgradeById.Values;
+        public IEnumerable<ChurrasqueirasChurrasqueiras> AllChurrasqueiras => _churrasqueiraById.Values;
 
         /// <summary>
         /// Builds the index and returns every structural problem found. An empty
@@ -162,6 +169,55 @@ namespace Churrasco.Core
                 }
             }
 
+            if (Churrasqueiras?.Churrasqueiras == null) problems.Add("churrasqueiras.json: no grills");
+            else
+            {
+                // The ladder's shape (docs/23 §2): unique ids and contiguous indices, exactly three
+                // evolutions each, level 1 free, and `fileiras` equal to evo 1's zoneCount — that last
+                // one is what keeps the painted bed and the mechanic agreeing.
+                _churrasqueiraById.Clear();
+                var seenIds = new HashSet<string>(StringComparer.Ordinal);
+                var seenIndices = new HashSet<int>();
+                var indices = new List<int>();
+                foreach (var ch in Churrasqueiras.Churrasqueiras)
+                {
+                    if (ch.Id == null) { problems.Add("churrasqueira: missing id"); continue; }
+                    if (!seenIds.Add(ch.Id)) problems.Add($"churrasqueira: duplicate id \"{ch.Id}\"");
+                    _churrasqueiraById[ch.Id] = ch;
+                    if (!seenIndices.Add(ch.Index)) problems.Add($"churrasqueira {ch.Id}: duplicate index {ch.Index}");
+                    indices.Add(ch.Index);
+                    if (ch.Fileiras < 1 || ch.Fileiras > 4) problems.Add($"churrasqueira {ch.Id}: fileiras must be 1..4");
+                    if (ch.Evolutions == null || ch.Evolutions.Count == 0)
+                    { problems.Add($"churrasqueira {ch.Id}: no evolutions"); continue; }
+                    if (ch.Fileiras != ch.Evolutions[0].ZoneCount)
+                        problems.Add($"churrasqueira {ch.Id}: fileiras mismatch zoneCount of evo 1");
+                    if (ch.Evolutions.Count != 3) problems.Add($"churrasqueira {ch.Id}: expected 3 evolutions");
+                    for (int i = 0; i < ch.Evolutions.Count; i++)
+                    {
+                        var evo = ch.Evolutions[i];
+                        if (evo.Level != i + 1)
+                            problems.Add($"churrasqueira {ch.Id} evo {evo.Level}: level should be {i + 1}");
+                        if (evo.ZoneCount < 1 || evo.ZoneCount > 4)
+                            problems.Add($"churrasqueira {ch.Id} evo {evo.Level}: zoneCount 1..4");
+                        if (evo.SlotsPerZone < 2 || evo.SlotsPerZone > 5)
+                            problems.Add($"churrasqueira {ch.Id} evo {evo.Level}: slotsPerZone 2..5");
+                        if (evo.HeatBase < 0.5 || evo.HeatBase > 1.7)
+                            problems.Add($"churrasqueira {ch.Id} evo {evo.Level}: heatBase out of range");
+                    }
+                    if (ch.UnlockLevel < 1) problems.Add($"churrasqueira {ch.Id}: unlockLevel must be >=1");
+                    if (ch.Evolutions[0].CostCoins != 0)
+                        problems.Add($"churrasqueira {ch.Id}: evolution 1 must cost 0 (granted on unlock)");
+                }
+                indices.Sort();
+                for (int i = 0; i < indices.Count; i++)
+                    if (indices[i] != i)
+                        problems.Add($"churrasqueira indices must be contiguous from 0 (found {indices[i]} at {i})");
+                ChurrasqueirasChurrasqueiras? starter = null;
+                foreach (var kv in _churrasqueiraById) if (kv.Value.Index == 0) starter = kv.Value;
+                if (starter != null && (starter.UnlockLevel != 1 || starter.UnlockCostCoins != 0))
+                    problems.Add($"churrasqueira {starter.Id}: starter (index 0) must be free at level 1");
+            }
+
             if (Economy?.Reward == null) problems.Add("economy.json: missing reward block");
             if (Economy?.Xp?.Formula == null) problems.Add("economy.json: missing xp.formula");
 
@@ -169,7 +225,7 @@ namespace Churrasco.Core
         }
 
         /// <summary>
-        /// Deserialises the ten modelled tables and builds the index.
+        /// Deserialises the eight modelled tables and builds the index.
         /// `readJson` is injected so the caller owns file IO (Addressables in the
         /// client, File.ReadAllText in the editor tools, a string in tests).
         /// </summary>
@@ -183,7 +239,8 @@ namespace Churrasco.Core
                 Restaurants = Deserialise<RestaurantsTable>(readJson, "restaurants.json"),
                 Upgrades = Deserialise<UpgradesTable>(readJson, "upgrades.json"),
                 Economy = Deserialise<EconomyTable>(readJson, "economy.json"),
-                Levels = Deserialise<LevelsTable>(readJson, "levels.json")
+                Levels = Deserialise<LevelsTable>(readJson, "levels.json"),
+                Churrasqueiras = Deserialise<ChurrasqueirasTable>(readJson, "churrasqueiras.json")
             };
             problems = data.Build();
             return data;

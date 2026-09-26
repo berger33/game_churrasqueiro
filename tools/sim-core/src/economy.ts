@@ -16,6 +16,11 @@ export interface PlayerState {
   churrasqueiraId: string;
   /** Evolution 1..3 per owned grill; 0 / missing = not owned. */
   churrasqueiraLevels: Record<string, number>;
+  /**
+   * Tipo de carvão equipado (`shared/data/grill.json.charcoal.types`). Ausente em
+   * save v2/v3 = `comum`, que é o jogo antigo por construção.
+   */
+  charcoalType?: string;
   counters: Record<string, number>;
   lastSeenUnixSec: number;
 }
@@ -30,9 +35,31 @@ export function newPlayerState(): PlayerState {
     upgradeLevels: {},
     churrasqueiraId: STARTER_CHURRASQUEIRA_ID,
     churrasqueiraLevels: { [STARTER_CHURRASQUEIRA_ID]: 1 },
+    charcoalType: DEFAULT_CHARCOAL_TYPE,
     counters: {},
     lastSeenUnixSec: 0
   };
+}
+
+/** O tipo que vale quando o save não diz nada — idêntico ao jogo pré-escada. */
+export const DEFAULT_CHARCOAL_TYPE = 'comum';
+
+/** O jogador pode usar o tipo? Só depois do nível pedido pela tabela. */
+export function charcoalTypeUnlocked(
+  db: GameDatabase,
+  p: PlayerState,
+  typeId: string
+): boolean {
+  const t = (db.grill.charcoal.types ?? []).find(x => x.id === typeId);
+  return !!t && p.level >= t.unlockLevel;
+}
+
+/** Troca o tipo equipado. Recusa tipo inexistente ou ainda não destravado. */
+export function equipCharcoalType(db: GameDatabase, p: PlayerState, typeId: string): boolean {
+  const t = (db.grill.charcoal.types ?? []).find(x => x.id === typeId);
+  if (!t || p.level < t.unlockLevel) return false;
+  p.charcoalType = typeId;
+  return true;
 }
 
 export interface LedgerEntry {
@@ -58,8 +85,18 @@ export function applyTurnResult(db: GameDatabase, p: PlayerState, r: TurnResult)
 
   p.coins += r.coins;
   ledger.push({ currency: 'coins', amount: r.coins, source: 'turn', balance: p.coins });
-  addCounter(p, 'coinsEarnedTotal', r.coins);
-  addCounter(p, 'coinsEarnedSession', r.coins);
+  // O turno devolve o caixa já líquido do carvão. Para a banda `coinSpendRatio`
+  // medir certo, o ganho é registrado em bruto e a recarga vira spend próprio —
+  // com `comum` (custo 0) esses dois termos são exatamente os de hoje.
+  const charcoalSpend = Math.max(0, Math.round(r.charcoalSpend ?? 0));
+  addCounter(p, 'coinsEarnedTotal', r.coins + charcoalSpend);
+  addCounter(p, 'coinsEarnedSession', r.coins + charcoalSpend);
+  if (charcoalSpend > 0) {
+    addCounter(p, 'coinsSpentTotal', charcoalSpend);
+    addCounter(p, 'coinsSpentSession', charcoalSpend);
+    addCounter(p, 'charcoalSpendTotal', charcoalSpend);
+    ledger.push({ currency: 'coins', amount: -charcoalSpend, source: 'charcoal', balance: p.coins });
+  }
   addCounter(p, 'turnsPlayed', 1);
   addCounter(p, 'perfectCooks', r.counters.perfectCooks);
   addCounter(p, 'burnedFood', r.counters.burnedFood);
@@ -280,7 +317,10 @@ export function computeOfflineEarnings(db: GameDatabase, p: PlayerState, elapsed
   const idle = db.economy.idle;
   if (p.restaurantIndex <= 0 || elapsedSec <= 0) return { minutes: 0, coins: 0, xp: 0, capped: false };
 
-  const maxSec = idle.maxOfflineHours * 3600 * (p.upgradeLevels['caixa'] ? 1 : 1);
+  // O teto de horas é a tabela, hoje. Um `× (levels['caixa'] ? 1 : 1)` mora aqui havia várias
+  // sessões: sempre deu 1, e a porta para um upgrade que encurta o cap offline ainda não existe —
+  // quando existir, entra de verdade nos dois lados (este arquivo e EconomyRules.cs), não como teatro.
+  const maxSec = idle.maxOfflineHours * 3600;
   const capped = elapsedSec > maxSec;
   const effective = Math.min(elapsedSec, maxSec);
   const minutes = effective / 60;

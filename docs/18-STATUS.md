@@ -1,6 +1,9 @@
 # 18 — Status Report
 
-**Snapshot:** 2026-09-25 · branch `arena/01a0d72a-game-churrasqueiro`
+**Snapshot:** 2026-09-25 · branch `arena/01a0daed-game-churrasqueiro` · on top of `main`
+after **PR #6 was merged** (`3e6ea7f`) — the art pass below is that merge plus the rejected
+lote 03 and its reprocess (docs/22 §6.5). Earlier snapshot line, kept for history:
+`arena/01a0d72a-game-churrasqueiro`
 (PR #5 fast-forwarded, then the six-step FTUE — see "FTUE" below and docs/05-UX_FLOW.md §4 —
 then its follow-ups: see "FTUE follow-ups" below; then the AI 2D art pass, lotes 01–03, integrated in the prototype — see
 "AI 2D art pass" below. Before that: churrasqueira purchase wired into the economy sim — §4.2
@@ -11,6 +14,73 @@ unverified here**, and what is **not built**. Anything marked ⚠ was not execut
 in this environment and must be re-run before it is trusted.
 
 ---
+
+## Lote 03 rejected, lote 04 = the reprocess (docs/22 §6.4–6.5)
+
+The owner rejected **all 36 sprites of lote 03** ("nothing enters the runtime; redo the batch").
+The redo is lote 04: the same 10 images, the same sprite names, two corrections.
+
+- **The layout guide shipped.** `tools/art/make-ref.mjs` gained a `guide` mode that draws the
+  grill silhouette with the cooking opening already placed (≥ 87 % of the object's width, top
+  edge horizontal, ~40 % of the bbox) and the model paints into it. The §6.4 rule it implements
+  was itself corrected: the old "~1.4:1 opening, ≥ 75 % of the width" cannot coexist with a
+  visible front panel in a 16:9 frame, which is what produced lote 03's three front windows.
+- **Measured with the same detector the painted sprite is judged by**, via a new
+  `process-sprites.mjs --dry-run` that writes nothing. Result: the error *class* is gone — no
+  front window, and the mouth's tilt fell from ±9° to 0–6°. The fornalha's mouth is 25 % of the
+  sprite (the approved lata: 21 %), but the two steel grills came out at 15 %: the model shrank
+  the opening it was told to paint around. They go back in the next batch with the opening
+  described as the reference itself, not as a proportion.
+- **The maminha reads as a wedge now** — the pair is no longer twins on the counter — but its
+  "served" cell came out as another charred steak, so `spr_food_maminha_served` is flagged
+  do-not-approve.
+- `ASSET_REGISTRY.csv` now carries the decision trail: 36 rows `lote-03/rejected` →
+  `lote-04/pending`, each note saying which batch it reprocesses. That needed a rule change
+  (docs/04 §11 item 3): a `rejected` row is no longer frozen, or a refused asset could never be
+  approved by its own redo.
+- **The owner approved 33 of the 36** (`set-status lote-04 approved`, then the 3 exceptions back
+  to `rejected`) and the runtime was rebuilt: **125 sprites, 2.01 MB** — the 18 UI/upgrade icons,
+  3 restaurant backgrounds, the contra-filé's 6 frames and the fornalha's painted opening are in
+  the game; the two steel grills and `spr_food_maminha_served` are not.
+- That exposed a rule worth knowing: `build-runtime` ships a food **whole or not at all**, so
+  refusing one frame of the maminha holds its five approved frames out and the ingredient falls
+  back to procedural art in game. The build now says so
+  (`⚠ incomplete food set: maminha (5/6 approved, falta spr_food_maminha_served)`) instead of
+  swallowing an approval silently — and it is why the redo repaints the whole 6-cell sheet, not
+  just cell 6 (docs/22 §7.1).
+- **Reprocess run (lote 05, 1/2)**: the maminha sheet came out right — a triangular wedge, five
+  states sharing one outline, and cell 6 is now the round board with fan slices (docs/22 §6.6).
+  The two steel grills went through **three more prompt routes and lost all three** (measured
+  6 %/9 %, a 642×25 slit, a 32×31 "mouth", −12.4° tilt); the lote-04 versions were restored from
+  `f26f0c4` as the best available and stay `rejected` for the owner's call (docs/22 §6.7).
+- **The grill standard (docs/22 §6.8)**: perspective and bed size are now *data*
+  (`shared/data/grill.json` → `art`) and a *gate* (`check-grill-geometry.mjs`), because the engine
+  maps the food grid onto the painted opening. Measured verdict: the owner-approved brick furnace
+  could not hold its own 9 slots (bands of 40 px for 54 px of food), the three tin drums were fine,
+  and both steel grills failed for the same reason as the furnace. Fix: the layout guide is
+  generated from the data (so the frame follows the mouth, not the other way round) and the
+  pipeline **conforms** a mouth that came out off-ratio — the approved furnace needed a ×1,64
+  vertical conform to reach 2:1, the new cart needed nothing (2,77:1 against 2,75:1 asked), the
+  new steel needed ×1,22. Diffusion models do not measure pixels: three prompt rounds for ~2:1
+  returned 1,31:1, 2,24:1 and 2,88:1, so the number is enforced in code and recorded as
+  `hole.conformed` instead of being begged for in prose.
+- **The l10n lie about the progression**: `grill.chef_cisma.evo2/evo3` promised "7" and "8"
+  skewers for grids of 6 (3×2) and 9 (3×3). Text corrected, and `validate-data` now holds any
+  "N fileiras, M espetos" sentence to the actual `zoneCount`/`slotsPerZone`.
+- **A process hole, found and closed**: repainting a food sheet kept five `approved` rows
+  approved while their pixels changed — the freeze guarded the decision, not the art.
+  `process-sprites` now refuses to repaint an `approved`/`superseded` row unless the operator
+  reopens it as `pending` (or passes `--allow-repaint`); verified in all three directions.
+- ⚠ **Open**: whether 15 % is acceptable for the steel grills or they get authored as a different
+  object; the Unity import postprocessor is still not written. `check-art-registry` is built (gate 16).
+- **Measured, not assumed:** the art record is in git — 137 files under `Assets/Art` (masters +
+  `ASSET_REGISTRY.csv` + manifest), 25 under `art/` (lot specs, prompts, contact sheets) and the 126-file
+  runtime atlas under `prototype/assets/art`, committed on purpose so a fresh clone renders approved art
+  without running `build-runtime`. A sandbox reset had rewound `HEAD` to the session base and `git
+  ls-files` answered `0`, which nearly produced a 36 MB re-commit of files that were already tracked:
+  check `git log --oneline -1 -- <path>` and `origin/<branch>` before concluding anything is unversioned.
+  What a reset really does drop is `art/source/` (raw model output — disposable by design) and
+  `node_modules/`.
 
 ## AI 2D art pass — lotes 01–03, integrated in the prototype (docs/22-ARTE_2D_PLANO.md)
 
@@ -51,8 +121,8 @@ images. Each batch is **approved by the game's owner before the next one is gene
   - `set-status` records approvals;
   - `make-ref` rebuilds references from masters;
   - `build-runtime` produces the approved-only runtime.
-- ⚠ **Not built:** the `check-art-registry` gate; the Unity import postprocessor. Gates:
-  unchanged list (14), all green here except `check-csharp` (needs dotnet; CI runs it).
+- ⚠ **Not built:** the Unity import postprocessor. Gates: the list is **16** now (14 + 
+  `check-grill-geometry` + `check-art-registry`), all green here except `check-csharp` (needs dotnet; CI runs it).
 - **Storage:** raw model outputs are disposable and gitignored, and workspace resets wipe
   them (lotes 01 and 02 raw files are gone). Masters are processed and committed in the same
   turn as generation. Masters: 9.4 + 6.7 MB + lote 03.
@@ -87,8 +157,9 @@ images. Each batch is **approved by the game's owner before the next one is gene
   (new, finished, restore), `TutorialDirector` (steps + the five analytics events),
   `TutorialCoachRules` (browned / flip-ready / serve-ready / ring progress / the hold, and the
   hand: `ForStep` for guided steps, `Next` for free play) and `TutorialMask` — and
-  `Analytics.cs` ports the event contract. Only `TutorialTurn`'s glue is left: it owns a
-  `TurnSimulation`, which has no C# port yet. A port nobody compiles is a draft, so there is a
+  `Analytics.cs` ports the event contract. Only `TutorialTurn`'s glue was left: it owns a
+  `TurnSimulation`, which had no C# port then (§7.2 wrote it, so the glue is unblocked). A port nobody
+  compiles is a draft, so there is a
   new gate, `npm run check-csharp` (14th, CI): it builds `Assets/Scripts/Core` as Unity
   would (netstandard2.1, C# 9, nullable, warnings as errors) and runs `tools/csharp/parity`.
   - **Compiling found 42 errors** in code that had never met a compiler: the generator emitted
@@ -109,7 +180,9 @@ images. Each batch is **approved by the game's owner before the next one is gene
     against `cooking.ts` found a third no vector covers yet: `EffectiveHeat` ignored the runtime
     zone heat a churrasqueira sets. All fixed. Result: cooking 48/48, scoring 32/32, effective heat
     1/1; the other 5 economy vectors and the 12 full turns are reported as waiting for
-    `EconomyRules.cs` / `TurnSimulation.cs`.
+    `EconomyRules.cs` / `TurnSimulation.cs`. Both ports landed afterwards — and the turn replay is the
+    one that proves the *composition*: it is sensitive to the order in which the dice are drawn, which
+    no single-function vector can see.
   - **The FTUE vectors** (`tools/golden/tutorial-vectors.json`, new, 44, written by
     `gen-vectors.ts` from the shipping TypeScript): six director scenarios (including resume,
     skip at exactly 2 000 ms and a half-millisecond that must round up), 15 restores, a coach grid
@@ -223,8 +296,8 @@ Every claim below was produced by a command run in this checkout.
 | Render smoke | `npm run check-render` | **OK, 4 s** — real bundle through the whole FTUE (played by following the hand: 8 events in order, 0 misses), step 6, Home's daily calendar (strip → modal → `RESGATAR` pays once → ✕), an ordinary turn to the result, then a second install that is backgrounded (`tutorial_abandon` once) and skipped (`tutorial_skip` → Home); **~38 M canvas ops, no exceptions** |
 | Shot harness | `npm run check-shots` | **OK — ~6 s.** 13 real PNGs: a fresh install (splash, title, FTUE steps 1 / 2-waiting / 2 / 3 / 4, FTUE result, step 6 on Home), then a relaunch that must open on Home (home, empty grill, cooking, result). Asserts the FTUE funnel from `__churrascoAnalytics` — first PERFEITO 16.1 s, step 6 at 38.3 s (< 60 s), 0 misses. 193 painted frames, ~1 390 sim-only ticks, 60 s self-budget. |
 | Prototype server | `node prototype/dev-server.mjs` | listening on `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
-| C# core | `npm run check-csharp` | **CI: builds `Assets/Scripts/Core` (netstandard2.1, C# 9, warnings as errors) and 139 parity checks agree** — 13 tables bind losslessly, `GameData.Load` clean, cooking 48/48, scoring 32/32, effective heat, 44 FTUE vectors; 17 economy/turn vectors listed as not ported. **Here: SKIP** (no .NET SDK); verified during development with an in-process Roslyn compiler |
-| CI | `.github/workflows/ci.yml` + `npm run gates` | **14 gates on ubuntu-latest** (`check-csharp` added, with `actions/setup-dotnet` 8.0). `check-shots` is in the per-PR list (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. The Unity-side layer is still not compiled — no Unity toolchain. |
+| C# core | `npm run check-csharp` | **CI: builds `Assets/Scripts/Core` (netstandard2.1, C# 9, warnings as errors) and 162 parity checks agree** — 13 tables bind losslessly, `GameData.Load` clean, cooking 48/48, scoring 32/32, economy 6/6, rng 6/6, **the 12 full turns replayed end to end** (`TurnSimulation.cs` + `SkillPolicy.cs`), 44 FTUE vectors. Nothing in `golden.*` is not-ported any more; what still has no C# counterpart is `EconomyRules.ApplyTurnResult` and `SaveSystem` v4, and no golden vector covers either. **Here: SKIP** (no .NET SDK); verified during development with an in-process Roslyn compiler |
+| CI | `.github/workflows/ci.yml` + `npm run gates` | **16 gates on ubuntu-latest** (`check-csharp` with `actions/setup-dotnet` 8.0; `check-grill-geometry` grades every shipped grill art against the bed its evolution promises; `check-art-registry` reconciles registry × shipped atlas × lot specs and refuses undeclared drift). `check-shots` is in the per-PR list (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. The Unity-side layer is still not compiled — no Unity toolchain. |
 
 ### The localisation gate caught a §56 violation
 
@@ -282,7 +355,7 @@ re-derived again; on the current rules the same two figures read **0.7%** and
 | Deliverable | State | Why it is unverified |
 |---|---|---|
 | Unity-side C# (`Assets/Scripts/Services/{AdService,BillingService,SecureConfig}.cs`) | Hand-written against `UnityEngine` | **No Unity toolchain.** `check-csharp` compiles only the engine-free `Assets/Scripts/Core` (see §1); these files reference `UnityEngine` and have never been compiled. |
-| `Assets/Scripts/Core/{TurnSimulation,EconomyRules,SaveSystem}.cs` | **Not yet written** | The compile + parity gate now exists (`check-csharp`); 17 golden vectors (5 economy, 12 full turns) are waiting for these ports. `TutorialTurn`'s C# glue waits for `TurnSimulation.cs`. |
+| `Assets/Scripts/Core/EconomyRules.ApplyTurnResult`, `SaveSystem.cs` (v4) | **Not yet written** | `TurnSimulation.cs` + `SkillPolicy.cs` landed with them on the waitlist and are now compiled and replayed by CI (§1), so the arithmetic of a turn is settled in C#; what remains is where a turn's purse enters the meta (coins, xp, stars, `charcoalSpend` into the ledger) and `progress.charcoalType` in the save. `TutorialTurn`'s glue was waiting for `TurnSimulation.cs` and is now unblocked. |
 | Unity layer (`GrillView`, `FoodView`, `CustomerCardView`, `TurnFlow`) | **Not yet written** | Needs the Editor to iterate on feel. |
 | Unity localisation (load `shared/l10n`, resolve `*Key`) | **Not yet written** | The TS resolver (`tools/sim-core/src/l10n.ts`) is tested; the C# port is not. |
 | `Packages/manifest.json`, `ProjectSettings/` | **Not yet written** | Needs the Unity Editor to generate authoritative values. |
@@ -530,25 +603,70 @@ specification. The prototype proves art *direction*, not the art *budget*.
 ## 7. What to do next
 
 1. ~~**Compile the C# core** (`dotnet build` in CI) and add golden-vector parity~~ — **done**:
-   `npm run check-csharp` (gate 14), 139 checks agree (see "FTUE follow-ups").
-2. Write `TurnSimulation.cs`, `EconomyRules.cs`, `SaveSystem.cs` (v3, with `progress.tutorial`)
-   — `check-csharp` will pick up the 17 economy / full-turn vectors they unlock; port the
-   churrasqueira functions (`applyChurrasqueiraToStats`, `churrasqueiraZoneHeat`,
-   `patchGrillForChurrasqueira`, `runtimeZoneIndex`) with them, then `TutorialTurn`'s glue.
-3. Write the Unity scene layer and run the feel pass.
-4. Confirm the 767-turn mid-game gap with telemetry before V1.0.
-5. Grow en-US / es-419 from 9.7 % stub to full coverage before any non-BR launch.
-6. ~~**Prototype FTUE**~~ — **done** (see "FTUE" at the top and docs/05 §4). Follow-ups:
+   `npm run check-csharp` (gate 14), 162 checks agree (see "FTUE follow-ups").
+
+
+
+2. ~~Write `TurnSimulation.cs`~~ and the economy vectors — **done**: `EconomyRules.cs` carries the
+   meta (139 → 150 checks), and `TurnSimulation.cs` + `SkillPolicy.cs` now replay the 12 golden turns in
+   CI (150 → 162). The four churrasqueira functions were already in `Rules.cs`, and the turn port reads
+   them through the same constructor order the reference uses. What still waits:
+   `EconomyRules.ApplyTurnResult`, `SaveSystem.cs` v4 (`progress.charcoalType`) and the
+   `TutorialTurn` glue the turn port unblocked.
+3. **Three monetization ideas were measured, not debated** (`docs/24`), and `docs/25` took the decisions
+   and landed the retention fixes that need no new runtime (offline curve cap + the missing top-screen
+   offline XP, a clean D0, the offer one purchase later, "Gorjetas" on screen) — comandas (queue ×2 pays +26 % at L1 and
+   +66…+91 % mid-ladder, while doubling *items* on top of that is what pushes lost customers to 18-24 %
+   and stars to 1.4-1.6), the blower and the water bottle (a heat boost measures as a *loss* — −2 to
+   −10 % coins, +2 to +8 pp burned — because at heat 1,70 the perfect window is 0,3 s wide and one second
+   of +35 % crosses all of it; cooling buys precision instead: +3 pp perfect, money flat), and the
+   currency (there is no diamond in this game: `embers`/Brasas is the premium one and it has four faucets
+   and **zero** sinks — `costEmbers` on evolutions is 0, every upgrade track is priced in `coins`, and the
+   `tip_2x`/`xp_2x` boosters granted by the starter pack, the daily and the pass do nothing). The study,
+   its numbers and the four decisions are `docs/24`; the instrument is
+   `tools/studio/probe-monetization.ts`. Deciding the comanda *before* writing `ApplyTurnResult` is the
+   cheap order: that function is where booster state and the embers sink would land.
+4. Write `EconomyRules.ApplyTurnResult` + `SaveSystem.cs` v4, and `TutorialTurn`'s glue — now with the
+   monetization decisions already taken (`docs/25` §4), so this commit also carries `boosters.json` and the
+   comanda (`fila_2x`, 4 orders, 2/day, first one granted at the end of the FTUE, 6 embers per extra),
+   the `double_turn` 6 → 3/day + mutual exclusion, and the embers column in the simulator's faucet/sink
+   report (today it sums `coins` only, which is why the embers sink had to be counted by hand).
+4b. Per-row tools (blower / bottle) as runtime modifiers on `zone.heat` — after item 4, with their own golden
+   vectors: they touch the `tick` whose 162 checks just agreed, so they arrive with both sides moving.
+5. Write the Unity scene layer and run the feel pass.
+6. ~~Confirm the 767-turn mid-game gap with telemetry before V1.0.~~ — the ladder was rebuilt to
+   answer it without waiting for telemetry (docs/23): ten grills now buy at turns 3 / 7 / 19 / 50 / 61 /
+   95 / 184 / 309 / 509 where there used were three (7 / 45 / 90), and the new screens sit past the
+   measured horizon on purpose. Telemetry still confirms or kills the tail.
+7. Grow en-US / es-419 from 8.8 % stub to full coverage before any non-BR launch (the percentage fell
+   because pt-BR grew to 615 keys with the ten-grill ladder, not because translations were removed).
+7b. ~~Port the charcoal multipliers to C# with `= 1` initializers (docs/23 §6.1) together with
+   `TurnSimulation.cs`~~ — **done**: `DerivedStats.Charcoal{Duration,Heat}Mult = 1`, consumption in
+   `TickGrill`, price in `TurnSimulation.RefillCharcoal`; the 12 golden turns replay with the purse and
+   the burn unchanged, which is precisely what the `= 1` was protecting.
+8. ~~**Prototype FTUE**~~ — **done** (see "FTUE" at the top and docs/05 §4). Follow-ups:
    - ~~Port `tutorial.ts` to the Unity `TutorialDirector`~~ — **done** (`Assets/Scripts/Core/
      Tutorial.cs`, 44 FTUE vectors agree); `TutorialTurn`'s glue follows `TurnSimulation.cs`.
    - ~~`SaveGame` v3 should carry `progress.tutorial`~~ — **done** (see "FTUE follow-ups").
    - ~~`gen-schemas.mjs` enum `OVERRIDES` never apply~~ — **fixed and guarded**.
    - ~~The Home daily-strip hit box sits below the drawn strip~~ — **fixed**, with the
      calendar modal's three hit-box bugs and the unlimited claims it was hiding.
-7. **Professional 2D art** (docs/22):
+9. **Professional 2D art** (docs/22):
    - ~~get lotes 01–02 approved~~ — **approved and integrated in the prototype**;
-   - get lote 03 approved (recommended: approve the icons, backgrounds and meats; redo the
-     3 grills with a layout guide);
-   - lotes 04–07 (docs/22 §6);
-   - write the `check-art-registry` gate;
+   - ~~lote 03~~ — **rejected whole by the owner** and reprocessed as lote 04, which is
+     **awaiting approval** (icons, backgrounds, both meats are the keepers; see "Lote 03
+     rejected" above);
+   - **lote 06 (as 6 evoluções sem arte)** — 4 de 6 no padrão (duas sem nenhum conform), 2 `redo`
+     por boca rasa; câmera corrigida no prompt ([CAMERA], docs/22 §6.9). Folha em
+     `art/review/lote-06.jpg`; nada aprovado, nada no runtime.
+   - **grelhas, o que falta decidir** (docs/22 §6.8): aprovar a fornalha conformada ×1,64 ou
+     repintá-la em 2:1; gerar as 6 evoluções ainda sem arte (zé e2/e3, inox e2/e3, fornalha
+     e2/e3 — os guias já existem e medem certo); decidir o letreiro pintado na chapa nova.
+     Nada disso entra no runtime sem `set-status.mjs lote-05 approved`.
+   - lote 05 = the content planned for lote 04 + the three redos from lote 04 (the two steel
+     grills with a wider mouth, the maminha's served cell);
+   - lotes 05–08 (docs/22 §6);
+   - ~~write the `check-art-registry` gate~~ — **built** (gate 16); `set-status approved` now also
+     refuses a grill whose painted mouth does not hold the promised grid, measured with the same ruler
+     as the guide, so approving from a contact sheet alone is no longer possible;
    - Unity import postprocessor (docs/22 §7.2).

@@ -26,6 +26,7 @@
  */
 
 import { createDatabase, validateDatabase } from '../../tools/sim-core/src/data.ts';
+import { grillBedWidthOnScreen, type GrillArtStandard } from '../../tools/sim-core/src/grill-art.ts';
 import { overallDoneness, evenness, stageOf, effectiveHeat, type FoodRuntime } from '../../tools/sim-core/src/cooking.ts';
 import { TurnSimulation, type CustomerRuntime } from '../../tools/sim-core/src/turn.ts';
 import type { GameDatabase, Ingredient, RawDataBundle } from '../../tools/sim-core/src/types.ts';
@@ -61,6 +62,8 @@ const BENCH_TOP = 552;
 const CHIMNEY_W = 68;
 const GRILL_BODY_W = W - 40;
 /** Painted grills (docs/22 §7.1): the opening's width on screen and where its centre sits. */
+/** Fallback only: the bed comes from `db.grill.art` per evolution (docs/22 §6.8), so a table
+ *  without the block still draws the grill it drew yesterday instead of dividing by zero. */
 const GRILL_ART_BED_W = 330;
 const GRILL_ART_HOLE_Y = 342;
 
@@ -107,11 +110,11 @@ interface ChurrEvolutionSpec {
   level: number;
   nameKey: string;
   descKey: string;
-  shortName: string;
+  shortNameKey: string;
   slotsPerZone: number;
   zoneCount: number;
   heatBase: number;
-  charcoalDurationBonus: number;
+  charcoalBonus: number;
   costCoins: number;
   costEmbers?: number;
   extraTipBonus?: number;
@@ -124,7 +127,6 @@ interface ChurrasqueiraSpec {
   subtitleKey: string;
   descKey: string;
   tier: string;
-  humorTag: string;
   unlockLevel: number;
   unlockCostCoins: number;
   fileiras: number;
@@ -164,7 +166,22 @@ interface Meta {
   graceUsed: boolean;
   churrasqueiraId: string;
   churrasqueiraLv: Record<string, number>; // 1..3 per churrasqueira id
+  /** Tipo de carvão equipado (`shared/data/grill.json.charcoal.types`). */
+  charcoalType: string;
 }
+
+/** Um dos três carvões da tabela; `durationMult`/`heatMult` são o que o motor aplica. */
+interface CharcoalTypeSpec {
+  id: string;
+  nameKey: string;
+  descKey: string;
+  tier: number;
+  durationMult: number;
+  heatMult: number;
+  refillCostCoins: number;
+  unlockLevel: number;
+}
+
 
 function todayISO(): string {
   const d = new Date();
@@ -181,7 +198,7 @@ function loadMeta(): Meta {
     totalPerfect: 0, collection: [], ftueDone: false,
     ftueStep: 0, clearedLevels: [], bonusReady: null, bonusExpiresAt: 0, wheelSpins: 1, lastWheelSpinISO: '',
     upgrades: { grill_size: 0 }, graceUsed: false,
-    churrasqueiraId: 'lata_valente', churrasqueiraLv: { lata_valente: 1 }
+    churrasqueiraId: 'lata_valente', churrasqueiraLv: { lata_valente: 1 }, charcoalType: 'comum'
   };
   try {
     if (typeof localStorage === 'undefined') return fallback;
@@ -195,6 +212,8 @@ function loadMeta(): Meta {
       clearedLevels: Array.isArray(j.clearedLevels) ? j.clearedLevels.filter((x): x is string => typeof x === 'string') : []
     };
     if (!merged.churrasqueiraId) merged.churrasqueiraId = fallback.churrasqueiraId;
+    // save pré-carvão: entra o tipo padrão, que é o jogo antigo (1,00x/1,00x e recarga grátis)
+    if (typeof merged.charcoalType !== 'string' || !merged.charcoalType) merged.charcoalType = fallback.charcoalType;
     if (!merged.churrasqueiraLv[merged.churrasqueiraId]) merged.churrasqueiraLv[merged.churrasqueiraId] = 1;
     return merged;
   } catch { return fallback; }
@@ -309,6 +328,8 @@ class Game {
 
   // Churrasqueiras (data-driven)
   private churrasqueiras: ChurrasqueiraSpec[] = [];
+  /** Painel dos três carvões (docs/23 §4). Aberto pelo chip no cartão da grelha. */
+  private charcoalPanelOpen = false;
   private churrasqueiraHintT = 0;
 
   async init(canvas: HTMLCanvasElement): Promise<void> {
@@ -460,6 +481,61 @@ class Game {
   }
 
   // ── Churrasqueira helpers ─────────────────────────────────────────────────
+  /** Os três carvões da tabela de grill (vazio se a tabela não trouxer `types`). */
+  private charcoalTypes(): CharcoalTypeSpec[] {
+    const g = (this.db as unknown as { grill?: { charcoal?: { types?: CharcoalTypeSpec[] } } }).grill;
+    return g?.charcoal?.types ?? [];
+  }
+  private charcoalTypeById(id: string): CharcoalTypeSpec | undefined {
+    return this.charcoalTypes().find((t) => t.id === id);
+  }
+  private equippedCharcoal(): CharcoalTypeSpec | undefined {
+    return this.charcoalTypeById(this.meta.charcoalType) ?? this.charcoalTypes()[0];
+  }
+  /** Tipos já alcançáveis pelo nível do jogador, na ordem da tabela. */
+  private availableCharcoal(): CharcoalTypeSpec[] {
+    return this.charcoalTypes().filter((t) => this.meta.level >= t.unlockLevel);
+  }
+  /** Chip de carvão no canto inferior direito do cartão da grelha (o único espaço livre da card). */
+  private charcoalChipRect(): Rect {
+    return { x: W - 96, y: 356 + 58, w: 82, h: 26, r: 12 };
+  }
+  /**
+   * Geometria do painel de carvão, compartilhada por desenho e toque (a lição do modal diário:
+   * quando as duas contas divergem, o botão só funciona por sorte — docs/05).
+   */
+  private charcoalPanelLayout(): { panel: Rect; rows: Rect[]; close: Rect } {
+    const types = this.charcoalTypes();
+    const pw = W - 44, px = 22;
+    const rowH = 66, rowGap = 8, head = 92, foot = 60;
+    const ph = head + types.length * (rowH + rowGap) + foot;
+    const py = Math.max(56, Math.round((H - ph) / 2) - 24);
+    const rows = types.map((_, i) => ({ x: px + 14, y: py + head + i * (rowH + rowGap), w: pw - 28, h: rowH, r: 14 }));
+    return { panel: { x: px, y: py, w: pw, h: ph, r: 20 }, rows, close: { x: px + pw - 40, y: py + 14, w: 26, h: 26, r: 8 } };
+  }
+  /** Delta acumulado de uma trilha de upgrade (mesma conta de `deriveStats`). */
+  private upgradeDelta(trackId: string): number {
+    const t = this.db.upgradeById.get(trackId);
+    const lvl = this.meta.upgrades[trackId] ?? 0;
+    if (!t || lvl <= 0) return 0;
+    return t.effect.delta * Math.min(lvl, t.maxLevel);
+  }
+  /**
+   * Quantos segundos de brasa o tipo dá *nesta* grelha, com o upgrade de duração somado. É o
+   * número do motor (cooking.ts: base × (1 + bônus da grelha + upgrade) × multiplicador do tipo),
+   * não uma estimativa decorativa — mostrar conta errada na tela de escolha é pior que não mostrar.
+   */
+  private charcoalSeconds(t: CharcoalTypeSpec): number {
+    const base = this.db.grill.charcoal.baseDurationSec;
+    const bonus = (this.activeEvo()?.charcoalBonus ?? 0) + this.upgradeDelta('charcoal_duration');
+    return Math.round(base * (1 + bonus) * t.durationMult);
+  }
+  /** Quantos segundos o tipo *base* daria nesta grelha (o ponto de comparação do painel). */
+  private baseCharcoalSeconds(): number {
+    const base = this.db.grill.charcoal.baseDurationSec;
+    const bonus = (this.activeEvo()?.charcoalBonus ?? 0) + this.upgradeDelta('charcoal_duration');
+    return Math.round(base * (1 + bonus));
+  }
   private churrasqueiraById(id: string): ChurrasqueiraSpec | undefined {
     return this.churrasqueiras.find((c) => c.id === id);
   }
@@ -519,7 +595,8 @@ class Game {
           maxOrdersOnScreen: lvl.maxOrdersOnScreen
         },
         churrasqueiraId: actForTurn?.id,
-        churrasqueiraLevel: actEvoLv
+        churrasqueiraLevel: actEvoLv,
+        charcoalType: this.meta.charcoalType
       },
       20260917 + this.levelIndex
     );
@@ -560,6 +637,8 @@ class Game {
     this.ftue = new TutorialTurn(this.db, t, this.tutorial, {
       restaurantIndex: lvl.restaurantIndex,
       upgradeLevels: this.meta.upgrades,
+      // O FTUE roda de propósito sem `charcoalType`: os tempos medidos do primeiro
+      // turno (1º PERFEITO 16,1s / turno completo 32,9s) são do caminho base.
       churrasqueiraLevel: 1,
       seed: 20260917
     });
@@ -753,7 +832,11 @@ class Game {
     dbg.__churrascoHome = this.screen === 'home' ? {
       coins: this.meta.coins, embers: this.meta.embers, lastClaimDay: this.meta.lastClaimDay,
       claimable: this.dailyClaimable(), dailyOpen: this.dailyModalOpen,
-      strip: this.dailyStripLayout().panel, modal: this.dailyModalOpen ? this.dailyModalLayout() : null
+      strip: this.dailyStripLayout().panel, modal: this.dailyModalOpen ? this.dailyModalLayout() : null,
+      // aba atual + painel dos carvões: o harness prova que o toque abre o painel e que o quadro
+      // cabe na tela — mesma razão de ser do `dailyOpen` logo acima (docs/05).
+      tab: this.homeTab, charcoalOpen: this.charcoalPanelOpen,
+      charcoalPanel: this.charcoalPanelOpen ? this.charcoalPanelLayout().panel : null
     } : null;
     if (this.screen === 'splash') {
       this.splashT += dt;
@@ -1129,18 +1212,32 @@ class Game {
 
   // ── Painted grill (docs/22 §7.1) ─────────────────────────────────────────
   /** Where the painted grill of the active churrasqueira sits; null → the procedural grill. */
+  /**
+   * The bed this grill's art is scaled to: `grill.art` × the grid of *this* evolution. The art gate
+   * (`tools/art/check-grill-geometry.mjs`) refuses a sprite whose opening cannot hold this number,
+   * so the promise and the pixels are checked against the same arithmetic.
+   */
+  private grillBedW(zoneCount: number, slotsPerZone: number): number {
+    const art = (this.db.grill as unknown as { art?: GrillArtStandard }).art;
+    return art ? grillBedWidthOnScreen(art, { zoneCount, slotsPerZone }) : GRILL_ART_BED_W;
+  }
   private grillArtView(hero: boolean): GrillArt | null {
     const ch = hero ? (this.churrasqueiras[0] ?? this.activeChurr()) : this.activeChurr();
     if (!ch) return null;
     const evo = hero ? (this.meta.churrasqueiraLv[ch.id] ?? 1) : (this.activeEvo()?.level ?? 1);
     const g = grillSprite(ch.id, evo);
     if (!g) return null;
+    const spec = ch.evolutions.find((e) => e.level === evo) ?? ch.evolutions[0];
+    // Play uses the live grid (an upgrade can add slots per row); the shop card uses the grid the
+    // evolution promises. Either way the painted opening is what the food is laid out inside.
+    const slots = hero ? (spec?.slotsPerZone ?? 1) : Math.max(spec?.slotsPerZone ?? 1, this.sim?.grill.stats.slotsPerZone ?? 0);
+    const bedW = this.grillBedW(hero ? (spec?.zoneCount ?? this.zoneCount()) : this.zoneCount(), slots);
     const [bx = 0, by = 0, bw = 1, bh = 1] = g.hole.bbox;
     let s: number, gx: number, gy: number;
     if (hero) {
-      s = 330 / g.w; gx = W / 2 - (g.w * s) / 2; gy = 262;
+      s = Math.min(bedW / g.w, (W - 24) / g.w); gx = W / 2 - (g.w * s) / 2; gy = 262;
     } else {
-      s = Math.min(GRILL_ART_BED_W / bw, (W - 12) / g.w);
+      s = Math.min(bedW / bw, (W - 12) / g.w);
       gx = W / 2 - (bx + bw / 2) * s;
       gy = GRILL_ART_HOLE_Y - (by + bh / 2) * s;
     }
@@ -1242,7 +1339,10 @@ class Game {
       if (this.drag?.food === f) continue;
       const p = this.foodScreenPos(f); this.drawFood(ctx, f, p.x, p.y, 1);
     }
-    this.drawCharcoalGauge(ctx, W / 2 - GRILL_ART_BED_W / 2, GRILL_BOTTOM + 8, GRILL_ART_BED_W);
+    // The gauge is as wide as the bed it feeds, so a bigger grill reads as a bigger grill even in
+    // the meter under it.
+    const bedW = this.grillBedW(this.zoneCount(), this.sim.grill.stats.slotsPerZone);
+    this.drawCharcoalGauge(ctx, W / 2 - bedW / 2, GRILL_BOTTOM + 8, bedW);
   }
   private benchItemRect(i: number): { x: number; y: number; w: number; h: number } {
     const w = 74; const gap = 8;
@@ -1349,6 +1449,34 @@ class Game {
         if (!contains(L.panel, p)) this.dailyModalOpen = false;
         return;
       }
+      if (this.charcoalPanelOpen) {
+        const L = this.charcoalPanelLayout();
+        if (contains(L.close, p, 10) || !contains(L.panel, p, 0)) { this.charcoalPanelOpen = false; audio.play('uiTap'); return; }
+        const types = this.charcoalTypes();
+        for (let i = 0; i < types.length; i++) {
+          if (!contains(L.rows[i]!, p, 4)) continue;
+          const t = types[i]!;
+          if (this.meta.level < t.unlockLevel) {
+            audio.play('uiError');
+            this.float(W / 2, L.rows[i]!.y, this.l10n.t('charcoal.locked', { n: t.unlockLevel }), C.ambar, 13);
+            return;
+          }
+          if (this.meta.charcoalType === t.id) { this.charcoalPanelOpen = false; audio.play('uiTap'); return; }
+          this.meta.charcoalType = t.id;
+          saveMeta(this.meta);
+          audio.play('coin');
+          this.track({
+            name: 'charcoal_select',
+            params: {
+              charcoal_type: t.id, player_level: this.meta.level, refill_cost_coins: t.refillCostCoins,
+              duration_mult: t.durationMult, heat_mult: t.heatMult
+            }
+          });
+          this.float(W / 2, 300, this.l10n.t('charcoal.equipped', { name: this.l10n.t(t.nameKey) }), C.ouroLight, 14);
+          return;
+        }
+        return;
+      }
       if (this.offlinePopup) {
         if (p.y > H*0.5 + 60 && p.y < H*0.5+120 && Math.abs(p.x - W/2) < 100) {
           this.meta.coins += this.offlinePopup.coins;
@@ -1403,6 +1531,12 @@ class Game {
         if (this.hitHomePlay(p)) {
           audio.play('uiTap');
           this.requestNextLevel();
+          return;
+        }
+        // Carvão: o chip no canto do cartão abre o painel dos três tipos.
+        if (!this.charcoalPanelOpen && this.charcoalTypes().length > 1 && contains(this.charcoalChipRect(), p, 3)) {
+          this.charcoalPanelOpen = true;
+          audio.play('uiTap');
           return;
         }
         // Churrasqueira showcase — 356..450
@@ -2006,6 +2140,7 @@ class Game {
     else this.drawPlay(ctx);
     // global overlays
     if (this.dailyModalOpen) this.drawDailyModal(ctx);
+    if (this.charcoalPanelOpen) this.drawCharcoalPanel(ctx);
     if (this.offlinePopup) this.drawOfflinePopup(ctx);
     ctx.restore();
   }
@@ -2221,6 +2356,9 @@ class Game {
       if (style === 'lata') { tg.addColorStop(0,'#7A4A2E'); tg.addColorStop(1,'#4B2A18'); }
       else if (style === 'chapa') { tg.addColorStop(0,'#5A5E62'); tg.addColorStop(1,'#2A2E33'); }
       else if (style === 'inox') { tg.addColorStop(0,'#D8E2E8'); tg.addColorStop(1,'#8FA0AF'); }
+      else if (style === 'espeto') { tg.addColorStop(0,'#8A6A4A'); tg.addColorStop(1,'#3A2418'); }
+      else if (style === 'tambor') { tg.addColorStop(0,'#4A4A4E'); tg.addColorStop(1,'#1E1C1B'); }
+      else if (style === 'campeao') { tg.addColorStop(0,'#E4E9EE'); tg.addColorStop(1,'#6E7A85'); }
       else { tg.addColorStop(0,'#8B5A2B'); tg.addColorStop(1,'#3A2510'); }
       ctx.fillStyle=tg; ctx.fillRect(thumbX,thumbY,thumbW,thumbH);
       // fileiras lines inside thumb
@@ -2291,6 +2429,32 @@ class Game {
       }
       ctx.font=font(8,700,UI); ctx.fillStyle='rgba(244,231,211,0.5)';
       ctx.fillText(`Evolução ${evoIdx+1}/3`, tx+52, showcaseY+73);
+    }
+    // ── Chip de carvão (docs/23 §4) ────────────────────────────────────────────
+    // Um único chip no canto inferior direito do cartão: é o espaço livre do cartão, e a
+    // garagem não tem linha própria sem empurrar os teasers de upgrade (que o FTUE ancora com
+    // `homeUpgradeRect`). Tocar roda entre os tipos liberados; o float diz o que mudou.
+    const cTypes = this.charcoalTypes();
+    if (cTypes.length > 1) {
+      const cr = this.charcoalChipRect();
+      const cur = this.equippedCharcoal();
+      const locked = this.availableCharcoal().length < 2;
+      const tintC = cur ? (cur.id === 'briquete' ? C.brasaHot : cur.id === 'vegetal' ? C.verdeClaro : C.ambar) : C.ambar;
+      panel(ctx, cr.x, cr.y, cr.w, cr.h, { r: cr.r ?? 12, top: 'rgba(44,32,24,0.94)', bottom: 'rgba(22,15,10,0.94)', border: tintC, borderWidth: 1.2, shadow: 6 });
+      flameIcon(ctx, cr.x + 12, cr.y + cr.h / 2, 5.5, true);
+      ctx.font = font(8, 900, UI); ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = C.perola;
+      const shortName = cur ? this.l10n.t(cur.nameKey).split(' ').slice(-1)[0]!.toUpperCase() : 'BRASA';
+      ctx.fillText(shortName.slice(0, 9), cr.x + 21, cr.y + cr.h / 2);
+      if (cur && cur.refillCostCoins > 0) {
+        ctx.font = font(7, 800, UI); ctx.fillStyle = tintC; ctx.textAlign = 'right';
+        ctx.fillText(`${cur.refillCostCoins}`, cr.x + cr.w - 6, cr.y + cr.h / 2);
+      } else if (locked) {
+        ctx.font = font(7, 800, UI); ctx.fillStyle = 'rgba(244,231,211,0.5)'; ctx.textAlign = 'right';
+        const nx = cTypes.find((t) => this.meta.level < t.unlockLevel);
+        ctx.fillText(nx ? `Nv ${nx.unlockLevel}` : '·', cr.x + cr.w - 6, cr.y + cr.h / 2);
+      }
+      ctx.textBaseline = 'alphabetic';
     }
     // CTA on right side of showcase
     const ctaX = W-92, ctaY = showcaseY+22, ctaW = 76, ctaH = 30;
@@ -3146,7 +3310,12 @@ class Game {
     ctx.strokeStyle='rgba(255,214,160,0.22)'; ctx.lineWidth=1; roundRectPath(ctx,bx+0.5,by+0.5,bw-1,bh-1,(bh-1)/2); ctx.stroke();
     flameIcon(ctx,bx+12,by+bh/2,5.5,!low);
     ctx.font=font(10,800,UI); ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillStyle= low? C.telha : C.creme;
-    ctx.shadowColor='rgba(0,0,0,0.7)'; ctx.shadowBlur=3; ctx.fillText(this.l10n.t('ui.hud.charcoal'),bx+24,by+bh/2); ctx.shadowBlur=0;
+    // O rótulo carrega o tipo equipado e o preço da recarga: "150s de brasa" ou "202s, 18 por
+    // recarga" é a diferença que o jogador precisa ver para escolher com conta na mão.
+    const ctype=this.equippedCharcoal();
+    const price=ctype && ctype.refillCostCoins>0 ? ` · ${ctype.refillCostCoins}` : ` · ${this.l10n.t('charcoal.free')}`;
+    const gaugeLabel=ctype ? `${this.l10n.t('ui.hud.charcoal')} · ${this.l10n.t(ctype.nameKey).split(' ').slice(-1)[0]}${price}` : this.l10n.t('ui.hud.charcoal');
+    ctx.shadowColor='rgba(0,0,0,0.7)'; ctx.shadowBlur=3; ctx.fillText(gaugeLabel,bx+24,by+bh/2); ctx.shadowBlur=0;
     if(refilling){ ctx.textAlign='right'; ctx.fillStyle=C.ambar; ctx.fillText(`${g.refilling.toFixed(1)}s`,bx+bw-10,by+bh/2);}
     else if(low){ const pulse=0.5+Math.sin(this.now*6)*0.5; ctx.globalAlpha=pulse; ctx.textAlign='right'; ctx.fillStyle=C.telha; ctx.font=font(10,900,UI); ctx.fillText('!',bx+bw-10,by+bh/2); ctx.globalAlpha=1; }
   }
@@ -3649,6 +3818,79 @@ class Game {
     ctx.font=font(10,600,UI); ctx.textAlign='center'; ctx.fillStyle='rgba(244,231,211,0.5)';
     ctx.fillText('Tempo limitado: gire antes que expire!',W/2, cy + r + 34);
     this.drawBanner(ctx);
+  }
+
+  /** Painel dos três carvões: a troca (mais brasa × menos fogo × preço) escrita em números do motor. */
+  private drawCharcoalPanel(ctx: CanvasRenderingContext2D): void {
+    const types = this.charcoalTypes();
+    const L = this.charcoalPanelLayout();
+    ctx.fillStyle = 'rgba(8,5,3,0.72)'; ctx.fillRect(0, 0, W, H);
+    panel(ctx, L.panel.x, L.panel.y, L.panel.w, L.panel.h, {
+      r: 20, top: 'rgba(58,42,30,0.99)', bottom: 'rgba(24,15,10,0.99)', border: C.brasaHot, borderWidth: 1.6, shadow: 22, innerGlow: true,
+      glowTop: 'rgba(255,180,90,0.16)'
+    });
+    outlinedText(ctx, this.l10n.t('charcoal.label').toUpperCase(), W / 2, L.panel.y + 30, C.perola, 17, { outline: 3, weight: 900 });
+    ctx.font = font(9, 600, UI); ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(244,231,211,0.6)';
+    ctx.fillText(this.l10n.t('charcoal.panel.subtitle'), W / 2, L.panel.y + 48);
+    ctx.font = font(8, 700, UI); ctx.fillStyle = 'rgba(244,231,211,0.42)';
+    const grillName = this.activeChurr() ? this.l10n.t(this.activeChurr()!.nameKey) : this.l10n.t('grill.none');
+    ctx.fillText(`${grillName}: ${this.baseCharcoalSeconds()}s ${this.l10n.t('charcoal.panel.seconds')}`, W / 2, L.panel.y + 66);
+    // Quebra de linha medida no canvas (o painel é desenhado em 420 px: texto estourando a borda
+    // é o tipo de defeito que só aparece no quadro montado, não no código).
+    const wrap = (text: string, x: number, y: number, maxW: number, lh: number, align: CanvasTextAlign = 'left') => {
+      ctx.textAlign = align;
+      const words = text.split(' '); let line = '', yy = y;
+      for (const w of words) {
+        const cand = line ? `${line} ${w}` : w;
+        if (ctx.measureText(cand).width > maxW && line) { ctx.fillText(line, x, yy); line = w; yy += lh; }
+        else line = cand;
+      }
+      if (line) ctx.fillText(line, x, yy);
+      return yy;
+    };
+    glass(ctx, L.close.x, L.close.y, L.close.w, L.close.h, { alpha: 0.18, border: 'rgba(255,214,160,0.3)' });
+    ctx.strokeStyle = C.creme; ctx.lineWidth = 2; ctx.beginPath();
+    ctx.moveTo(L.close.x + 8, L.close.y + 8); ctx.lineTo(L.close.x + 18, L.close.y + 18);
+    ctx.moveTo(L.close.x + 18, L.close.y + 8); ctx.lineTo(L.close.x + 8, L.close.y + 18); ctx.stroke();
+    for (let i = 0; i < types.length; i++) {
+      const t = types[i]!, r = L.rows[i]!;
+      const locked = this.meta.level < t.unlockLevel;
+      const equipped = this.meta.charcoalType === t.id;
+      const tint = t.id === 'briquete' ? C.brasaHot : t.id === 'vegetal' ? C.verdeClaro : C.ambar;
+      panel(ctx, r.x, r.y, r.w, r.h, {
+        r: 14, top: 'rgba(40,28,20,0.96)', bottom: 'rgba(20,13,9,0.96)',
+        border: equipped ? tint : locked ? 'rgba(255,214,160,0.10)' : 'rgba(255,214,160,0.22)',
+        borderWidth: equipped ? 1.8 : 1, shadow: equipped ? 10 : 4
+      });
+      ctx.globalAlpha = locked ? 0.5 : 1;
+      flameIcon(ctx, r.x + 18, r.y + 20, 7, !locked);
+      ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+      ctx.font = font(11, 900, UI); ctx.fillStyle = C.perola;
+      ctx.fillText(this.l10n.t(t.nameKey), r.x + 32, r.y + 24);
+      ctx.font = font(8, 600, UI); ctx.fillStyle = 'rgba(244,231,211,0.62)';
+      wrap(this.l10n.t(t.descKey), r.x + 14, r.y + 40, r.w - 108, 11);
+      // números do motor, não adjetivos: segundos reais de brasa e o preço da recarga
+      ctx.textAlign = 'right';
+      ctx.font = font(11, 900, UI); ctx.fillStyle = tint;
+      ctx.fillText(`${this.charcoalSeconds(t)}s`, r.x + r.w - 14, r.y + 22);
+      ctx.font = font(8, 700, UI); ctx.fillStyle = 'rgba(244,231,211,0.66)';
+      const heat = Math.round((t.heatMult - 1) * 100);
+      ctx.fillText(`calor ${heat >= 0 ? '+' : '\u2212'}${Math.abs(heat)}%`, r.x + r.w - 14, r.y + 36);
+      ctx.fillStyle = t.refillCostCoins > 0 ? C.ouroLight : C.verdeClaro;
+      ctx.fillText(t.refillCostCoins > 0
+        ? this.l10n.t('charcoal.per_refill', { n: t.refillCostCoins })
+        : this.l10n.t('charcoal.free'), r.x + r.w - 14, r.y + 50);
+      ctx.globalAlpha = 1;
+      if (locked) {
+        ctx.textAlign = 'center'; ctx.font = font(9, 900, UI); ctx.fillStyle = C.ambar;
+        ctx.fillText(this.l10n.t('charcoal.locked', { n: t.unlockLevel }), r.x + r.w / 2, r.y + r.h - 6);
+      } else if (equipped) {
+        ctx.textAlign = 'left'; ctx.font = font(8, 900, UI); ctx.fillStyle = tint;
+        ctx.fillText(this.l10n.t('charcoal.equippedBadge'), r.x + 14, r.y + r.h - 6);
+      }
+    }
+    ctx.font = font(8, 600, UI); ctx.fillStyle = 'rgba(244,231,211,0.5)';
+    wrap(this.l10n.t('charcoal.panel.footnote'), W / 2, L.panel.y + L.panel.h - 32, L.panel.w - 32, 11, 'center');
   }
 
   private drawDailyModal(ctx: CanvasRenderingContext2D): void {

@@ -49,7 +49,7 @@
     "maxPerSession": 3,
     "maxPerDay": 8,
     "skipFirstTurns": 6,
-    "skipFirstSessions": 2,
+    "skipFirstSessions": 3,
     "suppressAfterIapHours": 24,
     "suppressAfterRewardedMin": 10,
     "suppressDuring": ["cooking", "active_order", "critical_action", "tutorial"],
