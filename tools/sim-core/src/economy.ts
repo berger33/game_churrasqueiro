@@ -317,7 +317,10 @@ export function computeOfflineEarnings(db: GameDatabase, p: PlayerState, elapsed
   const idle = db.economy.idle;
   if (p.restaurantIndex <= 0 || elapsedSec <= 0) return { minutes: 0, coins: 0, xp: 0, capped: false };
 
-  const maxSec = idle.maxOfflineHours * 3600 * (p.upgradeLevels['caixa'] ? 1 : 1);
+  // O teto de horas é a tabela, hoje. Um `× (levels['caixa'] ? 1 : 1)` mora aqui havia várias
+  // sessões: sempre deu 1, e a porta para um upgrade que encurta o cap offline ainda não existe —
+  // quando existir, entra de verdade nos dois lados (este arquivo e EconomyRules.cs), não como teatro.
+  const maxSec = idle.maxOfflineHours * 3600;
   const capped = elapsedSec > maxSec;
   const effective = Math.min(elapsedSec, maxSec);
   const minutes = effective / 60;

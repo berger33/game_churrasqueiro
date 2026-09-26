@@ -193,7 +193,12 @@ public static class Program
         {
             var id = Str(v!["id"]);
             if (id == "econ.effectiveHeat") EffectiveHeat(data, stats, v, economy);
-            else economy.NotPorted(id, "EconomyRules.cs");
+            else if (id == "econ.xpForLevel") EconXpForLevel(v, economy);
+            else if (id == "econ.levelForXp") EconLevelForXp(v, economy);
+            else if (id == "econ.upgradeCost") EconUpgradeCost(v, economy);
+            else if (id == "econ.levelUpReward") EconLevelUpReward(v, economy);
+            else if (id == "econ.offline") EconOffline(data, v, economy);
+            else economy.NotPorted(id, "unknown economy vector");
         }
         var turns = report.Section("golden.turns");
         foreach (var v in doc["turns"]!.AsArray()) turns.NotPorted(Str(v!["id"]), "TurnSimulation.cs");
@@ -304,6 +309,103 @@ public static class Program
                 g.CharcoalEfficiency = CookingRules.SampleCurve(data.Grill.Charcoal.EfficiencyCurve, ts[k]);
                 Near(fails, $"zone {z} t={ts[k]}", CookingRules.EffectiveHeat(g, z, data), want[k]);
             }
+        }
+        s.Result(Str(v["id"]), fails);
+    }
+
+    // ── 3b. golden.economy (EconomyRules.cs) ────────────────────────────────
+
+    private static void EconXpForLevel(JsonNode v, Section s)
+    {
+        var input = v["input"]!;
+        double a = Num(input["formula"]!["a"]);
+        double exponent = Num(input["formula"]!["exponent"]);
+        double minPerLevel = Num(input["formula"]!["minPerLevel"]);
+        var levels = Ints(input["levels"]);
+        var want = Nums(v["expect"]!["values"]);
+        var fails = new List<string>();
+        for (int i = 0; i < levels.Length; i++)
+            Near(fails, $"level {levels[i]}", EconomyRules.XpForLevel(levels[i], a, exponent, minPerLevel), want[i]);
+        s.Result(Str(v["id"]), fails);
+    }
+
+    private static void EconLevelForXp(JsonNode v, Section s)
+    {
+        var input = v["input"]!;
+        double a = Num(input["formula"]!["a"]);
+        double exponent = Num(input["formula"]!["exponent"]);
+        double minPerLevel = Num(input["formula"]!["minPerLevel"]);
+        int maxLevel = Int(input["maxLevel"]);
+        var xs = Nums(input["xp"]);
+        var want = Ints(v["expect"]!["levels"]);
+        var fails = new List<string>();
+        for (int i = 0; i < xs.Length; i++)
+            Eq(fails, $"xp {xs[i]}", EconomyRules.LevelForXp(xs[i], a, exponent, minPerLevel, maxLevel), want[i]);
+        s.Result(Str(v["id"]), fails);
+    }
+
+    private static void EconUpgradeCost(JsonNode v, Section s)
+    {
+        var baseCost = new Dictionary<string, double>(StringComparer.Ordinal);
+        var growth = new Dictionary<string, double>(StringComparer.Ordinal);
+        foreach (var t in v["input"]!["tracks"]!.AsArray())
+        {
+            var id = Str(t!["id"]);
+            baseCost[id] = Num(t["baseCost"]);
+            growth[id] = Num(t["growth"]);
+        }
+        var fails = new List<string>();
+        foreach (var row in v["expect"]!["rows"]!.AsArray())
+        {
+            var track = Str(row!["track"]);
+            int level = Int(row["level"]);
+            if (!baseCost.TryGetValue(track, out double bc)) { fails.Add($"unknown track \"{track}\""); continue; }
+            Near(fails, $"{track} lv{level}", EconomyRules.UpgradeCost(bc, growth[track], level), Num(row["cost"]));
+        }
+        s.Result(Str(v["id"]), fails);
+    }
+
+    private static void EconLevelUpReward(JsonNode v, Section s)
+    {
+        double baseReward = Num(v["input"]!["coins"]!["base"]);
+        double exponent = Num(v["input"]!["coins"]!["exponent"]);
+        int every = Int(v["input"]!["embers"]!["every"]);
+        int amount = Int(v["input"]!["embers"]!["amount"]);
+        var levels = Ints(v["input"]!["levels"]);
+        var wantCoins = Nums(v["expect"]!["coins"]);
+        var wantEmbers = Nums(v["expect"]!["embers"]);
+        var fails = new List<string>();
+        for (int i = 0; i < levels.Length; i++)
+        {
+            int lv = levels[i];
+            Near(fails, $"coins@{lv}", EconomyRules.LevelUpCoinReward(baseReward, exponent, lv), wantCoins[i]);
+            Near(fails, $"embers@{lv}", every > 0 && lv % every == 0 ? amount : 0, wantEmbers[i]);
+        }
+        s.Result(Str(v["id"]), fails);
+    }
+
+    private static void EconOffline(GameData data, JsonNode v, Section s)
+    {
+        // The vector carries its own idle block. It is the table — the check below is what keeps
+        // "the vector is self-contained" from quietly becoming "the vector tests a stale table".
+        var idle = v["input"]!["idle"]!;
+        var table = data.Economy.Idle;
+        var fails = new List<string>();
+        if (Int(idle["maxOfflineHours"]) != table.MaxOfflineHours || Int(idle["rampInMinutes"]) != table.RampInMinutes)
+            fails.Add("vector idle differs from economy.json (regenerate the golden vectors)");
+        if (Nums(idle["coinsPerMinuteByRestaurant"]).Length != table.CoinsPerMinuteByRestaurant.Count)
+            fails.Add("vector idle.coinsPerMinuteByRestaurant length differs from the table");
+        var levels = new Dictionary<string, int>(StringComparer.Ordinal);
+        if (v["input"]!["upgradeLevels"] is JsonObject obj)
+            foreach (var kv in obj) levels[kv.Key] = (int)kv.Value!.GetValue<double>();
+        foreach (var row in v["expect"]!["rows"]!.AsArray())
+        {
+            int idx = Int(row!["restaurantIndex"]);
+            double elapsed = Num(row["elapsedSec"]);
+            var got = EconomyRules.ComputeOfflineEarnings(data, levels, idx, elapsed);
+            Near(fails, $"r{idx} {elapsed}s coins", got.Coins, Num(row["coins"]));
+            Near(fails, $"r{idx} {elapsed}s xp", got.Xp, Num(row["xp"]));
+            Eq(fails, $"r{idx} {elapsed}s capped", got.Capped, Bool(row["capped"]));
         }
         s.Result(Str(v["id"]), fails);
     }
