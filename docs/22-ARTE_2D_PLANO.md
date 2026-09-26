@@ -1,10 +1,15 @@
 # 22 — Plano de Arte 2D Profissional (gerada por IA, em lotes de 10)
 
-**Data:** 2026-09-25 · branch `arena/01a0d72a-game-churrasqueiro`
+**Data:** 2026-09-25 · branch `arena/01a0daed-game-churrasqueiro` (o `main` já com o PR #6)
 **Status:**
 
 - Lotes 01 e 02 **aprovados** e **integrados no protótipo** (§7.1).
-- Lote 03 gerado e processado, **aguardando aprovação**; nenhuma imagem do lote 04 é gerada antes do "ok".
+- **Lote 03 rejeitado inteiro pelo dono** (2026-09-25): "nada entra no runtime; refazer o lote".
+  As 36 linhas saem de `approved`-para-ser e viram `rejected` no registro.
+- **Lote 04 = o reprocessamento do lote 03**, as mesmas 10 imagens com duas correções (§6.4):
+  guia de layout nos três churrasqueiras e a maminha como cunha triangular. Entregue,
+  **aguardando aprovação**; três itens voltam para um reforço (§6.5).
+- O conteúdo que estava planejado para o lote 04 desce um degrau (§6).
 - A auditoria completa do que falta está em §2.
 
 > **Por quê.** A mecânica agrada, mas o visual do protótipo (tudo desenhado por código em
@@ -73,7 +78,7 @@ O texto exato está em `art/prompts/lote-NN.md`. A partir do lote 02, cada promp
 Contado a partir de **todas** as tabelas de `shared/data` (e não de estimativa). Legenda:
 
 - ✅ aprovado (e, no caso do protótipo, integrado);
-- 🟡 no lote 03, aguardando aprovação;
+- 🟡 no lote 04 (o reprocessamento do 03), aguardando aprovação;
 - 🔁 refazer;
 - ⬜ falta.
 
@@ -100,9 +105,10 @@ Contado a partir de **todas** as tabelas de `shared/data` (e não de estimativa)
 
 **Totais:**
 
-- 20 imagens aprovadas (lotes 01–02) viraram 92 sprites;
-- o lote 03 tem 10 imagens (36 sprites), das quais 3 vão para refação;
-- para cobrir tudo faltam cerca de **40 imagens**, em 4 lotes.
+- 20 imagens aprovadas (lotes 01–02) viraram 92 sprites — é o que está no runtime do protótipo;
+- o lote 03 foi **rejeitado inteiro** e reprocessado como lote 04: 10 imagens, 36 sprites,
+  dos quais 1 aprovado com ressalva e 3 para reforço (§6.5);
+- para cobrir tudo faltam cerca de **40 imagens**, em 4 lotes depois do 04.
 
 O logotipo continua tipográfico (Baloo 2 com efeitos): texto gerado por IA erra letras.
 
@@ -223,11 +229,12 @@ proíbem roupa e props magenta; a camisa salmão da mãe (lote 01) passou porque
 |---|---|---|
 | **01** | picanha, linguiça toscana, pão de alho, queijo coalho, espetinho misto · churrasqueira lata (evo 1) · fundo quintal · brasas (3 calores) · bancada · clientes A | **aprovado e integrado** |
 | **02** | espetinho de frango, coração, coxa, asinha, fraldinha, legumes, vinagrete · clientes B (+ turista com camisa floral) · lata evo 2 e evo 3 | **aprovado e integrado** |
-| **03** | 9 ícones de interface · 9 ícones de upgrade · chapa, inox e fornalha (evo 1) · fundos espetinho de rua, trailer, churrascaria de bairro · contra-filé, maminha | **entregue, aguardando aprovação** (3 churrasqueiras para refazer) |
-| **04** | refação de chapa, inox e fornalha (evo 1) **com guia de layout** · costela, cupim · ícones de upgrade 2/3 e 3/3 · funcionários (5) · fundos churrascaria premium e festival | proposto |
-| **05** | evoluções 2 e 3 de chapa, inox e fornalha (6) · fundo rede nacional · ícones de cosméticos (5) · categorias da coleção (10) · coleção: molhos e equipamentos (1/2) | planejado |
-| **06** | coleção 2/2 (churrasqueiras especiais, medalha) · banners de eventos (11, em 3 folhas) · arte da loja (7 produtos, 2 folhas) · Brasa Pass · VFX (fumaça, faíscas, PERFEITO, moedas/confete) | planejado |
-| **07** | mapa da rota · medalhas de conquista · key art da tela-título · loja das stores (3 conceitos de ícone, feature graphic) · sobras e refações | planejado |
+| **03** | 9 ícones de interface · 9 ícones de upgrade · chapa, inox e fornalha (evo 1) · fundos espetinho de rua, trailer, churrascaria de bairro · contra-filé, maminha | **REJEITADO inteiro pelo dono (2026-09-25)** — reprocessado como lote 04 |
+| **04** | **o reprocessamento do 03**: as mesmas 10 imagens com o guia de layout nas grelhas (§6.4) e a maminha triangular | **entregue, aguardando aprovação** · 3 itens voltam para reforço (§6.5) |
+| **05** | *(era o lote 04)* costela, cupim · ícones de upgrade 2/3 e 3/3 · funcionários (5) · fundos churrascaria premium e festival · **reforço**: chapa e inox com a boca maior, célula "servido" da maminha | proposto |
+| **06** | *(era o lote 05)* evoluções 2 e 3 de chapa, inox e fornalha (6) · fundo rede nacional · ícones de cosméticos (5) · categorias da coleção (10) · coleção: molhos e equipamentos (1/2) | planejado |
+| **07** | *(era o lote 06)* coleção 2/2 (churrasqueiras especiais, medalha) · banners de eventos (11, em 3 folhas) · arte da loja (7 produtos, 2 folhas) · Brasa Pass · VFX (fumaça, faíscas, PERFEITO, moedas/confete) | planejado |
+| **08** | *(era o lote 07)* mapa da rota · medalhas de conquista · key art da tela-título · loja das stores (3 conceitos de ícone, feature graphic) · sobras e refações | planejado |
 
 ### 6.1 Resultado do lote 01
 
@@ -296,14 +303,57 @@ nomeia pela posição e eles viram variantes.
 | 9 | contra-filé | 6 | ✅ |
 | 10 | maminha | 6 | ⚠️ pouco triangular: parecida com o contra-filé |
 
-### 6.4 Técnica nova para o lote 04: guia de layout
+### 6.4 Técnica nova: o guia de layout (implementado, modo `guide` do `make-ref.mjs`)
 
-Descrever a câmera com palavras falhou duas vezes nas churrasqueiras: a lata saiu oblíqua e
-as três novas saíram como janelas. No lote 04, a referência passada ao modelo será um **guia de
-layout** desenhado por script: silhueta simples da churrasqueira com a boca magenta na
-proporção e na posição exatas (~1,4:1, ≥ 75 % da largura, borda de cima horizontal), sobre
-magenta. O modelo pinta por cima da composição dada, em vez de interpretar "vista de cima".
-Os guias entram em `tools/art/make-ref.mjs` como um modo novo.
+Descrever a câmera com palavras falhou duas vezes nas churrasqueiras: a lata saiu oblíqua e as
+três do lote 03 saíram como janelas frontais. O guia inverte o ônus: um script desenha a
+silhueta e **a boca magenta já no lugar**, e o modelo pinta dentro da composição dada.
+
+```
+node tools/art/make-ref.mjs guide <out.png> <W> <H> <cart|box|masonry>
+```
+
+**Uma correção de rota:** o texto anterior pedia boca "~1,4:1, ≥ 75 % da largura". Isso não cabe
+num quadro 16:9 ao lado de um painel frontal visível — 1,4:1 numa boca de 80 % da largura pede
+uma altura maior que o próprio quadro, e é exatamente essa contradição que empurrou o modelo
+para "janela pequena na frente". A regra virou **medida**, não adjetivo: a boca é o quadrilátero
+onde o jogo mapeia as vagas e as faixas de calor, então o guia a põe com **≥ 87 % da largura do
+objeto, topo perfeitamente horizontal e ~40 % da área do bbox** (a lata aprovada: 89 % e 21 %).
+Os três tipos diferem no corpo — `cart` (carrinho com rodas), `box` (caixa de aço com
+prateleira), `masonry` (alvenaria com bancada de pedra).
+
+O guia é conferido com o **mesmo detector** que mede o sprite pintado, sem escrever nada:
+
+```
+node tools/art/process-sprites.mjs art/source/lote-04/check-guides.json --dry-run
+```
+
+É a regra do projeto aplicada à arte: quem mede o alvo é o mesmo código que mede o resultado.
+Antes disso, "a boca está pequena" era opinião; agora é um número na folha de revisão.
+
+### 6.5 Resultado do lote 04 — o reprocessamento do 03
+
+Medido pelo detector do `process-sprites`, com a lata aprovada (89 % da largura do objeto,
+21 % do sprite, −8,6°) como régua:
+
+| # | Imagem | Sprites | Boca | Avaliação |
+|---|---|---|---|---|
+| 1 | `ui_icons_core` | 9 | — | ✅ moeda, brasa, estrela, relógio, chama, check, baú, booster, cadeado; lêem a 32 px e em cinza |
+| 2 | `ui_icons_upgrades_a` | 9 | — | ✅ nomes = ids de `upgrades.json`; `ic_heat` é o card do passo 6 do FTUE |
+| 3 | `grill_ze_da_esquina_evo1` | 1 + furo | 64 % · 15 % · 4,3° | ⚠️ a boca voltou a ser a **superfície de topo** (era janela frontal de 6 % no lote 03) e o topo está quase horizontal, mas o modelo encolheu a boca do guia (92 % → 64 %). Reforço no lote 05 |
+| 4 | `grill_parrilla_chef_cisma_evo1` | 1 + furo | 66 % · 15 % · 6° | ⚠️ igual; o inox, o termômetro, a prateleira e as pernas estão bons |
+| 5 | `grill_fornalha_dragao_manso_evo1` | 1 + furo | 74 % · **25 %** · **0°** | ✅ boca maior e mais horizontal que a da lata aprovada; tijolo, bancada e chaminé coerentes |
+| 6–8 | fundos espetinho de rua / trailer / churrascaria de bairro | 3 | — | ✅ 9:16, sem texto, terço central livre; o letreiro do trailer é uma chama + linguiça, sem letras |
+| 9 | contra-filé | 6 | — | ✅ retângulo espesso com a faixa fina de gordura |
+| 10 | maminha | 6 | — | ✅ a cunha triangular resolve a confusão com o contra-filé na bancada · ⚠️ a célula 6 ("servido") saiu como mais um bife queimado: `spr_food_maminha_served` **não deve ser aprovado**; refazer a célula no lote 05 |
+
+**O que o guia consertou e o que não consertou.** A classe do erro acabou: nenhuma das três
+saiu como janela na frente, e a inclinação do topo caiu de ±9° para 0–6°. O que sobrou é
+tamanho da boca nas duas grelhas de aço — as duas com 15 % do sprite, abaixo dos 21 % da lata.
+O reforço (lote 05) repete as duas imagens com o prompt em que a boca é descrita como a
+própria referência ("same left edge, same right edge, same top edge, same bottom edge"), porque
+o pedido de "pintar em volta" foi lido como "pintar uma churrasqueira que caiba no desenho".
+
 
 ## 7. Integração no jogo
 
@@ -321,7 +371,7 @@ Só começa depois da aprovação do lote. Nenhum código do jogo muda enquanto 
 | Clientes | retrato circular por tipo; variantes a/b escolhidas pelo `uid`, então cada cliente mantém o rosto |
 | Cena | fundo pintado do restaurante do turno (e do quintal na tela-título), com degradê para o HUD ficar legível; as luzes procedurais saem quando a pintura já tem as suas |
 | Bancada | bancada pintada com a borda de trás cruzando a tela e as vagas como tapetes translúcidos |
-| Ícones | `coinIcon`, `flameIcon`, `starIcon`, `clockIcon` e `checkIcon` usam os ícones pintados, e os cards de upgrade usam o `icon` de cada trilha. Entram sozinhos quando o lote 03 for aprovado e o build refeito |
+| Ícones | `coinIcon`, `flameIcon`, `starIcon`, `clockIcon` e `checkIcon` usam os ícones pintados, e os cards de upgrade usam o `icon` de cada trilha. Entram sozinhos quando o lote 04 for aprovado e o build refeito |
 | Harnesses | `check-art` e `check-render` rodam sem `Image` e testam o procedural. `check-shots` tem um shim de `Image`, espera todos os sprites decodificarem e gera as capturas com a arte; é delas que saem as screenshots reais da loja |
 
 **Aprovar um lote = dois comandos:** `node tools/art/set-status.mjs lote-NN approved` e
@@ -395,10 +445,14 @@ ele não existe neste ambiente. **Ponto de decisão: lote 03.**
 ## 11. Próximos passos
 
 1. ~~Aprovação dos lotes 01 e 02~~: **aprovados** e integrados no protótipo.
-2. **Aprovação do lote 03.** Recomendação:
-   - aprovar ícones, fundos e as duas carnes;
-   - refazer chapa, inox e fornalha no lote 04 com guia de layout;
-   - decidir se a maminha fica.
+2. ~~**Aprovação do lote 03**~~ → o dono **rejeitou o lote inteiro** (2026-09-25) e mandou
+   reprocessar. Feito: é o lote 04 (§6.5), com o guia de layout do §6.4 valendo nas três grelhas.
+   - **Aprovação do lote 04** é a decisão pendente: `node tools/art/set-status.mjs lote-04
+     approved` + `node tools/art/build-runtime.mjs`;
+   - três itens vão para o reforço do lote 05 com o resto do conteúdo planejado: chapa e inox
+     com a boca maior, e a célula "servido" da maminha;
+   - **lote 05** = o que estava no lote 04 (costela, cupim, ícones 2/3 e 3/3, funcionários,
+     fundos premium e festival) + esses três reforços (§6).
 3. Lote 04 (§6), com os prompts gravados em `art/prompts/lote-04.md` antes da geração.
 4. Gate `check-art-registry`: todo arquivo em `Assets/Art` tem linha no registro, toda linha
    aponta para um arquivo que existe, e o runtime só contém `approved` (o CI que `docs/04` §11

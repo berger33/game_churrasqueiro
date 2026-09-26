@@ -10,8 +10,8 @@
         0.5
       ],
       "category": "background",
-      "source": "art/source/lote-03/bg_churrascaria_bairro.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/bg_churrascaria_bairro.png",
+      "batch": "lote-04"
     },
     "bg_restaurant_espetinho_rua": {
       "file": "Assets/Art/Backgrounds/bg_restaurant_espetinho_rua.png",
@@ -22,8 +22,8 @@
         0.5
       ],
       "category": "background",
-      "source": "art/source/lote-03/bg_espetinho_rua.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/bg_espetinho_rua.png",
+      "batch": "lote-04"
     },
     "bg_restaurant_quintal": {
       "file": "Assets/Art/Backgrounds/bg_restaurant_quintal.png",
@@ -46,224 +46,224 @@
         0.5
       ],
       "category": "background",
-      "source": "art/source/lote-03/bg_trailer.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/bg_trailer.png",
+      "batch": "lote-04"
     },
     "ic_auto_refill": {
       "file": "Assets/Art/UI/Icons/ic_auto_refill.png",
-      "w": 230,
-      "h": 304,
-      "pivot": [
-        0.5,
-        0.5
-      ],
-      "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
-    },
-    "ic_board": {
-      "file": "Assets/Art/UI/Icons/ic_board.png",
-      "w": 292,
-      "h": 254,
-      "pivot": [
-        0.5,
-        0.5
-      ],
-      "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
-    },
-    "ic_booster": {
-      "file": "Assets/Art/UI/Icons/ic_booster.png",
-      "w": 192,
-      "h": 291,
-      "pivot": [
-        0.5,
-        0.5
-      ],
-      "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
-    },
-    "ic_charcoal": {
-      "file": "Assets/Art/UI/Icons/ic_charcoal.png",
-      "w": 285,
-      "h": 300,
-      "pivot": [
-        0.5,
-        0.5
-      ],
-      "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
-    },
-    "ic_charcoal_quality": {
-      "file": "Assets/Art/UI/Icons/ic_charcoal_quality.png",
-      "w": 276,
-      "h": 280,
-      "pivot": [
-        0.5,
-        0.5
-      ],
-      "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
-    },
-    "ic_check": {
-      "file": "Assets/Art/UI/Icons/ic_check.png",
-      "w": 274,
-      "h": 243,
-      "pivot": [
-        0.5,
-        0.5
-      ],
-      "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
-    },
-    "ic_chest": {
-      "file": "Assets/Art/UI/Icons/ic_chest.png",
-      "w": 290,
-      "h": 283,
-      "pivot": [
-        0.5,
-        0.5
-      ],
-      "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
-    },
-    "ic_clock": {
-      "file": "Assets/Art/UI/Icons/ic_clock.png",
-      "w": 282,
-      "h": 293,
-      "pivot": [
-        0.5,
-        0.5
-      ],
-      "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
-    },
-    "ic_coin": {
-      "file": "Assets/Art/UI/Icons/ic_coin.png",
-      "w": 283,
-      "h": 284,
-      "pivot": [
-        0.5,
-        0.5
-      ],
-      "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
-    },
-    "ic_ember": {
-      "file": "Assets/Art/UI/Icons/ic_ember.png",
-      "w": 204,
-      "h": 291,
-      "pivot": [
-        0.5,
-        0.5
-      ],
-      "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
-    },
-    "ic_flame": {
-      "file": "Assets/Art/UI/Icons/ic_flame.png",
-      "w": 249,
-      "h": 307,
-      "pivot": [
-        0.5,
-        0.5
-      ],
-      "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
-    },
-    "ic_grill_size": {
-      "file": "Assets/Art/UI/Icons/ic_grill_size.png",
-      "w": 326,
-      "h": 189,
-      "pivot": [
-        0.5,
-        0.5
-      ],
-      "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
-    },
-    "ic_heat": {
-      "file": "Assets/Art/UI/Icons/ic_heat.png",
-      "w": 257,
-      "h": 315,
-      "pivot": [
-        0.5,
-        0.5
-      ],
-      "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
-    },
-    "ic_knife": {
-      "file": "Assets/Art/UI/Icons/ic_knife.png",
-      "w": 296,
+      "w": 265,
       "h": 290,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/ui_icons_upgrades_a.png",
+      "batch": "lote-04"
+    },
+    "ic_board": {
+      "file": "Assets/Art/UI/Icons/ic_board.png",
+      "w": 292,
+      "h": 277,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-04/ui_icons_upgrades_a.png",
+      "batch": "lote-04"
+    },
+    "ic_booster": {
+      "file": "Assets/Art/UI/Icons/ic_booster.png",
+      "w": 192,
+      "h": 281,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-04/ui_icons_core.png",
+      "batch": "lote-04"
+    },
+    "ic_charcoal": {
+      "file": "Assets/Art/UI/Icons/ic_charcoal.png",
+      "w": 289,
+      "h": 298,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-04/ui_icons_upgrades_a.png",
+      "batch": "lote-04"
+    },
+    "ic_charcoal_quality": {
+      "file": "Assets/Art/UI/Icons/ic_charcoal_quality.png",
+      "w": 270,
+      "h": 272,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-04/ui_icons_upgrades_a.png",
+      "batch": "lote-04"
+    },
+    "ic_check": {
+      "file": "Assets/Art/UI/Icons/ic_check.png",
+      "w": 252,
+      "h": 225,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-04/ui_icons_core.png",
+      "batch": "lote-04"
+    },
+    "ic_chest": {
+      "file": "Assets/Art/UI/Icons/ic_chest.png",
+      "w": 272,
+      "h": 253,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-04/ui_icons_core.png",
+      "batch": "lote-04"
+    },
+    "ic_clock": {
+      "file": "Assets/Art/UI/Icons/ic_clock.png",
+      "w": 262,
+      "h": 266,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-04/ui_icons_core.png",
+      "batch": "lote-04"
+    },
+    "ic_coin": {
+      "file": "Assets/Art/UI/Icons/ic_coin.png",
+      "w": 264,
+      "h": 264,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-04/ui_icons_core.png",
+      "batch": "lote-04"
+    },
+    "ic_ember": {
+      "file": "Assets/Art/UI/Icons/ic_ember.png",
+      "w": 212,
+      "h": 275,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-04/ui_icons_core.png",
+      "batch": "lote-04"
+    },
+    "ic_flame": {
+      "file": "Assets/Art/UI/Icons/ic_flame.png",
+      "w": 236,
+      "h": 288,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-04/ui_icons_core.png",
+      "batch": "lote-04"
+    },
+    "ic_grill_size": {
+      "file": "Assets/Art/UI/Icons/ic_grill_size.png",
+      "w": 323,
+      "h": 273,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-04/ui_icons_upgrades_a.png",
+      "batch": "lote-04"
+    },
+    "ic_heat": {
+      "file": "Assets/Art/UI/Icons/ic_heat.png",
+      "w": 266,
+      "h": 298,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-04/ui_icons_upgrades_a.png",
+      "batch": "lote-04"
+    },
+    "ic_knife": {
+      "file": "Assets/Art/UI/Icons/ic_knife.png",
+      "w": 296,
+      "h": 286,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-04/ui_icons_upgrades_a.png",
+      "batch": "lote-04"
     },
     "ic_lock": {
       "file": "Assets/Art/UI/Icons/ic_lock.png",
-      "w": 232,
-      "h": 293,
+      "w": 219,
+      "h": 279,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/ui_icons_core.png",
+      "batch": "lote-04"
     },
     "ic_speed": {
       "file": "Assets/Art/UI/Icons/ic_speed.png",
-      "w": 285,
-      "h": 285,
+      "w": 294,
+      "h": 294,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/ui_icons_upgrades_a.png",
+      "batch": "lote-04"
     },
     "ic_stability": {
       "file": "Assets/Art/UI/Icons/ic_stability.png",
-      "w": 312,
-      "h": 267,
-      "pivot": [
-        0.5,
-        0.5
-      ],
-      "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
-    },
-    "ic_star": {
-      "file": "Assets/Art/UI/Icons/ic_star.png",
-      "w": 272,
+      "w": 302,
       "h": 260,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/ui_icons_upgrades_a.png",
+      "batch": "lote-04"
+    },
+    "ic_star": {
+      "file": "Assets/Art/UI/Icons/ic_star.png",
+      "w": 259,
+      "h": 246,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-04/ui_icons_core.png",
+      "batch": "lote-04"
     },
     "spr_char_customer_apressado_a": {
       "file": "Assets/Art/Sprites/Characters/spr_char_customer_apressado_a.png",
@@ -519,51 +519,51 @@
     },
     "spr_food_contra_file_burned": {
       "file": "Assets/Art/Sprites/Food/spr_food_contra_file_burned.png",
-      "w": 372,
-      "h": 278,
+      "w": 380,
+      "h": 276,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-03/food_contra_file.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/food_contra_file.png",
+      "batch": "lote-04"
     },
     "spr_food_contra_file_medium": {
       "file": "Assets/Art/Sprites/Food/spr_food_contra_file_medium.png",
-      "w": 372,
-      "h": 278,
+      "w": 380,
+      "h": 276,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-03/food_contra_file.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/food_contra_file.png",
+      "batch": "lote-04"
     },
     "spr_food_contra_file_rare": {
       "file": "Assets/Art/Sprites/Food/spr_food_contra_file_rare.png",
-      "w": 372,
-      "h": 278,
+      "w": 380,
+      "h": 276,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-03/food_contra_file.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/food_contra_file.png",
+      "batch": "lote-04"
     },
     "spr_food_contra_file_raw": {
       "file": "Assets/Art/Sprites/Food/spr_food_contra_file_raw.png",
-      "w": 372,
-      "h": 278,
+      "w": 380,
+      "h": 276,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-03/food_contra_file.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/food_contra_file.png",
+      "batch": "lote-04"
     },
     "spr_food_contra_file_served": {
       "file": "Assets/Art/Sprites/Food/spr_food_contra_file_served.png",
@@ -574,20 +574,20 @@
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-03/food_contra_file.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/food_contra_file.png",
+      "batch": "lote-04"
     },
     "spr_food_contra_file_well": {
       "file": "Assets/Art/Sprites/Food/spr_food_contra_file_well.png",
-      "w": 372,
-      "h": 278,
+      "w": 380,
+      "h": 276,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-03/food_contra_file.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/food_contra_file.png",
+      "batch": "lote-04"
     },
     "spr_food_coracao_frango_burned": {
       "file": "Assets/Art/Sprites/Food/spr_food_coracao_frango_burned.png",
@@ -1095,75 +1095,75 @@
     },
     "spr_food_maminha_burned": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_burned.png",
-      "w": 382,
-      "h": 278,
+      "w": 396,
+      "h": 290,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-03/food_maminha.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/food_maminha.png",
+      "batch": "lote-04"
     },
     "spr_food_maminha_medium": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_medium.png",
-      "w": 382,
-      "h": 278,
+      "w": 396,
+      "h": 290,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-03/food_maminha.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/food_maminha.png",
+      "batch": "lote-04"
     },
     "spr_food_maminha_rare": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_rare.png",
-      "w": 382,
-      "h": 278,
+      "w": 396,
+      "h": 290,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-03/food_maminha.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/food_maminha.png",
+      "batch": "lote-04"
     },
     "spr_food_maminha_raw": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_raw.png",
-      "w": 382,
-      "h": 278,
+      "w": 396,
+      "h": 290,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-03/food_maminha.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/food_maminha.png",
+      "batch": "lote-04"
     },
     "spr_food_maminha_served": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_served.png",
-      "w": 374,
-      "h": 287,
+      "w": 377,
+      "h": 271,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-03/food_maminha.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/food_maminha.png",
+      "batch": "lote-04"
     },
     "spr_food_maminha_well": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_well.png",
-      "w": 382,
-      "h": 278,
+      "w": 396,
+      "h": 290,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-03/food_maminha.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-04/food_maminha.png",
+      "batch": "lote-04"
     },
     "spr_food_pao_de_alho_burned": {
       "file": "Assets/Art/Sprites/Food/spr_food_pao_de_alho_burned.png",
@@ -1431,43 +1431,43 @@
     },
     "spr_grill_fornalha_dragao_manso_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_fornalha_dragao_manso_evo1.png",
-      "w": 664,
-      "h": 709,
+      "w": 1166,
+      "h": 767,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "grill",
-      "source": "art/source/lote-03/grill_fornalha_dragao_manso_evo1.png",
+      "source": "art/source/lote-04/grill_fornalha_dragao_manso_evo1.png",
       "hole": {
         "bbox": [
-          180,
-          277,
-          249,
-          136
+          153,
+          279,
+          860,
+          263
         ],
         "quad": [
           [
-            182,
-            318
+            155,
+            279
           ],
           [
-            428,
-            278
+            1010,
+            279
           ],
           [
-            425,
-            365
+            1010,
+            540
           ],
           [
-            183,
-            411
+            155,
+            540
           ]
         ],
-        "tiltDeg": -9.2,
-        "areaFrac": 0.0474
+        "tiltDeg": 0,
+        "areaFrac": 0.2517
       },
-      "batch": "lote-03"
+      "batch": "lote-04"
     },
     "spr_grill_lata_valente_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_lata_valente_evo1.png",
@@ -1591,83 +1591,83 @@
     },
     "spr_grill_parrilla_chef_cisma_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_parrilla_chef_cisma_evo1.png",
-      "w": 849,
-      "h": 673,
+      "w": 1229,
+      "h": 759,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "grill",
-      "source": "art/source/lote-03/grill_parrilla_chef_cisma_evo1.png",
+      "source": "art/source/lote-04/grill_parrilla_chef_cisma_evo1.png",
       "hole": {
         "bbox": [
-          218,
-          218,
-          281,
-          149
+          102,
+          135,
+          806,
+          271
         ],
         "quad": [
           [
-            219,
-            218
+            257,
+            136
           ],
           [
-            494,
-            261
+            906,
+            204
           ],
           [
-            497,
-            365
+            787,
+            403
           ],
           [
-            220,
-            315
+            102,
+            307
           ]
         ],
-        "tiltDeg": 8.9,
-        "areaFrac": 0.0505
+        "tiltDeg": 6,
+        "areaFrac": 0.147
       },
-      "batch": "lote-03"
+      "batch": "lote-04"
     },
     "spr_grill_ze_da_esquina_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_ze_da_esquina_evo1.png",
-      "w": 731,
-      "h": 712,
+      "w": 1255,
+      "h": 757,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "grill",
-      "source": "art/source/lote-03/grill_ze_da_esquina_evo1.png",
+      "source": "art/source/lote-04/grill_ze_da_esquina_evo1.png",
       "hole": {
         "bbox": [
-          168,
-          162,
-          318,
-          143
+          81,
+          132,
+          809,
+          238
         ],
         "quad": [
           [
-            169,
-            162
+            81,
+            132
           ],
           [
-            484,
-            203
+            886,
+            192
           ],
           [
-            481,
-            304
+            888,
+            369
           ],
           [
-            172,
-            251
+            91,
+            303
           ]
         ],
-        "tiltDeg": 7.4,
-        "areaFrac": 0.0581
+        "tiltDeg": 4.3,
+        "areaFrac": 0.1481
       },
-      "batch": "lote-03"
+      "batch": "lote-04"
     },
     "spr_prop_bancada": {
       "file": "Assets/Art/Sprites/Props/spr_prop_bancada.png",

@@ -1,0 +1,257 @@
+{
+  "_comment": "Lote 04 — reprocessamento do lote 03 inteiro, rejeitado pelo dono em 2026-09-25. Mesmas 10 imagens e os mesmos nomes de sprite (o registro re-adota a linha rejeitada); mudam dois pontos: as três churrasqueiras recebem um guia de layout desenhado por script (tools/art/make-ref.mjs guide) em vez de uma frase sobre a câmera, e a maminha é pedida como cunha triangular para não ser gêmea do contra-filé. Prompts exatos em art/prompts/lote-04.md. O conteúdo que estava planejado para o lote 04 (costela, cupim, ícones 2/3 e 3/3, funcionários, fundos premium e festival) desce para o lote 05 (docs/22 §6).",
+  "batch": "lote-04",
+  "date": "2026-09-25",
+  "sourceDir": "art/source/lote-04",
+  "assets": [
+    {
+      "source": "ui_icons_core.png",
+      "mode": "icons",
+      "cols": 3,
+      "rows": 3,
+      "category": "ui",
+      "label": "Ícones de interface",
+      "names": [
+        "ic_coin",
+        "ic_ember",
+        "ic_star",
+        "ic_clock",
+        "ic_flame",
+        "ic_check",
+        "ic_chest",
+        "ic_booster",
+        "ic_lock"
+      ],
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "9 ícones, família coesa, lêem a 32 px e em cinza; moeda e brasa são os ids que economy.json já referencia"
+      }
+    },
+    {
+      "source": "ui_icons_upgrades_a.png",
+      "mode": "icons",
+      "cols": 3,
+      "rows": 3,
+      "category": "ui",
+      "label": "Ícones de upgrade (1/3)",
+      "names": [
+        "ic_grill_size",
+        "ic_heat",
+        "ic_stability",
+        "ic_speed",
+        "ic_charcoal",
+        "ic_charcoal_quality",
+        "ic_auto_refill",
+        "ic_knife",
+        "ic_board"
+      ],
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "nomes = ids de upgrades.json; ic_heat é o card destacado no passo 6 do FTUE"
+      }
+    },
+    {
+      "source": "grill_ze_da_esquina_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "category": "grill",
+      "name": "spr_grill_ze_da_esquina_evo1",
+      "label": "Zé da Esquina evo 1 — Chapa da Calçada",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "warn",
+        "note": "a boca voltou a ser a superfície de topo (15 % do sprite, topo a 4,3°) em vez da janela frontal de 6 % do lote 03 — mas o modelo encolheu a boca do guia: 64 % da largura do objeto contra os 92 % desenhados. Reforço com o prompt 'cover exactly that rectangle' no próximo turno"
+      }
+    },
+    {
+      "source": "grill_parrilla_chef_cisma_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "category": "grill",
+      "name": "spr_grill_parrilla_chef_cisma_evo1",
+      "label": "Chef Cisma evo 1 — Inox Brilhando",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "warn",
+        "note": "igual: topo da grelha no lugar (15 %, 6°), boca a 66 % da largura do objeto (o guia pedia 92 %); inox, termômetro, prateleira e pernas estão bons"
+      }
+    },
+    {
+      "source": "grill_fornalha_dragao_manso_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "category": "grill",
+      "name": "spr_grill_fornalha_dragao_manso_evo1",
+      "label": "Dragão Manso evo 1 — Tijolo Refratário",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok",
+        "note": "boca 25 % do sprite com o topo a 0° — maior e mais horizontal que a lata aprovada (21 %, −8,6°); tijolo, bancada de pedra e chaminé coerentes"
+      }
+    },
+    {
+      "source": "bg_espetinho_rua.png",
+      "mode": "opaque",
+      "category": "background",
+      "name": "bg_restaurant_espetinho_rua",
+      "label": "fundo: espetinho de rua (noite)",
+      "out": "Assets/Art/Backgrounds",
+      "review": {
+        "verdict": "ok",
+        "note": "noite com poste de luz e carrinho de espetos sob toldo listrado; terço central livre"
+      }
+    },
+    {
+      "source": "bg_trailer.png",
+      "mode": "opaque",
+      "category": "background",
+      "name": "bg_restaurant_trailer",
+      "label": "fundo: trailer (neon)",
+      "out": "Assets/Art/Backgrounds",
+      "review": {
+        "verdict": "ok",
+        "note": "trailer com letreiro de neon em forma de chama e linguiça, sem letras"
+      }
+    },
+    {
+      "source": "bg_churrascaria_bairro.png",
+      "mode": "opaque",
+      "category": "background",
+      "name": "bg_restaurant_churrascaria_bairro",
+      "label": "fundo: churrascaria de bairro",
+      "out": "Assets/Art/Backgrounds",
+      "review": {
+        "verdict": "ok",
+        "note": "salão com mesas, adega e coifa de inox; o meio livre para a grelha"
+      }
+    },
+    {
+      "source": "food_contra_file.png",
+      "mode": "grid",
+      "cols": 2,
+      "rows": 3,
+      "category": "food",
+      "subject": "contra_file",
+      "label": "Contra-filé",
+      "cells": [
+        "raw",
+        "rare",
+        "medium",
+        "well",
+        "burned",
+        "served"
+      ],
+      "states": [
+        "raw",
+        "rare",
+        "medium",
+        "well",
+        "burned"
+      ],
+      "out": "Assets/Art/Sprites/Food",
+      "review": {
+        "verdict": "ok",
+        "note": "retângulo espesso com a faixa fina de gordura no topo; 5 estados com o mesmo contorno"
+      }
+    },
+    {
+      "source": "food_maminha.png",
+      "mode": "grid",
+      "cols": 2,
+      "rows": 3,
+      "category": "food",
+      "subject": "maminha",
+      "label": "Maminha",
+      "cells": [
+        "raw",
+        "rare",
+        "medium",
+        "well",
+        "burned",
+        "served"
+      ],
+      "states": [
+        "raw",
+        "rare",
+        "medium",
+        "well",
+        "burned"
+      ],
+      "out": "Assets/Art/Sprites/Food",
+      "review": {
+        "verdict": "warn",
+        "note": "a cunha triangular resolve a confusão com o contra-filé, mas a célula 6 saiu como mais um bife queimado, não como o prato servido: spr_food_maminha_served é carvão, não tábua fatiada. Não aprovar esse sprite — refazer a célula no reforço"
+      }
+    }
+  ],
+  "compare": [
+    "spr_grill_lata_valente_evo1"
+  ],
+  "preview": {
+    "background": "bg_restaurant_espetinho_rua",
+    "grill": "spr_grill_lata_valente_evo3",
+    "embers": "t_fx_embers_medium",
+    "onGrill": [
+      [
+        "spr_food_maminha_medium",
+        0.26,
+        0.45,
+        72
+      ],
+      [
+        "spr_food_contra_file_rare",
+        0.55,
+        0.47,
+        72
+      ],
+      [
+        "spr_food_linguica_toscana_medium",
+        0.82,
+        0.5,
+        60
+      ]
+    ],
+    "benchItems": [
+      [
+        "spr_food_contra_file_raw",
+        62
+      ],
+      [
+        "spr_food_maminha_raw",
+        62
+      ],
+      [
+        "spr_food_espetinho_frango_raw",
+        76
+      ],
+      [
+        "spr_food_linguica_toscana_raw",
+        62
+      ],
+      [
+        "spr_food_pao_de_alho_raw",
+        62
+      ]
+    ],
+    "orders": [
+      [
+        "spr_char_customer_vizinho",
+        [
+          "spr_food_contra_file_served",
+          "spr_food_pao_de_alho_served"
+        ],
+        0.8
+      ],
+      [
+        "spr_char_customer_rival_a",
+        [
+          "spr_food_maminha_served",
+          "spr_food_linguica_toscana_served"
+        ],
+        0.35
+      ]
+    ]
+  }
+}

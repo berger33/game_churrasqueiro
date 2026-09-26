@@ -1,6 +1,9 @@
 # 18 — Status Report
 
-**Snapshot:** 2026-09-25 · branch `arena/01a0d72a-game-churrasqueiro`
+**Snapshot:** 2026-09-25 · branch `arena/01a0daed-game-churrasqueiro` · on top of `main`
+after **PR #6 was merged** (`3e6ea7f`) — the art pass below is that merge plus the rejected
+lote 03 and its reprocess (docs/22 §6.5). Earlier snapshot line, kept for history:
+`arena/01a0d72a-game-churrasqueiro`
 (PR #5 fast-forwarded, then the six-step FTUE — see "FTUE" below and docs/05-UX_FLOW.md §4 —
 then its follow-ups: see "FTUE follow-ups" below; then the AI 2D art pass, lotes 01–03, integrated in the prototype — see
 "AI 2D art pass" below. Before that: churrasqueira purchase wired into the economy sim — §4.2
@@ -11,6 +14,35 @@ unverified here**, and what is **not built**. Anything marked ⚠ was not execut
 in this environment and must be re-run before it is trusted.
 
 ---
+
+## Lote 03 rejected, lote 04 = the reprocess (docs/22 §6.4–6.5)
+
+The owner rejected **all 36 sprites of lote 03** ("nothing enters the runtime; redo the batch").
+The redo is lote 04: the same 10 images, the same sprite names, two corrections.
+
+- **The layout guide shipped.** `tools/art/make-ref.mjs` gained a `guide` mode that draws the
+  grill silhouette with the cooking opening already placed (≥ 87 % of the object's width, top
+  edge horizontal, ~40 % of the bbox) and the model paints into it. The §6.4 rule it implements
+  was itself corrected: the old "~1.4:1 opening, ≥ 75 % of the width" cannot coexist with a
+  visible front panel in a 16:9 frame, which is what produced lote 03's three front windows.
+- **Measured with the same detector the painted sprite is judged by**, via a new
+  `process-sprites.mjs --dry-run` that writes nothing. Result: the error *class* is gone — no
+  front window, and the mouth's tilt fell from ±9° to 0–6°. The fornalha's mouth is 25 % of the
+  sprite (the approved lata: 21 %), but the two steel grills came out at 15 %: the model shrank
+  the opening it was told to paint around. They go back in the next batch with the opening
+  described as the reference itself, not as a proportion.
+- **The maminha reads as a wedge now** — the pair is no longer twins on the counter — but its
+  "served" cell came out as another charred steak, so `spr_food_maminha_served` is flagged
+  do-not-approve.
+- `ASSET_REGISTRY.csv` now carries the decision trail: 36 rows `lote-03/rejected` →
+  `lote-04/pending`, each note saying which batch it reprocesses. That needed a rule change
+  (docs/04 §11 item 3): a `rejected` row is no longer frozen, or a refused asset could never be
+  approved by its own redo.
+- **Runtime unchanged and correct**: only `approved` rows ship, so the prototype still runs the
+  92 approved sprites of lotes 01–02. Approving lote 04 is two commands
+  (`set-status lote-04 approved` + `build-runtime`).
+- ⚠ **Open**: the three redos above; `check-art-registry` and the Unity import postprocessor
+  are still not written.
 
 ## AI 2D art pass — lotes 01–03, integrated in the prototype (docs/22-ARTE_2D_PLANO.md)
 
@@ -547,8 +579,11 @@ specification. The prototype proves art *direction*, not the art *budget*.
      calendar modal's three hit-box bugs and the unlimited claims it was hiding.
 7. **Professional 2D art** (docs/22):
    - ~~get lotes 01–02 approved~~ — **approved and integrated in the prototype**;
-   - get lote 03 approved (recommended: approve the icons, backgrounds and meats; redo the
-     3 grills with a layout guide);
-   - lotes 04–07 (docs/22 §6);
+   - ~~lote 03~~ — **rejected whole by the owner** and reprocessed as lote 04, which is
+     **awaiting approval** (icons, backgrounds, both meats are the keepers; see "Lote 03
+     rejected" above);
+   - lote 05 = the content planned for lote 04 + the three redos from lote 04 (the two steel
+     grills with a wider mouth, the maminha's served cell);
+   - lotes 05–08 (docs/22 §6);
    - write the `check-art-registry` gate;
    - Unity import postprocessor (docs/22 §7.2).
