@@ -427,6 +427,38 @@
    "w": 240,
    "h": 205
   },
+  "spr_grill_fornalha_dragao_manso_evo1": {
+   "file": "spr_grill_fornalha_dragao_manso_evo1.webp",
+   "w": 1024,
+   "h": 889,
+   "hole": {
+    "bbox": [
+     148,
+     244,
+     728,
+     462
+    ],
+    "quad": [
+     [
+      210,
+      245
+     ],
+     [
+      814,
+      244
+     ],
+     [
+      875,
+      705
+     ],
+     [
+      148,
+      705
+     ]
+    ],
+    "tiltDeg": -0.1
+   }
+  },
   "spr_grill_lata_valente_evo1": {
    "file": "spr_grill_lata_valente_evo1.webp",
    "w": 1042,
@@ -521,6 +553,70 @@
      ]
     ],
     "tiltDeg": -8.8
+   }
+  },
+  "spr_grill_parrilla_chef_cisma_evo1": {
+   "file": "spr_grill_parrilla_chef_cisma_evo1.webp",
+   "w": 1024,
+   "h": 853,
+   "hole": {
+    "bbox": [
+     134,
+     174,
+     757,
+     379
+    ],
+    "quad": [
+     [
+      188,
+      174
+     ],
+     [
+      835,
+      174
+     ],
+     [
+      890,
+      551
+     ],
+     [
+      134,
+      552
+     ]
+    ],
+    "tiltDeg": 0
+   }
+  },
+  "spr_grill_ze_da_esquina_evo1": {
+   "file": "spr_grill_ze_da_esquina_evo1.webp",
+   "w": 1024,
+   "h": 925,
+   "hole": {
+    "bbox": [
+     117,
+     152,
+     791,
+     502
+    ],
+    "quad": [
+     [
+      188,
+      152
+     ],
+     [
+      835,
+      152
+     ],
+     [
+      907,
+      652
+     ],
+     [
+      117,
+      653
+     ]
+    ],
+    "tiltDeg": 0
    }
   },
   "spr_prop_bancada": {
@@ -715,10 +811,19 @@
   ]
  },
  "grills": {
+  "fornalha_dragao_manso": {
+   "1": "spr_grill_fornalha_dragao_manso_evo1"
+  },
   "lata_valente": {
    "1": "spr_grill_lata_valente_evo1",
    "2": "spr_grill_lata_valente_evo2",
    "3": "spr_grill_lata_valente_evo3"
+  },
+  "parrilla_chef_cisma": {
+   "1": "spr_grill_parrilla_chef_cisma_evo1"
+  },
+  "ze_da_esquina": {
+   "1": "spr_grill_ze_da_esquina_evo1"
   }
  },
  "backgrounds": {
