@@ -7,6 +7,11 @@
    "w": 768,
    "h": 1376
   },
+  "bg_restaurant_espetinho_rua": {
+   "file": "bg_restaurant_espetinho_rua.webp",
+   "w": 768,
+   "h": 1376
+  },
   "bg_restaurant_festival": {
    "file": "bg_restaurant_festival.webp",
    "w": 768,
@@ -22,6 +27,11 @@
    "w": 768,
    "h": 1376
   },
+  "bg_restaurant_trailer": {
+   "file": "bg_restaurant_trailer.webp",
+   "w": 768,
+   "h": 1376
+  },
   "bg_route_brasil": {
    "file": "bg_route_brasil.webp",
    "w": 768,
@@ -32,9 +42,19 @@
    "w": 768,
    "h": 1376
   },
+  "ic_auto_refill": {
+   "file": "ic_auto_refill.webp",
+   "w": 108,
+   "h": 128
+  },
   "ic_auxiliar": {
    "file": "ic_auxiliar.webp",
    "w": 110,
+   "h": 128
+  },
+  "ic_board": {
+   "file": "ic_board.webp",
+   "w": 112,
    "h": 128
   },
   "ic_booster": {
@@ -56,6 +76,16 @@
    "file": "ic_capacity.webp",
    "w": 128,
    "h": 110
+  },
+  "ic_charcoal": {
+   "file": "ic_charcoal.webp",
+   "w": 120,
+   "h": 128
+  },
+  "ic_charcoal_quality": {
+   "file": "ic_charcoal_quality.webp",
+   "w": 128,
+   "h": 127
   },
   "ic_check": {
    "file": "ic_check.webp",
@@ -197,10 +227,20 @@
    "w": 128,
    "h": 121
   },
+  "ic_heat": {
+   "file": "ic_heat.webp",
+   "w": 104,
+   "h": 128
+  },
   "ic_imperio": {
    "file": "ic_imperio.webp",
    "w": 128,
    "h": 123
+  },
+  "ic_knife": {
+   "file": "ic_knife.webp",
+   "w": 125,
+   "h": 128
   },
   "ic_lighting": {
    "file": "ic_lighting.webp",
@@ -231,6 +271,16 @@
    "file": "ic_sign.webp",
    "w": 122,
    "h": 128
+  },
+  "ic_speed": {
+   "file": "ic_speed.webp",
+   "w": 128,
+   "h": 127
+  },
+  "ic_stability": {
+   "file": "ic_stability.webp",
+   "w": 128,
+   "h": 93
   },
   "ic_star": {
    "file": "ic_star.webp",
@@ -1648,9 +1698,11 @@
  },
  "backgrounds": {
   "churrascaria_premium": "bg_restaurant_churrascaria_premium",
+  "espetinho_rua": "bg_restaurant_espetinho_rua",
   "festival": "bg_restaurant_festival",
   "quintal": "bg_restaurant_quintal",
-  "rede_nacional": "bg_restaurant_rede_nacional"
+  "rede_nacional": "bg_restaurant_rede_nacional",
+  "trailer": "bg_restaurant_trailer"
  },
  "props": {
   "bancada": "spr_prop_bancada"
@@ -1671,11 +1723,15 @@
   "starburst": "t_fx_starburst"
  },
  "icons": {
+  "ic_auto_refill": "ic_auto_refill",
   "ic_auxiliar": "ic_auxiliar",
+  "ic_board": "ic_board",
   "ic_booster": "ic_booster",
   "ic_brasa_mastery": "ic_brasa_mastery",
   "ic_caixa": "ic_caixa",
   "ic_capacity": "ic_capacity",
+  "ic_charcoal": "ic_charcoal",
+  "ic_charcoal_quality": "ic_charcoal_quality",
   "ic_check": "ic_check",
   "ic_chest": "ic_chest",
   "ic_churrasqueiro": "ic_churrasqueiro",
@@ -1704,13 +1760,17 @@
   "ic_garcom": "ic_garcom",
   "ic_gerente": "ic_gerente",
   "ic_grill_size": "ic_grill_size",
+  "ic_heat": "ic_heat",
   "ic_imperio": "ic_imperio",
+  "ic_knife": "ic_knife",
   "ic_lighting": "ic_lighting",
   "ic_lock": "ic_lock",
   "ic_music": "ic_music",
   "ic_patience": "ic_patience",
   "ic_plate": "ic_plate",
   "ic_sign": "ic_sign",
+  "ic_speed": "ic_speed",
+  "ic_stability": "ic_stability",
   "ic_star": "ic_star",
   "ic_table": "ic_table",
   "ic_tray": "ic_tray"

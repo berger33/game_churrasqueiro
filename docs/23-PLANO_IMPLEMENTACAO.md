@@ -1,6 +1,6 @@
 # 23 — Plano de Implementação e Melhoria (passo a passo)
 
-**Data:** 2026-09-26 · branch `arena/01a0df03-game-churrasqueiro`
+**Data:** 2026-09-26 · branch `arena/01a0e001-game-churrasqueiro`
 **Status:** ativo — este é o documento-guia do dia a dia. Na dúvida sobre o que fazer
 a seguir, a resposta está em "Próximo passo imediato" (§8).
 
@@ -84,9 +84,10 @@ aprovação do dono → `set-status` → `build-runtime`.
   Verifica: `set-status` (34/34 approved) → `build-runtime` (211 sprites) → gates locais 13/14; `check-csharp` SKIP por ausência de dotnet no sandbox. CI remoto ainda não registrado para esta branch; validar em CI/ambiente .NET antes de merge.
 - [ ] **1.3-A — Substituir os 33 sprites pending do lote 03 em 4 rodadas individuais (10 + 10 + 10 + 3).**
   - Lote 08: **10/10 aprovados pelo dono em 2026-09-26 e integrados**. Abrange os 9 ícones centrais de UI + `ic_grill_size`; runtime aprovado 211 → 221 sprites / 3,49 MB.
-  - Lote 09: **10/10 gerados e processados**, 8 upgrades + fundos Espetinho de Rua e Trailer; `pending`, aguardando aprovação. O fundo Espetinho veio com dois carrinhos espelhados em vez de um à direita (`warn`); centro livre, sem pessoas/texto.
-  - Lotes 10–11: 13 imagens restantes; não iniciar o próximo sem decisão explícita sobre o anterior.
-  Verifica: `art/review/lote-09-preview.jpg` (ícones a 32 px/cinza + fundos), `art/review/lote-09-checks.json`; lote 09 fora do runtime.
+  - Lote 09: **10/10 aprovados e integrados**, 8 upgrades + fundos Espetinho de Rua e Trailer. O dono aceitou os dois carrinhos espelhados ao pedir a rodada seguinte; runtime 221 → **231 sprites / 3,81 MB**.
+  - Lote 10: **10/10 imagens geradas, processadas e tecnicamente `ok`, ainda `pending`**. Abrange os cinco estados de grelha de contra-filé e os cinco de maminha; cada família compartilha tela/pivô e tem 0,01% de variação de área alfa.
+  - Lote 11: três imagens restantes — dois pratos `served` + fundo Churrascaria de Bairro; não iniciar sem decisão explícita sobre o lote 10.
+  Verifica: `art/review/lote-10-preview.jpg`, `art/review/lote-10.jpg` e `art/review/lote-10-checks.json`; lote 10 fora do runtime.
   Pronto quando: as quatro rodadas tiverem decisão final e só as aprovadas estiverem no runtime. O merge será feito apenas ao completar as 33 imagens, conforme decisão do dono.
 - [ ] **1.4 — Gate `check-art-registry` no CI.**
   Ações: todo arquivo em `Assets/Art` tem linha no registro; toda linha aponta para um
@@ -164,11 +165,12 @@ Cada passo, ao ser aberto, ganha sub-passos próprios neste documento (mesmo for
 
 ## 8. Próximo passo imediato
 
-👉 **Revisar o lote 09 e registrar a decisão do dono**, incluindo o aviso do fundo Espetinho
-de Rua com dois carrinhos espelhados. Não gerar o lote 10 antes dessa decisão. O lote 08 já
-está aprovado e no runtime (221 sprites). O merge desta branch só ocorrerá depois das 33
-imagens, conforme orientação do dono. Depois da sequência, retomar `check-art-registry` e o
-snapshot de `18-STATUS.md`. Prompt de retomada: `docs/24-PROMPT_PROXIMA_SESSAO.md`.
+👉 **Revisar o lote 10 e registrar a decisão do dono** sobre os cinco estados de contra-filé e
+os cinco de maminha. Não gerar o lote 11 antes dessa decisão. Os lotes 08–09 já estão aprovados
+e o runtime contém 231 sprites / 3,81 MB; o lote 10 continua `pending` e fora dele. O merge
+desta branch só ocorrerá depois das 33 imagens, conforme orientação do dono. Depois da
+sequência, retomar `check-art-registry` e o snapshot de `18-STATUS.md`. Prompt de retomada:
+`docs/24-PROMPT_PROXIMA_SESSAO.md`.
 
 **Registro de progresso:**
 
@@ -182,4 +184,5 @@ snapshot de `18-STATUS.md`. Prompt de retomada: `docs/24-PROMPT_PROXIMA_SESSAO.m
 | 2026-09-26 | 1.2 (lote 06) | 10/10: chapa evo 2 passou na 7ª passada ([ALTA]); chapa evo 3 + fornalhas evo 2–3 implementadas com desvio documentado e autorização do dono | `arena/01a0df03-game-churrasqueiro` | 29 sprites approved; runtime 177 sprites (3,11 MB); contrato mantido no spec para refação futura |
 | 2026-09-26 | 1.3 (lote 07) | 10/10 imagens, 34/34 sprites aprovados; runtime reconstruído para 211 sprites / 3,44 MB WebP | `arena/01a0dfd3-game-churrasqueiro` | 13/14 gates locais; `check-csharp` SKIP sem dotnet. Aprovação cobre arte, não integração das telas de metajogo; desvios aceitos descritos em docs/22 §6.7 |
 | 2026-09-26 | 1.3-A (lote 08) | 10/10 aprovados e integrados | `arena/01a0e001-game-churrasqueiro` | 9 ícones centrais + `ic_grill_size`; runtime 211 → 221 sprites / 3,49 MB; dono pediu seguir e fazer merge só após as 33 imagens |
-| 2026-09-26 | 1.3-A (lote 09) | 10 imagens geradas e recortadas; 10 sprites `pending` | `arena/01a0e001-game-churrasqueiro` | 8 upgrades + 2 fundos; zero magenta nos ícones; Espetinho de Rua com dois carrinhos (`warn`); aguarda aprovação |
+| 2026-09-26 | 1.3-A (lote 09) | 10/10 aprovados e integrados | `arena/01a0e001-game-churrasqueiro` | dono pediu o próximo lote e aceitou os dois carrinhos; runtime 221 → 231 sprites / 3,81 MB |
+| 2026-09-26 | 1.3-A (lote 10) | 10 imagens individuais entregues; 10 sprites `pending` | `arena/01a0e001-game-churrasqueiro` | cinco estados de contra-filé + cinco de maminha; tela/pivô comuns, área alfa estável, 0 magenta, 10 vereditos técnicos `ok`; aguarda aprovação |

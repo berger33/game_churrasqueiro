@@ -485,6 +485,16 @@ async function montage(pv) {
 if (batch.reviewLayout === 'meta') {
   const { reviewMeta } = await import('./review-meta.mjs');
   await reviewMeta({ root: ROOT, batch, manifest, status: await batchStatus(), font: UI });
+} else if (batch.reviewLayout === 'individual-food-states') {
+  const { reviewFoodStates } = await import('./review-food-states.mjs');
+  await reviewFoodStates({
+    root: ROOT,
+    batch,
+    manifest,
+    status: await batchStatus(),
+    font: UI,
+    displayFont: DISPLAY,
+  });
 } else {
   await contactSheet();
   if (batch.preview) await montage(batch.preview);

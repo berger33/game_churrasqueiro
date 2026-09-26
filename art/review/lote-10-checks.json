@@ -1,0 +1,298 @@
+{
+  "batch": "lote-10",
+  "status": "pending",
+  "checks": {
+    "generatedImages": 10,
+    "processedSprites": 10,
+    "oneSpritePerImage": true,
+    "sharedCanvasPerFamily": true,
+    "sharedPivotPerFamily": true,
+    "fixedScaleReview": true,
+    "magentaResidualPixels": 0
+  },
+  "warnings": [],
+  "groups": [
+    {
+      "id": "contra_file_cooking",
+      "names": [
+        "spr_food_contra_file_raw",
+        "spr_food_contra_file_rare",
+        "spr_food_contra_file_medium",
+        "spr_food_contra_file_well",
+        "spr_food_contra_file_burned"
+      ],
+      "canvas": [
+        "918x404"
+      ],
+      "pivot": [
+        [
+          0.5,
+          0.5
+        ]
+      ],
+      "maskAreaSpreadPct": 0.01
+    },
+    {
+      "id": "maminha_cooking",
+      "names": [
+        "spr_food_maminha_raw",
+        "spr_food_maminha_rare",
+        "spr_food_maminha_medium",
+        "spr_food_maminha_well",
+        "spr_food_maminha_burned"
+      ],
+      "canvas": [
+        "1038x432"
+      ],
+      "pivot": [
+        [
+          0.5,
+          0.5
+        ]
+      ],
+      "maskAreaSpreadPct": 0.01
+    }
+  ],
+  "sprites": [
+    {
+      "name": "spr_food_contra_file_raw",
+      "category": "food",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "width": 918,
+      "height": 404,
+      "opaquePixels": 239850,
+      "partialAlphaPixels": 7028,
+      "magentaResidualPixels": 0,
+      "maskPixels": 243327,
+      "alphaBounds": [
+        67,
+        37,
+        842,
+        357
+      ],
+      "alphaCentroid": [
+        459,
+        202.02
+      ]
+    },
+    {
+      "name": "spr_food_contra_file_rare",
+      "category": "food",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "width": 918,
+      "height": 404,
+      "opaquePixels": 239562,
+      "partialAlphaPixels": 7631,
+      "magentaResidualPixels": 0,
+      "maskPixels": 243322,
+      "alphaBounds": [
+        67,
+        37,
+        842,
+        358
+      ],
+      "alphaCentroid": [
+        459.02,
+        202.02
+      ]
+    },
+    {
+      "name": "spr_food_contra_file_medium",
+      "category": "food",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "width": 918,
+      "height": 404,
+      "opaquePixels": 239602,
+      "partialAlphaPixels": 7586,
+      "magentaResidualPixels": 0,
+      "maskPixels": 243340,
+      "alphaBounds": [
+        67,
+        37,
+        842,
+        357
+      ],
+      "alphaCentroid": [
+        459,
+        202.01
+      ]
+    },
+    {
+      "name": "spr_food_contra_file_well",
+      "category": "food",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "width": 918,
+      "height": 404,
+      "opaquePixels": 239655,
+      "partialAlphaPixels": 7485,
+      "magentaResidualPixels": 0,
+      "maskPixels": 243336,
+      "alphaBounds": [
+        67,
+        37,
+        842,
+        357
+      ],
+      "alphaCentroid": [
+        459.01,
+        202.02
+      ]
+    },
+    {
+      "name": "spr_food_contra_file_burned",
+      "category": "food",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "width": 918,
+      "height": 404,
+      "opaquePixels": 239722,
+      "partialAlphaPixels": 7306,
+      "magentaResidualPixels": 0,
+      "maskPixels": 243358,
+      "alphaBounds": [
+        67,
+        37,
+        842,
+        357
+      ],
+      "alphaCentroid": [
+        458.99,
+        202
+      ]
+    },
+    {
+      "name": "spr_food_maminha_raw",
+      "category": "food",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "width": 1038,
+      "height": 432,
+      "opaquePixels": 217840,
+      "partialAlphaPixels": 5692,
+      "magentaResidualPixels": 0,
+      "maskPixels": 220748,
+      "alphaBounds": [
+        165,
+        10,
+        863,
+        406
+      ],
+      "alphaCentroid": [
+        519.03,
+        216.03
+      ]
+    },
+    {
+      "name": "spr_food_maminha_rare",
+      "category": "food",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "width": 1038,
+      "height": 432,
+      "opaquePixels": 217627,
+      "partialAlphaPixels": 6056,
+      "magentaResidualPixels": 0,
+      "maskPixels": 220751,
+      "alphaBounds": [
+        165,
+        10,
+        863,
+        406
+      ],
+      "alphaCentroid": [
+        519.01,
+        216
+      ]
+    },
+    {
+      "name": "spr_food_maminha_medium",
+      "category": "food",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "width": 1038,
+      "height": 432,
+      "opaquePixels": 217678,
+      "partialAlphaPixels": 6070,
+      "magentaResidualPixels": 0,
+      "maskPixels": 220753,
+      "alphaBounds": [
+        165,
+        10,
+        863,
+        406
+      ],
+      "alphaCentroid": [
+        519,
+        216.01
+      ]
+    },
+    {
+      "name": "spr_food_maminha_well",
+      "category": "food",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "width": 1038,
+      "height": 432,
+      "opaquePixels": 217685,
+      "partialAlphaPixels": 5951,
+      "magentaResidualPixels": 0,
+      "maskPixels": 220725,
+      "alphaBounds": [
+        165,
+        10,
+        863,
+        406
+      ],
+      "alphaCentroid": [
+        519.02,
+        216
+      ]
+    },
+    {
+      "name": "spr_food_maminha_burned",
+      "category": "food",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "width": 1038,
+      "height": 432,
+      "opaquePixels": 217654,
+      "partialAlphaPixels": 5968,
+      "magentaResidualPixels": 0,
+      "maskPixels": 220728,
+      "alphaBounds": [
+        165,
+        10,
+        863,
+        406
+      ],
+      "alphaCentroid": [
+        519.01,
+        215.99
+      ]
+    }
+  ]
+}
