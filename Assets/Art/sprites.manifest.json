@@ -1483,6 +1483,114 @@
       "batch": "lote-04",
       "bedWidth": 359
     },
+    "spr_grill_fornalha_dragao_manso_evo2": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_fornalha_dragao_manso_evo2.png",
+      "w": 1044,
+      "h": 1133,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "grill",
+      "source": "art/source/lote-06/spr_grill_fornalha_dragao_manso_evo2.png",
+      "grill": "fornalha_dragao_manso",
+      "evo": 2,
+      "hole": {
+        "bbox": [
+          229,
+          373,
+          609,
+          305
+        ],
+        "quad": [
+          [
+            234,
+            377
+          ],
+          [
+            837,
+            377
+          ],
+          [
+            837,
+            676
+          ],
+          [
+            232,
+            676
+          ]
+        ],
+        "tiltDeg": 0,
+        "areaFrac": 0.1542,
+        "conformed": {
+          "factorY": 1.161,
+          "reason": "faixa de brasa rasa demais para a comida",
+          "mouthHScreen": [
+            155,
+            180
+          ],
+          "aspect": [
+            2.32,
+            2
+          ]
+        }
+      },
+      "batch": "lote-06"
+    },
+    "spr_grill_fornalha_dragao_manso_evo3": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_fornalha_dragao_manso_evo3.png",
+      "w": 1113,
+      "h": 1024,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "grill",
+      "source": "art/source/lote-06/spr_grill_fornalha_dragao_manso_evo3.png",
+      "grill": "fornalha_dragao_manso",
+      "evo": 3,
+      "hole": {
+        "bbox": [
+          284,
+          306,
+          543,
+          240
+        ],
+        "quad": [
+          [
+            285,
+            306
+          ],
+          [
+            826,
+            306
+          ],
+          [
+            826,
+            543
+          ],
+          [
+            285,
+            544
+          ]
+        ],
+        "tiltDeg": 0,
+        "areaFrac": 0.1142,
+        "conformed": {
+          "factorY": 1.084,
+          "reason": "faixa de brasa rasa demais para a comida",
+          "mouthHScreen": [
+            166,
+            180
+          ],
+          "aspect": [
+            2.46,
+            2.26
+          ]
+        }
+      },
+      "batch": "lote-06"
+    },
     "spr_grill_lata_valente_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_lata_valente_evo1.png",
       "w": 1042,
@@ -1657,6 +1765,102 @@
       },
       "batch": "lote-05"
     },
+    "spr_grill_parrilla_chef_cisma_evo2": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_parrilla_chef_cisma_evo2.png",
+      "w": 988,
+      "h": 1401,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "grill",
+      "source": "art/source/lote-06/spr_grill_parrilla_chef_cisma_evo2.png",
+      "grill": "parrilla_chef_cisma",
+      "evo": 2,
+      "hole": {
+        "bbox": [
+          201,
+          397,
+          504,
+          275
+        ],
+        "quad": [
+          [
+            201,
+            456
+          ],
+          [
+            703,
+            397
+          ],
+          [
+            704,
+            593
+          ],
+          [
+            201,
+            608
+          ]
+        ],
+        "tiltDeg": -6.8,
+        "areaFrac": 0.0717,
+        "conformed": {
+          "factorY": 1.353,
+          "reason": "faixa de brasa rasa demais para a comida",
+          "mouthHScreen": [
+            133,
+            180
+          ],
+          "aspect": [
+            2.48,
+            1.83
+          ]
+        }
+      },
+      "batch": "lote-06"
+    },
+    "spr_grill_parrilla_chef_cisma_evo3": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_parrilla_chef_cisma_evo3.png",
+      "w": 1044,
+      "h": 816,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "grill",
+      "source": "art/source/lote-06/spr_grill_parrilla_chef_cisma_evo3.png",
+      "grill": "parrilla_chef_cisma",
+      "evo": 3,
+      "hole": {
+        "bbox": [
+          215,
+          61,
+          723,
+          209
+        ],
+        "quad": [
+          [
+            217,
+            61
+          ],
+          [
+            936,
+            61
+          ],
+          [
+            937,
+            268
+          ],
+          [
+            215,
+            267
+          ]
+        ],
+        "tiltDeg": 0,
+        "areaFrac": 0.1774
+      },
+      "batch": "lote-06"
+    },
     "spr_grill_ze_da_esquina_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_ze_da_esquina_evo1.png",
       "w": 1174,
@@ -1698,6 +1902,90 @@
         "areaFrac": 0.0957
       },
       "batch": "lote-05"
+    },
+    "spr_grill_ze_da_esquina_evo2": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_ze_da_esquina_evo2.png",
+      "w": 713,
+      "h": 765,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "grill",
+      "source": "art/source/lote-06/spr_grill_ze_da_esquina_evo2.png",
+      "grill": "ze_da_esquina",
+      "evo": 2,
+      "hole": {
+        "bbox": [
+          180,
+          307,
+          284,
+          131
+        ],
+        "quad": [
+          [
+            180,
+            307
+          ],
+          [
+            463,
+            358
+          ],
+          [
+            463,
+            437
+          ],
+          [
+            180,
+            386
+          ]
+        ],
+        "tiltDeg": 10.2,
+        "areaFrac": 0.0427
+      },
+      "batch": "lote-06"
+    },
+    "spr_grill_ze_da_esquina_evo3": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_ze_da_esquina_evo3.png",
+      "w": 1714,
+      "h": 592,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "grill",
+      "source": "art/source/lote-06/spr_grill_ze_da_esquina_evo3.png",
+      "grill": "ze_da_esquina",
+      "evo": 3,
+      "hole": {
+        "bbox": [
+          45,
+          182,
+          1219,
+          132
+        ],
+        "quad": [
+          [
+            45,
+            182
+          ],
+          [
+            1262,
+            182
+          ],
+          [
+            1263,
+            312
+          ],
+          [
+            45,
+            313
+          ]
+        ],
+        "tiltDeg": 0,
+        "areaFrac": 0.1586
+      },
+      "batch": "lote-06"
     },
     "spr_prop_bancada": {
       "file": "Assets/Art/Sprites/Props/spr_prop_bancada.png",

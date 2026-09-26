@@ -1,0 +1,207 @@
+{
+  "_comment": "Lote 06 — as 6 evoluções de churrasqueira que nunca tiveram arte, pintadas sobre o padrão `grill.art` (docs/22 §6.8). Guias: art/source/lote-06/guides (make-ref.mjs guide --grill <id> --evo <n>). Prompts e medições: art/prompts/lote-06.md. Cada linha declara grill+evo, que é o que liga o conform de boca na entrada do process-sprites; o que o modelo entregar fora da razão é conformado e dito, não maquiado. Nada entra no runtime sem aprovação do dono (lote 05 também está pendente).",
+  "batch": "lote-06",
+  "date": "2026-09-26",
+  "sourceDir": "art/source/lote-06",
+  "assets": [
+    {
+      "source": "spr_grill_ze_da_esquina_evo2.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "ze_da_esquina",
+      "evo": 2,
+      "category": "grill",
+      "name": "spr_grill_ze_da_esquina_evo2",
+      "label": "Chapa e2 'Toldo Novo' 2×2 (4)",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok",
+        "note": "Pintada no alvo, sem conform: boca 2,17:1 (pedido 2,75:1 — mais alta que o mínimo, o que só sobra folga de faixa), célula 119×76. Toldo listrado é o único acréscimo sobre o corpo do e1, como promete a progressão."
+      }
+    },
+    {
+      "source": "spr_grill_ze_da_esquina_evo3.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "ze_da_esquina",
+      "evo": 3,
+      "category": "grill",
+      "name": "spr_grill_ze_da_esquina_evo3",
+      "label": "Chapa e3 'Com Fritadeira' 2×3 (6)",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "redo",
+        "note": "Reprovada: o modelo abriu uma fenda de 9,23:1 (faixa de 19 px para comida de 54 px). O conform pediria ×3,08 e o portão recusa espremer mais de ±70 % — é 'regenere', não 'estique'. Precisa de nova geração (1 por turno), e eu não queimaria a sua decisão nisso sem antes bater o resto do lote."
+      }
+    },
+    {
+      "source": "spr_grill_parrilla_chef_cisma_evo2.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "parrilla_chef_cisma",
+      "evo": 2,
+      "category": "grill",
+      "name": "spr_grill_parrilla_chef_cisma_evo2",
+      "label": "Inox e2 'Altura Regulável' 3×2 (6)",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok",
+        "note": "Boca veio rasa e o conform abriu em ×1,353 → 1,83:1 exato com a manivela estendida e a prateleira tubular. O leito NÃO mudou entre e1 e e2, que é o que o dado promete (3×2 nos dois degraus)."
+      }
+    },
+    {
+      "source": "spr_grill_parrilla_chef_cisma_evo3.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "parrilla_chef_cisma",
+      "evo": 3,
+      "category": "grill",
+      "name": "spr_grill_parrilla_chef_cisma_evo3",
+      "label": "Inox e3 'Termômetro que Não Mente' 3×3 (9)",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "warn",
+        "note": "Ronda 3 com a câmera corrigida: medir no portão abaixo. Se ainda passar de 12° de topo, vira redo — a razão já estava certa na primeira passada."
+      }
+    },
+    {
+      "source": "spr_grill_fornalha_dragao_manso_evo2.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "fornalha_dragao_manso",
+      "evo": 2,
+      "category": "grill",
+      "name": "spr_grill_fornalha_dragao_manso_evo2",
+      "label": "Fornalha e2 'Dragão Acordado' 3×3 (9)",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok",
+        "note": "Depois do [CAMERA]: 2:1 com topo a 0°, conform leve de ×1,161. Mesmo leito do e1 (3×3) — o degrau é personagem (dragão rugindo, segunda toma de brasa), não espaço."
+      }
+    },
+    {
+      "source": "spr_grill_fornalha_dragao_manso_evo3.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "fornalha_dragao_manso",
+      "evo": 3,
+      "category": "grill",
+      "name": "spr_grill_fornalha_dragao_manso_evo3",
+      "label": "Fornalha e3 'Inferno Bom' 3×4 (12)",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok",
+        "note": "A boca mais larga do jogo: 2,26:1 com topo a 0°, 12 vagas (3×4) e célula de 73×60 — o piso do leito procedural, exatamente como o padrão calcula para S=4."
+      }
+    }
+  ],
+  "compare": [
+    "spr_grill_lata_valente_evo1",
+    "spr_grill_ze_da_esquina_evo1",
+    "spr_grill_parrilla_chef_cisma_evo1",
+    "spr_grill_fornalha_dragao_manso_evo1"
+  ],
+  "preview": {
+    "background": "bg_restaurant_espetinho_rua",
+    "grill": "spr_grill_fornalha_dragao_manso_evo3",
+    "_note": "a escada inteira tem de caber na tela: aqui, o topo dela — 12 vagas (3×4) ao tamanho real de comida (73 px, o piso do leito procedural)",
+    "onGrill": [
+      [
+        "spr_food_picanha_medium",
+        0.185,
+        0.17,
+        73
+      ],
+      [
+        "spr_food_contra_file_rare",
+        0.4,
+        0.17,
+        73
+      ],
+      [
+        "spr_food_linguica_toscana_medium",
+        0.615,
+        0.17,
+        73
+      ],
+      [
+        "spr_food_maminha_medium",
+        0.83,
+        0.17,
+        73
+      ],
+      [
+        "spr_food_coracao_frango_medium",
+        0.185,
+        0.5,
+        73
+      ],
+      [
+        "spr_food_asinha_frango_medium",
+        0.4,
+        0.5,
+        73
+      ],
+      [
+        "spr_food_pao_de_alho_raw",
+        0.615,
+        0.5,
+        73
+      ],
+      [
+        "spr_food_queijo_coalho_medium",
+        0.83,
+        0.5,
+        73
+      ],
+      [
+        "spr_food_fraldinha_medium",
+        0.185,
+        0.83,
+        73
+      ],
+      [
+        "spr_food_espetinho_misto_medium",
+        0.4,
+        0.83,
+        73
+      ],
+      [
+        "spr_food_legumes_grelhados_medium",
+        0.615,
+        0.83,
+        73
+      ],
+      [
+        "spr_food_frango_coxa_medium",
+        0.83,
+        0.83,
+        73
+      ]
+    ],
+    "benchItems": [
+      [
+        "spr_food_maminha_raw",
+        62
+      ],
+      [
+        "spr_food_contra_file_raw",
+        62
+      ],
+      [
+        "spr_food_pao_de_alho_raw",
+        62
+      ]
+    ],
+    "orders": [
+      [
+        "spr_char_customer_vizinho",
+        [
+          "spr_food_maminha_served",
+          "spr_food_pao_de_alho_served"
+        ],
+        0.8
+      ]
+    ]
+  }
+}

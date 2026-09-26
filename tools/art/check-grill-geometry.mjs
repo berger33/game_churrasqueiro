@@ -43,9 +43,12 @@ console.log(`   grelha              Z×S  vagas   exige (vaga)     pintado (vaga
 let bad = 0, warn = 0;
 for (const r of rows.sort((a, b) => a.cap.id.localeCompare(b.cap.id) || a.cap.evo - b.cap.evo)) {
   const st = statusOf.get(r.name) ?? 'unknown';
-  const counts = st === 'approved' || checkAll;
-  const flag = r.got.ok ? 'ok' : (counts ? 'FALHA' : 'pende');
-  if (!r.got.ok && counts) bad++; else if (!r.got.ok) warn++;
+  // Only approved art ships, so only approved art can break the build. `--all` widens what is
+  // *measured and printed* — counting a pending row as a failure was both wrong (nobody agreed to
+  // ship it) and self-defeating: it made the flag you use to grade a batch before approval red.
+  const ships = st === 'approved';
+  const flag = r.got.ok ? 'ok' : (ships ? 'FALHA' : 'pende');
+  if (!r.got.ok) { if (ships) bad++; else warn++; }
   console.log(
     `   ${(r.cap.name.slice(0, 18) + ' e' + r.cap.evo).padEnd(20)}` +
     ` ${r.cap.zoneCount}×${r.cap.slotsPerZone}`.padEnd(7) + fmt(r.cap.capacity) +
@@ -65,10 +68,14 @@ for (const step of ladder) {
 }
 const caps = ladder.map((s) => s.cap);
 console.log(`\n   escada de vagas: ${caps.join(' → ')}  (monótona: ${ladderBad ? 'NÃO' : 'sim'})`);
+if (!checkAll && warn) console.log(`   (${warn} grelha(s) fora do padrão ainda não aprovadas — ` + `rode com --all para ver as medições)`);
 
 if (!rows.length) { console.error('[grill-geometry] no grill sprites with a detected opening in the manifest'); process.exit(1); }
 if (bad || ladderBad) {
-  console.error(`\n[grill-geometry] FAILED — ${bad} grelha(s) aprovada(s) sem leito para a grade que os dados prometem${ladderBad ? ` · ${ladderBad} inversão(ões) de progressão` : ''}`);
+  const parts = [];
+  if (bad) parts.push(`${bad} grelha(s) aprovada(s) sem leito para a grade que os dados prometem`);
+  if (ladderBad) parts.push(`${ladderBad} inversão(ões) de progressão na escada de vagas`);
+  console.error(`\n[grill-geometry] FAILED — ${parts.join(' · ')}`);
   console.error('[grill-geometry] ou se regenera a arte com a boca exigida (make-ref.mjs guide --grill <id> --evo <n>), ou se corrige zoneCount/slotsPerZone em churrasqueiras.json.');
   process.exit(1);
 }

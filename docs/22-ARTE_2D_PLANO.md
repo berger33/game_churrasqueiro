@@ -558,3 +558,40 @@ esticado, e o toco da chaminé fica mais solto que na versão achatada — ou en
 das nove já são gerados e medem certo; (c) o letreiro "GRELHA DO ZÉ DA ESQUINA" que o modelo
 pintou na lateral da chapa (o prompt proibia texto; lido em 86 px vira massa — charme ou defeito é
 escolha dele).
+
+### 6.9 Lote 06 — a escada inteira pintada no padrão, e a câmera que estava errada em mim
+
+Seis evoluções que nunca tiveram arte (zé e2/e3, inox e2/e3, fornalha e2/e3), cada uma com guia
+derivado do dado. Primeira passada: 3 ok, 3 fora — e as três fora eram **paralelogramos**: boca com
+topo a −40°, −16° e −20°. A causa estava no meu prompt, que pedia `isometric 2:1 feel` e, três linhas
+depois, "topo e base horizontais". Numa projeção isométrica a face de cima de uma caixa É um
+paralelogramo. O modelo obedeceu às duas frases e a régua pegou.
+
+Correção: bloco `[CAMERA]` na primeira linha do prompt — "vista de frente, levemente de cima
+(15–20°), a boca é um retângulo alinhado aos eixos da imagem, topo e base paralelos ao topo da
+imagem; não é isométrico nem aéreo". Resultado das regenerações:
+
+| arte | boca | topo | conform | veredicto |
+|---|---|---|---|---|
+| chapa e2 'Toldo Novo' | 2,17:1 | dentro | nenhum | **ok** |
+| inox e2 'Altura Regulável' | 1,83:1 | −6,8° | ×1,353 | **ok** |
+| fornalha e2 'Dragão Acordado' | 2:1 | 0° | ×1,161 | **ok** |
+| fornalha e3 'Inferno Bom' | 2,26:1 | 0° | ×1,084 | **ok** |
+| chapa e3 'Com Fritadeira' | 9,23:1 | 0° | precisaria ×3,08 | **redo** |
+| inox e3 'Termômetro que Não Mente' | 3,46:1 | 0° | precisaria ×1,73 | **redo** |
+
+Duas lições que ficam:
+
+- **o conform tem teto, e o teto é a régua.** ×3,08 num carrinho o transformaria em um totem; o
+  portão devolve `regenere, não esprema` e o lote para ali. As duas reprovas de agora são a boca
+  *rasa* (19 px e 35 px de faixa contra 60 px pedidos), não torta — a câmera foi consertada, o
+  comprimento da boca não. Uma geração por turno resolve; a instrução que falta é "a boca é a parte
+  MAIS ALTA do objeto", não apenas "larga".
+- **medir a arte reprovada é o que diz se a régua é justa.** Sem o `--all` do gate, as três
+  paralelogramas teriam virado "estilo do modelo" e alguém teria relaxado o limite de 12° para
+  passar arte ruim. O limite continua 12°: a lata aprovada mede −8,6° e a inox nova, −6,8°.
+
+Rodapé de infraestrutura, pago pelo próprio lote: `build-runtime.mjs --dry-run` agora existe. Antes
+dele, `build-runtime` **apagava e re-escrevia** o atlas de runtime antes de qualquer coisa — rodá-lo
+"para ver o aviso" de um lote pendente re-escrevia o jogo com o que estivesse `approved` (e 6 grelhas
+estavam `pending`). Hoje o dry-run mede, avisa e não toca em `prototype/assets/art`.

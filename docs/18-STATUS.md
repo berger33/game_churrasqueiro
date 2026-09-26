@@ -612,6 +612,9 @@ specification. The prototype proves art *direction*, not the art *budget*.
    - ~~lote 03~~ — **rejected whole by the owner** and reprocessed as lote 04, which is
      **awaiting approval** (icons, backgrounds, both meats are the keepers; see "Lote 03
      rejected" above);
+   - **lote 06 (as 6 evoluções sem arte)** — 4 de 6 no padrão (duas sem nenhum conform), 2 `redo`
+     por boca rasa; câmera corrigida no prompt ([CAMERA], docs/22 §6.9). Folha em
+     `art/review/lote-06.jpg`; nada aprovado, nada no runtime.
    - **grelhas, o que falta decidir** (docs/22 §6.8): aprovar a fornalha conformada ×1,64 ou
      repintá-la em 2:1; gerar as 6 evoluções ainda sem arte (zé e2/e3, inox e2/e3, fornalha
      e2/e3 — os guias já existem e medem certo); decidir o letreiro pintado na chapa nova.
