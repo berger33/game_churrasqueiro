@@ -57,6 +57,13 @@ const STYLE_BODIES = {
   chapa:   { body: [0.06, 0.10, 0.94, 0.60], base: { kind: 'wheels', from: 0.60, to: 0.90, inset: 0.13 }, shelf: [0.94, 0.34, 0.99, 0.48], chimney: [0.13, 0.035, 0.19, 0.115] },
   inox:    { body: [0.05, 0.12, 0.95, 0.60], base: { kind: 'legs', from: 0.60, to: 0.90, inset: 0.10 }, shelf: [0.95, 0.30, 1.00, 0.46], chimney: [0.09, 0.0, 0.15, 0.075] },
   fornalha:{ body: [0.03, 0.10, 0.97, 0.585], base: { kind: 'plinth', from: 0.585, to: 0.97, inset: 0.0 }, shelf: null, chimney: [0.08, 0.0, 0.16, 0.115] },
+  // Os três estilos que entraram com a escada de dez grelhas (docs/23 §2). O que importa para a
+  // régua é o corpo e a boca; os detalhes abaixo da boca (spits/valve/counter) são caráter — são
+  // desenhados *fora* do magenta, porque qualquer coisa sobre o buraco encolhe o leito detectado
+  // pelo process-sprites e a grelha inteira volta para `redo`.
+  espeto:  { body: [0.04, 0.14, 0.96, 0.66], base: { kind: 'drum', from: 0.66, to: 0.94, inset: 0.14 }, shelf: null, chimney: null, spits: true, motor: true },
+  tambor:  { body: [0.12, 0.09, 0.88, 0.60], base: { kind: 'legs', from: 0.60, to: 0.95, inset: 0.16 }, shelf: null, chimney: [0.42, 0.0, 0.58, 0.075], valve: true },
+  campeao: { body: [0.03, 0.13, 0.97, 0.60], base: { kind: 'plinth', from: 0.60, to: 0.96, inset: 0.02 }, shelf: [0.97, 0.32, 1.00, 0.46], chimney: null, counter: [0.0, 0.075, 1.0, 0.115] },
 };
 
 async function drawGuide(out, kindOrOpts) {
@@ -112,7 +119,22 @@ async function drawGuide(out, kindOrOpts) {
   } else {
     for (const cx of [bi, 1 - bi - 0.025]) ctx.fillRect(cx * W, base.from * H, W * 0.026, (base.to - base.from) * H);
   }
+  if (g.counter) rect(g.counter, NEAR, W * 0.006);   // bancada do campeão: sempre acima do corpo
   rect(mouth, '#FF00FF');   // the opening: painted by the model, detected by process-sprites
+  // Caráter do estilo, desenhado na faixa entre a boca e a base — nunca sobre o magenta.
+  const bandTop = mouth[3] + 0.012, bandBot = body[3] - 0.012;
+  if (g.spits) {
+    ctx.fillStyle = '#6f6257';
+    for (let i = 0; i < 3; i++) {
+      const y = bandTop + (bandBot - bandTop) * (0.28 + i * 0.22);
+      ctx.fillRect(mouth[0] * W, y * H, (mouth[2] - mouth[0]) * W, Math.max(2, H * 0.008));
+    }
+  }
+  if (g.motor) { ctx.fillStyle = FAR; ctx.fillRect(body[0] * W - W * 0.05, (body[1] + 0.06) * H, W * 0.05, H * 0.10); }
+  if (g.valve) {
+    ctx.fillStyle = NEAR; ctx.beginPath();
+    ctx.arc(body[2] * W + W * 0.012, ((bandTop + bandBot) / 2) * H, H * 0.022, 0, Math.PI * 2); ctx.fill();
+  }
   const mwp = (mouth[2] - mouth[0]) * W, mhp = (mouth[3] - mouth[1]) * H;
   console.log(`[guide] ${grillId} e${evo} (${style}) ${W}×${H}: boca ${Math.round(mwp)}×${Math.round(mhp)} px `
     + `= ${(mwp / mhp).toFixed(2)}:1 · ${cap.zoneCount}×${cap.slotsPerZone} vagas · leito ${need.bedW} px na tela `
