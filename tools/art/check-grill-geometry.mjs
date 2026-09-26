@@ -53,7 +53,8 @@ for (const r of rows.sort((a, b) => a.cap.id.localeCompare(b.cap.id) || a.cap.ev
     `   ${(r.cap.name.slice(0, 18) + ' e' + r.cap.evo).padEnd(20)}` +
     ` ${r.cap.zoneCount}×${r.cap.slotsPerZone}`.padEnd(7) + fmt(r.cap.capacity) +
     `   ${fmt(r.need.cellW)}×${r.need.cellH}`.padEnd(17) + `${fmt(r.got.cellW)}×${r.got.cellH}`.padEnd(17) +
-    ` ${String(r.got.aspect).padStart(5)}:1 ${String(r.got.tiltDeg).padStart(5)}°  ${flag.padEnd(6)} ${r.name}`);
+    ` ${String(r.got.aspect).padStart(5)}:1 ${String(r.got.tiltDeg).padStart(5)}° ` +
+    `${r.got.bedKind === 'cells' ? '⌗células' : '—aberto '}` + `  ${flag.padEnd(6)} ${r.name}`);
   if (!r.got.ok) console.log(`   ${''.padEnd(20)}→ ${r.got.why}`);
 }
 

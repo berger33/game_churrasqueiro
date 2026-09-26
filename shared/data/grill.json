@@ -128,7 +128,7 @@
     "_economyNote": "Payout/combo money constants live in economy.json -> reward. Do not duplicate them here."
   },
   "art": {
-    "_comment": "Padrão único de perspectiva e de boca para TODAS as churrasqueiras pintadas (docs/04 §5.1, docs/22 §6.8). Regra: a arte nunca pode dar ao jogador MENOS espaço que o leito procedural (proceduralBedWidth × proceduralBedHeight, o GRILL_TOP..GRILL_BOTTOM da tela de 420 px) — e a boca tem de ter altura para zoneCount faixas de comida real (foodFootprint), porque o jogo mapeia as vagas sobre o quadrilátero detectado na pintura. O leito cresce com slotsPerZone até maxBedWidthOnScreen: quem compra mais grelha recebe mais grelha na tela. maxTiltDeg é generoso de propósito (o aro redondo da lata aprovada mede −8,6°): acima de ~12° a boca deixou de ser um topo visto de frente e virou um paralelogramo de vista área, que desperdiça tela.",
+    "_comment": "Padrão único de perspectiva e de boca para TODAS as churrasqueiras pintadas (docs/04 §5.1, docs/22 §6.8). Regra: a arte nunca pode dar ao jogador MENOS espaço que o leito procedural (proceduralBedWidth × proceduralBedHeight, o GRILL_TOP..GRILL_BOTTOM da tela de 420 px) — e a boca tem de ter altura para zoneCount faixas de comida real (foodFootprint), porque o jogo mapeia as vagas sobre o quadrilátero detectado na pintura. O leito cresce com slotsPerZone até maxBedWidthOnScreen: quem compra mais grelha recebe mais grelha na tela. maxTiltDeg é generoso de propósito (o aro redondo da lata aprovada mede −8,6°): acima de ~12° a boca deixou de ser um topo visto de frente e virou um paralelogramo de vista área, que desperdiça tela. `paintedCellsMaxSlots` fecha a última pergunta aberta do padrão: a largura de vaga que a boca comporta é `0,72 × leito / slotsPerZone`, que dá 119 px com 2 espetos, 86 px com 3 e cai para 73 px com 4, 59 px com 5, 49 px com 6 — o prato mede 86 px de largura. Logo, acima de 3 espetos por fileira a arte não pode prometer uma célula por prato: ela pinta leito aberto (brasa contínua) e quem reparte o espaço é o motor, que já desenha a comida na escala da vaga (`slotX` distribui a largura do leito por `slotsPerZone`). Abaixo disso a grelha pinta divisórias e cada célula tem de caber o prato. A régua cobra os dois casos por nome: ver `bedKind` em grill-geometry.mjs (docs/23 §5).",
     "maxTiltDeg": 12,
     "bedWidthOnScreen": 330,
     "maxBedWidthOnScreen": 408,
@@ -144,6 +144,7 @@
     },
     "camera": "quase de frente, ~20° acima; boca retangular com topo e base perfeitamente horizontais",
     "proceduralBedWidth": 310,
-    "proceduralBedHeight": 248
+    "proceduralBedHeight": 248,
+    "paintedCellsMaxSlots": 3
   }
 }

@@ -515,6 +515,16 @@ aprovada (−8,6°). Decisão do dono: aceitar os 15 %, ou encomendar as duas co
 
 ### 6.8 O padrão de perspectiva e leito — quando a régua virou conta
 
+> **Dois tipos de leito, um número só (2026-09-26).** A célula pintada é
+> `0,72 × leito / slotsPerZone`: 119 px com 2 espetos, 86 com 3, 73 com 4, 59 com 5, 49 com 6. O prato
+> mede 86 px. Então `grill.json.art.paintedCellsMaxSlots = 3` separa as duas linguagens — até 3 espetos a
+> grelha pinta divisórias e cada célula tem de comportar o prato (o portão cobra isso pelo nome, em
+> `bedKind: cells`); de 4 para cima ela pinta brasa contínua, sem divisória, porque uma linha no meio da
+> pintura seria a promessa de um espaço que o motor não tem (`slotX` reparte a largura da tela pelo número
+> de vagas, e é ele quem decide o tamanho do prato). Um lote novo de grelha larga, por isso, pede *leito
+> aberto* no prompt — não "menos capricho": a boca continua nivelada, a faixa por fileira continua ≥ 60 px
+> e o conform de ±70 % continua valendo.
+
 O dono pediu três coisas: que as grelhas façam sentido com a progressão, que o espaço na tela seja
 de acordo com cada uma, e que exista **uma** perspectiva padrão. As duas primeiras não são
 estéticas: o motor (`toGrillScreen`) joga a comida dentro da boca pintada. Então o padrão virou

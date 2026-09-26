@@ -109,6 +109,7 @@ namespace Churrasco.Core.Generated
         public List<double> FoodU { get; set; }
         public int MaxBedWidthOnScreen { get; set; }
         public int MaxTiltDeg { get; set; }
+        public int PaintedCellsMaxSlots { get; set; }
         public int ProceduralBedHeight { get; set; }
         public int ProceduralBedWidth { get; set; }
     }

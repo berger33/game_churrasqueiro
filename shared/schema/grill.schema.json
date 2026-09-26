@@ -66,6 +66,9 @@
         "maxTiltDeg": {
           "type": "integer"
         },
+        "paintedCellsMaxSlots": {
+          "type": "integer"
+        },
         "proceduralBedHeight": {
           "type": "integer"
         },
@@ -83,6 +86,7 @@
         "foodU",
         "maxBedWidthOnScreen",
         "maxTiltDeg",
+        "paintedCellsMaxSlots",
         "proceduralBedHeight",
         "proceduralBedWidth"
       ]

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-26T03:46:02.917Z",
+  "generatedAt": "2026-09-26T04:16:37.790Z",
   "source": "shared/data",
   "files": {
     "achievements.json": {
@@ -39,8 +39,8 @@
       "bytes": 4012
     },
     "grill.json": {
-      "sha256": "580ee5a3a15822efb66b7aeaaa87ca72251af6473cca4a1ca133ae340c3f6dff",
-      "bytes": 5435
+      "sha256": "40f812a33a4a1403e8fade446b9593f8e2ff83804be2fa002c0e1a39eb223a87",
+      "bytes": 6165
     },
     "iap.json": {
       "sha256": "e3d2be582a9000d71b237b18467b07fca69f5a33c86651a462359b77273288c7",

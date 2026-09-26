@@ -162,12 +162,24 @@ painel cabe em 420×780 e que o × fecha — e escreve o quadro em `prototype/sh
 - **10 fundos de tela** (7 existentes + cais, orla, campeão).
 - A régua continua a mesma: boca nivelada (`|inclinação| ≤ 12°`), célula ≥ `min(procCellW, 86) × 60`,
   boca ≤ 248 px, escada monótona, conform com teto de ±70 %. O portão aceita `pending` sem medir e só
-  abre a medição com `--all`; continuar assim.
-- Topo da escada, medido de novo com a grade final: `4×5` dá leito de 408 px → célula de 58,8 px, e o
-  prato de 86 px encosta no vizinho no leito **pintado**. As três saídas continuam postadas (subir
-  `maxBedWidthOnScreen`, escalar `foodDisplayWidth` por célula, ou aceitar) e a escolha é do dono, porque
-  é escolha de linguagem visual, não de número. No protótipo isso não aparece: lá o espaçamento vem de
-  `usable = W − 110` em pixels de tela, não do leito do sprite.
+  abre a medição com `--all`; continuar assim. Desde a decisão abaixo, `grill-geometry` também devolve
+  `bedKind` e o `check-grill-geometry` imprime `⌗células` / `—aberto` em cada linha, para o tipo de leito
+  ser lido na folha de medição e não deduzido do humor de quem olha.
+- **A célula do topo, decidido (2026-09-26, por delegação explícita do dono — "tome a melhor decisão
+  para o jogo").** Medido com `maxBedWidthOnScreen = 408`: a vaga pintada tem 119 px com 2 espetos, 86 px
+  com 3, **73 px com 4, 59 px com 5, 49 px com 6**, contra um prato de 86 px. O problema, portanto, nunca
+  foi só do `4×5`: `ze_da_esquina e3` (6 por fileira) e qualquer grelha de 4+ já viviam com célula menor
+  que o prato — e as três saídas postadas só empurrariam o limite (subir o leito para 598 px é um leito
+  mais largo que a tela de 420 px; escalar `foodDisplayWidth` por célula é o motor fazendo o que ele já
+  faz, via `slotX`). A regra passa a dizer o que a aritmética já dizia: **`slotsPerZone ≤ 3` pinta leito
+  de células e o gate exige prato por célula pelo nome; `≥ 4` pinta leito aberto** (brasa contínua, sem
+  divisórias pintadas), e quem reparte a comida é o motor. O limite vai para dado —
+  `grill.json.art.paintedCellsMaxSlots = 3` — porque limite de arte mora em dado, e vai para o prompt do
+  lote porque é daí que o modelo sabe se desenha grades ou brasas. Consequência verificada: as 12 grelhas
+  aprovadas passam as duas leituras sem nenhuma mudança de arte (a menor célula aprovada em `cells` é
+  exatamente 86 px), e as duas que ainda falham (`ze_da_esquina e3`, faixa de 19 px; `parrilla_chef_cisma
+  e3`, 35 px) estão no montete de `pende` por *altura*, não por largura — a decisão não salvou nem condenou
+  ninguém. No protótipo nada disso aparece: lá o espaçamento vem de `usable = W − 110` em pixels de tela.
 
 ## 6. Pendências abertas por esta mudança
 

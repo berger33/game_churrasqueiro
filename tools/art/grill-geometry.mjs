@@ -62,6 +62,10 @@ export function requiredMouth(art, cap) {
   const cellW = (usable * bedW) / cap.slotsPerZone;
   const cellH = mouthH / cap.zoneCount;
   return {
+    // `cells` = a pintura mostra uma divisória por vaga, então cada célula tem de comportar o prato;
+    // `open` = leito contínuo e o prato é colocado pelo motor na escala da vaga. Não é escape: é a
+    // única leitura honesta de 59 px de célula contra 86 px de comida (docs/23 §5).
+    bedKind: cap.slotsPerZone <= (art.paintedCellsMaxSlots ?? 3) ? 'cells' : 'open',
     bedW, mouthH: Math.min(mouthH, art.proceduralBedHeight),
     aspect: +(bedW / Math.min(mouthH, art.proceduralBedHeight)).toFixed(2),
     cellW: Math.round(cellW), cellH: Math.round(cellH),
@@ -99,10 +103,17 @@ export function measuredMouth(art, sprite, cap) {
     // Half a pixel of tolerance: the numbers above are ceil-ed twice (once into the guide, once
     // into the threshold), so art that obeys the guide exactly can land 0.4 px short. A gate that
     // rejects compliance is noise; real failures here are 10 px and up.
+    bedKind: need.bedKind,
+    plateFits: cellW >= food.width - 0.5,
     ok: cellW >= need.minCellW - 0.5 && cellH >= need.minCellH - 0.5 && !tooTall
-      && Math.abs(sprite.hole.tiltDeg ?? 0) <= art.maxTiltDeg,
+      && Math.abs(sprite.hole.tiltDeg ?? 0) <= art.maxTiltDeg
+      // Leito de células: a divisória pintada é uma promessa ao jogador, então o prato tem de caber
+      // nela. Leito aberto: a promessa é só a faixa por fileira, e a escala da comida é do motor.
+      && (need.bedKind !== 'cells' || cellW >= food.width - 0.5),
     why: [
       cellW < need.minCellW ? `vaga de ${Math.round(cellW)} px < o mínimo ${need.minCellW} px (fallback dá ${need.procCellW})` : '',
+      need.bedKind === 'cells' && cellW < food.width - 0.5
+        ? `leito de células com ${cap.slotsPerZone} vagas de ${Math.round(cellW)} px < prato de ${food.width} px — ou pinta leito aberto, ou o grid desce para ≤ ${art.paintedCellsMaxSlots}` : '',
       cellH < need.minCellH ? `faixa de ${Math.round(cellH)} px < ${need.minCellH} px (comida de ${food.height} px)` : '',
       // A boca quadrada passa na régua de comida e mesmo assim estraga a tela: ao escalar a boca
       // para `bedW`, a grelha pintada fica mais alta que o leito procedural que ela substitui.
