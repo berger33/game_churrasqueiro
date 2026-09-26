@@ -328,6 +328,8 @@ class Game {
 
   // Churrasqueiras (data-driven)
   private churrasqueiras: ChurrasqueiraSpec[] = [];
+  /** Painel dos três carvões (docs/23 §4). Aberto pelo chip no cartão da grelha. */
+  private charcoalPanelOpen = false;
   private churrasqueiraHintT = 0;
 
   async init(canvas: HTMLCanvasElement): Promise<void> {
@@ -494,22 +496,45 @@ class Game {
   private availableCharcoal(): CharcoalTypeSpec[] {
     return this.charcoalTypes().filter((t) => this.meta.level >= t.unlockLevel);
   }
-  /**
-   * Roda para o próximo tipo liberado. Sem `types` na tabela (jogo pré-escada) isso é no-op, e o
-   * chip some da tela — o fallback procedural também vale para a UI.
-   */
-  private cycleCharcoalType(): CharcoalTypeSpec | null {
-    const list = this.availableCharcoal();
-    if (list.length < 2) return null;
-    const i = list.findIndex((t) => t.id === this.meta.charcoalType);
-    const next = list[(i + 1) % list.length]!;
-    this.meta.charcoalType = next.id;
-    saveMeta(this.meta);
-    return next;
-  }
   /** Chip de carvão no canto inferior direito do cartão da grelha (o único espaço livre da card). */
   private charcoalChipRect(): Rect {
     return { x: W - 96, y: 356 + 58, w: 82, h: 26, r: 12 };
+  }
+  /**
+   * Geometria do painel de carvão, compartilhada por desenho e toque (a lição do modal diário:
+   * quando as duas contas divergem, o botão só funciona por sorte — docs/05).
+   */
+  private charcoalPanelLayout(): { panel: Rect; rows: Rect[]; close: Rect } {
+    const types = this.charcoalTypes();
+    const pw = W - 44, px = 22;
+    const rowH = 66, rowGap = 8, head = 92, foot = 60;
+    const ph = head + types.length * (rowH + rowGap) + foot;
+    const py = Math.max(56, Math.round((H - ph) / 2) - 24);
+    const rows = types.map((_, i) => ({ x: px + 14, y: py + head + i * (rowH + rowGap), w: pw - 28, h: rowH, r: 14 }));
+    return { panel: { x: px, y: py, w: pw, h: ph, r: 20 }, rows, close: { x: px + pw - 40, y: py + 14, w: 26, h: 26, r: 8 } };
+  }
+  /** Delta acumulado de uma trilha de upgrade (mesma conta de `deriveStats`). */
+  private upgradeDelta(trackId: string): number {
+    const t = this.db.upgradeById.get(trackId);
+    const lvl = this.meta.upgrades[trackId] ?? 0;
+    if (!t || lvl <= 0) return 0;
+    return t.effect.delta * Math.min(lvl, t.maxLevel);
+  }
+  /**
+   * Quantos segundos de brasa o tipo dá *nesta* grelha, com o upgrade de duração somado. É o
+   * número do motor (cooking.ts: base × (1 + bônus da grelha + upgrade) × multiplicador do tipo),
+   * não uma estimativa decorativa — mostrar conta errada na tela de escolha é pior que não mostrar.
+   */
+  private charcoalSeconds(t: CharcoalTypeSpec): number {
+    const base = this.db.grill.charcoal.baseDurationSec;
+    const bonus = (this.activeEvo()?.charcoalBonus ?? 0) + this.upgradeDelta('charcoal_duration');
+    return Math.round(base * (1 + bonus) * t.durationMult);
+  }
+  /** Quantos segundos o tipo *base* daria nesta grelha (o ponto de comparação do painel). */
+  private baseCharcoalSeconds(): number {
+    const base = this.db.grill.charcoal.baseDurationSec;
+    const bonus = (this.activeEvo()?.charcoalBonus ?? 0) + this.upgradeDelta('charcoal_duration');
+    return Math.round(base * (1 + bonus));
   }
   private churrasqueiraById(id: string): ChurrasqueiraSpec | undefined {
     return this.churrasqueiras.find((c) => c.id === id);
@@ -807,7 +832,11 @@ class Game {
     dbg.__churrascoHome = this.screen === 'home' ? {
       coins: this.meta.coins, embers: this.meta.embers, lastClaimDay: this.meta.lastClaimDay,
       claimable: this.dailyClaimable(), dailyOpen: this.dailyModalOpen,
-      strip: this.dailyStripLayout().panel, modal: this.dailyModalOpen ? this.dailyModalLayout() : null
+      strip: this.dailyStripLayout().panel, modal: this.dailyModalOpen ? this.dailyModalLayout() : null,
+      // aba atual + painel dos carvões: o harness prova que o toque abre o painel e que o quadro
+      // cabe na tela — mesma razão de ser do `dailyOpen` logo acima (docs/05).
+      tab: this.homeTab, charcoalOpen: this.charcoalPanelOpen,
+      charcoalPanel: this.charcoalPanelOpen ? this.charcoalPanelLayout().panel : null
     } : null;
     if (this.screen === 'splash') {
       this.splashT += dt;
@@ -1420,6 +1449,34 @@ class Game {
         if (!contains(L.panel, p)) this.dailyModalOpen = false;
         return;
       }
+      if (this.charcoalPanelOpen) {
+        const L = this.charcoalPanelLayout();
+        if (contains(L.close, p, 10) || !contains(L.panel, p, 0)) { this.charcoalPanelOpen = false; audio.play('uiTap'); return; }
+        const types = this.charcoalTypes();
+        for (let i = 0; i < types.length; i++) {
+          if (!contains(L.rows[i]!, p, 4)) continue;
+          const t = types[i]!;
+          if (this.meta.level < t.unlockLevel) {
+            audio.play('uiError');
+            this.float(W / 2, L.rows[i]!.y, this.l10n.t('charcoal.locked', { n: t.unlockLevel }), C.ambar, 13);
+            return;
+          }
+          if (this.meta.charcoalType === t.id) { this.charcoalPanelOpen = false; audio.play('uiTap'); return; }
+          this.meta.charcoalType = t.id;
+          saveMeta(this.meta);
+          audio.play('coin');
+          this.track({
+            name: 'charcoal_select',
+            params: {
+              charcoal_type: t.id, player_level: this.meta.level, refill_cost_coins: t.refillCostCoins,
+              duration_mult: t.durationMult, heat_mult: t.heatMult
+            }
+          });
+          this.float(W / 2, 300, this.l10n.t('charcoal.equipped', { name: this.l10n.t(t.nameKey) }), C.ouroLight, 14);
+          return;
+        }
+        return;
+      }
       if (this.offlinePopup) {
         if (p.y > H*0.5 + 60 && p.y < H*0.5+120 && Math.abs(p.x - W/2) < 100) {
           this.meta.coins += this.offlinePopup.coins;
@@ -1476,24 +1533,10 @@ class Game {
           this.requestNextLevel();
           return;
         }
-        // Carvão: um chip no canto do cartão, testado antes da faixa inteira do cartão.
-        if (this.charcoalTypes().length > 1 && contains(this.charcoalChipRect(), p, 3)) {
-          const list = this.availableCharcoal();
-          const next = this.cycleCharcoalType();
-          if (next) {
-            audio.play('uiTap');
-            this.float(W / 2, 340, this.l10n.t('charcoal.equipped', { name: this.l10n.t(next.nameKey) }), C.ouroLight, 13);
-            this.float(W / 2, 356, this.l10n.t(next.descKey), C.creme, 10);
-          } else {
-            const locked = this.charcoalTypes().find((t) => this.meta.level < t.unlockLevel);
-            audio.play('uiError');
-            this.float(W / 2, 340, locked
-              ? this.l10n.t('charcoal.locked', { n: locked.unlockLevel })
-              : this.l10n.t('charcoal.locked', { n: 1 }), C.ambar, 12);
-          }
-          if (list.length === 1) {
-            this.float(W / 2, 372, this.l10n.t(this.charcoalTypes()[0]!.descKey), C.creme, 10);
-          }
+        // Carvão: o chip no canto do cartão abre o painel dos três tipos.
+        if (!this.charcoalPanelOpen && this.charcoalTypes().length > 1 && contains(this.charcoalChipRect(), p, 3)) {
+          this.charcoalPanelOpen = true;
+          audio.play('uiTap');
           return;
         }
         // Churrasqueira showcase — 356..450
@@ -2097,6 +2140,7 @@ class Game {
     else this.drawPlay(ctx);
     // global overlays
     if (this.dailyModalOpen) this.drawDailyModal(ctx);
+    if (this.charcoalPanelOpen) this.drawCharcoalPanel(ctx);
     if (this.offlinePopup) this.drawOfflinePopup(ctx);
     ctx.restore();
   }
@@ -3774,6 +3818,79 @@ class Game {
     ctx.font=font(10,600,UI); ctx.textAlign='center'; ctx.fillStyle='rgba(244,231,211,0.5)';
     ctx.fillText('Tempo limitado: gire antes que expire!',W/2, cy + r + 34);
     this.drawBanner(ctx);
+  }
+
+  /** Painel dos três carvões: a troca (mais brasa × menos fogo × preço) escrita em números do motor. */
+  private drawCharcoalPanel(ctx: CanvasRenderingContext2D): void {
+    const types = this.charcoalTypes();
+    const L = this.charcoalPanelLayout();
+    ctx.fillStyle = 'rgba(8,5,3,0.72)'; ctx.fillRect(0, 0, W, H);
+    panel(ctx, L.panel.x, L.panel.y, L.panel.w, L.panel.h, {
+      r: 20, top: 'rgba(58,42,30,0.99)', bottom: 'rgba(24,15,10,0.99)', border: C.brasaHot, borderWidth: 1.6, shadow: 22, innerGlow: true,
+      glowTop: 'rgba(255,180,90,0.16)'
+    });
+    outlinedText(ctx, this.l10n.t('charcoal.label').toUpperCase(), W / 2, L.panel.y + 30, C.perola, 17, { outline: 3, weight: 900 });
+    ctx.font = font(9, 600, UI); ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(244,231,211,0.6)';
+    ctx.fillText(this.l10n.t('charcoal.panel.subtitle'), W / 2, L.panel.y + 48);
+    ctx.font = font(8, 700, UI); ctx.fillStyle = 'rgba(244,231,211,0.42)';
+    const grillName = this.activeChurr() ? this.l10n.t(this.activeChurr()!.nameKey) : this.l10n.t('grill.none');
+    ctx.fillText(`${grillName}: ${this.baseCharcoalSeconds()}s ${this.l10n.t('charcoal.panel.seconds')}`, W / 2, L.panel.y + 66);
+    // Quebra de linha medida no canvas (o painel é desenhado em 420 px: texto estourando a borda
+    // é o tipo de defeito que só aparece no quadro montado, não no código).
+    const wrap = (text: string, x: number, y: number, maxW: number, lh: number, align: CanvasTextAlign = 'left') => {
+      ctx.textAlign = align;
+      const words = text.split(' '); let line = '', yy = y;
+      for (const w of words) {
+        const cand = line ? `${line} ${w}` : w;
+        if (ctx.measureText(cand).width > maxW && line) { ctx.fillText(line, x, yy); line = w; yy += lh; }
+        else line = cand;
+      }
+      if (line) ctx.fillText(line, x, yy);
+      return yy;
+    };
+    glass(ctx, L.close.x, L.close.y, L.close.w, L.close.h, { alpha: 0.18, border: 'rgba(255,214,160,0.3)' });
+    ctx.strokeStyle = C.creme; ctx.lineWidth = 2; ctx.beginPath();
+    ctx.moveTo(L.close.x + 8, L.close.y + 8); ctx.lineTo(L.close.x + 18, L.close.y + 18);
+    ctx.moveTo(L.close.x + 18, L.close.y + 8); ctx.lineTo(L.close.x + 8, L.close.y + 18); ctx.stroke();
+    for (let i = 0; i < types.length; i++) {
+      const t = types[i]!, r = L.rows[i]!;
+      const locked = this.meta.level < t.unlockLevel;
+      const equipped = this.meta.charcoalType === t.id;
+      const tint = t.id === 'briquete' ? C.brasaHot : t.id === 'vegetal' ? C.verdeClaro : C.ambar;
+      panel(ctx, r.x, r.y, r.w, r.h, {
+        r: 14, top: 'rgba(40,28,20,0.96)', bottom: 'rgba(20,13,9,0.96)',
+        border: equipped ? tint : locked ? 'rgba(255,214,160,0.10)' : 'rgba(255,214,160,0.22)',
+        borderWidth: equipped ? 1.8 : 1, shadow: equipped ? 10 : 4
+      });
+      ctx.globalAlpha = locked ? 0.5 : 1;
+      flameIcon(ctx, r.x + 18, r.y + 20, 7, !locked);
+      ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+      ctx.font = font(11, 900, UI); ctx.fillStyle = C.perola;
+      ctx.fillText(this.l10n.t(t.nameKey), r.x + 32, r.y + 24);
+      ctx.font = font(8, 600, UI); ctx.fillStyle = 'rgba(244,231,211,0.62)';
+      wrap(this.l10n.t(t.descKey), r.x + 14, r.y + 40, r.w - 108, 11);
+      // números do motor, não adjetivos: segundos reais de brasa e o preço da recarga
+      ctx.textAlign = 'right';
+      ctx.font = font(11, 900, UI); ctx.fillStyle = tint;
+      ctx.fillText(`${this.charcoalSeconds(t)}s`, r.x + r.w - 14, r.y + 22);
+      ctx.font = font(8, 700, UI); ctx.fillStyle = 'rgba(244,231,211,0.66)';
+      const heat = Math.round((t.heatMult - 1) * 100);
+      ctx.fillText(`calor ${heat >= 0 ? '+' : '\u2212'}${Math.abs(heat)}%`, r.x + r.w - 14, r.y + 36);
+      ctx.fillStyle = t.refillCostCoins > 0 ? C.ouroLight : C.verdeClaro;
+      ctx.fillText(t.refillCostCoins > 0
+        ? this.l10n.t('charcoal.per_refill', { n: t.refillCostCoins })
+        : this.l10n.t('charcoal.free'), r.x + r.w - 14, r.y + 50);
+      ctx.globalAlpha = 1;
+      if (locked) {
+        ctx.textAlign = 'center'; ctx.font = font(9, 900, UI); ctx.fillStyle = C.ambar;
+        ctx.fillText(this.l10n.t('charcoal.locked', { n: t.unlockLevel }), r.x + r.w / 2, r.y + r.h - 6);
+      } else if (equipped) {
+        ctx.textAlign = 'left'; ctx.font = font(8, 900, UI); ctx.fillStyle = tint;
+        ctx.fillText(this.l10n.t('charcoal.equippedBadge'), r.x + 14, r.y + r.h - 6);
+      }
+    }
+    ctx.font = font(8, 600, UI); ctx.fillStyle = 'rgba(244,231,211,0.5)';
+    wrap(this.l10n.t('charcoal.panel.footnote'), W / 2, L.panel.y + L.panel.h - 32, L.panel.w - 32, 11, 'center');
   }
 
   private drawDailyModal(ctx: CanvasRenderingContext2D): void {

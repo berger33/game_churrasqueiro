@@ -141,10 +141,17 @@ Preço e travas:
 
 Estado e UI: `player.charcoalType` é novo no save (**v3 → v4**, migração põe `comum` e não muda o
 ritmo de ninguém). No protótipo, o tipo equipado aparece no medidor de brasa durante o turno
-(`Carvão · Briquete · 46`) e troca com um chip no canto inferior direito do cartão da grelha em casa —
-tocar roda entre os tipos liberados e o float diz o que mudou. O cartão não ganhou linha própria
-porque `homeUpgradeRect` ancora a mão do FTUE ali; **o seletor de três chips com preço na garagem é o
-próximo passo declarado**, junto do evento de analytics `charcoal_type` (hoje a troca só toca `uiTap`).
+(`Carvão · Briquete · 46`) e o chip no canto inferior direito do cartão da grelha em casa agora **abre
+um modal** com os três tipos, um por linha: nome, descrição, e os três números que importam medidos no
+motor *desta* grelha — `203s` de brasa (base × bônus da evolução × `durationMult`, o mesmo cálculo de
+`tickGrill`), `calor +10 %` e `46/recarga`. Bloqueado mostra `Libera no nível N` por cima da linha, sem
+esconder o que a pessoa estaria perdendo. O cartão não ganhou linha própria porque `homeUpgradeRect`
+ancora a mão do FTUE ali, e o modal evita a colisão de chips que a régua de 350..512 px já tinha medido.
+Cada troca emite `charcoal_select` (`charcoal_type`, `player_level`, `refill_cost_coins`,
+`duration_mult`, `heat_mult`) — o evento saiu como `charcoal_select`, não `charcoal_type`, porque o que
+se quer no funil é a decisão, não o estado. Verificado de verdade: `CHURR_SHOT=charcoal` no
+`prototype/shoot.mjs` entra na garagem, toca o chip, afirma `__churrascoHome.charcoalOpen`, mede que o
+painel cabe em 420×780 e que o × fecha — e escreve o quadro em `prototype/shots/99-charcoal-panel.png`.
 
 ## 5. O que isso cobra da arte (por isso o lote está segurado)
 
@@ -169,8 +176,10 @@ próximo passo declarado**, junto do evento de analytics `charcoal_type` (hoje a
    quebrariam no CI), o `× CharcoalHeatMult` em `Tick` e o preço em `RefillCharcoal`. Junto com
    `TurnSimulation.cs` / `EconomyRules.cs` / `SaveSystem.cs` e as quatro funções de churrasqueira já
    listadas em docs/18 §7 (17 vetores ainda "not ported").
-2. **Seletor completo na garagem** (3 chips com preço, estado bloqueado e descrição) + evento de
-   analytics para a escolha.
+2. ~~**Seletor completo na garagem** (3 chips com preço, estado bloqueado e descrição) + evento de
+   analytics para a escolha~~ — **feito**: modal de três linhas aberto pelo chip do cartão, números do
+   motor por linha, `charcoal_select` na taxonomia (49 eventos) e o quadro verificado por
+   `CHURR_SHOT=charcoal`.
 3. `levels.json` continua cobrindo as telas 0–1 (`gen-levels [[0,24],[1,36]]`): as telas novas usam a
    curva de XP até `xp.maxLevel 80` contra `requiredLevel` 64 / 70 / 76 — alcançável sem reescrever os
    60 níveis autorados, o FTUE medido e os vetores. É escolha de conteúdo, não de engine.

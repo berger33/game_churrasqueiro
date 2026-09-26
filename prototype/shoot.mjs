@@ -368,6 +368,28 @@ await advance(0.4, { paint: true });
 assert(screen() === 'home' && !ftue(), `relaunch should open Home, got ${screen()} ftue=${JSON.stringify(ftue())}`);
 await shot('10-home');
 
+// Quadro extra para julgamento de UI: `CHURR_SHOT=charcoal` abre o painel dos três carvões com um
+// toque real no chip do cartão e fotografa o resultado. A régua de layout é ver o quadro, não ler
+// descrição — e o painel do carvão tem linhas bloqueadas, que só aparecem no nível baixo do harness.
+// Fora das asserções do gate: serve para olhar, não para aprovar nada sozinho.
+if (process.env.CHURR_SHOT === 'charcoal') {
+  tap(126, 780 - 32);                      // barra de navegação: aba 'shop' (a garagem)
+  await advance(0.15, { paint: false });
+  tap(420 - 96 + 41, 356 + 58 + 13);       // charcoalChipRect(): { x: W-96, y: 356+58, w: 82, h: 26 }
+  await advance(0.25, { paint: false });
+  const home = globalThis.__churrascoHome;
+  assert(home?.tab === 'shop', `painel testado fora da garagem (tab=${home?.tab})`);
+  assert(home?.charcoalOpen === true, `toque no chip não abriu o painel de carvão (home=${JSON.stringify(home)})`);
+  const pp = home.charcoalPanel;
+  assert(pp && pp.y > 0 && pp.y + pp.h < 780, `painel fora da tela: ${JSON.stringify(pp)}`);
+  console.log(`[shoot] painel de carvão aberto · panel=${JSON.stringify(pp)}`);
+  await shot('99-charcoal-panel');
+  tap(pp.x + pp.w - 40 + 13, pp.y + 14 + 13);   // centro do × (close: x=pw-40, y=py+14, 26×26)
+  await advance(0.2, { paint: false });
+  assert(globalThis.__churrascoHome?.charcoalOpen === false, 'botão × não fechou o painel');
+  console.log('[shoot] painel de carvão fechado pelo ×');
+}
+
 // 11. JOGAR
 tap(210, 310);
 await advance(0.8, { paint: true });

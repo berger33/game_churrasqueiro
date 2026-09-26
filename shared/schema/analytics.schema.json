@@ -103,6 +103,9 @@
               "category": {
                 "type": "string"
               },
+              "charcoal_type": {
+                "type": "string"
+              },
               "coins": {
                 "type": "string"
               },
@@ -159,6 +162,9 @@
               "duration_ms": {
                 "type": "string"
               },
+              "duration_mult": {
+                "type": "string"
+              },
               "ecpm_micros": {
                 "type": "string"
               },
@@ -184,6 +190,9 @@
                 "type": "string"
               },
               "event_type": {
+                "type": "string"
+              },
+              "heat_mult": {
                 "type": "string"
               },
               "ingredient": {
@@ -247,6 +256,9 @@
                   "string"
                 ]
               },
+              "player_level": {
+                "type": "string"
+              },
               "price_micros": {
                 "type": "string"
               },
@@ -271,6 +283,9 @@
                 "enum": [
                   "string"
                 ]
+              },
+              "refill_cost_coins": {
+                "type": "string"
               },
               "restaurant_id": {
                 "type": "string"

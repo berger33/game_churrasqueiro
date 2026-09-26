@@ -613,5 +613,10 @@
   "grill.fornalha_orla.evo3.short": "Forno ao Lado",
   "grill.cozinha_campeao.evo1.short": "Ilha do Chef",
   "grill.cozinha_campeao.evo2.short": "Ilha Completa",
-  "grill.cozinha_campeao.evo3.short": "Brasa Certificada"
+  "grill.cozinha_campeao.evo3.short": "Brasa Certificada",
+  "charcoal.panel.subtitle": "Mais brasa, menos fogo, ou o contrário: cada tipo troca uma coisa pela outra.",
+  "charcoal.panel.seconds": "de brasa sem contar o tipo",
+  "charcoal.panel.footnote": "A recarga cobra na bolsa do turno; sem moeda no turno, ela sai do fundo de cozinha.",
+  "charcoal.equippedBadge": "EM USO",
+  "grill.none": "a grelha"
 }
