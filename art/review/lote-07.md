@@ -62,8 +62,9 @@ para depois do “ok”, conforme a ordem pedida.
 
 ## Próximo turno — mesma branch, sem regenerar as 9 imagens
 
-1. `git fetch origin`; conferir que o checkout é esta branch e não há trabalho novo a
-   perder; recuperar o tip remoto desta mesma branch com `git reset --hard
+1. `git fetch origin arena/01a0df4e-game-churrasqueiro:refs/remotes/origin/arena/01a0df4e-game-churrasqueiro`
+   (este clone pode buscar só main no refspec padrão); conferir que o checkout é esta
+   branch e não há trabalho novo a perder; recuperar o tip remoto desta mesma branch com `git reset --hard
    origin/arena/01a0df4e-game-churrasqueiro` se o sandbox reverteu.
 2. `npm install`; recriar referências com os comandos de `art/prompts/lote-07.md`.
 3. Gerar **só** `iap_a.png`, prompt 05 já gravado (não está gerada/aprovada).
