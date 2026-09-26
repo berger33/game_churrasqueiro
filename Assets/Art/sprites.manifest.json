@@ -1431,43 +1431,45 @@
     },
     "spr_grill_fornalha_dragao_manso_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_fornalha_dragao_manso_evo1.png",
-      "w": 664,
-      "h": 709,
+      "w": 1024,
+      "h": 889,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "grill",
-      "source": "art/source/lote-03/grill_fornalha_dragao_manso_evo1.png",
+      "source": "art/source/lote-04/grill_fornalha_dragao_manso_evo1.png",
       "hole": {
         "bbox": [
-          180,
-          277,
-          249,
-          136
+          148,
+          244,
+          728,
+          462
         ],
         "quad": [
           [
-            182,
-            318
+            210,
+            245
           ],
           [
-            428,
-            278
+            814,
+            244
           ],
           [
-            425,
-            365
+            875,
+            705
           ],
           [
-            183,
-            411
+            148,
+            705
           ]
         ],
-        "tiltDeg": -9.2,
-        "areaFrac": 0.0474
+        "tiltDeg": -0.1,
+        "areaFrac": 0.3387,
+        "widthFrac": 0.7109,
+        "aspectRatio": 1.432
       },
-      "batch": "lote-03"
+      "batch": "lote-04"
     },
     "spr_grill_lata_valente_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_lata_valente_evo1.png",
@@ -1591,83 +1593,87 @@
     },
     "spr_grill_parrilla_chef_cisma_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_parrilla_chef_cisma_evo1.png",
-      "w": 849,
-      "h": 673,
+      "w": 1024,
+      "h": 853,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "grill",
-      "source": "art/source/lote-03/grill_parrilla_chef_cisma_evo1.png",
+      "source": "art/source/lote-04/grill_parrilla_chef_cisma_evo1.png",
       "hole": {
         "bbox": [
-          218,
-          218,
-          281,
-          149
+          134,
+          174,
+          757,
+          379
         ],
         "quad": [
           [
-            219,
-            218
+            188,
+            174
           ],
           [
-            494,
-            261
+            835,
+            174
           ],
           [
-            497,
-            365
+            890,
+            551
           ],
           [
-            220,
-            315
+            134,
+            552
           ]
         ],
-        "tiltDeg": 8.9,
-        "areaFrac": 0.0505
+        "tiltDeg": 0,
+        "areaFrac": 0.3051,
+        "widthFrac": 0.7393,
+        "aspectRatio": 1.839
       },
-      "batch": "lote-03"
+      "batch": "lote-04"
     },
     "spr_grill_ze_da_esquina_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_ze_da_esquina_evo1.png",
-      "w": 731,
-      "h": 712,
+      "w": 1024,
+      "h": 925,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "grill",
-      "source": "art/source/lote-03/grill_ze_da_esquina_evo1.png",
+      "source": "art/source/lote-04/grill_ze_da_esquina_evo1.png",
       "hole": {
         "bbox": [
-          168,
-          162,
-          318,
-          143
+          117,
+          152,
+          791,
+          502
         ],
         "quad": [
           [
-            169,
-            162
+            188,
+            152
           ],
           [
-            484,
-            203
+            835,
+            152
           ],
           [
-            481,
-            304
+            907,
+            652
           ],
           [
-            172,
-            251
+            117,
+            653
           ]
         ],
-        "tiltDeg": 7.4,
-        "areaFrac": 0.0581
+        "tiltDeg": 0,
+        "areaFrac": 0.3812,
+        "widthFrac": 0.7725,
+        "aspectRatio": 1.421
       },
-      "batch": "lote-03"
+      "batch": "lote-04"
     },
     "spr_prop_bancada": {
       "file": "Assets/Art/Sprites/Props/spr_prop_bancada.png",

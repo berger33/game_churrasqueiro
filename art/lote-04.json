@@ -1,0 +1,65 @@
+{
+  "_comment": "Lote 04 — refação das três churrasqueiras de 2–3 zonas do lote 03. Cada abertura passa por contrato geométrico: área útil >=18%, largura >=70% do sprite, aspecto entre 1.2:1 e 1.9:1 e borda de trás quase horizontal (±2°).",
+  "batch": "lote-04",
+  "date": "2026-09-26",
+  "sourceDir": "art/source/lote-04",
+  "assets": [
+    {
+      "source": "grill_ze_da_esquina_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "holeValidation": {"minAreaFrac": 0.18, "minWidthFrac": 0.70, "minAspectRatio": 1.2, "maxAspectRatio": 1.9, "maxAbsTiltDeg": 2},
+      "category": "grill",
+      "name": "spr_grill_ze_da_esquina_evo1",
+      "label": "Zé da Esquina evo 1 — Chapa da Calçada",
+      "out": "Assets/Art/Sprites/Grills",
+      "notes": "Refação guiada; abertura superior ampla, validada para leito de cocção e zonas interativas.",
+      "review": {"verdict": "warn", "note": "nova composição com guia geométrico; aguardando aprovação visual do dono"}
+    },
+    {
+      "source": "grill_parrilla_chef_cisma_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "holeValidation": {"minAreaFrac": 0.18, "minWidthFrac": 0.70, "minAspectRatio": 1.2, "maxAspectRatio": 1.9, "maxAbsTiltDeg": 2},
+      "category": "grill",
+      "name": "spr_grill_parrilla_chef_cisma_evo1",
+      "label": "Parrilla Chef Cisma evo 1 — Inox Brilhando",
+      "out": "Assets/Art/Sprites/Grills",
+      "notes": "Refação guiada; abertura superior ampla, validada para leito de cocção e zonas interativas.",
+      "review": {"verdict": "warn", "note": "nova composição com guia geométrico; aguardando aprovação visual do dono"}
+    },
+    {
+      "source": "grill_fornalha_dragao_manso_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "holeValidation": {"minAreaFrac": 0.18, "minWidthFrac": 0.70, "minAspectRatio": 1.2, "maxAspectRatio": 1.9, "maxAbsTiltDeg": 2},
+      "category": "grill",
+      "name": "spr_grill_fornalha_dragao_manso_evo1",
+      "label": "Fornalha Dragão Manso evo 1 — Tijolo Refratário",
+      "out": "Assets/Art/Sprites/Grills",
+      "notes": "Refação guiada; abertura superior ampla, validada para leito de cocção e zonas interativas.",
+      "review": {"verdict": "warn", "note": "nova composição com guia geométrico; aguardando aprovação visual do dono"}
+    }
+  ],
+  "compare": ["spr_grill_lata_valente_evo3"],
+  "preview": {
+    "background": "bg_restaurant_quintal",
+    "grill": "spr_grill_ze_da_esquina_evo1",
+    "zones": ["t_fx_embers_low", "t_fx_embers_high"],
+    "onGrill": [
+      ["spr_food_linguica_toscana_medium", 0.26, 0.24, 67],
+      ["spr_food_picanha_medium", 0.72, 0.76, 77]
+    ],
+    "benchItems": [
+      ["spr_food_linguica_toscana_raw", 62],
+      ["spr_food_pao_de_alho_raw", 62],
+      ["spr_food_queijo_coalho_raw", 62],
+      ["spr_food_espetinho_misto_raw", 70],
+      ["spr_food_picanha_raw", 64]
+    ],
+    "orders": [
+      ["spr_char_customer_comum", ["spr_food_linguica_toscana_served", "spr_food_pao_de_alho_served"], 0.8],
+      ["spr_char_customer_vip", ["spr_food_picanha_served", "spr_food_queijo_coalho_served"], 0.5]
+    ]
+  }
+}

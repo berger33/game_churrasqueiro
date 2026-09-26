@@ -275,7 +275,14 @@ async function contactSheet() {
         ty = verdictChip(ctx, item.review, x, ty + 8);
         if (item.review?.note) ty = wrap(ctx, item.review.note, x, ty, bw - 10, 21, 25, P.sand, UIB);
       }
-      if (s.hole) text(ctx, `boca: inclinação ${s.hole.tiltDeg ?? '?'}°, ${Math.round(s.hole.areaFrac * 100)} % do sprite`, x, ty + 4, 21, P.cyan, UIB);
+      if (s.hole) {
+        const area = s.hole.areaFrac == null ? '?' : `${Math.round(s.hole.areaFrac * 100)}%`;
+        const width = s.hole.widthFrac == null ? '?' : `${Math.round(s.hole.widthFrac * 100)}%`;
+        const aspect = s.hole.aspectRatio == null ? '?' : `${s.hole.aspectRatio}:1`;
+        text(ctx, `boca: área ${area} · largura ${width}`, x, ty + 4, 21, P.cyan, UIB);
+        text(ctx, `aspecto ${aspect} · inclinação ${s.hole.tiltDeg ?? '?'}°`, x, ty + 29, 21, P.cyan, UIB);
+        maxY = Math.max(maxY, ty + 55);
+      }
       maxY = Math.max(maxY, ty + 30);
     }
     y = maxY + 30;

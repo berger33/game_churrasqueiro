@@ -327,12 +327,35 @@ function enclosedHole(sprite) {
   const diag = clockwise([tl, tr, br, bl]), axis = clockwise([l, t, r, b]);
   const quad = area(axis) > area(diag) ? axis : diag;
   const edge = Math.atan2(quad[1][1] - quad[0][1], quad[1][0] - quad[0][0]);
+  const topWidth = Math.hypot(quad[1][0] - quad[0][0], quad[1][1] - quad[0][1]);
+  const bottomWidth = Math.hypot(quad[2][0] - quad[3][0], quad[2][1] - quad[3][1]);
+  const leftDepth = Math.hypot(quad[3][0] - quad[0][0], quad[3][1] - quad[0][1]);
+  const rightDepth = Math.hypot(quad[2][0] - quad[1][0], quad[2][1] - quad[1][1]);
+  const aspectRatio = ((topWidth + bottomWidth) / 2) / ((leftDepth + rightDepth) / 2);
   return {
     bbox: [hole.minx, hole.miny, hole.maxx - hole.minx + 1, hole.maxy - hole.miny + 1],
     quad, // TL, TR, BR, BL — TL→TR is the far rim; the grate bars run parallel to it
     tiltDeg: +((edge * 180) / Math.PI).toFixed(1), // 0 = the game's horizontal heat bands fit as-is
     areaFrac: +(hole.area / (w * h)).toFixed(4),
+    widthFrac: +((hole.maxx - hole.minx + 1) / w).toFixed(4),
+    aspectRatio: +aspectRatio.toFixed(3),
   };
+}
+
+/** Hard geometry contract for interactive grill sprites: fail before shipping a tiny or tilted bed. */
+function validateHoleGeometry(name, sprite, hole, limits) {
+  const errors = [];
+  if (!hole) errors.push('no enclosed transparent cooking opening was detected');
+  else {
+    if (hole.areaFrac < limits.minAreaFrac) errors.push(`opening area ${(hole.areaFrac * 100).toFixed(1)}% < ${(limits.minAreaFrac * 100).toFixed(1)}%`);
+    if (hole.widthFrac < limits.minWidthFrac) errors.push(`opening width ${(hole.widthFrac * 100).toFixed(1)}% < ${(limits.minWidthFrac * 100).toFixed(1)}% of sprite`);
+    if (Math.abs(hole.tiltDeg) > limits.maxAbsTiltDeg) errors.push(`far rim tilt ${hole.tiltDeg}° > ±${limits.maxAbsTiltDeg}°`);
+    if (hole.aspectRatio < limits.minAspectRatio || hole.aspectRatio > limits.maxAspectRatio) {
+      errors.push(`opening aspect ${hole.aspectRatio}:1 outside ${limits.minAspectRatio}–${limits.maxAspectRatio}:1`);
+    }
+  }
+  if (errors.length) throw new Error(`${name}: interactive grill geometry failed — ${errors.join('; ')}`);
+  console.log(`[art]   geometry OK · area ${(hole.areaFrac * 100).toFixed(1)}% · width ${(hole.widthFrac * 100).toFixed(1)}% · aspect ${hole.aspectRatio}:1 · tilt ${hole.tiltDeg}°`);
 }
 
 // ── modes ────────────────────────────────────────────────────────────────────
@@ -564,6 +587,7 @@ async function main() {
       console.log(`[art]   ${spec.source}: ${tag}`);
     } else if (spec.mode === 'single') {
       const { sprite, hole } = processSingle(img, lab, comps, spec);
+      if (spec.holeValidation) validateHoleGeometry(spec.name, sprite, hole, spec.holeValidation);
       const file = await writeSprite(spec.out, spec.name, sprite);
       put(spec.name, { file, w: sprite.w, h: sprite.h, pivot: [0.5, 0.5], category: spec.category, source: srcRel, ...(hole ? { hole } : {}) });
       row(spec.name, spec.category, file, spec.notes ?? '');
