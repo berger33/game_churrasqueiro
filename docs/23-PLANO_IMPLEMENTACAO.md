@@ -170,3 +170,4 @@ já com conteúdo definido acima) — arte nova entra como `pending` e só integ
 | Data | Passo | Status | Branch/PR | Obs |
 |---|---|---|---|---|
 | 2026-09-26 | — | plano criado (este documento) | `arena/01a0df03-game-churrasqueiro` | ponto de partida |
+| 2026-09-26 | 1.1 (lote 05) | 10 imagens geradas, 53 sprites processados, `pending` | `arena/01a0df03-game-churrasqueiro` | aguardando aprovação do dono |

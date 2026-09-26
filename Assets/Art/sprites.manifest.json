@@ -13,6 +13,18 @@
       "source": "art/source/lote-03/bg_churrascaria_bairro.png",
       "batch": "lote-03"
     },
+    "bg_restaurant_churrascaria_premium": {
+      "file": "Assets/Art/Backgrounds/bg_restaurant_churrascaria_premium.png",
+      "w": 768,
+      "h": 1376,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "background",
+      "source": "art/source/lote-05/bg_churrascaria_premium.png",
+      "batch": "lote-05"
+    },
     "bg_restaurant_espetinho_rua": {
       "file": "Assets/Art/Backgrounds/bg_restaurant_espetinho_rua.png",
       "w": 768,
@@ -25,6 +37,18 @@
       "source": "art/source/lote-03/bg_espetinho_rua.png",
       "batch": "lote-03"
     },
+    "bg_restaurant_festival": {
+      "file": "Assets/Art/Backgrounds/bg_restaurant_festival.png",
+      "w": 768,
+      "h": 1376,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "background",
+      "source": "art/source/lote-05/bg_festival.png",
+      "batch": "lote-05"
+    },
     "bg_restaurant_quintal": {
       "file": "Assets/Art/Backgrounds/bg_restaurant_quintal.png",
       "w": 768,
@@ -36,6 +60,18 @@
       "category": "background",
       "source": "art/source/lote-01/bg_quintal.png",
       "batch": "lote-01"
+    },
+    "bg_restaurant_rede_nacional": {
+      "file": "Assets/Art/Backgrounds/bg_restaurant_rede_nacional.png",
+      "w": 768,
+      "h": 1376,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "background",
+      "source": "art/source/lote-05/bg_rede_nacional.png",
+      "batch": "lote-05"
     },
     "bg_restaurant_trailer": {
       "file": "Assets/Art/Backgrounds/bg_restaurant_trailer.png",
@@ -61,6 +97,18 @@
       "source": "art/source/lote-03/ui_icons_upgrades_a.png",
       "batch": "lote-03"
     },
+    "ic_auxiliar": {
+      "file": "Assets/Art/UI/Icons/ic_auxiliar.png",
+      "w": 247,
+      "h": 288,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_c.png",
+      "batch": "lote-05"
+    },
     "ic_board": {
       "file": "Assets/Art/UI/Icons/ic_board.png",
       "w": 292,
@@ -84,6 +132,42 @@
       "category": "ui",
       "source": "art/source/lote-03/ui_icons_core.png",
       "batch": "lote-03"
+    },
+    "ic_brasa_mastery": {
+      "file": "Assets/Art/UI/Icons/ic_brasa_mastery.png",
+      "w": 300,
+      "h": 274,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_c.png",
+      "batch": "lote-05"
+    },
+    "ic_caixa": {
+      "file": "Assets/Art/UI/Icons/ic_caixa.png",
+      "w": 270,
+      "h": 296,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_c.png",
+      "batch": "lote-05"
+    },
+    "ic_capacity": {
+      "file": "Assets/Art/UI/Icons/ic_capacity.png",
+      "w": 323,
+      "h": 278,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_b.png",
+      "batch": "lote-05"
     },
     "ic_charcoal": {
       "file": "Assets/Art/UI/Icons/ic_charcoal.png",
@@ -133,6 +217,30 @@
       "source": "art/source/lote-03/ui_icons_core.png",
       "batch": "lote-03"
     },
+    "ic_churrasqueiro": {
+      "file": "Assets/Art/UI/Icons/ic_churrasqueiro.png",
+      "w": 268,
+      "h": 308,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_c.png",
+      "batch": "lote-05"
+    },
+    "ic_clientela": {
+      "file": "Assets/Art/UI/Icons/ic_clientela.png",
+      "w": 266,
+      "h": 258,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_c.png",
+      "batch": "lote-05"
+    },
     "ic_clock": {
       "file": "Assets/Art/UI/Icons/ic_clock.png",
       "w": 282,
@@ -156,6 +264,210 @@
       "category": "ui",
       "source": "art/source/lote-03/ui_icons_core.png",
       "batch": "lote-03"
+    },
+    "ic_col_acompanhamentos": {
+      "file": "Assets/Art/UI/Icons/ic_col_acompanhamentos.png",
+      "w": 287,
+      "h": 249,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_collection.png",
+      "batch": "lote-05"
+    },
+    "ic_col_aves": {
+      "file": "Assets/Art/UI/Icons/ic_col_aves.png",
+      "w": 287,
+      "h": 263,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_collection.png",
+      "batch": "lote-05"
+    },
+    "ic_col_carnes": {
+      "file": "Assets/Art/UI/Icons/ic_col_carnes.png",
+      "w": 289,
+      "h": 240,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_collection.png",
+      "batch": "lote-05"
+    },
+    "ic_col_churrasqueiras": {
+      "file": "Assets/Art/UI/Icons/ic_col_churrasqueiras.png",
+      "w": 290,
+      "h": 301,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_collection.png",
+      "batch": "lote-05"
+    },
+    "ic_col_equipamentos": {
+      "file": "Assets/Art/UI/Icons/ic_col_equipamentos.png",
+      "w": 289,
+      "h": 290,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_collection.png",
+      "batch": "lote-05"
+    },
+    "ic_col_espetinhos": {
+      "file": "Assets/Art/UI/Icons/ic_col_espetinhos.png",
+      "w": 291,
+      "h": 294,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_collection.png",
+      "batch": "lote-05"
+    },
+    "ic_col_linguicas": {
+      "file": "Assets/Art/UI/Icons/ic_col_linguicas.png",
+      "w": 290,
+      "h": 239,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_collection.png",
+      "batch": "lote-05"
+    },
+    "ic_col_molhos": {
+      "file": "Assets/Art/UI/Icons/ic_col_molhos.png",
+      "w": 209,
+      "h": 303,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_collection.png",
+      "batch": "lote-05"
+    },
+    "ic_col_paes": {
+      "file": "Assets/Art/UI/Icons/ic_col_paes.png",
+      "w": 290,
+      "h": 235,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_collection.png",
+      "batch": "lote-05"
+    },
+    "ic_col_queijos": {
+      "file": "Assets/Art/UI/Icons/ic_col_queijos.png",
+      "w": 290,
+      "h": 234,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_collection.png",
+      "batch": "lote-05"
+    },
+    "ic_cos_apron": {
+      "file": "Assets/Art/UI/Icons/ic_cos_apron.png",
+      "w": 383,
+      "h": 486,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_cosmetics.png",
+      "batch": "lote-05"
+    },
+    "ic_cos_grill": {
+      "file": "Assets/Art/UI/Icons/ic_cos_grill.png",
+      "w": 313,
+      "h": 354,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_cosmetics.png",
+      "batch": "lote-05"
+    },
+    "ic_cos_hat": {
+      "file": "Assets/Art/UI/Icons/ic_cos_hat.png",
+      "w": 309,
+      "h": 318,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_cosmetics.png",
+      "batch": "lote-05"
+    },
+    "ic_cos_knife": {
+      "file": "Assets/Art/UI/Icons/ic_cos_knife.png",
+      "w": 262,
+      "h": 486,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_cosmetics.png",
+      "batch": "lote-05"
+    },
+    "ic_cos_sign": {
+      "file": "Assets/Art/UI/Icons/ic_cos_sign.png",
+      "w": 257,
+      "h": 356,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_cosmetics.png",
+      "batch": "lote-05"
+    },
+    "ic_counter": {
+      "file": "Assets/Art/UI/Icons/ic_counter.png",
+      "w": 329,
+      "h": 204,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_b.png",
+      "batch": "lote-05"
+    },
+    "ic_decor": {
+      "file": "Assets/Art/UI/Icons/ic_decor.png",
+      "w": 227,
+      "h": 299,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_b.png",
+      "batch": "lote-05"
     },
     "ic_ember": {
       "file": "Assets/Art/UI/Icons/ic_ember.png",
@@ -181,6 +493,30 @@
       "source": "art/source/lote-03/ui_icons_core.png",
       "batch": "lote-03"
     },
+    "ic_garcom": {
+      "file": "Assets/Art/UI/Icons/ic_garcom.png",
+      "w": 287,
+      "h": 251,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_c.png",
+      "batch": "lote-05"
+    },
+    "ic_gerente": {
+      "file": "Assets/Art/UI/Icons/ic_gerente.png",
+      "w": 226,
+      "h": 297,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_c.png",
+      "batch": "lote-05"
+    },
     "ic_grill_size": {
       "file": "Assets/Art/UI/Icons/ic_grill_size.png",
       "w": 326,
@@ -205,6 +541,18 @@
       "source": "art/source/lote-03/ui_icons_upgrades_a.png",
       "batch": "lote-03"
     },
+    "ic_imperio": {
+      "file": "Assets/Art/UI/Icons/ic_imperio.png",
+      "w": 291,
+      "h": 280,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_c.png",
+      "batch": "lote-05"
+    },
     "ic_knife": {
       "file": "Assets/Art/UI/Icons/ic_knife.png",
       "w": 296,
@@ -217,6 +565,18 @@
       "source": "art/source/lote-03/ui_icons_upgrades_a.png",
       "batch": "lote-03"
     },
+    "ic_lighting": {
+      "file": "Assets/Art/UI/Icons/ic_lighting.png",
+      "w": 273,
+      "h": 294,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_b.png",
+      "batch": "lote-05"
+    },
     "ic_lock": {
       "file": "Assets/Art/UI/Icons/ic_lock.png",
       "w": 232,
@@ -228,6 +588,54 @@
       "category": "ui",
       "source": "art/source/lote-03/ui_icons_core.png",
       "batch": "lote-03"
+    },
+    "ic_music": {
+      "file": "Assets/Art/UI/Icons/ic_music.png",
+      "w": 268,
+      "h": 300,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_c.png",
+      "batch": "lote-05"
+    },
+    "ic_patience": {
+      "file": "Assets/Art/UI/Icons/ic_patience.png",
+      "w": 190,
+      "h": 298,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_b.png",
+      "batch": "lote-05"
+    },
+    "ic_plate": {
+      "file": "Assets/Art/UI/Icons/ic_plate.png",
+      "w": 210,
+      "h": 251,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_b.png",
+      "batch": "lote-05"
+    },
+    "ic_sign": {
+      "file": "Assets/Art/UI/Icons/ic_sign.png",
+      "w": 263,
+      "h": 275,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_b.png",
+      "batch": "lote-05"
     },
     "ic_speed": {
       "file": "Assets/Art/UI/Icons/ic_speed.png",
@@ -264,6 +672,30 @@
       "category": "ui",
       "source": "art/source/lote-03/ui_icons_core.png",
       "batch": "lote-03"
+    },
+    "ic_table": {
+      "file": "Assets/Art/UI/Icons/ic_table.png",
+      "w": 302,
+      "h": 306,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_b.png",
+      "batch": "lote-05"
+    },
+    "ic_tray": {
+      "file": "Assets/Art/UI/Icons/ic_tray.png",
+      "w": 330,
+      "h": 213,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-05/ui_icons_upgrades_b.png",
+      "batch": "lote-05"
     },
     "spr_char_customer_apressado_a": {
       "file": "Assets/Art/Sprites/Characters/spr_char_customer_apressado_a.png",
@@ -444,6 +876,66 @@
       "category": "character",
       "source": "art/source/lote-02/char_clientes_b.png",
       "batch": "lote-02"
+    },
+    "spr_char_staff_auxiliar": {
+      "file": "Assets/Art/Sprites/Characters/spr_char_staff_auxiliar.png",
+      "w": 278,
+      "h": 610,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "character",
+      "source": "art/source/lote-05/char_funcionarios.png",
+      "batch": "lote-05"
+    },
+    "spr_char_staff_caixa": {
+      "file": "Assets/Art/Sprites/Characters/spr_char_staff_caixa.png",
+      "w": 268,
+      "h": 611,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "character",
+      "source": "art/source/lote-05/char_funcionarios.png",
+      "batch": "lote-05"
+    },
+    "spr_char_staff_churrasqueiro": {
+      "file": "Assets/Art/Sprites/Characters/spr_char_staff_churrasqueiro.png",
+      "w": 289,
+      "h": 616,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "character",
+      "source": "art/source/lote-05/char_funcionarios.png",
+      "batch": "lote-05"
+    },
+    "spr_char_staff_garcom": {
+      "file": "Assets/Art/Sprites/Characters/spr_char_staff_garcom.png",
+      "w": 293,
+      "h": 615,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "character",
+      "source": "art/source/lote-05/char_funcionarios.png",
+      "batch": "lote-05"
+    },
+    "spr_char_staff_gerente": {
+      "file": "Assets/Art/Sprites/Characters/spr_char_staff_gerente.png",
+      "w": 287,
+      "h": 619,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "character",
+      "source": "art/source/lote-05/char_funcionarios.png",
+      "batch": "lote-05"
     },
     "spr_food_asinha_frango_burned": {
       "file": "Assets/Art/Sprites/Food/spr_food_asinha_frango_burned.png",
@@ -660,6 +1152,150 @@
       "category": "food",
       "source": "art/source/lote-02/food_coracao_frango.png",
       "batch": "lote-02"
+    },
+    "spr_food_costela_burned": {
+      "file": "Assets/Art/Sprites/Food/spr_food_costela_burned.png",
+      "w": 382,
+      "h": 280,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-05/food_costela.png",
+      "batch": "lote-05"
+    },
+    "spr_food_costela_medium": {
+      "file": "Assets/Art/Sprites/Food/spr_food_costela_medium.png",
+      "w": 382,
+      "h": 280,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-05/food_costela.png",
+      "batch": "lote-05"
+    },
+    "spr_food_costela_rare": {
+      "file": "Assets/Art/Sprites/Food/spr_food_costela_rare.png",
+      "w": 382,
+      "h": 280,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-05/food_costela.png",
+      "batch": "lote-05"
+    },
+    "spr_food_costela_raw": {
+      "file": "Assets/Art/Sprites/Food/spr_food_costela_raw.png",
+      "w": 382,
+      "h": 280,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-05/food_costela.png",
+      "batch": "lote-05"
+    },
+    "spr_food_costela_served": {
+      "file": "Assets/Art/Sprites/Food/spr_food_costela_served.png",
+      "w": 374,
+      "h": 286,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-05/food_costela.png",
+      "batch": "lote-05"
+    },
+    "spr_food_costela_well": {
+      "file": "Assets/Art/Sprites/Food/spr_food_costela_well.png",
+      "w": 382,
+      "h": 280,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-05/food_costela.png",
+      "batch": "lote-05"
+    },
+    "spr_food_cupim_burned": {
+      "file": "Assets/Art/Sprites/Food/spr_food_cupim_burned.png",
+      "w": 390,
+      "h": 264,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-05/food_cupim.png",
+      "batch": "lote-05"
+    },
+    "spr_food_cupim_medium": {
+      "file": "Assets/Art/Sprites/Food/spr_food_cupim_medium.png",
+      "w": 390,
+      "h": 264,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-05/food_cupim.png",
+      "batch": "lote-05"
+    },
+    "spr_food_cupim_rare": {
+      "file": "Assets/Art/Sprites/Food/spr_food_cupim_rare.png",
+      "w": 390,
+      "h": 264,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-05/food_cupim.png",
+      "batch": "lote-05"
+    },
+    "spr_food_cupim_raw": {
+      "file": "Assets/Art/Sprites/Food/spr_food_cupim_raw.png",
+      "w": 390,
+      "h": 264,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-05/food_cupim.png",
+      "batch": "lote-05"
+    },
+    "spr_food_cupim_served": {
+      "file": "Assets/Art/Sprites/Food/spr_food_cupim_served.png",
+      "w": 391,
+      "h": 288,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-05/food_cupim.png",
+      "batch": "lote-05"
+    },
+    "spr_food_cupim_well": {
+      "file": "Assets/Art/Sprites/Food/spr_food_cupim_well.png",
+      "w": 390,
+      "h": 264,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "food",
+      "source": "art/source/lote-05/food_cupim.png",
+      "batch": "lote-05"
     },
     "spr_food_espetinho_frango_burned": {
       "file": "Assets/Art/Sprites/Food/spr_food_espetinho_frango_burned.png",
@@ -1871,6 +2507,28 @@
         "burned": "spr_food_maminha_burned"
       },
       "served": "spr_food_maminha_served"
+    },
+    "costela": {
+      "kind": "grill",
+      "states": {
+        "raw": "spr_food_costela_raw",
+        "rare": "spr_food_costela_rare",
+        "medium": "spr_food_costela_medium",
+        "well": "spr_food_costela_well",
+        "burned": "spr_food_costela_burned"
+      },
+      "served": "spr_food_costela_served"
+    },
+    "cupim": {
+      "kind": "grill",
+      "states": {
+        "raw": "spr_food_cupim_raw",
+        "rare": "spr_food_cupim_rare",
+        "medium": "spr_food_cupim_medium",
+        "well": "spr_food_cupim_well",
+        "burned": "spr_food_cupim_burned"
+      },
+      "served": "spr_food_cupim_served"
     }
   }
 }

@@ -79,16 +79,16 @@ Contado a partir de **todas** as tabelas de `shared/data` (e não de estimativa)
 
 | Família | Fonte nos dados | Precisa | Situação |
 |---|---|---|---|
-| Comidas (5 estados + servido) | `ingredients.json` (16) | 16 folhas | ✅ 12 · 🟡 2 (contra-filé, maminha) · ⬜ 2 (costela, cupim) |
-| Churrasqueiras × evolução | `churrasqueiras.json` (4 × 3) | 12 | ✅ 3 (lata evo 1–3) · 🔁 3 (chapa, inox, fornalha evo 1) · ⬜ 6 (evo 2–3 dessas) |
-| Fundos dos restaurantes | `restaurants.json` (7) | 7 | ✅ 1 (quintal) · 🟡 3 (espetinho de rua, trailer, bairro) · ⬜ 3 (premium, festival, rede nacional) |
+| Comidas (5 estados + servido) | `ingredients.json` (16) | 16 folhas | ✅ 12 · 🟡 4 (contra-filé, maminha no 03; costela, cupim no 05) |
+| Churrasqueiras × evolução | `churrasqueiras.json` (4 × 3) | 12 | ✅ 3 (lata evo 1–3) · 🟡 3 (refação evo 1 no 04; versões do 03 marcadas `redo`) · ⬜ 6 (evo 2–3 dessas) |
+| Fundos dos restaurantes | `restaurants.json` (7) | 7 | ✅ 1 (quintal) · 🟡 6 (espetinho de rua, trailer, bairro no 03; premium, festival, rede no 05) |
 | Clientes | `customers.json` (11 tipos) | 11+ | ✅ 11 tipos, 14 retratos (variantes a/b) |
-| Funcionários | `employees.json` (5 cargos) | 5 | ⬜ 5 |
-| Ícones de interface | moedas (`economy.json`: `ic_coin`, `ic_ember`) + HUD, diária, resultado | 9 | 🟡 9 |
-| Ícones de upgrade | `upgrades.json` (`tracks[].icon`, 27) | 27 | 🟡 9 · ⬜ 18 |
-| Ícones de cosméticos | `upgrades.json` (`cosmeticTracks`, 5) | 5 | ⬜ 5 |
-| Coleção: itens | `collection.json` (37 entradas) | 37 | 16 usam os sprites de comida (✅ 12 · 🟡 2 · ⬜ 2) · ⬜ 21 próprios (4 molhos, 9 equipamentos, 7 churrasqueiras especiais, 1 medalha) |
-| Coleção: categorias | `collection.json` (10) | 10 | ⬜ 10 |
+| Funcionários | `employees.json` (5 cargos) | 5 | 🟡 5 (lote 05) |
+| Ícones de interface | moedas (`economy.json`: `ic_coin`, `ic_ember`) + HUD, diária, resultado | 9 | 🟡 9 (lote 03) |
+| Ícones de upgrade | `upgrades.json` (`tracks[].icon`, 27) | 27 | 🟡 27 (9 no 03, 18 no 05) |
+| Ícones de cosméticos | `upgrades.json` (`cosmeticTracks`, 5) | 5 | 🟡 5 (lote 05; fiação nos dados: docs/23 passo 1.5) |
+| Coleção: itens | `collection.json` (37 entradas) | 37 | 16 usam os sprites de comida (✅ 12 · 🟡 4) · ⬜ 21 próprios (4 molhos, 9 equipamentos, 7 churrasqueiras especiais, 1 medalha) |
+| Coleção: categorias | `collection.json` (10) | 10 | 🟡 10 (lote 05) |
 | Eventos | `events.json` (4 semanais + 7 sazonais) | 11 | ⬜ 11 banners |
 | Loja (IAP) | `iap.json` (7 produtos) | 7 | ⬜ 7 |
 | Brasa Pass | `pass.json` | 1–2 | ⬜ arte da temporada |
@@ -404,3 +404,4 @@ ele não existe neste ambiente. **Ponto de decisão: lote 03.**
    aponta para um arquivo que existe, e o runtime só contém `approved` (o CI que `docs/04` §11
    já promete).
 5. Unity: `AssetPostprocessor` lendo `sprites.manifest.json` (§7.2).
+).
