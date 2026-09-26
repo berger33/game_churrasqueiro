@@ -78,6 +78,19 @@ namespace Churrasco.Core.Generated
         public double LowWarningThreshold { get; set; }
         public int RefillCostCoins { get; set; }
         public double RefillTimeSec { get; set; }
+        public List<GrillCharcoalTypes> Types { get; set; }
+    }
+
+    public sealed class GrillCharcoalTypes
+    {
+        public string DescKey { get; set; }
+        public double DurationMult { get; set; }
+        public double HeatMult { get; set; }
+        public string Id { get; set; }
+        public string NameKey { get; set; }
+        public int RefillCostCoins { get; set; }
+        public int Tier { get; set; }
+        public int UnlockLevel { get; set; }
     }
 
     public sealed class GrillCharcoalEfficiencyCurve

@@ -362,6 +362,10 @@ quadro recusado que segura o ingrediente. Por isso o reforço refaz a grade de 6
 só a célula 6.
 
 
+### 6.10 A escada virou dez grelhas (docs/23) — e o lote está segurado
+
+O plano de arte passa a ser **30 sprites de grelha** (10 churrasqueiras × 3 níveis) e 10 fundos de tela, não 12 e 7. Nada é gerado nem aprovado enquanto a escada mudar: `art/lote-05*` e `art/lote-06` ficam `pending`, e o runtime continua nos 125 sprites aprovados — `build-runtime.mjs` sem `--dry-run` reconstrói o atlas em serviço. A régua não muda e é por isso que a escada nova é barata: o leito é derivado de `Z×S` (`grill.json.art` + `tools/art/grill-geometry.mjs`), então degrau novo não pede código novo; o que falta é corpo novo em `STYLE_BODIES` para os três estilos (`espeto`, `tambor`, `campeao`) e as três variantes de gradiente no fallback procedural do protótipo (estas já feitas). Teto da escada em arte: 4 fileiras × 5 vagas — a boca fecha em `4×60 = 240 px ≤ 248` e o leito em 408 px; com 5 fileiras o conform engoliria a célula mínima de 60 px. Consequência conhecida e postada: em `4×5` a célula do leito pintado tem 58,8 px contra o prato de 86 px (docs/23 §5).
+
 ## 7. Integração no jogo
 
 Só começa depois da aprovação do lote. Nenhum código do jogo muda enquanto a arte está em revisão.

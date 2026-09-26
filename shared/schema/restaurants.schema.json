@@ -16,6 +16,9 @@
     "_comment": {
       "type": "string"
     },
+    "_demandNote": {
+      "type": "string"
+    },
     "_pacingNote": {
       "type": "string"
     },
@@ -24,6 +27,9 @@
       "items": {
         "type": "object",
         "properties": {
+          "_comment": {
+            "type": "string"
+          },
           "ambient": {
             "type": "string"
           },

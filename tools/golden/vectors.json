@@ -6,7 +6,7 @@
     "ingredients": 5,
     "grill": 5,
     "economy": 12,
-    "restaurants": 6,
+    "restaurants": 7,
     "upgrades": 3
   },
   "epsilon": 1e-9,
@@ -11880,7 +11880,10 @@
             42,
             96,
             210,
-            430
+            430,
+            860,
+            1720,
+            3440
           ],
           "xpPerMinuteByRestaurant": [
             0,
@@ -11894,7 +11897,8 @@
           "maxOfflineHours": 8,
           "rampInMinutes": 20,
           "adDoubleAvailable": true,
-          "minCollectIntervalMin": 30
+          "minCollectIntervalMin": 30,
+          "_comment": "Moeda offline por minuto por índice de restaurante (0 no quintal: sem idle antes do primeiro upgrades de fila). Os sete primeiros são os medidos na curva antiga (0, 6, 16, 42, 96, 210, 430; razão cai de ~2,7 para ~2,0); as três telas novas da escada de 10 (cais, orla, campeão) continuam a mesma razão convergente 860 / 1720 / 3440 em vez de dobrar o número na cara do jogador."
         },
         "upgradeLevels": {},
         "nowSec": 1000000

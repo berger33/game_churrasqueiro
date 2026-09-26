@@ -110,11 +110,11 @@ interface ChurrEvolutionSpec {
   level: number;
   nameKey: string;
   descKey: string;
-  shortName: string;
+  shortNameKey: string;
   slotsPerZone: number;
   zoneCount: number;
   heatBase: number;
-  charcoalDurationBonus: number;
+  charcoalBonus: number;
   costCoins: number;
   costEmbers?: number;
   extraTipBonus?: number;
@@ -127,7 +127,6 @@ interface ChurrasqueiraSpec {
   subtitleKey: string;
   descKey: string;
   tier: string;
-  humorTag: string;
   unlockLevel: number;
   unlockCostCoins: number;
   fileiras: number;
@@ -167,7 +166,22 @@ interface Meta {
   graceUsed: boolean;
   churrasqueiraId: string;
   churrasqueiraLv: Record<string, number>; // 1..3 per churrasqueira id
+  /** Tipo de carvão equipado (`shared/data/grill.json.charcoal.types`). */
+  charcoalType: string;
 }
+
+/** Um dos três carvões da tabela; `durationMult`/`heatMult` são o que o motor aplica. */
+interface CharcoalTypeSpec {
+  id: string;
+  nameKey: string;
+  descKey: string;
+  tier: number;
+  durationMult: number;
+  heatMult: number;
+  refillCostCoins: number;
+  unlockLevel: number;
+}
+
 
 function todayISO(): string {
   const d = new Date();
@@ -184,7 +198,7 @@ function loadMeta(): Meta {
     totalPerfect: 0, collection: [], ftueDone: false,
     ftueStep: 0, clearedLevels: [], bonusReady: null, bonusExpiresAt: 0, wheelSpins: 1, lastWheelSpinISO: '',
     upgrades: { grill_size: 0 }, graceUsed: false,
-    churrasqueiraId: 'lata_valente', churrasqueiraLv: { lata_valente: 1 }
+    churrasqueiraId: 'lata_valente', churrasqueiraLv: { lata_valente: 1 }, charcoalType: 'comum'
   };
   try {
     if (typeof localStorage === 'undefined') return fallback;
@@ -198,6 +212,8 @@ function loadMeta(): Meta {
       clearedLevels: Array.isArray(j.clearedLevels) ? j.clearedLevels.filter((x): x is string => typeof x === 'string') : []
     };
     if (!merged.churrasqueiraId) merged.churrasqueiraId = fallback.churrasqueiraId;
+    // save pré-carvão: entra o tipo padrão, que é o jogo antigo (1,00x/1,00x e recarga grátis)
+    if (typeof merged.charcoalType !== 'string' || !merged.charcoalType) merged.charcoalType = fallback.charcoalType;
     if (!merged.churrasqueiraLv[merged.churrasqueiraId]) merged.churrasqueiraLv[merged.churrasqueiraId] = 1;
     return merged;
   } catch { return fallback; }
@@ -463,6 +479,38 @@ class Game {
   }
 
   // ── Churrasqueira helpers ─────────────────────────────────────────────────
+  /** Os três carvões da tabela de grill (vazio se a tabela não trouxer `types`). */
+  private charcoalTypes(): CharcoalTypeSpec[] {
+    const g = (this.db as unknown as { grill?: { charcoal?: { types?: CharcoalTypeSpec[] } } }).grill;
+    return g?.charcoal?.types ?? [];
+  }
+  private charcoalTypeById(id: string): CharcoalTypeSpec | undefined {
+    return this.charcoalTypes().find((t) => t.id === id);
+  }
+  private equippedCharcoal(): CharcoalTypeSpec | undefined {
+    return this.charcoalTypeById(this.meta.charcoalType) ?? this.charcoalTypes()[0];
+  }
+  /** Tipos já alcançáveis pelo nível do jogador, na ordem da tabela. */
+  private availableCharcoal(): CharcoalTypeSpec[] {
+    return this.charcoalTypes().filter((t) => this.meta.level >= t.unlockLevel);
+  }
+  /**
+   * Roda para o próximo tipo liberado. Sem `types` na tabela (jogo pré-escada) isso é no-op, e o
+   * chip some da tela — o fallback procedural também vale para a UI.
+   */
+  private cycleCharcoalType(): CharcoalTypeSpec | null {
+    const list = this.availableCharcoal();
+    if (list.length < 2) return null;
+    const i = list.findIndex((t) => t.id === this.meta.charcoalType);
+    const next = list[(i + 1) % list.length]!;
+    this.meta.charcoalType = next.id;
+    saveMeta(this.meta);
+    return next;
+  }
+  /** Chip de carvão no canto inferior direito do cartão da grelha (o único espaço livre da card). */
+  private charcoalChipRect(): Rect {
+    return { x: W - 96, y: 356 + 58, w: 82, h: 26, r: 12 };
+  }
   private churrasqueiraById(id: string): ChurrasqueiraSpec | undefined {
     return this.churrasqueiras.find((c) => c.id === id);
   }
@@ -522,7 +570,8 @@ class Game {
           maxOrdersOnScreen: lvl.maxOrdersOnScreen
         },
         churrasqueiraId: actForTurn?.id,
-        churrasqueiraLevel: actEvoLv
+        churrasqueiraLevel: actEvoLv,
+        charcoalType: this.meta.charcoalType
       },
       20260917 + this.levelIndex
     );
@@ -563,6 +612,8 @@ class Game {
     this.ftue = new TutorialTurn(this.db, t, this.tutorial, {
       restaurantIndex: lvl.restaurantIndex,
       upgradeLevels: this.meta.upgrades,
+      // O FTUE roda de propósito sem `charcoalType`: os tempos medidos do primeiro
+      // turno (1º PERFEITO 16,1s / turno completo 32,9s) são do caminho base.
       churrasqueiraLevel: 1,
       seed: 20260917
     });
@@ -1425,6 +1476,26 @@ class Game {
           this.requestNextLevel();
           return;
         }
+        // Carvão: um chip no canto do cartão, testado antes da faixa inteira do cartão.
+        if (this.charcoalTypes().length > 1 && contains(this.charcoalChipRect(), p, 3)) {
+          const list = this.availableCharcoal();
+          const next = this.cycleCharcoalType();
+          if (next) {
+            audio.play('uiTap');
+            this.float(W / 2, 340, this.l10n.t('charcoal.equipped', { name: this.l10n.t(next.nameKey) }), C.ouroLight, 13);
+            this.float(W / 2, 356, this.l10n.t(next.descKey), C.creme, 10);
+          } else {
+            const locked = this.charcoalTypes().find((t) => this.meta.level < t.unlockLevel);
+            audio.play('uiError');
+            this.float(W / 2, 340, locked
+              ? this.l10n.t('charcoal.locked', { n: locked.unlockLevel })
+              : this.l10n.t('charcoal.locked', { n: 1 }), C.ambar, 12);
+          }
+          if (list.length === 1) {
+            this.float(W / 2, 372, this.l10n.t(this.charcoalTypes()[0]!.descKey), C.creme, 10);
+          }
+          return;
+        }
         // Churrasqueira showcase — 356..450
         if (p.y > 350 && p.y < 458 && p.x > 12 && p.x < W-12) {
           // CTA region is right side 76x30 at W-92, but tapping anywhere on card attempts action
@@ -2241,6 +2312,9 @@ class Game {
       if (style === 'lata') { tg.addColorStop(0,'#7A4A2E'); tg.addColorStop(1,'#4B2A18'); }
       else if (style === 'chapa') { tg.addColorStop(0,'#5A5E62'); tg.addColorStop(1,'#2A2E33'); }
       else if (style === 'inox') { tg.addColorStop(0,'#D8E2E8'); tg.addColorStop(1,'#8FA0AF'); }
+      else if (style === 'espeto') { tg.addColorStop(0,'#8A6A4A'); tg.addColorStop(1,'#3A2418'); }
+      else if (style === 'tambor') { tg.addColorStop(0,'#4A4A4E'); tg.addColorStop(1,'#1E1C1B'); }
+      else if (style === 'campeao') { tg.addColorStop(0,'#E4E9EE'); tg.addColorStop(1,'#6E7A85'); }
       else { tg.addColorStop(0,'#8B5A2B'); tg.addColorStop(1,'#3A2510'); }
       ctx.fillStyle=tg; ctx.fillRect(thumbX,thumbY,thumbW,thumbH);
       // fileiras lines inside thumb
@@ -2311,6 +2385,32 @@ class Game {
       }
       ctx.font=font(8,700,UI); ctx.fillStyle='rgba(244,231,211,0.5)';
       ctx.fillText(`Evolução ${evoIdx+1}/3`, tx+52, showcaseY+73);
+    }
+    // ── Chip de carvão (docs/23 §4) ────────────────────────────────────────────
+    // Um único chip no canto inferior direito do cartão: é o espaço livre do cartão, e a
+    // garagem não tem linha própria sem empurrar os teasers de upgrade (que o FTUE ancora com
+    // `homeUpgradeRect`). Tocar roda entre os tipos liberados; o float diz o que mudou.
+    const cTypes = this.charcoalTypes();
+    if (cTypes.length > 1) {
+      const cr = this.charcoalChipRect();
+      const cur = this.equippedCharcoal();
+      const locked = this.availableCharcoal().length < 2;
+      const tintC = cur ? (cur.id === 'briquete' ? C.brasaHot : cur.id === 'vegetal' ? C.verdeClaro : C.ambar) : C.ambar;
+      panel(ctx, cr.x, cr.y, cr.w, cr.h, { r: cr.r ?? 12, top: 'rgba(44,32,24,0.94)', bottom: 'rgba(22,15,10,0.94)', border: tintC, borderWidth: 1.2, shadow: 6 });
+      flameIcon(ctx, cr.x + 12, cr.y + cr.h / 2, 5.5, true);
+      ctx.font = font(8, 900, UI); ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = C.perola;
+      const shortName = cur ? this.l10n.t(cur.nameKey).split(' ').slice(-1)[0]!.toUpperCase() : 'BRASA';
+      ctx.fillText(shortName.slice(0, 9), cr.x + 21, cr.y + cr.h / 2);
+      if (cur && cur.refillCostCoins > 0) {
+        ctx.font = font(7, 800, UI); ctx.fillStyle = tintC; ctx.textAlign = 'right';
+        ctx.fillText(`${cur.refillCostCoins}`, cr.x + cr.w - 6, cr.y + cr.h / 2);
+      } else if (locked) {
+        ctx.font = font(7, 800, UI); ctx.fillStyle = 'rgba(244,231,211,0.5)'; ctx.textAlign = 'right';
+        const nx = cTypes.find((t) => this.meta.level < t.unlockLevel);
+        ctx.fillText(nx ? `Nv ${nx.unlockLevel}` : '·', cr.x + cr.w - 6, cr.y + cr.h / 2);
+      }
+      ctx.textBaseline = 'alphabetic';
     }
     // CTA on right side of showcase
     const ctaX = W-92, ctaY = showcaseY+22, ctaW = 76, ctaH = 30;
@@ -3166,7 +3266,12 @@ class Game {
     ctx.strokeStyle='rgba(255,214,160,0.22)'; ctx.lineWidth=1; roundRectPath(ctx,bx+0.5,by+0.5,bw-1,bh-1,(bh-1)/2); ctx.stroke();
     flameIcon(ctx,bx+12,by+bh/2,5.5,!low);
     ctx.font=font(10,800,UI); ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillStyle= low? C.telha : C.creme;
-    ctx.shadowColor='rgba(0,0,0,0.7)'; ctx.shadowBlur=3; ctx.fillText(this.l10n.t('ui.hud.charcoal'),bx+24,by+bh/2); ctx.shadowBlur=0;
+    // O rótulo carrega o tipo equipado e o preço da recarga: "150s de brasa" ou "202s, 18 por
+    // recarga" é a diferença que o jogador precisa ver para escolher com conta na mão.
+    const ctype=this.equippedCharcoal();
+    const price=ctype && ctype.refillCostCoins>0 ? ` · ${ctype.refillCostCoins}` : ` · ${this.l10n.t('charcoal.free')}`;
+    const gaugeLabel=ctype ? `${this.l10n.t('ui.hud.charcoal')} · ${this.l10n.t(ctype.nameKey).split(' ').slice(-1)[0]}${price}` : this.l10n.t('ui.hud.charcoal');
+    ctx.shadowColor='rgba(0,0,0,0.7)'; ctx.shadowBlur=3; ctx.fillText(gaugeLabel,bx+24,by+bh/2); ctx.shadowBlur=0;
     if(refilling){ ctx.textAlign='right'; ctx.fillStyle=C.ambar; ctx.fillText(`${g.refilling.toFixed(1)}s`,bx+bw-10,by+bh/2);}
     else if(low){ const pulse=0.5+Math.sin(this.now*6)*0.5; ctx.globalAlpha=pulse; ctx.textAlign='right'; ctx.fillStyle=C.telha; ctx.font=font(10,900,UI); ctx.fillText('!',bx+bw-10,by+bh/2); ctx.globalAlpha=1; }
   }

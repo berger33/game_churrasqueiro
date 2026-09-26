@@ -90,6 +90,9 @@
     "charcoal": {
       "type": "object",
       "properties": {
+        "_comment": {
+          "type": "string"
+        },
         "baseDurationSec": {
           "type": "integer"
         },
@@ -119,14 +122,69 @@
         },
         "refillTimeSec": {
           "type": "number"
+        },
+        "types": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_comment": {
+                "type": "string"
+              },
+              "descKey": {
+                "type": "string"
+              },
+              "durationMult": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "heatMult": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "nameKey": {
+                "type": "string"
+              },
+              "refillCostCoins": {
+                "type": "integer"
+              },
+              "tier": {
+                "type": "integer"
+              },
+              "unlockLevel": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "_comment",
+              "descKey",
+              "durationMult",
+              "heatMult",
+              "id",
+              "nameKey",
+              "refillCostCoins",
+              "tier",
+              "unlockLevel"
+            ]
+          }
         }
       },
       "required": [
+        "_comment",
         "baseDurationSec",
         "efficiencyCurve",
         "lowWarningThreshold",
         "refillCostCoins",
-        "refillTimeSec"
+        "refillTimeSec",
+        "types"
       ]
     },
     "interaction": {

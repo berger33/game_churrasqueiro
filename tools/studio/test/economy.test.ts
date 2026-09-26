@@ -136,63 +136,73 @@ describe('churrasqueira sink', () => {
   });
 
   it('must max the current grill before the next one is offered', () => {
+    const CH = db.churrasqueiras!.churrasqueiras;
+    const second = CH[1]!.id;
     const p = newPlayerState();
-    p.coins = 99_999;
+    p.coins = 1_000_000;
     p.level = 80;
     expect(nextChurrasqueiraStep(db, p)?.kind).toBe('evolve');
-    expect(unlockChurrasqueira(db, p, 'ze_da_esquina')).toBeNull();
+    expect(unlockChurrasqueira(db, p, second)).toBeNull();
     expect(evolveChurrasqueira(db, p)).not.toBeNull(); // 1 → 2
     expect(evolveChurrasqueira(db, p)).not.toBeNull(); // 2 → 3
     const step = nextChurrasqueiraStep(db, p);
-    expect(step).toEqual({ kind: 'unlock', id: 'ze_da_esquina', costCoins: expect.any(Number) });
+    expect(step).toEqual({ kind: 'unlock', id: second, costCoins: expect.any(Number) });
   });
 
   it('unlocks the next grill in order, equips it at evo 1, and cannot skip', () => {
+    const CH = db.churrasqueiras!.churrasqueiras;
+    const second = CH[1]!.id, far = CH[CH.length - 1]!.id;
     const p = newPlayerState();
-    p.coins = 99_999;
+    p.coins = 1_000_000;
     p.level = 80;
     evolveChurrasqueira(db, p);
     evolveChurrasqueira(db, p);
-    expect(unlockChurrasqueira(db, p, 'parrilla_chef_cisma')).toBeNull();
-    const entry = unlockChurrasqueira(db, p, 'ze_da_esquina');
+    // pular degrau não é opção: a escada é sequencial (a arte da grelha seguinte é
+    // desenhada a partir de onde a anterior termina).
+    expect(unlockChurrasqueira(db, p, far)).toBeNull();
+    const entry = unlockChurrasqueira(db, p, second);
     expect(entry).not.toBeNull();
-    expect(entry!.source).toBe('churrasqueira_unlock:ze_da_esquina');
-    expect(p.churrasqueiraId).toBe('ze_da_esquina');
-    expect(p.churrasqueiraLevels['ze_da_esquina']).toBe(1);
-    expect(equippedEvolution(db, p)!.zoneCount).toBe(2);
+    expect(entry!.source).toBe(`churrasqueira_unlock:${second}`);
+    expect(p.churrasqueiraId).toBe(second);
+    expect(p.churrasqueiraLevels[second]).toBe(1);
+    expect(equippedEvolution(db, p)!.zoneCount).toBe(CH[1]!.evolutions[0]!.zoneCount);
   });
 
   it('gates unlocks on player level', () => {
+    const CH = db.churrasqueiras!.churrasqueiras;
+    const second = CH[1]!;
     const p = newPlayerState();
-    p.coins = 99_999;
+    p.coins = 1_000_000;
     p.level = 1;
     evolveChurrasqueira(db, p);
     evolveChurrasqueira(db, p);
     expect(nextChurrasqueiraStep(db, p)).toBeNull();
     expect(buyNextChurrasqueira(db, p)).toBeNull();
-    p.level = 4;
+    p.level = second.unlockLevel;
     const entry = buyNextChurrasqueira(db, p);
-    expect(entry?.source).toBe('churrasqueira_unlock:ze_da_esquina');
+    expect(entry?.source).toBe(`churrasqueira_unlock:${second.id}`);
   });
 
-  it('walks the whole 1F→2F→3F→Fornalha path', () => {
+  it('walks the whole ten-grill ladder, three levels each', () => {
+    const CH = db.churrasqueiras!.churrasqueiras;
     const p = newPlayerState();
-    p.coins = 99_999;
+    p.coins = 10_000_000;
     p.level = 80;
     const ids: string[] = [];
     let guard = 0;
-    while (guard++ < 20) {
+    while (guard++ < 40) {
       const step = nextChurrasqueiraStep(db, p);
       if (!step) break;
       if (step.kind === 'unlock') ids.push(step.id);
       expect(buyNextChurrasqueira(db, p)).not.toBeNull();
     }
-    expect(ids).toEqual(['ze_da_esquina', 'parrilla_chef_cisma', 'fornalha_dragao_manso']);
-    expect(p.churrasqueiraId).toBe('fornalha_dragao_manso');
-    expect(p.churrasqueiraLevels['fornalha_dragao_manso']).toBe(3);
+    expect(ids).toEqual(CH.slice(1).map((c) => c.id));
+    const last = CH[CH.length - 1]!;
+    expect(p.churrasqueiraId).toBe(last.id);
+    expect(p.churrasqueiraLevels[last.id]).toBe(3);
     expect(nextChurrasqueiraStep(db, p)).toBeNull();
-    expect(p.counters['churrasqueiraEvolutions']).toBe(8); // 2 per grill × 4
-    expect(p.counters['churrasqueirasUnlocked']).toBe(3);
+    expect(p.counters['churrasqueiraEvolutions']).toBe(2 * CH.length); // 2 evoluções por grelha × 10
+    expect(p.counters['churrasqueirasUnlocked']).toBe(CH.length - 1);
   });
 });
 

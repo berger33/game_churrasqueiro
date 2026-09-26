@@ -32,7 +32,8 @@ export function capacity(standard, churrasqueiraId, evoLevel) {
   if (!ch) throw new Error(`churrasqueira ${churrasqueiraId} is not in churrasqueiras.json`);
   const evo = ch.evolutions.find((e) => e.level === evoLevel) ?? ch.evolutions[0];
   return {
-    id: ch.id, name: evo.shortName ?? ch.id, evo: evo.level, style: ch.visual?.style ?? '',
+    // rótulo só para o relatório de medição — a tabela carrega chave de l10n, não texto
+    id: ch.id, name: (evo.shortNameKey ?? '').split('.').slice(-2).join(' ') || ch.id, evo: evo.level, style: ch.visual?.style ?? '',
     zoneCount: evo.zoneCount, slotsPerZone: evo.slotsPerZone,
     capacity: evo.zoneCount * evo.slotsPerZone,
   };

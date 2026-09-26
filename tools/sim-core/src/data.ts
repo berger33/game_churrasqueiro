@@ -98,13 +98,16 @@ export function validateDatabase(db: GameDatabase): string[] {
       seen.add(ch.id);
       if (indices.has(ch.index)) problems.push(`churrasqueira ${ch.id}: duplicate index ${ch.index}`);
       indices.add(ch.index);
-      if (ch.fileiras < 1 || ch.fileiras > 3) problems.push(`churrasqueira ${ch.id}: fileiras must be 1..3`);
+      // 1..4 fileiras / 2..5 vagas: o teto nao e cosmetico, e o padrao de arte. `grill.json.art`
+      // fecha a boca em Z x 60 <= 248 px e o leito em 408 px, entao 5 fileiras engoliriam a celula
+      // de 60 px e a escada inteira perderia a regua que mede a arte ja aprovada.
+      if (ch.fileiras < 1 || ch.fileiras > 4) problems.push(`churrasqueira ${ch.id}: fileiras must be 1..4`);
       if (ch.fileiras !== ch.evolutions[0]?.zoneCount) problems.push(`churrasqueira ${ch.id}: fileiras mismatch zoneCount of evo 1`);
       if (ch.evolutions.length !== 3) problems.push(`churrasqueira ${ch.id}: expected 3 evolutions`);
       ch.evolutions.forEach((evo, i) => {
         if (evo.level !== i + 1) problems.push(`churrasqueira ${ch.id} evo ${evo.level}: level should be ${i + 1}`);
-        if (evo.zoneCount < 1 || evo.zoneCount > 3) problems.push(`churrasqueira ${ch.id} evo ${evo.level}: zoneCount 1..3`);
-        if (evo.slotsPerZone < 2 || evo.slotsPerZone > 4) problems.push(`churrasqueira ${ch.id} evo ${evo.level}: slotsPerZone 2..4`);
+        if (evo.zoneCount < 1 || evo.zoneCount > 4) problems.push(`churrasqueira ${ch.id} evo ${evo.level}: zoneCount 1..4`);
+        if (evo.slotsPerZone < 2 || evo.slotsPerZone > 5) problems.push(`churrasqueira ${ch.id} evo ${evo.level}: slotsPerZone 2..5`);
         if (evo.heatBase < 0.5 || evo.heatBase > 1.7) problems.push(`churrasqueira ${ch.id} evo ${evo.level}: heatBase out of range`);
       });
       // monotonic unlock levels

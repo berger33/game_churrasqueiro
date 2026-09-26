@@ -598,8 +598,15 @@ specification. The prototype proves art *direction*, not the art *budget*.
    churrasqueira functions (`applyChurrasqueiraToStats`, `churrasqueiraZoneHeat`,
    `patchGrillForChurrasqueira`, `runtimeZoneIndex`) with them, then `TutorialTurn`'s glue.
 3. Write the Unity scene layer and run the feel pass.
-4. Confirm the 767-turn mid-game gap with telemetry before V1.0.
-5. Grow en-US / es-419 from 9.7 % stub to full coverage before any non-BR launch.
+4. ~~Confirm the 767-turn mid-game gap with telemetry before V1.0.~~ — the ladder was rebuilt to
+   answer it without waiting for telemetry (docs/23): ten grills now buy at turns 3 / 7 / 19 / 50 / 61 /
+   95 / 184 / 309 / 509 where there used were three (7 / 45 / 90), and the new screens sit past the
+   measured horizon on purpose. Telemetry still confirms or kills the tail.
+5. Grow en-US / es-419 from 8.8 % stub to full coverage before any non-BR launch (the percentage fell
+   because pt-BR grew to 615 keys with the ten-grill ladder, not because translations were removed).
+5b. Port the charcoal multipliers to C# with `= 1` initializers (docs/23 §6.1) together with
+   `TurnSimulation.cs` — a `double` defaulting to 0 would zero the burn duration and break the golden
+   replay in CI, which is the one compiler we do not have in this sandbox.
 6. ~~**Prototype FTUE**~~ — **done** (see "FTUE" at the top and docs/05 §4). Follow-ups:
    - ~~Port `tutorial.ts` to the Unity `TutorialDirector`~~ — **done** (`Assets/Scripts/Core/
      Tutorial.cs`, 44 FTUE vectors agree); `TutorialTurn`'s glue follows `TurnSimulation.cs`.
