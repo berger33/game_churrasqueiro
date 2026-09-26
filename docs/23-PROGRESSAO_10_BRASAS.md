@@ -183,11 +183,15 @@ painel cabe em 420×780 e que o × fecha — e escreve o quadro em `prototype/sh
 
 ## 6. Pendências abertas por esta mudança
 
-1. **Portar os multiplicadores de carvão para o C#** — duas propriedades em `DerivedStats` com
-   inicializador `= 1` (o hazard é exatamente esse: `double` default 0 zeraria a duração e os vetores
-   quebrariam no CI), o `× CharcoalHeatMult` em `Tick` e o preço em `RefillCharcoal`. Junto com
-   `TurnSimulation.cs` / `EconomyRules.cs` / `SaveSystem.cs` e as quatro funções de churrasqueira já
-   listadas em docs/18 §7 (17 vetores ainda "not ported").
+1. ~~**Portar os multiplicadores de carvão para o C#**~~ — **feito**: `DerivedStats.Charcoal{Duration,
+   Heat}Mult` com inicializador `= 1` (o hazard era exatamente esse: `double` default 0 zeraria a
+   duração da brasa e todo vetor dourado reproduziria um turno com o fogo apagado), o consumo em
+   `TickGrill` e o preço em `TurnSimulation.RefillCharcoal`. Vieram junto com `TurnSimulation.cs` +
+   `SkillPolicy.cs`, que fecharam os 12 vetores de turno (`check-csharp`: 150 → 162 checks concordando,
+   `golden.turns` sem um único "not ported") — os turnos reproduzem a conta *com* carvão e sem pagar
+   nada a mais, que é a prova de que `comum` ainda é o jogo de antes. O que sobrou da fila:
+   `EconomyRules.ApplyTurnResult` (bolsa do turno → meta, com `charcoalSpend` no ledger) e
+   `SaveSystem.cs` v4 (`progress.charcoalType`), ambos em docs/18 §7.2.
 2. ~~**Seletor completo na garagem** (3 chips com preço, estado bloqueado e descrição) + evento de
    analytics para a escolha~~ — **feito**: modal de três linhas aberto pelo chip do cartão, números do
    motor por linha, `charcoal_select` na taxonomia (49 eventos) e o quadro verificado por

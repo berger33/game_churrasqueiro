@@ -157,8 +157,9 @@ images. Each batch is **approved by the game's owner before the next one is gene
   (new, finished, restore), `TutorialDirector` (steps + the five analytics events),
   `TutorialCoachRules` (browned / flip-ready / serve-ready / ring progress / the hold, and the
   hand: `ForStep` for guided steps, `Next` for free play) and `TutorialMask` — and
-  `Analytics.cs` ports the event contract. Only `TutorialTurn`'s glue is left: it owns a
-  `TurnSimulation`, which has no C# port yet. A port nobody compiles is a draft, so there is a
+  `Analytics.cs` ports the event contract. Only `TutorialTurn`'s glue was left: it owns a
+  `TurnSimulation`, which had no C# port then (§7.2 wrote it, so the glue is unblocked). A port nobody
+  compiles is a draft, so there is a
   new gate, `npm run check-csharp` (14th, CI): it builds `Assets/Scripts/Core` as Unity
   would (netstandard2.1, C# 9, nullable, warnings as errors) and runs `tools/csharp/parity`.
   - **Compiling found 42 errors** in code that had never met a compiler: the generator emitted
@@ -179,7 +180,9 @@ images. Each batch is **approved by the game's owner before the next one is gene
     against `cooking.ts` found a third no vector covers yet: `EffectiveHeat` ignored the runtime
     zone heat a churrasqueira sets. All fixed. Result: cooking 48/48, scoring 32/32, effective heat
     1/1; the other 5 economy vectors and the 12 full turns are reported as waiting for
-    `EconomyRules.cs` / `TurnSimulation.cs`.
+    `EconomyRules.cs` / `TurnSimulation.cs`. Both ports landed afterwards — and the turn replay is the
+    one that proves the *composition*: it is sensitive to the order in which the dice are drawn, which
+    no single-function vector can see.
   - **The FTUE vectors** (`tools/golden/tutorial-vectors.json`, new, 44, written by
     `gen-vectors.ts` from the shipping TypeScript): six director scenarios (including resume,
     skip at exactly 2 000 ms and a half-millisecond that must round up), 15 restores, a coach grid
@@ -293,7 +296,7 @@ Every claim below was produced by a command run in this checkout.
 | Render smoke | `npm run check-render` | **OK, 4 s** — real bundle through the whole FTUE (played by following the hand: 8 events in order, 0 misses), step 6, Home's daily calendar (strip → modal → `RESGATAR` pays once → ✕), an ordinary turn to the result, then a second install that is backgrounded (`tutorial_abandon` once) and skipped (`tutorial_skip` → Home); **~38 M canvas ops, no exceptions** |
 | Shot harness | `npm run check-shots` | **OK — ~6 s.** 13 real PNGs: a fresh install (splash, title, FTUE steps 1 / 2-waiting / 2 / 3 / 4, FTUE result, step 6 on Home), then a relaunch that must open on Home (home, empty grill, cooking, result). Asserts the FTUE funnel from `__churrascoAnalytics` — first PERFEITO 16.1 s, step 6 at 38.3 s (< 60 s), 0 misses. 193 painted frames, ~1 390 sim-only ticks, 60 s self-budget. |
 | Prototype server | `node prototype/dev-server.mjs` | listening on `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
-| C# core | `npm run check-csharp` | **CI: builds `Assets/Scripts/Core` (netstandard2.1, C# 9, warnings as errors) and 139 parity checks agree** — 13 tables bind losslessly, `GameData.Load` clean, cooking 48/48, scoring 32/32, effective heat, 44 FTUE vectors; 17 economy/turn vectors listed as not ported. **Here: SKIP** (no .NET SDK); verified during development with an in-process Roslyn compiler |
+| C# core | `npm run check-csharp` | **CI: builds `Assets/Scripts/Core` (netstandard2.1, C# 9, warnings as errors) and 162 parity checks agree** — 13 tables bind losslessly, `GameData.Load` clean, cooking 48/48, scoring 32/32, economy 6/6, rng 6/6, **the 12 full turns replayed end to end** (`TurnSimulation.cs` + `SkillPolicy.cs`), 44 FTUE vectors. Nothing in `golden.*` is not-ported any more; what still has no C# counterpart is `EconomyRules.ApplyTurnResult` and `SaveSystem` v4, and no golden vector covers either. **Here: SKIP** (no .NET SDK); verified during development with an in-process Roslyn compiler |
 | CI | `.github/workflows/ci.yml` + `npm run gates` | **16 gates on ubuntu-latest** (`check-csharp` with `actions/setup-dotnet` 8.0; `check-grill-geometry` grades every shipped grill art against the bed its evolution promises; `check-art-registry` reconciles registry × shipped atlas × lot specs and refuses undeclared drift). `check-shots` is in the per-PR list (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. The Unity-side layer is still not compiled — no Unity toolchain. |
 
 ### The localisation gate caught a §56 violation
@@ -352,7 +355,7 @@ re-derived again; on the current rules the same two figures read **0.7%** and
 | Deliverable | State | Why it is unverified |
 |---|---|---|
 | Unity-side C# (`Assets/Scripts/Services/{AdService,BillingService,SecureConfig}.cs`) | Hand-written against `UnityEngine` | **No Unity toolchain.** `check-csharp` compiles only the engine-free `Assets/Scripts/Core` (see §1); these files reference `UnityEngine` and have never been compiled. |
-| `Assets/Scripts/Core/{TurnSimulation,EconomyRules,SaveSystem}.cs` | **Not yet written** | The compile + parity gate now exists (`check-csharp`); 17 golden vectors (5 economy, 12 full turns) are waiting for these ports. `TutorialTurn`'s C# glue waits for `TurnSimulation.cs`. |
+| `Assets/Scripts/Core/EconomyRules.ApplyTurnResult`, `SaveSystem.cs` (v4) | **Not yet written** | `TurnSimulation.cs` + `SkillPolicy.cs` landed with them on the waitlist and are now compiled and replayed by CI (§1), so the arithmetic of a turn is settled in C#; what remains is where a turn's purse enters the meta (coins, xp, stars, `charcoalSpend` into the ledger) and `progress.charcoalType` in the save. `TutorialTurn`'s glue was waiting for `TurnSimulation.cs` and is now unblocked. |
 | Unity layer (`GrillView`, `FoodView`, `CustomerCardView`, `TurnFlow`) | **Not yet written** | Needs the Editor to iterate on feel. |
 | Unity localisation (load `shared/l10n`, resolve `*Key`) | **Not yet written** | The TS resolver (`tools/sim-core/src/l10n.ts`) is tested; the C# port is not. |
 | `Packages/manifest.json`, `ProjectSettings/` | **Not yet written** | Needs the Unity Editor to generate authoritative values. |
@@ -600,11 +603,13 @@ specification. The prototype proves art *direction*, not the art *budget*.
 ## 7. What to do next
 
 1. ~~**Compile the C# core** (`dotnet build` in CI) and add golden-vector parity~~ — **done**:
-   `npm run check-csharp` (gate 14), 139 checks agree (see "FTUE follow-ups").
-2. Write `TurnSimulation.cs`, `EconomyRules.cs`, `SaveSystem.cs` (v3, with `progress.tutorial`)
-   — `check-csharp` will pick up the 17 economy / full-turn vectors they unlock; port the
-   churrasqueira functions (`applyChurrasqueiraToStats`, `churrasqueiraZoneHeat`,
-   `patchGrillForChurrasqueira`, `runtimeZoneIndex`) with them, then `TutorialTurn`'s glue.
+   `npm run check-csharp` (gate 14), 162 checks agree (see "FTUE follow-ups").
+2. ~~Write `TurnSimulation.cs`~~ and the economy vectors — **done**: `EconomyRules.cs` carries the
+   meta (139 → 150 checks), and `TurnSimulation.cs` + `SkillPolicy.cs` now replay the 12 golden turns in
+   CI (150 → 162). The four churrasqueira functions were already in `Rules.cs`, and the turn port reads
+   them through the same constructor order the reference uses. What still waits:
+   `EconomyRules.ApplyTurnResult`, `SaveSystem.cs` v4 (`progress.charcoalType`) and the
+   `TutorialTurn` glue the turn port unblocked.
 3. Write the Unity scene layer and run the feel pass.
 4. ~~Confirm the 767-turn mid-game gap with telemetry before V1.0.~~ — the ladder was rebuilt to
    answer it without waiting for telemetry (docs/23): ten grills now buy at turns 3 / 7 / 19 / 50 / 61 /
@@ -612,9 +617,10 @@ specification. The prototype proves art *direction*, not the art *budget*.
    measured horizon on purpose. Telemetry still confirms or kills the tail.
 5. Grow en-US / es-419 from 8.8 % stub to full coverage before any non-BR launch (the percentage fell
    because pt-BR grew to 615 keys with the ten-grill ladder, not because translations were removed).
-5b. Port the charcoal multipliers to C# with `= 1` initializers (docs/23 §6.1) together with
-   `TurnSimulation.cs` — a `double` defaulting to 0 would zero the burn duration and break the golden
-   replay in CI, which is the one compiler we do not have in this sandbox.
+5b. ~~Port the charcoal multipliers to C# with `= 1` initializers (docs/23 §6.1) together with
+   `TurnSimulation.cs`~~ — **done**: `DerivedStats.Charcoal{Duration,Heat}Mult = 1`, consumption in
+   `TickGrill`, price in `TurnSimulation.RefillCharcoal`; the 12 golden turns replay with the purse and
+   the burn unchanged, which is precisely what the `= 1` was protecting.
 6. ~~**Prototype FTUE**~~ — **done** (see "FTUE" at the top and docs/05 §4). Follow-ups:
    - ~~Port `tutorial.ts` to the Unity `TutorialDirector`~~ — **done** (`Assets/Scripts/Core/
      Tutorial.cs`, 44 FTUE vectors agree); `TutorialTurn`'s glue follows `TurnSimulation.cs`.
