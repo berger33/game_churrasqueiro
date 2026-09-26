@@ -122,3 +122,66 @@ upgrades **compactos e colados ao corpo** (toldo como capa próxima, sem mastros
 manivela/termômetro NO painel frontal; dragão/chaminé sem estender a silhueta); a boca
 domina o sprite (≥70% da largura, ≥18% da área). Não afrouxar o contrato: ele garante a
 área de toque jogável.
+
+---
+
+## Terceira passada (5 grills)
+
+**[COMPACTO]** (acrescenta ao [GRILLEVO2] + [TOPOPEN])
+> Perfectly straight-on symmetrical front view, exactly like the FIRST reference: no oblique angle, no visible side face. The grill body is large and fills the frame; keep every upgrade element SMALL and tucked close to the body so the cooking opening stays by far the largest feature of the sprite.
+
+- `grill_ze_da_esquina_evo2.png`: [STYLE] [GRILLEVO2: "Toldo Novo" — a compact red-and-white striped awning cap fitted close above the grill body on two SHORT poles, plus a small side shelf with a stack of paper plates] [TOPOPEN] [COMPACTO] [TECH]
+- `grill_ze_da_esquina_evo3.png`: [STYLE] [GRILLEVO2: "Com Fritadeira" — the compact striped awning cap, a small stainless deep-fryer pot with a wire basket on the small side shelf, and a SHORT string of golden torresmo cracklings tucked on the cart frame below the opening] [TOPOPEN] [COMPACTO] [TECH]
+- `grill_parrilla_chef_cisma_evo2.png`: [STYLE] [GRILLEVO2: "Altura Regulável" — a small side crank wheel with a short chain and a toothed rack, all mounted flat ON the front and side panels, barely extending the silhouette] [TOPOPEN] [COMPACTO] [TECH]
+- `grill_fornalha_dragao_manso_evo2.png`: [STYLE] [GRILLEVO2: "Dragão Acordado" — tighter framing with the grill body filling the frame; the wrought-iron dragon ornament bigger and awake: spread wings, glowing amber eyes and a slightly open jaw, still friendly; short chimney at the back-left like the reference] [TOPOPEN] [COMPACTO] [TECH]
+- `grill_fornalha_dragao_manso_evo3.png`: [STYLE] [GRILLEVO2: "Inferno Bom" — strictly straight-on symmetrical front view; taller chimney at the back-left glowing with embers at the rim; thin glowing lava-like cracks across the firebricks; the awake dragon kept small on top] [TOPOPEN] [COMPACTO] [TECH]
+
+---
+
+## Quarta passada (4 grills: chapa 2–3, fornalha 2–3)
+
+Diagnóstico visual da 3ª: câmera agora frontal e bocas limpas, mas o corpo da grelha
+saiu estreito (chapas 48–61% de largura) ou com bochechas largas de tijolo (fornalha
+evo 2: 42%); fornalha evo 3 pintou a boca LARANJA brilhante em vez de magenta.
+
+**[WIDE]** (acrescenta ao [GRILLEVO2] + [TOPOPEN] + [COMPACTO])
+> Composition: the grill body spans nearly the FULL image width from edge to edge with only small magenta margins; the cooking opening spans nearly the FULL width of the grill body with narrow side walls. The opening is by far the largest feature of the sprite.
+
+- `grill_ze_da_esquina_evo2.png`: [STYLE] [GRILLEVO2: "Toldo Novo" — a compact red-and-white striped awning cap fitted close above the grill body on two SHORT poles, plus a small side shelf with a stack of paper plates] [TOPOPEN] [COMPACTO] [WIDE] [TECH]
+- `grill_ze_da_esquina_evo3.png`: [STYLE] [GRILLEVO2: "Com Fritadeira" — the compact RED-AND-WHITE striped awning cap (same as evolution 2), a small stainless deep-fryer pot with a wire basket on the small side shelf, and a SHORT string of golden torresmo cracklings tucked on the cart frame below the opening] [TOPOPEN] [COMPACTO] [WIDE] [TECH]
+- `grill_fornalha_dragao_manso_evo2.png`: [STYLE] [GRILLEVO2: "Dragão Acordado" — tighter framing with the grill body filling the frame and NARROW brick side walls; the wrought-iron dragon ornament bigger and awake: spread wings, glowing amber eyes and a slightly open jaw, still friendly; short chimney at the back-left like the reference] [TOPOPEN] [COMPACTO] [WIDE] [TECH]
+- `grill_fornalha_dragao_manso_evo3.png`: [STYLE] [GRILLEVO2: "Inferno Bom" — strictly straight-on symmetrical front view; taller chimney at the back-left glowing with embers at the rim; thin glowing lava-like cracks across the firebricks; the awake dragon kept small on top. IMPORTANT: the cooking opening itself is completely empty flat magenta, NOT glowing and NOT orange — all glow stays on the bricks and the chimney OUTSIDE the opening] [TOPOPEN] [COMPACTO] [WIDE] [TECH]
+
+---
+
+## Quinta passada (bloco [PROPORCAO])
+
+Diagnóstico visual da 4ª: câmera frontal correta nas 4, mas o modelo insiste em
+paredes laterais grossas (bocas 57–64% da largura) e na fornalha evo 3 a boca saiu
+baixa e comprida demais (aspecto 2.19). Tentativa: proporções numéricas explícitas.
+
+**[PROPORCAO]** (acrescenta ao [GRILLEVO2] + [TOPOPEN] + [COMPACTO] + [WIDE])
+> Exact proportions, follow strictly: the cooking opening spans 80% of the grill body width, with thin side walls under 10% of the body width on each side; the opening is TALL, its height about 65% of its width.
+
+- Chapa evo 2/3, fornalha evo 2/3: mesmos upgrades da passada anterior + [PROPORCAO].
+
+---
+
+## Resultado da 5ª passada (só chapa evo 2 — teto de 10 gerações)
+
+- `grill_ze_da_esquina_evo2.png` + [PROPORCAO]: **46,7%** (pior que os 64,0% da 4ª).
+- Causa raiz visível: o modelo desenhou ARMÁRIOS/PAINÉIS LATERAIS largos + prateleira
+  lateral com pratos; o corpo ficou muito largo e a boca (boa, limpa, frontal)
+  encolheu em % do sprite. Números no prompt não adiantam enquanto houver volume
+  nas laterais.
+
+## Sexta passada (4 grills: chapa 2–3, fornalha 2–3) — PLANO
+
+**[SEM-LATERAL]** (acrescenta ao [GRILLEVO2] + [TOPOPEN] + [COMPACTO] + [WIDE])
+> The grill body is ONLY the firebox directly around the cooking opening: NO side cabinets, NO side panels, NO side doors, NO side shelves, NO visible side faces at all. Every upgrade element sits strictly ABOVE or BELOW the opening, never on the sides.
+
+- Chapa evo 2 "Toldo Novo": toldo compacto ACIMA + pilha de pratos de papel
+  EMBUTIDA no vão do carrinho ABAIXO da boca (sem prateleira lateral).
+- Chapa evo 3 "Com Fritadeira": toldo + fritadeira pequena ACIMA/ao lado do toldo,
+  torresmos no vão ABAIXO da boca; nada nas laterais.
+- Fornalha evo 2/3: dragão e chaminé só ACIMA; paredes laterais finas de tijolo.

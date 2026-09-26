@@ -1,14 +1,49 @@
 {
-  "_comment": "Lote 06 — PARCIAL (5/10 processados): inox evo 3 + 2 folhas de VFX + molhos + equipamentos. Os outros 5 grills (chapa evo 2–3, inox evo 2, fornalha evo 2–3) falharam no holeValidation (boca pequena/inclinada vs contrato) e serão regenerados com upgrades compactos; voltam a este spec antes da aprovação. Prompts em art/prompts/lote-06.md.",
+  "_comment": "Lote 06 — PARCIAL (6/10 processados): inox evo 2–3 + 2 folhas de VFX + molhos + equipamentos. Faltam 4 grills (chapa evo 2–3, fornalha evo 2–3): 5ª passada ([PROPORCAO]) piorou chapa evo 2 (46,7% — laterais/armários alargaram o corpo); causa raiz: corpo largo com painéis laterais encolhe a boca em %. 6ª passada: proibir painéis/armários laterais, corpo = só a fornalha ao redor da boca. Spec completo com os 10 assets; rodar process após regenerar os 4. Prompts e notas em art/prompts/lote-06.md.",
   "batch": "lote-06",
   "date": "2026-09-26",
   "sourceDir": "art/source/lote-06",
   "assets": [
     {
+      "source": "grill_ze_da_esquina_evo2.png",
+      "mode": "single", "hole": true,
+      "holeValidation": {"minAreaFrac": 0.18, "minWidthFrac": 0.70, "minAspectRatio": 1.2, "maxAspectRatio": 1.9, "maxAbsTiltDeg": 2},
+      "category": "grill", "name": "spr_grill_ze_da_esquina_evo2", "label": "Zé da Esquina evo 2 — Toldo Novo",
+      "out": "Assets/Art/Sprites/Grills"
+    },
+    {
+      "source": "grill_ze_da_esquina_evo3.png",
+      "mode": "single", "hole": true,
+      "holeValidation": {"minAreaFrac": 0.18, "minWidthFrac": 0.70, "minAspectRatio": 1.2, "maxAspectRatio": 1.9, "maxAbsTiltDeg": 2},
+      "category": "grill", "name": "spr_grill_ze_da_esquina_evo3", "label": "Zé da Esquina evo 3 — Com Fritadeira",
+      "out": "Assets/Art/Sprites/Grills"
+    },
+    {
+      "source": "grill_parrilla_chef_cisma_evo2.png",
+      "mode": "single", "hole": true,
+      "holeValidation": {"minAreaFrac": 0.18, "minWidthFrac": 0.70, "minAspectRatio": 1.2, "maxAspectRatio": 1.9, "maxAbsTiltDeg": 2},
+      "category": "grill", "name": "spr_grill_parrilla_chef_cisma_evo2", "label": "Chef Cisma evo 2 — Altura Regulável",
+      "out": "Assets/Art/Sprites/Grills"
+    },
+    {
       "source": "grill_parrilla_chef_cisma_evo3.png",
       "mode": "single", "hole": true,
       "holeValidation": {"minAreaFrac": 0.18, "minWidthFrac": 0.70, "minAspectRatio": 1.2, "maxAspectRatio": 1.9, "maxAbsTiltDeg": 2},
       "category": "grill", "name": "spr_grill_parrilla_chef_cisma_evo3", "label": "Chef Cisma evo 3 — Termômetro que Não Mente",
+      "out": "Assets/Art/Sprites/Grills"
+    },
+    {
+      "source": "grill_fornalha_dragao_manso_evo2.png",
+      "mode": "single", "hole": true,
+      "holeValidation": {"minAreaFrac": 0.18, "minWidthFrac": 0.70, "minAspectRatio": 1.2, "maxAspectRatio": 1.9, "maxAbsTiltDeg": 2},
+      "category": "grill", "name": "spr_grill_fornalha_dragao_manso_evo2", "label": "Dragão Manso evo 2 — Dragão Acordado",
+      "out": "Assets/Art/Sprites/Grills"
+    },
+    {
+      "source": "grill_fornalha_dragao_manso_evo3.png",
+      "mode": "single", "hole": true,
+      "holeValidation": {"minAreaFrac": 0.18, "minWidthFrac": 0.70, "minAspectRatio": 1.2, "maxAspectRatio": 1.9, "maxAbsTiltDeg": 2},
+      "category": "grill", "name": "spr_grill_fornalha_dragao_manso_evo3", "label": "Dragão Manso evo 3 — Inferno Bom",
       "out": "Assets/Art/Sprites/Grills"
     },
     {
@@ -57,10 +92,10 @@
       "out": "Assets/Art/Sprites/Collection"
     }
   ],
-  "compare": ["spr_grill_parrilla_chef_cisma_evo1"],
+  "compare": ["spr_grill_ze_da_esquina_evo1", "spr_grill_parrilla_chef_cisma_evo1", "spr_grill_fornalha_dragao_manso_evo1"],
   "preview": {
     "background": "bg_restaurant_festival",
-    "grill": "spr_grill_parrilla_chef_cisma_evo3",
+    "grill": "spr_grill_fornalha_dragao_manso_evo3",
     "embers": "t_fx_embers_medium",
     "onGrill": [
       ["spr_food_costela_medium", 0.22, 0.5, 72],
