@@ -100,6 +100,16 @@ export function measuredMouth(art, sprite, cap) {
     aspect: +(mw / mh).toFixed(2),
     widthFrac: +(mw / sprite.w).toFixed(2),
     mouthTooNarrow: mw / sprite.w < MOUTH_WIDTH_HINT,
+    fill: (() => {
+      const magenta = (sprite.hole.areaFrac ?? 0) * sprite.w * sprite.h;
+      const quad = mouthArea(sprite);
+      return quad > 0 ? +(magenta / quad).toFixed(2) : 1;
+    })(),
+    mouthInvaded: (() => {
+      const magenta = (sprite.hole.areaFrac ?? 0) * sprite.w * sprite.h;
+      const quad = mouthArea(sprite);
+      return quad > 0 && magenta / quad < MOUTH_FILL_HINT;
+    })(),
     need,
     tooTall: mouthHScreen > art.proceduralBedHeight + 0.5,
     // Half a pixel of tolerance: the numbers above are ceil-ed twice (once into the guide, once
@@ -170,6 +180,32 @@ export async function report(standard, { only = null } = {}) {
  * tem 0,31) e reprová-las agora seria o portão mentindo sobre o que já está no jogo.
  */
 export const MOUTH_WIDTH_HINT = 0.72;
+
+/**
+ * Quanta da caixa delimitadora da boca é magenta de verdade. O `process-sprites` mede o buraco como a
+ * área chaveada e a sua bbox; uma boca em "L" — um balcão, uma tampa ou um apoio de panela pintado para
+ * dentro do vão — tem bbox grande e área pequena, e a régua de vagas, que trabalha com a bbox, fica
+ * otimista: o prato é lançado num retângulo que em parte é parede pintada. 0,85 é o piso: a boca do guia
+ * é um retângulo cheio (1,00), e uma arte honesta perde pouco para o traço torto do modelo.
+ */
+export const MOUTH_FILL_HINT = 0.85;
+
+/** Área do quadrilátero do vão (shoelace). Compara com a *boca*, não com a caixa dela: uma boca com o
+ * topo a −8,6° — a lata aprovada — ocupa 57 % da própria bbox e 100 % do vão, e um portão que confunde
+ * os dois reprova a câmera em vez de reprovar o detalhe pintado dentro do buraco. */
+export function mouthArea(sprite) {
+  const q = sprite.hole?.quad;
+  if (!q || q.length < 3) {
+    const [, , w, h] = sprite.hole.bbox;
+    return w * h;
+  }
+  let a = 0;
+  for (let i = 0; i < q.length; i++) {
+    const [x0, y0] = q[i], [x1, y1] = q[(i + 1) % q.length];
+    a += x0 * y1 - x1 * y0;
+  }
+  return Math.abs(a) / 2;
+}
 
 export const CONFORM_LIMIT = 0.7; // ±70 %: past that the object stops being the object — regenerate
 

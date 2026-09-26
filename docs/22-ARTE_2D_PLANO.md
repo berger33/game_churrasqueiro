@@ -695,3 +695,13 @@ no próprio arquivo (versão 2), e o `build-runtime` agora **recusa** construir 
 sem o PNG correspondente em `art/frozen-atlas/` — congelar é entregar bytes, não descrever uma intenção.
 Consequência visível e correta: grelha sem aprovação no atlas cai para o leito procedural, e isso é
 informação para a decisão dele, não defeito a esconder.
+
+### 6.10.2 `cheio`: a boca medida contra o próprio quadrilátero, não contra a caixa dele
+
+Nasce de um quase-engano. Comparar a área magenta com a **bbox** do vão dá 0,57 para a `lata_valente`
+aprovada — que é inclinada −8,6° e por isso nunca preenche a caixa. A régua iria reprovar cinco artes
+assinadas pelo dono por causa da câmera, que é exatamente a classe de defeito que este arquivo já
+registrou duas vezes. `mouthArea()` fecha o quadrilátero detectado (shoelace) e `cheio = área magenta ÷
+área do quadrilátero`, com piso `MOUTH_FILL_HINT = 0,85`: continua pegando boca em "L" (balcão, tampa ou
+apoio pintado para dentro do vão, que come o espaço do prato) e para de punir perspectiva. Nas dezoito
+grelhas medidas hoje o índice é 1,00–1,04 em todas.

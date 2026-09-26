@@ -147,3 +147,17 @@ Ficou assim: lista de congelamento esvaziada com a história escrita dentro do a
 `build-runtime` passa a **recusar** lista declarada sem os PNGs correspondentes em `art/frozen-atlas/`.
 "O atlas continua servindo" ou é verdade verificável ou não é argumento. O atlas de hoje é aprovado-only
 (124) e as grelhas sem aprovação caem no fallback procedural, que é o contrato honesto até ele decidir.
+
+## O que eu quase reportei errado (e a régua que nasceu disto)
+
+Olhando a folha, o quintal (#2) parece ter um balcão de azulejo entrando pela boca. Escrevi a métrica
+`cheio` = área magenta ÷ **caixa** do vão, rodei, e o veredito saía "7 grelhas com a boca invadida,
+5 delas **aprovadas**" — inclusive a `lata_valente`, a referência do ângulo certo, em 0,57. Isso era
+impossível: a lata tem o topo a −8,6°, e uma boca inclinada ocupa pouco da sua bbox *sem* estar invadida.
+A métrica estava medindo a câmera, não o defeito.
+
+Corrigida: `cheio` = área magenta ÷ área do **quadrilátero** detectado (`mouthArea()`, shoelace). Com
+isso as dezoito grelhas medem 1,00–1,04 e **nenhuma** boca está invadida — inclusive a do quintal: o que
+eu li como balcão dentro do vão é a parede pintada *atrás* dele, e o vão é retângulo cheio. A coluna
+`cheio` fica no portão como guarda (é ela que pega boca em "L" no futuro), com piso 0,85, e a lição vai
+para `docs/22`: comparar área com a caixa delimitadora de uma boca inclinada é reprovar perspectiva.
