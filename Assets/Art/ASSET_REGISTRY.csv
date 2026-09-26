@@ -240,3 +240,7 @@ spr_achievement_tier3,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent
 spr_achievement_tier4,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Achievements/spr_achievement_tier4.png,touches cell edge
 spr_achievement_tier5,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Achievements/spr_achievement_tier5.png,
 bg_title_key_art,background,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/Backgrounds/bg_title_key_art.png,
+spr_iap_starter,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Shop/spr_iap_starter.png,
+spr_iap_noads,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Shop/spr_iap_noads.png,
+spr_iap_embers_small,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Shop/spr_iap_embers_small.png,
+spr_iap_embers_medium,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Shop/spr_iap_embers_medium.png,

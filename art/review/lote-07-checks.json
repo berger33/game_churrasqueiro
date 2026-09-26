@@ -1,226 +1,359 @@
 {
   "batch": "lote-07",
   "date": "2026-09-26",
-  "complete": false,
-  "generatedImages": 9,
+  "complete": true,
+  "generatedImages": 10,
   "plannedImages": 10,
-  "processedSprites": 30,
+  "processedSprites": 34,
   "expectedSprites": 34,
-  "missingSource": "iap_a.png",
-  "missingReason": "Generation returned no image (MAX_TOKENS); retry blocked by 10-call turn cap.",
+  "approval": "pending — no owner approval received",
+  "sourceIapAExists": true,
   "existingManifestEntriesUnchanged": true,
   "runtimeUnchanged": true,
   "registryOldRowsBytePreserved": true,
+  "registryNewRows": 4,
+  "registryNewRowsStatus": "pending",
+  "registryLineEndings": "CRLF",
   "checks": [
-    {
-      "name": "bg_route_brasil",
-      "width": 768,
-      "height": 1376,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 0
-    },
-    {
-      "name": "bg_title_key_art",
-      "width": 768,
-      "height": 1376,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 0
-    },
-    {
-      "name": "spr_achievement_tier1",
-      "width": 252,
-      "height": 312,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 29144
-    },
-    {
-      "name": "spr_achievement_tier2",
-      "width": 254,
-      "height": 313,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 29356
-    },
-    {
-      "name": "spr_achievement_tier3",
-      "width": 280,
-      "height": 315,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 34411
-    },
-    {
-      "name": "spr_achievement_tier4",
-      "width": 286,
-      "height": 316,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 32958
-    },
-    {
-      "name": "spr_achievement_tier5",
-      "width": 255,
-      "height": 384,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 40786
-    },
-    {
-      "name": "spr_col_coroa_da_brasa",
-      "width": 313,
-      "height": 307,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 49056
-    },
     {
       "name": "spr_col_g_alvenaria",
       "width": 228,
       "height": 387,
       "residualMagentaPixels": 0,
-      "transparentPixels": 33546
-    },
-    {
-      "name": "spr_col_g_fogo_chao",
-      "width": 338,
-      "height": 293,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 48745
-    },
-    {
-      "name": "spr_col_g_inox",
-      "width": 310,
-      "height": 234,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 35129
-    },
-    {
-      "name": "spr_col_g_neon",
-      "width": 306,
-      "height": 258,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 33063
-    },
-    {
-      "name": "spr_col_g_premium",
-      "width": 270,
-      "height": 344,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 32189
+      "transparentPixels": 33546,
+      "partiallyTransparentPixels": 1890,
+      "status": "pending",
+      "batch": "lote-07"
     },
     {
       "name": "spr_col_g_tambor",
       "width": 327,
       "height": 239,
       "residualMagentaPixels": 0,
-      "transparentPixels": 35053
+      "transparentPixels": 35053,
+      "partiallyTransparentPixels": 1972,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_col_g_inox",
+      "width": 310,
+      "height": 234,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 35129,
+      "partiallyTransparentPixels": 1682,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_col_g_premium",
+      "width": 270,
+      "height": 344,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 32189,
+      "partiallyTransparentPixels": 1719,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_col_g_fogo_chao",
+      "width": 338,
+      "height": 293,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 48745,
+      "partiallyTransparentPixels": 3220,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_col_g_neon",
+      "width": 306,
+      "height": 258,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 33063,
+      "partiallyTransparentPixels": 1669,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_col_coroa_da_brasa",
+      "width": 313,
+      "height": 307,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 49056,
+      "partiallyTransparentPixels": 2089,
+      "status": "pending",
+      "batch": "lote-07"
     },
     {
       "name": "spr_col_medalha_picanha",
       "width": 184,
       "height": 316,
       "residualMagentaPixels": 0,
-      "transparentPixels": 23269
-    },
-    {
-      "name": "spr_event_anonovo",
-      "width": 830,
-      "height": 359,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 25039
-    },
-    {
-      "name": "spr_event_carnaval",
-      "width": 778,
-      "height": 294,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 22322
-    },
-    {
-      "name": "spr_event_fds_brasa",
-      "width": 823,
-      "height": 278,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 24803
-    },
-    {
-      "name": "spr_event_ferias",
-      "width": 778,
-      "height": 295,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 22564
-    },
-    {
-      "name": "spr_event_festa_junina",
-      "width": 778,
-      "height": 295,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 23112
-    },
-    {
-      "name": "spr_event_inverno",
-      "width": 778,
-      "height": 295,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 23103
-    },
-    {
-      "name": "spr_event_natal",
-      "width": 830,
-      "height": 359,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 25752
-    },
-    {
-      "name": "spr_event_primavera",
-      "width": 835,
-      "height": 359,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 27439
-    },
-    {
-      "name": "spr_event_quarta_espetinho",
-      "width": 823,
-      "height": 277,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 23309
+      "transparentPixels": 23269,
+      "partiallyTransparentPixels": 1839,
+      "status": "pending",
+      "batch": "lote-07"
     },
     {
       "name": "spr_event_segunda_linguica",
       "width": 823,
       "height": 277,
       "residualMagentaPixels": 0,
-      "transparentPixels": 23389
+      "transparentPixels": 23389,
+      "partiallyTransparentPixels": 3889,
+      "status": "pending",
+      "batch": "lote-07"
     },
     {
       "name": "spr_event_terca_picanha",
       "width": 823,
       "height": 276,
       "residualMagentaPixels": 0,
-      "transparentPixels": 22975
+      "transparentPixels": 22975,
+      "partiallyTransparentPixels": 2935,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_event_quarta_espetinho",
+      "width": 823,
+      "height": 277,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 23309,
+      "partiallyTransparentPixels": 3898,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_event_fds_brasa",
+      "width": 823,
+      "height": 278,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 24803,
+      "partiallyTransparentPixels": 2640,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_event_carnaval",
+      "width": 778,
+      "height": 294,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 22322,
+      "partiallyTransparentPixels": 3633,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_event_festa_junina",
+      "width": 778,
+      "height": 295,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 23112,
+      "partiallyTransparentPixels": 3245,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_event_ferias",
+      "width": 778,
+      "height": 295,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 22564,
+      "partiallyTransparentPixels": 3809,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_event_inverno",
+      "width": 778,
+      "height": 295,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 23103,
+      "partiallyTransparentPixels": 3264,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_event_primavera",
+      "width": 835,
+      "height": 359,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 27439,
+      "partiallyTransparentPixels": 4354,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_event_natal",
+      "width": 830,
+      "height": 359,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 25752,
+      "partiallyTransparentPixels": 3892,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_event_anonovo",
+      "width": 830,
+      "height": 359,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 25039,
+      "partiallyTransparentPixels": 4243,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_iap_starter",
+      "width": 421,
+      "height": 430,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 80468,
+      "partiallyTransparentPixels": 3482,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_iap_noads",
+      "width": 334,
+      "height": 385,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 40378,
+      "partiallyTransparentPixels": 1797,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_iap_embers_small",
+      "width": 316,
+      "height": 328,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 33474,
+      "partiallyTransparentPixels": 1655,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_iap_embers_medium",
+      "width": 406,
+      "height": 406,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 71063,
+      "partiallyTransparentPixels": 1991,
+      "status": "pending",
+      "batch": "lote-07"
     },
     {
       "name": "spr_iap_embers_large",
       "width": 375,
       "height": 381,
       "residualMagentaPixels": 0,
-      "transparentPixels": 58130
-    },
-    {
-      "name": "spr_iap_pass_bundle",
-      "width": 390,
-      "height": 346,
-      "residualMagentaPixels": 0,
-      "transparentPixels": 62166
+      "transparentPixels": 58130,
+      "partiallyTransparentPixels": 2222,
+      "status": "pending",
+      "batch": "lote-07"
     },
     {
       "name": "spr_iap_pass_season",
       "width": 310,
       "height": 356,
       "residualMagentaPixels": 0,
-      "transparentPixels": 50534
+      "transparentPixels": 50534,
+      "partiallyTransparentPixels": 2068,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_iap_pass_bundle",
+      "width": 390,
+      "height": 346,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 62166,
+      "partiallyTransparentPixels": 2424,
+      "status": "pending",
+      "batch": "lote-07"
     },
     {
       "name": "spr_pass_temporada",
       "width": 1364,
       "height": 642,
       "residualMagentaPixels": 0,
-      "transparentPixels": 42974
+      "transparentPixels": 42974,
+      "partiallyTransparentPixels": 7616,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "bg_route_brasil",
+      "width": 768,
+      "height": 1376,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 0,
+      "partiallyTransparentPixels": 0,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_achievement_tier1",
+      "width": 252,
+      "height": 312,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 29144,
+      "partiallyTransparentPixels": 1542,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_achievement_tier2",
+      "width": 254,
+      "height": 313,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 29356,
+      "partiallyTransparentPixels": 1633,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_achievement_tier3",
+      "width": 280,
+      "height": 315,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 34411,
+      "partiallyTransparentPixels": 1752,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_achievement_tier4",
+      "width": 286,
+      "height": 316,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 32958,
+      "partiallyTransparentPixels": 2055,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "spr_achievement_tier5",
+      "width": 255,
+      "height": 384,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 40786,
+      "partiallyTransparentPixels": 1945,
+      "status": "pending",
+      "batch": "lote-07"
+    },
+    {
+      "name": "bg_title_key_art",
+      "width": 768,
+      "height": 1376,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 0,
+      "partiallyTransparentPixels": 0,
+      "status": "pending",
+      "batch": "lote-07"
     }
   ]
 }
