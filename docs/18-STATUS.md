@@ -1,8 +1,10 @@
 # 18 — Status Report
 
-**Snapshot:** 2026-09-25 · branch `arena/01a0daed-game-churrasqueiro` · on top of `main`
-after **PR #6 was merged** (`3e6ea7f`) — the art pass below is that merge plus the rejected
-lote 03 and its reprocess (docs/22 §6.5). Earlier snapshot line, kept for history:
+**Snapshot:** 2026-09-26 (grelha a gás assinada e embarcada; lote 11 entregue) · branch
+`arena/01a0de76-game-churrasqueiro` · on top of `main` after **PR #6 was merged** (`3e6ea7f`) + the
+progression/art work of PR #7 (`arena/01a0daed-game-churrasqueiro`) — the art pass below is that merge
+plus the rejected lote 03 and its reprocess (docs/22 §6.5); **o estado vivo da arte, lote a lote, está em
+§9 abaixo e em docs/22 §6.11**. Earlier snapshot line, kept for history:
 `arena/01a0d72a-game-churrasqueiro`
 (PR #5 fast-forwarded, then the six-step FTUE — see "FTUE" below and docs/05-UX_FLOW.md §4 —
 then its follow-ups: see "FTUE follow-ups" below; then the AI 2D art pass, lotes 01–03, integrated in the prototype — see
@@ -653,20 +655,34 @@ specification. The prototype proves art *direction*, not the art *budget*.
      calendar modal's three hit-box bugs and the unlimited claims it was hiding.
 9. **Professional 2D art** (docs/22):
    - ~~get lotes 01–02 approved~~ — **approved and integrated in the prototype**;
-   - ~~lote 03~~ — **rejected whole by the owner** and reprocessed as lote 04, which is
-     **awaiting approval** (icons, backgrounds, both meats are the keepers; see "Lote 03
-     rejected" above);
-   - **lote 06 (as 6 evoluções sem arte)** — 4 de 6 no padrão (duas sem nenhum conform), 2 `redo`
-     por boca rasa; câmera corrigida no prompt ([CAMERA], docs/22 §6.9). Folha em
-     `art/review/lote-06.jpg`; nada aprovado, nada no runtime.
-   - **grelhas, o que falta decidir** (docs/22 §6.8): aprovar a fornalha conformada ×1,64 ou
-     repintá-la em 2:1; gerar as 6 evoluções ainda sem arte (zé e2/e3, inox e2/e3, fornalha
-     e2/e3 — os guias já existem e medem certo); decidir o letreiro pintado na chapa nova.
-     Nada disso entra no runtime sem `set-status.mjs lote-05 approved`.
+   - lote 03 rejected whole → reprocessed as lote 04 → **33 of its 36 sprites approved**; lotes 07–10
+     painted the ten-rung grill ladder;
+   - **the gas grill is signed and in service (2026-09-26)** — `spr_grill_fornalha_dragao_manso_evo1`
+     (round 7) passed all three rulers with the camera the owner asks for, `set-status` approved it, and
+     the atlas re-shipped at **128 sprites**. All ten ladder identities now have a painted evo 1 in the
+     atlas; `check-grill-geometry` reports 18 grills measured and 0 approved-outside-the-standard.
+   - **lote 06 (as 6 evoluções)** — 4 de 6 no padrão (duas sem nenhum conform), 2 `redo` por boca rasa;
+     as duas reprovadas foram repintadas no lote 11, então o lote 06 hoje só tem arte aprovável:
+     `set-status.mjs lote-06 approved` passa a régua e embarca 4 sprites (zé e2, inox e2, fornalha e2/e3).
+   - **lote 11 entregue, aguardando aprovação** (docs/22 §6.11) — as duas evo 3 repintadas dentro de
+     guias derivados do dado, sem conform (chapa 86×79 px por vaga a -6,7°; inox 86×73 px a -6,4°), e a
+     folha inteira da maminha com a célula 6 como tábua fatiada. 8 linhas `pending`; com a assinatura dele
+     elas entram no jogo de uma vez, porque comida entra inteira.
+   - **grelhas, o que falta decidir** (docs/22 §6.8): decidir o letreiro pintado na chapa nova; gerar as
+     12 evoluções ainda sem arte (evo 2–3 de praça, nenô, tambor, cais, orla e campeão — os guias já
+     medem certo); e o `b/larg` 0,58–0,69 das repinturas contra o piso novo de 0,72, que é aviso e hoje
+     custa a identidade do objeto (as evo 1 assinadas das mesmas identidades medem 0,48 e 0,61).
+   - **dois passos que são dado, não pixel** (docs/23): o *passo de identidade* — os ids
+     `fornalha_dragao_manso`/`ze_da_esquina`/`grelha_de_praca` e ~60 chaves de loja ainda descrevem tijolo
+     e chaminé para grelhas cuja arte assinada é a gás / de praça / inox — e o teto da escada, 4 fileiras
+     no dado contra as 3 que ele escreveu (as três do topo ainda não têm evo 2/3 aprovada, então trocar
+     custa só dado + textos).
    - lote 05 = the content planned for lote 04 + the three redos from lote 04 (the two steel
      grills with a wider mouth, the maminha's served cell);
-   - lotes 05–08 (docs/22 §6);
+   - lotes 12+ (docs/22 §2: 2 comidas, 6 fundos, 23 ícones, funcionários, coleção, eventos, loja,
+     pass, mapa, medalhas, VFX, arte das stores);
    - ~~write the `check-art-registry` gate~~ — **built** (gate 16); `set-status approved` now also
      refuses a grill whose painted mouth does not hold the promised grid, measured with the same ruler
-     as the guide, so approving from a contact sheet alone is no longer possible;
+     as the guide, so approving from a contact sheet alone is no longer possible — which is exactly why
+     a whole-lote approval of lote 06 was impossible and two arts were repainted;
    - Unity import postprocessor (docs/22 §7.2).

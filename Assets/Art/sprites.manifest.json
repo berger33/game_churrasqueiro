@@ -1095,75 +1095,75 @@
     },
     "spr_food_maminha_burned": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_burned.png",
-      "w": 472,
-      "h": 238,
+      "w": 336,
+      "h": 200,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-05/food_maminha.png",
-      "batch": "lote-05"
+      "source": "art/source/lote-11/food_maminha_r2.png",
+      "batch": "lote-11"
     },
     "spr_food_maminha_medium": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_medium.png",
-      "w": 472,
-      "h": 238,
+      "w": 336,
+      "h": 200,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-05/food_maminha.png",
-      "batch": "lote-05"
+      "source": "art/source/lote-11/food_maminha_r2.png",
+      "batch": "lote-11"
     },
     "spr_food_maminha_rare": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_rare.png",
-      "w": 472,
-      "h": 238,
+      "w": 336,
+      "h": 200,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-05/food_maminha.png",
-      "batch": "lote-05"
+      "source": "art/source/lote-11/food_maminha_r2.png",
+      "batch": "lote-11"
     },
     "spr_food_maminha_raw": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_raw.png",
-      "w": 472,
-      "h": 238,
+      "w": 336,
+      "h": 200,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-05/food_maminha.png",
-      "batch": "lote-05"
+      "source": "art/source/lote-11/food_maminha_r2.png",
+      "batch": "lote-11"
     },
     "spr_food_maminha_served": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_served.png",
-      "w": 418,
-      "h": 418,
+      "w": 338,
+      "h": 245,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-05/food_maminha.png",
-      "batch": "lote-05"
+      "source": "art/source/lote-11/food_maminha_r2.png",
+      "batch": "lote-11"
     },
     "spr_food_maminha_well": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_well.png",
-      "w": 472,
-      "h": 238,
+      "w": 336,
+      "h": 200,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-05/food_maminha.png",
-      "batch": "lote-05"
+      "source": "art/source/lote-11/food_maminha_r2.png",
+      "batch": "lote-11"
     },
     "spr_food_pao_de_alho_burned": {
       "file": "Assets/Art/Sprites/Food/spr_food_pao_de_alho_burned.png",
@@ -2065,45 +2065,45 @@
     },
     "spr_grill_parrilla_chef_cisma_evo3": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_parrilla_chef_cisma_evo3.png",
-      "w": 1044,
-      "h": 816,
+      "w": 929,
+      "h": 990,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "grill",
-      "source": "art/source/lote-06/spr_grill_parrilla_chef_cisma_evo3.png",
+      "source": "art/source/lote-11/spr_grill_parrilla_chef_cisma_evo3_r2.png",
       "grill": "parrilla_chef_cisma",
       "evo": 3,
       "hole": {
         "bbox": [
-          215,
-          61,
-          723,
-          209
+          174,
+          284,
+          542,
+          329
         ],
         "quad": [
           [
-            217,
-            61
+            174,
+            342
           ],
           [
-            936,
-            61
+            685,
+            285
           ],
           [
-            937,
-            268
+            715,
+            549
           ],
           [
-            215,
-            267
+            204,
+            611
           ]
         ],
-        "tiltDeg": 0,
-        "areaFrac": 0.1774
+        "tiltDeg": -6.4,
+        "areaFrac": 0.1518
       },
-      "batch": "lote-06"
+      "batch": "lote-11"
     },
     "spr_grill_parrilla_do_cais_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_parrilla_do_cais_evo1.png",
@@ -2287,45 +2287,45 @@
     },
     "spr_grill_ze_da_esquina_evo3": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_ze_da_esquina_evo3.png",
-      "w": 1714,
-      "h": 592,
+      "w": 1102,
+      "h": 841,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "grill",
-      "source": "art/source/lote-06/spr_grill_ze_da_esquina_evo3.png",
+      "source": "art/source/lote-11/spr_grill_ze_da_esquina_evo3_r3.png",
       "grill": "ze_da_esquina",
       "evo": 3,
       "hole": {
         "bbox": [
-          45,
-          182,
-          1219,
-          132
+          158,
+          234,
+          763,
+          334
         ],
         "quad": [
           [
-            45,
-            182
+            161,
+            320
           ],
           [
-            1262,
-            182
+            893,
+            234
           ],
           [
-            1263,
-            312
+            920,
+            476
           ],
           [
-            45,
-            313
+            189,
+            567
           ]
         ],
-        "tiltDeg": 0,
-        "areaFrac": 0.1586
+        "tiltDeg": -6.7,
+        "areaFrac": 0.1978
       },
-      "batch": "lote-06"
+      "batch": "lote-11"
     },
     "spr_prop_bancada": {
       "file": "Assets/Art/Sprites/Props/spr_prop_bancada.png",

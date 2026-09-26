@@ -7,10 +7,21 @@
 - **Lote 03 rejeitado inteiro pelo dono** (2026-09-25): "nada entra no runtime; refazer o lote".
   As 36 linhas saem de `approved`-para-ser e viram `rejected` no registro.
 - **Lote 04 = o reprocessamento do lote 03**, as mesmas 10 imagens com duas correções (§6.4):
-  guia de layout nos três churrasqueiras e a maminha como cunha triangular. Entregue,
-  **aguardando aprovação**; três itens voltam para um reforço (§6.5).
-- O conteúdo que estava planejado para o lote 04 desce um degrau (§6).
-- A auditoria completa do que falta está em §2.
+  guia de layout nos três churrasqueiras e a maminha como cunha triangular. Aprovado 33/36 (§6.5).
+- **Lote 10 assinado (2026-09-26)**: a grelha a gás na sétima rodada (`r7`) passou nas três réguas com
+  a câmera que o dono pede e ele mandou assiná-la. O atlas foi re-embarcado: **127 → 128 sprites**, e a
+  fornalha do degrau 7 deixou de cair no leito procedural. §6.10.4 é a geometria que este lote ensinou.
+- **Lote 11 entregue, aguardando aprovação** (§6.11): as duas evoluções 3 que a régua do lote 06
+  reprovou (chapa com faixa de 19 px, inox com 35 px, as duas com o vão em nível) e a folha inteira da
+  maminha, presa desde o lote 05 pela regra "comida entra inteira". As grelhas nasceram dentro de guias
+  derivados do dado e nenhuma das duas precisou de conform.
+- **A regra que o lote 06 ensinou na prática:** `set-status.mjs <lote> approved` roda a régua da grelha
+  antes de assinar e recusa o **lote inteiro** se uma linha reprovar. Um lote com 4 artes sadias e 2
+  tortas não é aprovado "em bloco com exceções" — são as 2 repintadas (este lote) ou os 4 aprovados por
+  nome. Foi por isso que o lote 06 ficou parado.
+- A auditoria completa do que falta está em §2. A numeração dos lotes seguiu a escada de 10 identidades
+  (docs/23) a partir do lote 07; a tabela de §6 registra a origem do conteúdo, e o histórico real de cada
+  rodada está em §6.8–§6.11.
 
 > **Por quê.** A mecânica agrada, mas o visual do protótipo (tudo desenhado por código em
 > `prototype/src/foods.ts`, `theme.ts` e `main.ts`) ainda parece amador. Este plano troca cada
@@ -78,19 +89,19 @@ O texto exato está em `art/prompts/lote-NN.md`. A partir do lote 02, cada promp
 Contado a partir de **todas** as tabelas de `shared/data` (e não de estimativa). Legenda:
 
 - ✅ aprovado (e, no caso do protótipo, integrado);
-- 🟡 no lote 04 (o reprocessamento do 03), aguardando aprovação;
+- 🟡 em lote entregue, aguardando aprovação;
 - 🔁 refazer;
 - ⬜ falta.
 
 | Família | Fonte nos dados | Precisa | Situação |
 |---|---|---|---|
-| Comidas (5 estados + servido) | `ingredients.json` (16) | 16 folhas | ✅ 12 · 🟡 2 (contra-filé, maminha) · ⬜ 2 (costela, cupim) |
-| Churrasqueiras × evolução | `churrasqueiras.json` (4 × 3) | 12 | ✅ 3 (lata evo 1–3) · 🔁 3 (chapa, inox, fornalha evo 1) · ⬜ 6 (evo 2–3 dessas) |
-| Fundos dos restaurantes | `restaurants.json` (7) | 7 | ✅ 1 (quintal) · 🟡 3 (espetinho de rua, trailer, bairro) · ⬜ 3 (premium, festival, rede nacional) |
-| Clientes | `customers.json` (11 tipos) | 11+ | ✅ 11 tipos, 14 retratos (variantes a/b) |
+| Comidas (5 estados + servido) | `ingredients.json` (16) | 16 folhas | ✅ 13 (12 de 6 quadros + vinagrete, de preparo) · 🟡 1 (maminha, lote 11) · ⬜ 2 (costela nv 34, cupim nv 44) |
+| Churrasqueiras × evolução | `churrasqueiras.json` (10 × 3) | 30 degraus | ✅ 12 (as 10 evo 1 + lata evo 2–3) · 🟡 6 (evo 2–3 de chapa, inox e fornalha: 4 no lote 06, 2 repintadas no 11) · ⬜ 12 (evo 2–3 das outras seis identidades) · +1 conceito sem id no dado (`fogueira_no_chao`, o "degrau zero") |
+| Fundos dos restaurantes | `restaurants.json` (10) | 10 | ✅ 4 (quintal, espetinho de rua, trailer, churrascaria de bairro) · ⬜ 6 (premium, festival, rede nacional, cais, quiosque da orla, cozinha do campeão) |
+| Clientes | `customers.json` (11 tipos) | 11+ | ✅ 11 tipos, 14 retratos (variantes a/b) · 1 superseded (o turista sem camisa do lote 01) |
 | Funcionários | `employees.json` (5 cargos) | 5 | ⬜ 5 |
-| Ícones de interface | moedas (`economy.json`: `ic_coin`, `ic_ember`) + HUD, diária, resultado | 9 | 🟡 9 |
-| Ícones de upgrade | `upgrades.json` (`tracks[].icon`, 27) | 27 | 🟡 9 · ⬜ 18 |
+| Ícones de interface | moedas (`economy.json`: `ic_coin`, `ic_ember`) + HUD, diária, resultado | 9 | ✅ 9 |
+| Ícones de upgrade | `upgrades.json` (`tracks[].icon`, 27) | 27 | ✅ 9 · ⬜ 18 |
 | Ícones de cosméticos | `upgrades.json` (`cosmeticTracks`, 5) | 5 | ⬜ 5 |
 | Coleção: itens | `collection.json` (37 entradas) | 37 | 16 usam os sprites de comida (✅ 12 · 🟡 2 · ⬜ 2) · ⬜ 21 próprios (4 molhos, 9 equipamentos, 7 churrasqueiras especiais, 1 medalha) |
 | Coleção: categorias | `collection.json` (10) | 10 | ⬜ 10 |
@@ -103,12 +114,17 @@ Contado a partir de **todas** as tabelas de `shared/data` (e não de estimativa)
 | Props | cenas de `restaurants.json` | 1 + ~4 | ✅ bancada · ⬜ tábua, pratos, pegador |
 | Loja das stores | `docs/15-ASO.md` | 5 | ⬜ 3 conceitos de ícone, feature graphic, key art |
 
-**Totais:**
+**Totais** (contados do registro, não de memória — `npm run check-art-registry` confere os três
+contadores toda rodada de CI):
 
-- 20 imagens aprovadas (lotes 01–02) viraram 92 sprites — é o que está no runtime do protótipo;
-- o lote 03 foi **rejeitado inteiro** e reprocessado como lote 04: 10 imagens, 36 sprites,
-  dos quais 1 aprovado com ressalva e 3 para reforço (§6.5);
-- para cobrir tudo faltam cerca de **40 imagens**, em 4 lotes depois do 04.
+- **128 sprites aprovados e embarcados** no protótipo (lotes 01–02, o aprovado do 04, os ícones/fundos
+  dos lotes 07–10): comidas 13 · clientes 11 tipos · grelhas 12 degraus com arte própria · fundos 4 ·
+  ícones 18;
+- **13 linhas `pending`** esperando assinatura: os 6 quadros da maminha e as 7 grelhas do fim da escada
+  (4 do lote 06 + 2 repintadas no 11 + o conceito `fogueira_no_chao`, que ainda não tem id no dado);
+- para cobrir tudo o que falta neste plano (2 comidas, 18 degraus de grelha, 6 fundos, 23 ícones,
+  funcionários, coleção, eventos, loja, pass, mapa, medalhas, VFX e a arte das stores) seguem cerca de
+  **30 imagens**, em 3 lotes.
 
 O logotipo continua tipográfico (Baloo 2 com efeitos): texto gerado por IA erra letras.
 
@@ -750,3 +766,47 @@ quadro** — e o rolo do quadro é exatamente o que o `tiltDeg` do vão mede. Du
   ficou abaixo do piso. O rolo precisa ser pedido à parte, com número e com chão: "8°, o chão das rodas sobe
   para a direita". Com isso a r7 fechou −7,2° · recorte 0,74 · boca 2:1 · `cheio` 1,00 — verde em tudo, e é a
   que vai para a assinatura dele.
+
+### 6.11 Lote 11 — as duas evo 3 que a régua reprovou, e a maminha inteira (2026-09-26)
+
+O dono assinou a grelha a gás (lote 10) e pediu duas coisas: **embarcá-la** e **repintar as duas
+evoluções 3 que a régua do leito não deixa aprovar**, junto com a maminha. As três estavam em situações
+diferentes e viraram um lote só porque o motivo é o mesmo: arte que existe, medida e reprovada por
+aritmética, não por gosto.
+
+| # | Imagem | Sprites | Medido contra o padrão `grill.art` |
+|---|---|---|---|
+| 1 | `spr_grill_ze_da_esquina_evo3` | 1 + furo | boca 2,28:1 · **vaga 86×79 px** (pedia 86×60) · vão a −6,7° · `cheio` 1,01 · **sem conform** — o lote 06 dava 19 px de faixa |
+| 2 | `spr_grill_parrilla_chef_cisma_evo3` | 1 + furo | boca 1,65:1 · **vaga 86×73 px** · vão a −6,4° · `cheio` 1,01 · **sem conform** — o lote 06 dava 35 px |
+| 3 | `food_maminha` | 6 | cunha triangular com capa de gordura só na aresta longa, 5 estados no mesmo contorno, **célula 6 = tábua com 5 fatias em leque** (o defeito que a prendia desde o lote 04) |
+
+**O que mudou no método, não só no lote.** Três coisas saem daqui e viram regra de prompt para as
+grelhas (já escritas em `art/prompts/lote-11.md`):
+
+1. **O vão de uma grelha de caixa é a janela da parede frontal, e isso precisa ser dito junto com o
+   tanto de elevação que ela aguenta.** A r1 da chapa veio funda e rasa ao mesmo tempo (1,63:1 com areia
+   no chão) porque "olhe para dentro da caixa" e "boca com altura" são ordens inimigas — a lição da
+   sexta rodada da gás, aplicada na primeira rodada desta.
+2. **Nada entra no vão por desenho, não por régua.** Os espetos e a corrente do inox estavam *dentro* da
+   boca na r1, e o `cheio` não viu: o quadrilátero ajustado acompanha o entalhe (a lacuna já escrita em
+   §6.10.3). A frase que resolveu foi "the rods and the crank live ABOVE and BESIDE the opening, never
+   inside it". É instrução de prompt, não checagem — e enquanto a checagem não existe, a frase fica.
+3. **A razão pedida não vale o rolo, e o rolo não vale a razão.** A r4 da chapa entregou 2,93:1 contra
+   2,99:1 do guia — a boca mais fiel da série — com o vão a −4,1°, no piso exato do que o dono lê como
+   "sem inclinação na imagem". A r5 cravou 2,98:1 mas com o vão pintado em 3,89:1, e o pipeline teria
+   esticado a arte inteira em ×1,304 para conformar. A adotada é a r3: boca 2,28:1 (mais alta que o
+   guia, o que **sobra** leito em vez de faltar), vão a −6,7° — dentro da faixa −8,6°…−6,1° das assinadas
+   — e zero cirurgia de pixel. As duas com a razão exata ficam em `art/source/lote-11/`, e trocar é um
+   comando por item.
+
+**A régua que ainda só avisa, e por quê.** As duas grelhas medem `b/larg` 0,69 e 0,58, abaixo do piso novo
+de 0,72. Não reprova, e não dá para reprovar o que se pede aqui: baixar a moldura abaixo dos pilares de
+tijolo e das quatro pernas é apagar a identidade da grelha. As próprias evo 1 que o dono assinou dessas
+duas identidades medem 0,48 e 0,61 — as novas estão **acima das irmãs**. Fica como escolha dele, medida,
+e não como decisão minha embutida num "ok".
+
+**Estado no fim do turno:** 128 sprites aprovados embarcados (o atlas ganhou a gás, 127 → 128), as 8
+linhas novas em `pending`, `build-runtime --dry-run` avisando que continuam no leito procedural
+`ze_da_esquina: evo2, evo3 · parrilla_chef_cisma: evo2, evo3 · fornalha_dragao_manso: evo2, evo3`.
+Nada deste lote entra no jogo sem `set-status lote-11 approved` — e aprovado, ele embarca 8 sprites de uma
+vez, porque a maminha entra inteira.
