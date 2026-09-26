@@ -482,6 +482,11 @@ async function montage(pv) {
   console.log(`[review] ${out.replace(ROOT + '/', '')} ${c.width}×${c.height}`);
 }
 
-await contactSheet();
-if (batch.preview) await montage(batch.preview);
+if (batch.reviewLayout === 'meta') {
+  const { reviewMeta } = await import('./review-meta.mjs');
+  await reviewMeta({ root: ROOT, batch, manifest, status: await batchStatus(), font: UI });
+} else {
+  await contactSheet();
+  if (batch.preview) await montage(batch.preview);
+}
 console.log(`[review] fonts: ${fontFiles.display ? 'Baloo 2 + Nunito' : 'system fallback (set ART_FONTS_DIR for the game fonts)'}`);

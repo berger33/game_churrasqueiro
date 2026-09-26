@@ -1,0 +1,285 @@
+{
+  "_comment": "Lote 07: 10 imagens planejadas / 34 sprites. Parcial 9/10: iap_a falhou no gerador (limite de chamadas). Não solicitar aprovação antes do lote completo. Prompts exatos gravados antes em art/prompts/lote-07.md. Tudo pending, runtime intocado.",
+  "batch": "lote-07",
+  "date": "2026-09-26",
+  "sourceDir": "art/source/lote-07",
+  "reviewLayout": "meta",
+  "assets": [
+    {
+      "source": "col_churrasqueiras.png",
+      "mode": "icons",
+      "category": "ui",
+      "label": "Coleção · churrasqueiras especiais e troféus",
+      "names": [
+        "spr_col_g_alvenaria",
+        "spr_col_g_tambor",
+        "spr_col_g_inox",
+        "spr_col_g_premium",
+        "spr_col_g_fogo_chao",
+        "spr_col_g_neon",
+        "spr_col_coroa_da_brasa",
+        "spr_col_medalha_picanha"
+      ],
+      "cols": 4,
+      "rows": 2,
+      "out": "Assets/Art/Sprites/Collection",
+      "cellLabels": [
+        "Alvenaria",
+        "Tambor",
+        "Inox",
+        "Premium",
+        "Fogo de chão",
+        "Neon",
+        "Coroa da Brasa",
+        "Medalha da Picanha"
+      ],
+      "contentIds": [
+        "c_g_alvenaria",
+        "c_g_tambor",
+        "c_g_inox",
+        "c_g_premium",
+        "c_g_fogo_chao",
+        "c_g_neon",
+        "c_coroa_da_brasa",
+        "c_medalha_picanha"
+      ],
+      "review": {
+        "note": "Ícones da coleção, não grills de gameplay. Inox sem manivela. Avisos de célula conferidos: sem corte visível."
+      }
+    },
+    {
+      "source": "eventos_semanais.png",
+      "mode": "icons",
+      "category": "ui",
+      "label": "Eventos · semanais",
+      "names": [
+        "spr_event_segunda_linguica",
+        "spr_event_terca_picanha",
+        "spr_event_quarta_espetinho",
+        "spr_event_fds_brasa"
+      ],
+      "cols": 1,
+      "rows": 4,
+      "out": "Assets/Art/UI/Events",
+      "cellLabels": [
+        "Segunda da Linguiça",
+        "Terça da Picanha",
+        "Quarta do Espetinho",
+        "Fim de Semana da Brasa"
+      ],
+      "contentIds": [
+        "segunda_linguica",
+        "terca_picanha",
+        "quarta_espetinho",
+        "fds_brasa"
+      ],
+      "reviewLayout": "banners",
+      "review": {
+        "note": "Área esquerda para UI. Proporções variam entre folhas; conferir montagem."
+      }
+    },
+    {
+      "source": "eventos_sazonais_a.png",
+      "mode": "icons",
+      "category": "ui",
+      "label": "Eventos · sazonais A",
+      "names": [
+        "spr_event_carnaval",
+        "spr_event_festa_junina",
+        "spr_event_ferias",
+        "spr_event_inverno"
+      ],
+      "cols": 1,
+      "rows": 4,
+      "out": "Assets/Art/UI/Events",
+      "cellLabels": [
+        "Carnaval",
+        "Festa Junina",
+        "Férias",
+        "Inverno"
+      ],
+      "contentIds": [
+        "carnaval",
+        "festa_junina",
+        "ferias",
+        "inverno"
+      ],
+      "reviewLayout": "banners",
+      "review": {
+        "note": "Área esquerda para UI. Proporções variam entre folhas; conferir montagem."
+      }
+    },
+    {
+      "source": "eventos_sazonais_b.png",
+      "mode": "icons",
+      "category": "ui",
+      "label": "Eventos · sazonais B",
+      "names": [
+        "spr_event_primavera",
+        "spr_event_natal",
+        "spr_event_anonovo"
+      ],
+      "cols": 1,
+      "rows": 3,
+      "out": "Assets/Art/UI/Events",
+      "cellLabels": [
+        "Primavera",
+        "Natal",
+        "Ano-novo"
+      ],
+      "contentIds": [
+        "primavera",
+        "natal",
+        "anonovo"
+      ],
+      "reviewLayout": "banners",
+      "review": {
+        "note": "Área esquerda para UI. Proporções variam entre folhas; conferir montagem."
+      }
+    },
+    {
+      "source": "iap_a.png",
+      "mode": "icons",
+      "category": "ui",
+      "label": "Loja / IAP · 1 de 2",
+      "names": [
+        "spr_iap_starter",
+        "spr_iap_noads",
+        "spr_iap_embers_small",
+        "spr_iap_embers_medium"
+      ],
+      "cols": 2,
+      "rows": 2,
+      "out": "Assets/Art/UI/Shop",
+      "cellLabels": [
+        "Kit inicial",
+        "Sem intersticiais",
+        "Brasas · pequeno",
+        "Brasas · médio"
+      ],
+      "contentIds": [
+        "brasa.starterpack.v1",
+        "brasa.noads.v1",
+        "brasa.coins.small.v1",
+        "brasa.coins.medium.v1"
+      ],
+      "review": {
+        "note": "FALTA GERAR: ferramenta falhou sem imagem; limite do turno atingido. Não aprovar parcialmente."
+      }
+    },
+    {
+      "source": "iap_b_selected.png",
+      "mode": "icons",
+      "category": "ui",
+      "label": "Loja / IAP · 2 de 2",
+      "names": [
+        "spr_iap_embers_large",
+        "spr_iap_pass_season",
+        "spr_iap_pass_bundle"
+      ],
+      "cols": 3,
+      "rows": 1,
+      "out": "Assets/Art/UI/Shop",
+      "cellLabels": [
+        "Brasas · grande",
+        "Passe premium",
+        "Pacote do passe"
+      ],
+      "contentIds": [
+        "brasa.coins.large.v1",
+        "brasa.pass.season.v1",
+        "brasa.pass.bundle.v1"
+      ],
+      "sourcePreparation": {
+        "original": "iap_b.png",
+        "rect": [
+          0,
+          0,
+          1264,
+          421
+        ]
+      },
+      "review": {
+        "note": "Modelo gerou 2 linhas; selecionada só a superior (3 produtos), sem registrar extras."
+      }
+    },
+    {
+      "source": "brasa_pass.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "spr_pass_temporada",
+      "label": "Brasa Pass · arte de temporada",
+      "out": "Assets/Art/UI/Pass",
+      "reviewLayout": "hero",
+      "review": {
+        "note": "Arte neutra de temporada; trilhas, títulos e benefícios são overlays de UI."
+      }
+    },
+    {
+      "source": "mapa_rota.png",
+      "mode": "opaque",
+      "category": "background",
+      "name": "bg_route_brasil",
+      "label": "Mapa · Rota da Brasa",
+      "out": "Assets/Art/Backgrounds",
+      "reviewLayout": "portrait",
+      "review": {
+        "note": "Divisões internas pintadas apesar do prompt: limites não cartográficos. Caminhos e pins serão UI, não estão integrados."
+      }
+    },
+    {
+      "source": "medalhas_conquista_selected.png",
+      "mode": "icons",
+      "category": "ui",
+      "label": "Conquistas · molduras tiers 1–5",
+      "names": [
+        "spr_achievement_tier1",
+        "spr_achievement_tier2",
+        "spr_achievement_tier3",
+        "spr_achievement_tier4",
+        "spr_achievement_tier5"
+      ],
+      "cols": 5,
+      "rows": 1,
+      "out": "Assets/Art/UI/Achievements",
+      "cellLabels": [
+        "Tier 1 · ferro",
+        "Tier 2 · cobre",
+        "Tier 3 · prata",
+        "Tier 4 · ouro",
+        "Tier 5 · coroa"
+      ],
+      "tiers": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "sourcePreparation": {
+        "original": "medalhas_conquista.png",
+        "rect": [
+          0,
+          0,
+          1376,
+          384
+        ]
+      },
+      "review": {
+        "note": "Modelo duplicou a linha; apenas 5 medalhas superiores. Centro opaco vazio para símbolos."
+      }
+    },
+    {
+      "source": "key_art_titulo.png",
+      "mode": "opaque",
+      "category": "background",
+      "name": "bg_title_key_art",
+      "label": "Key art · tela-título",
+      "out": "Assets/Art/Backgrounds",
+      "reviewLayout": "portrait",
+      "review": {
+        "note": "Não é captura do jogo. Espaços superiores e inferiores reservados à UI."
+      }
+    }
+  ]
+}
