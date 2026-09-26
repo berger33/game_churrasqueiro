@@ -22,6 +22,16 @@
    "w": 768,
    "h": 1376
   },
+  "bg_route_brasil": {
+   "file": "bg_route_brasil.webp",
+   "w": 768,
+   "h": 1376
+  },
+  "bg_title_key_art": {
+   "file": "bg_title_key_art.webp",
+   "w": 768,
+   "h": 1376
+  },
   "ic_auxiliar": {
    "file": "ic_auxiliar.webp",
    "w": 110,
@@ -187,6 +197,31 @@
    "w": 128,
    "h": 83
   },
+  "spr_achievement_tier1": {
+   "file": "spr_achievement_tier1.webp",
+   "w": 103,
+   "h": 128
+  },
+  "spr_achievement_tier2": {
+   "file": "spr_achievement_tier2.webp",
+   "w": 104,
+   "h": 128
+  },
+  "spr_achievement_tier3": {
+   "file": "spr_achievement_tier3.webp",
+   "w": 114,
+   "h": 128
+  },
+  "spr_achievement_tier4": {
+   "file": "spr_achievement_tier4.webp",
+   "w": 116,
+   "h": 128
+  },
+  "spr_achievement_tier5": {
+   "file": "spr_achievement_tier5.webp",
+   "w": 85,
+   "h": 128
+  },
   "spr_char_customer_apressado_a": {
    "file": "spr_char_customer_apressado_a.webp",
    "w": 196,
@@ -292,6 +327,11 @@
    "w": 276,
    "h": 252
   },
+  "spr_col_coroa_da_brasa": {
+   "file": "spr_col_coroa_da_brasa.webp",
+   "w": 128,
+   "h": 126
+  },
   "spr_col_espeto_longo": {
    "file": "spr_col_espeto_longo.webp",
    "w": 312,
@@ -307,6 +347,36 @@
    "w": 405,
    "h": 402
   },
+  "spr_col_g_alvenaria": {
+   "file": "spr_col_g_alvenaria.webp",
+   "w": 75,
+   "h": 128
+  },
+  "spr_col_g_fogo_chao": {
+   "file": "spr_col_g_fogo_chao.webp",
+   "w": 128,
+   "h": 111
+  },
+  "spr_col_g_inox": {
+   "file": "spr_col_g_inox.webp",
+   "w": 128,
+   "h": 97
+  },
+  "spr_col_g_neon": {
+   "file": "spr_col_g_neon.webp",
+   "w": 128,
+   "h": 108
+  },
+  "spr_col_g_premium": {
+   "file": "spr_col_g_premium.webp",
+   "w": 100,
+   "h": 128
+  },
+  "spr_col_g_tambor": {
+   "file": "spr_col_g_tambor.webp",
+   "w": 128,
+   "h": 94
+  },
   "spr_col_grelha_argola": {
    "file": "spr_col_grelha_argola.webp",
    "w": 295,
@@ -321,6 +391,11 @@
    "file": "spr_col_mapa_brasa.webp",
    "w": 295,
    "h": 250
+  },
+  "spr_col_medalha_picanha": {
+   "file": "spr_col_medalha_picanha.webp",
+   "w": 75,
+   "h": 128
   },
   "spr_col_molho_alho": {
    "file": "spr_col_molho_alho.webp",
@@ -346,6 +421,61 @@
    "file": "spr_col_sal_grosso.webp",
    "w": 295,
    "h": 280
+  },
+  "spr_event_anonovo": {
+   "file": "spr_event_anonovo.webp",
+   "w": 128,
+   "h": 55
+  },
+  "spr_event_carnaval": {
+   "file": "spr_event_carnaval.webp",
+   "w": 128,
+   "h": 48
+  },
+  "spr_event_fds_brasa": {
+   "file": "spr_event_fds_brasa.webp",
+   "w": 128,
+   "h": 43
+  },
+  "spr_event_ferias": {
+   "file": "spr_event_ferias.webp",
+   "w": 128,
+   "h": 49
+  },
+  "spr_event_festa_junina": {
+   "file": "spr_event_festa_junina.webp",
+   "w": 128,
+   "h": 49
+  },
+  "spr_event_inverno": {
+   "file": "spr_event_inverno.webp",
+   "w": 128,
+   "h": 49
+  },
+  "spr_event_natal": {
+   "file": "spr_event_natal.webp",
+   "w": 128,
+   "h": 55
+  },
+  "spr_event_primavera": {
+   "file": "spr_event_primavera.webp",
+   "w": 128,
+   "h": 55
+  },
+  "spr_event_quarta_espetinho": {
+   "file": "spr_event_quarta_espetinho.webp",
+   "w": 128,
+   "h": 43
+  },
+  "spr_event_segunda_linguica": {
+   "file": "spr_event_segunda_linguica.webp",
+   "w": 128,
+   "h": 43
+  },
+  "spr_event_terca_picanha": {
+   "file": "spr_event_terca_picanha.webp",
+   "w": 128,
+   "h": 43
   },
   "spr_food_asinha_frango_burned": {
    "file": "spr_food_asinha_frango_burned.webp",
@@ -1140,6 +1270,46 @@
     ],
     "tiltDeg": 0
    }
+  },
+  "spr_iap_embers_large": {
+   "file": "spr_iap_embers_large.webp",
+   "w": 126,
+   "h": 128
+  },
+  "spr_iap_embers_medium": {
+   "file": "spr_iap_embers_medium.webp",
+   "w": 128,
+   "h": 128
+  },
+  "spr_iap_embers_small": {
+   "file": "spr_iap_embers_small.webp",
+   "w": 123,
+   "h": 128
+  },
+  "spr_iap_noads": {
+   "file": "spr_iap_noads.webp",
+   "w": 111,
+   "h": 128
+  },
+  "spr_iap_pass_bundle": {
+   "file": "spr_iap_pass_bundle.webp",
+   "w": 128,
+   "h": 114
+  },
+  "spr_iap_pass_season": {
+   "file": "spr_iap_pass_season.webp",
+   "w": 111,
+   "h": 128
+  },
+  "spr_iap_starter": {
+   "file": "spr_iap_starter.webp",
+   "w": 125,
+   "h": 128
+  },
+  "spr_pass_temporada": {
+   "file": "spr_pass_temporada.webp",
+   "w": 128,
+   "h": 60
   },
   "spr_prop_bancada": {
    "file": "spr_prop_bancada.webp",

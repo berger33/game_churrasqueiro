@@ -170,9 +170,10 @@ TECHNICAL: One continuous full-bleed opaque portrait illustration, 9:16 composit
 
 ## Registro da execução — 2026-09-26
 
-- Os 10 prompts acima foram gravados **antes** da primeira chamada; SHA-256 do arquivo naquele momento: `ff286c147936031ce7ee52e184752f226dc6a1d10c6c0b3c2925f25c01c91200`.
-- Primeira rodada: 10 chamadas, **9 arquivos** produzidos. A imagem 05 (`iap_a.png`) retornou erro sem imagem (`finishReasons: MAX_TOKENS`). Tentativa de repetir exatamente o mesmo prompt foi bloqueada: `Image generation limit of 10 reached for this turn`.
-- Não houve refações, novas variantes solicitadas nem aprovação. **Repetir somente a imagem 05 no próximo turno**, com o prompt literal já salvo.
-- O gerador duplicou as linhas das imagens 06 e 09. `art/prepare-lote-07.mjs` seleciona apenas a linha superior conforme `sourcePreparation` no spec, sem alterar os originais. Os 3 produtos e as 5 medalhas pedidos foram preservados; as variantes extras NÃO entram no registro nem na contagem do lote.
-- Originais e refs ficam ignorados como nos lotes anteriores. Os 30 masters processados desta parcial estão versionados; faltam 4 sprites da folha IAP 1/2 para os 34 esperados.
-- `review-sheet` agora aceita `reviewLayout: "meta"`, com banners, ícones, retratos de mapa/key art e montagem estática de telas de metajogo. Os layouts antigos permanecem no caminho original. Nenhum código de gameplay foi alterado.
+- Os 10 prompts foram gravados antes da rodada original; SHA-256 naquele momento: `ff286c147936031ce7ee52e184752f226dc6a1d10c6c0b3c2925f25c01c91200`.
+- Rodada original: 10 chamadas, 9 arquivos produzidos. A imagem 05 (`iap_a.png`) retornou erro sem imagem (`finishReasons: MAX_TOKENS`); uma repetição naquele turno foi bloqueada pelo limite de 10 chamadas.
+- Continuação após o merge do PR #11: referência aprovada `lote07_rewards` recriada a partir dos masters; somente a imagem 05 foi gerada, com o prompt literal acima, sem alterações. Geração concluída com sucesso em `art/source/lote-07/iap_a.png`.
+- Processamento completado: 10/10 imagens, 34/34 sprites. As outras nove fontes brutas não existiam após wipe; o processador as pulou e manteve os masters versionados. `art/prepare-lote-07.mjs` também pulou os raws ausentes de IAP 2/2 e medalhas.
+- IAP 2/2 e medalhas: o modelo duplicou linhas; somente a linha superior foi selecionada pelos recortes especificados, sem sobrescrever os originais. Variantes extras não entram na contagem nem no registro.
+- O relatório técnico atualizado está em `art/review/lote-07-checks.json`; folha completa e montagem estática em `art/review/lote-07.jpg` e `art/review/lote-07-preview.jpg`.
+- O dono aprovou o lote completo em 2026-09-26. `set-status` marcou 34/34 como `approved`/`ai-assisted-reviewed`; runtime rebuild: 211 sprites, 3,44 MB WebP. Telas de metajogo não foram integradas.

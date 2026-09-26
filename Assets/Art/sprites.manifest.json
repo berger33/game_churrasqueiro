@@ -3043,6 +3043,42 @@
       "source": "art/source/lote-07/iap_b_selected.png",
       "batch": "lote-07"
     },
+    "spr_iap_embers_medium": {
+      "file": "Assets/Art/UI/Shop/spr_iap_embers_medium.png",
+      "w": 406,
+      "h": 406,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/iap_a.png",
+      "batch": "lote-07"
+    },
+    "spr_iap_embers_small": {
+      "file": "Assets/Art/UI/Shop/spr_iap_embers_small.png",
+      "w": 316,
+      "h": 328,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/iap_a.png",
+      "batch": "lote-07"
+    },
+    "spr_iap_noads": {
+      "file": "Assets/Art/UI/Shop/spr_iap_noads.png",
+      "w": 334,
+      "h": 385,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/iap_a.png",
+      "batch": "lote-07"
+    },
     "spr_iap_pass_bundle": {
       "file": "Assets/Art/UI/Shop/spr_iap_pass_bundle.png",
       "w": 390,
@@ -3065,6 +3101,18 @@
       ],
       "category": "ui",
       "source": "art/source/lote-07/iap_b_selected.png",
+      "batch": "lote-07"
+    },
+    "spr_iap_starter": {
+      "file": "Assets/Art/UI/Shop/spr_iap_starter.png",
+      "w": 421,
+      "h": 430,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/iap_a.png",
       "batch": "lote-07"
     },
     "spr_pass_temporada": {

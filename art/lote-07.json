@@ -1,5 +1,5 @@
 {
-  "_comment": "Lote 07: 10 imagens planejadas / 34 sprites. Parcial 9/10: iap_a falhou no gerador (limite de chamadas). Não solicitar aprovação antes do lote completo. Prompts exatos gravados antes em art/prompts/lote-07.md. Tudo pending, runtime intocado.",
+  "_comment": "Lote 07: 10 imagens / 34 sprites. Aprovado pelo dono em 2026-09-26 após revisão completa; 34/34 linhas approved e incluídas no runtime. Telas de metajogo não implementadas.",
   "batch": "lote-07",
   "date": "2026-09-26",
   "sourceDir": "art/source/lote-07",
@@ -164,7 +164,7 @@
         "brasa.coins.medium.v1"
       ],
       "review": {
-        "note": "FALTA GERAR: ferramenta falhou sem imagem; limite do turno atingido. Não aprovar parcialmente."
+        "note": "Gerada em 2026-09-26 com o prompt literal 05 e referência aprovada lote07_rewards. Os quatro produtos estão presentes; conferir progressão visual pequeno/médio na folha completa."
       }
     },
     {
