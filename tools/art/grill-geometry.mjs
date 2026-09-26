@@ -98,6 +98,8 @@ export function measuredMouth(art, sprite, cap) {
     tiltDeg: sprite.hole.tiltDeg ?? 0,
     cellW: Math.round(cellW), cellH: Math.round(cellH),
     aspect: +(mw / mh).toFixed(2),
+    widthFrac: +(mw / sprite.w).toFixed(2),
+    mouthTooNarrow: mw / sprite.w < MOUTH_WIDTH_HINT,
     need,
     tooTall: mouthHScreen > art.proceduralBedHeight + 0.5,
     // Half a pixel of tolerance: the numbers above are ceil-ed twice (once into the guide, once
@@ -130,18 +132,24 @@ export async function report(standard, { only = null } = {}) {
   const { art, root } = standard;
   const manifest = JSON.parse(await readFile(join(root, 'Assets', 'Art', 'sprites.manifest.json'), 'utf8'));
   const rows = [];
+  const concepts = [];
   for (const [name, e] of Object.entries(manifest.sprites)) {
     const m = name.match(/^spr_grill_(.+)_evo(\d+)$/);
     if (!m || !e.hole) continue;
     const [_, id, lvl] = m;
     if (only && !only.includes(id)) continue;
+    // Arte de conceito: o nome diz `spr_grill_<id>_evo<n>`, mas o `<id>` ainda não é uma churrasqueira
+    // do dado — é uma identidade esperando o passo mecânico (o lote 07 pintou a fogueira de chão antes
+    // de existir slot `fogueira_no_chao`). Medir isso seria comparar com uma promessa que não existe, e
+    // derrubar o portão por um nome novo não é um defeito de arte. Entra na lista e no relatório.
+    if (!standard.churrasqueiras.some((c) => c.id === id)) { concepts.push({ name, id, lvl: +lvl }); continue; }
     const cap = capacity(standard, id, +lvl);
     rows.push({ name, cap, need: requiredMouth(art, cap), got: measuredMouth(art, e, cap) });
   }
   // the ladder itself: capacity must grow with the progression, and the art must not invert it
   const ladder = standard.churrasqueiras.flatMap((c) =>
     c.evolutions.map((e) => ({ id: c.id, evo: e.level, cap: e.zoneCount * e.slotsPerZone })));
-  return { rows, ladder, art };
+  return { rows, ladder, art, concepts };
 }
 
 // ── conforming a painted opening to the standard ────────────────────────────
@@ -150,6 +158,18 @@ export async function report(standard, { only = null } = {}) {
 // opening is *empty space* — the geometry the game reads — so the pipeline finishes it: scale the
 // art vertically until the opening holds its bands, and scale the recorded hole with it.
 // See tools/art/conform-mouth.mjs (the CLI) and process-sprites.mjs (on the way in).
+
+/**
+ * A boca precisa ser larga *em relação ao sprite inteiro*, não só em relação às vagas. O motor escala
+ * a grelha por dois caminhos: na loja, `s = min(bedW / spriteW, (W − 24) / spriteW)` — a largura whole
+ * do desenho é que vai ao leito, então boca estreita = leito minúsculo no cartão; no jogo, `s =
+ * min(bedW / mouthW, (W − 12) / spriteW)` — quando a boca ocupa menos de `bedW / (W − 12)` da largura
+ * do sprite, o teto de tela ganha da régua do leito e a comida (que é desenhada em tamanho fixo)
+ * encosta na vizinha. A lata aprovada mede 0,80–0,89; 0,72 é o guia (MOUTH_W 0,8) com folga de recorte.
+ * É AVISO, não reprovação: cinco artes aprovadas antes desta regra medem menos que ela (a parrilla e2
+ * tem 0,31) e reprová-las agora seria o portão mentindo sobre o que já está no jogo.
+ */
+export const MOUTH_WIDTH_HINT = 0.72;
 
 export const CONFORM_LIMIT = 0.7; // ±70 %: past that the object stops being the object — regenerate
 

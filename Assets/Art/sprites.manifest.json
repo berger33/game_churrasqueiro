@@ -1429,59 +1429,237 @@
       "source": "art/source/lote-02/food_vinagrete.png",
       "batch": "lote-02"
     },
-    "spr_grill_fornalha_dragao_manso_evo1": {
-      "file": "Assets/Art/Sprites/Grills/spr_grill_fornalha_dragao_manso_evo1.png",
-      "w": 1166,
-      "h": 1255,
+    "spr_grill_cozinha_do_campeao_evo1": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_cozinha_do_campeao_evo1.png",
+      "w": 951,
+      "h": 1238,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "grill",
-      "source": "art/source/lote-04/grill_fornalha_dragao_manso_evo1.png",
+      "source": "art/source/lote-07/spr_grill_cozinha_do_campeao_evo1.png",
+      "grill": "cozinha_do_campeao",
+      "evo": 1,
       "hole": {
         "bbox": [
-          153,
-          457,
-          860,
-          430
+          155,
+          266,
+          588,
+          345
         ],
         "quad": [
           [
+            156,
+            266
+          ],
+          [
+            740,
+            266
+          ],
+          [
+            742,
+            610
+          ],
+          [
             155,
-            457
-          ],
-          [
-            1010,
-            457
-          ],
-          [
-            1010,
-            884
-          ],
-          [
-            155,
-            884
+            610
           ]
         ],
         "tiltDeg": 0,
-        "areaFrac": 0.2517,
+        "areaFrac": 0.1724,
         "conformed": {
-          "factorY": 1.636,
+          "factorY": 1.182,
           "reason": "faixa de brasa rasa demais para a comida",
           "mouthHScreen": [
-            110,
-            180
+            203,
+            239
           ],
           "aspect": [
-            3.27,
-            2
-          ],
-          "date": "2026-09-26"
+            2.01,
+            1.7
+          ]
         }
       },
-      "batch": "lote-04",
-      "bedWidth": 359
+      "batch": "lote-07"
+    },
+    "spr_grill_espeto_do_neno_evo1": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_espeto_do_neno_evo1.png",
+      "w": 1115,
+      "h": 775,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "grill",
+      "source": "art/source/lote-07/spr_grill_espeto_do_neno_evo1.png",
+      "grill": "espeto_do_neno",
+      "evo": 1,
+      "hole": {
+        "bbox": [
+          176,
+          253,
+          470,
+          187
+        ],
+        "quad": [
+          [
+            176,
+            255
+          ],
+          [
+            644,
+            254
+          ],
+          [
+            644,
+            435
+          ],
+          [
+            176,
+            438
+          ]
+        ],
+        "tiltDeg": -0.1,
+        "areaFrac": 0.1003
+      },
+      "batch": "lote-07"
+    },
+    "spr_grill_fogueira_no_chao_evo1": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_fogueira_no_chao_evo1.png",
+      "w": 1292,
+      "h": 658,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "grill",
+      "source": "art/source/lote-07/spr_grill_fogueira_no_chao_evo1.png",
+      "hole": {
+        "bbox": [
+          255,
+          161,
+          773,
+          143
+        ],
+        "quad": [
+          [
+            285,
+            161
+          ],
+          [
+            998,
+            162
+          ],
+          [
+            1027,
+            302
+          ],
+          [
+            255,
+            302
+          ]
+        ],
+        "tiltDeg": 0.1,
+        "areaFrac": 0.1242
+      },
+      "batch": "lote-07"
+    },
+    "spr_grill_fornalha_da_orla_evo1": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_fornalha_da_orla_evo1.png",
+      "w": 954,
+      "h": 1024,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "grill",
+      "source": "art/source/lote-07/spr_grill_fornalha_da_orla_evo1.png",
+      "grill": "fornalha_da_orla",
+      "evo": 1,
+      "hole": {
+        "bbox": [
+          193,
+          324,
+          398,
+          234
+        ],
+        "quad": [
+          [
+            194,
+            370
+          ],
+          [
+            589,
+            324
+          ],
+          [
+            590,
+            494
+          ],
+          [
+            193,
+            555
+          ]
+        ],
+        "tiltDeg": -6.7,
+        "areaFrac": 0.0734,
+        "conformed": {
+          "factorY": 1.048,
+          "reason": "faixa de brasa rasa demais para a comida",
+          "mouthHScreen": [
+            229,
+            240
+          ],
+          "aspect": [
+            1.78,
+            1.7
+          ]
+        }
+      },
+      "batch": "lote-07"
+    },
+    "spr_grill_fornalha_dragao_manso_evo1": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_fornalha_dragao_manso_evo1.png",
+      "w": 1020,
+      "h": 1004,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "grill",
+      "source": "art/source/lote-07/spr_grill_fornalha_dragao_manso_evo1.png",
+      "grill": "fornalha_dragao_manso",
+      "evo": 1,
+      "hole": {
+        "bbox": [
+          261,
+          367,
+          498,
+          89
+        ],
+        "quad": [
+          [
+            296,
+            367
+          ],
+          [
+            723,
+            367
+          ],
+          [
+            758,
+            454
+          ],
+          [
+            261,
+            454
+          ]
+        ],
+        "tiltDeg": 0,
+        "areaFrac": 0.0404
+      },
+      "batch": "lote-07"
     },
     "spr_grill_fornalha_dragao_manso_evo2": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_fornalha_dragao_manso_evo2.png",
@@ -1590,6 +1768,60 @@
         }
       },
       "batch": "lote-06"
+    },
+    "spr_grill_grelha_de_praca_evo1": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_grelha_de_praca_evo1.png",
+      "w": 1233,
+      "h": 827,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "grill",
+      "source": "art/source/lote-07/spr_grill_grelha_de_praca_evo1.png",
+      "grill": "grelha_de_praca",
+      "evo": 1,
+      "hole": {
+        "bbox": [
+          248,
+          146,
+          733,
+          267
+        ],
+        "quad": [
+          [
+            263,
+            157
+          ],
+          [
+            980,
+            157
+          ],
+          [
+            974,
+            401
+          ],
+          [
+            251,
+            406
+          ]
+        ],
+        "tiltDeg": 0,
+        "areaFrac": 0.1816,
+        "conformed": {
+          "factorY": 1.026,
+          "reason": "faixa de brasa rasa demais para a comida",
+          "mouthHScreen": [
+            117,
+            120
+          ],
+          "aspect": [
+            2.82,
+            2.75
+          ]
+        }
+      },
+      "batch": "lote-07"
     },
     "spr_grill_lata_valente_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_lata_valente_evo1.png",
@@ -1713,57 +1945,57 @@
     },
     "spr_grill_parrilla_chef_cisma_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_parrilla_chef_cisma_evo1.png",
-      "w": 981,
-      "h": 939,
+      "w": 969,
+      "h": 1142,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "grill",
-      "source": "art/source/lote-05/spr_grill_parrilla_chef_cisma_evo1.png",
+      "source": "art/source/lote-07/spr_grill_parrilla_chef_cisma_evo1.png",
       "grill": "parrilla_chef_cisma",
       "evo": 1,
       "hole": {
         "bbox": [
-          307,
-          178,
-          560,
-          306
+          254,
+          342,
+          587,
+          320
         ],
         "quad": [
           [
-            308,
-            289
+            257,
+            404
           ],
           [
-            865,
-            178
+            840,
+            342
           ],
           [
-            866,
-            355
+            840,
+            568
           ],
           [
-            307,
-            482
+            263,
+            661
           ]
         ],
-        "tiltDeg": -11.3,
-        "areaFrac": 0.1146,
+        "tiltDeg": -6.1,
+        "areaFrac": 0.1283,
         "conformed": {
-          "factorY": 1.224,
+          "factorY": 1.132,
           "reason": "faixa de brasa rasa demais para a comida",
           "mouthHScreen": [
-            147,
+            159,
             180
           ],
           "aspect": [
-            2.24,
+            2.07,
             1.83
           ]
         }
       },
-      "batch": "lote-05"
+      "batch": "lote-07"
     },
     "spr_grill_parrilla_chef_cisma_evo2": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_parrilla_chef_cisma_evo2.png",
@@ -1861,47 +2093,155 @@
       },
       "batch": "lote-06"
     },
-    "spr_grill_ze_da_esquina_evo1": {
-      "file": "Assets/Art/Sprites/Grills/spr_grill_ze_da_esquina_evo1.png",
-      "w": 1174,
-      "h": 839,
+    "spr_grill_parrilla_do_cais_evo1": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_parrilla_do_cais_evo1.png",
+      "w": 892,
+      "h": 1102,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "grill",
-      "source": "art/source/lote-05/spr_grill_ze_da_esquina_evo1.png",
+      "source": "art/source/lote-07/spr_grill_parrilla_do_cais_evo1.png",
+      "grill": "parrilla_do_cais",
+      "evo": 1,
+      "hole": {
+        "bbox": [
+          286,
+          113,
+          450,
+          301
+        ],
+        "quad": [
+          [
+            287,
+            115
+          ],
+          [
+            734,
+            115
+          ],
+          [
+            708,
+            395
+          ],
+          [
+            289,
+            413
+          ]
+        ],
+        "tiltDeg": 0,
+        "areaFrac": 0.1276,
+        "conformed": {
+          "factorY": 1.017,
+          "reason": "faixa de brasa rasa demais para a comida",
+          "mouthHScreen": [
+            236,
+            240
+          ],
+          "aspect": [
+            1.52,
+            1.5
+          ]
+        }
+      },
+      "batch": "lote-07"
+    },
+    "spr_grill_tambor_vertical_evo1": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_tambor_vertical_evo1.png",
+      "w": 998,
+      "h": 1017,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "grill",
+      "source": "art/source/lote-07/spr_grill_tambor_vertical_evo1.png",
+      "grill": "tambor_vertical",
+      "evo": 1,
+      "hole": {
+        "bbox": [
+          335,
+          408,
+          512,
+          257
+        ],
+        "quad": [
+          [
+            335,
+            408
+          ],
+          [
+            790,
+            408
+          ],
+          [
+            845,
+            663
+          ],
+          [
+            379,
+            662
+          ]
+        ],
+        "tiltDeg": 0,
+        "areaFrac": 0.1172,
+        "conformed": {
+          "factorY": 1.04,
+          "reason": "faixa de brasa rasa demais para a comida",
+          "mouthHScreen": [
+            173,
+            180
+          ],
+          "aspect": [
+            2.07,
+            1.99
+          ]
+        }
+      },
+      "batch": "lote-07"
+    },
+    "spr_grill_ze_da_esquina_evo1": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_ze_da_esquina_evo1.png",
+      "w": 1196,
+      "h": 811,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "grill",
+      "source": "art/source/lote-07/spr_grill_ze_da_esquina_evo1.png",
       "grill": "ze_da_esquina",
       "evo": 1,
       "hole": {
         "bbox": [
-          203,
-          195,
-          617,
-          223
+          324,
+          155,
+          570,
+          210
         ],
         "quad": [
           [
-            204,
-            195
+            325,
+            155
           ],
           [
-            818,
-            267
+            892,
+            155
           ],
           [
-            819,
-            417
+            893,
+            364
           ],
           [
-            203,
-            347
+            325,
+            364
           ]
         ],
-        "tiltDeg": 6.7,
-        "areaFrac": 0.0957
+        "tiltDeg": 0,
+        "areaFrac": 0.1232
       },
-      "batch": "lote-05"
+      "batch": "lote-07"
     },
     "spr_grill_ze_da_esquina_evo2": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_ze_da_esquina_evo2.png",

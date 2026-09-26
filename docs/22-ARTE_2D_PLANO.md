@@ -642,3 +642,44 @@ vagas, no teto de largura, faltam 13 px. Três saídas, e todas são escolha do 
 
 A folha (`art/review/lote-06*.jpg`) mostra a opção 3 como estado atual; a linha de comparação no topo
 da folha existe para ele ver as quatro grelhas em serviço na mesma escala antes de decidir.
+
+### 6.11 Lote 07 — as dez identidades do dono, e a boca que era larga demais *para o sprite*
+
+O dono reescreveu a escada visual em dez conceitos (fogueira no chão → tambor cortado → tijolo a seco
+→ quintal de alvenaria → espeto motorizado → defumador com tampa → gás → parrilla argentina → inox
+profissional → robótica) e colou a foto de uma arte minha para cravar a câmera: **frontal, 15–20° de
+cima, boca = vão magenta largo como o corpo, brasa na frente do corpo, abaixo da boca**. A regra de
+trabalho que ele deu no mesmo fôlego: **dez imagens geradas, validação dele antes do lote seguinte**, e
+"recriar primeiro todas as imagens pendentes para o funcionamento mecânico e visual correto; os outros
+erros vêm depois".
+
+O lote saiu com as dez pintadas, processadas e medidas (`art/review/lote-07*.jpg`). Oito das nove
+grelhas com slot no dado passaram na régua de leito; uma (a grelha a gás, `spr_grill_fornalha_dragao_manso_evo1`)
+veio com boca de 5,6:1 e faixa de 21 px — o conform pediria ×2,81, o teto é ±70 %, então é
+regeneração, e o limite de dez imagens por turno segurou a regravação para o lote 08.
+
+Achei, medindo para escrever o veredito, um defeito que **a régua não via**: boca larga *em pixels de
+vaga* pode ser boca estreita *em relação ao sprite*. O motor escala de dois jeitos —
+
+- loja (`grillArtView(hero: true)`): `s = min(bedW / spriteW, (W − 24) / spriteW)` — quem vai ao leito é
+  a **largura inteira do recorte**, então boca que ocupa 40 % do sprite vira leito de 40 % no cartão;
+- jogo (`hero: false`): `s = min(bedW / mouthW, (W − 12) / spriteW)` — quando a boca não é larga o
+  bastante, o **teto de tela** ganha da régua do leito, o leito encolhe e a comida, que é desenhada em
+  tamanho fixo (86 px), encosta na vizinha.
+
+A lata aprovada mede 0,80–0,89 de boca/sprite. Do lote 07, `espeto_do_neno` 0,42 ·
+`fornalha_da_orla` 0,42 · `tambor_vertical` 0,40 — porque os meus prompts pediram bandejas,
+porta-facas, funil de carvão, chaminé e mastro de sensor **para os lados**, e o recorte cresce para os
+lados enquanto a boca fica parada. O `make-ref` desenha o guia com a boca em 0,8 da moldura e o corpo
+em 0,89; é essa silhueta que a arte tem que obedecer, e o `[NO SIDE FURNITURE]` passa a ser bloco
+obrigatório: móvel lateral só *dentro* da largura do corpo, e o que não couber vai para baixo da boca.
+
+A régua agora mede e informa (`MOUTH_WIDTH_HINT = 0,72`, coluna `b/larg`), mas **não reprova**:
+12 grelhas já aprovadas medem menos que isso (a `parrilla_chef_cisma` e2 está em 0,31), e um portão que
+declara defeito uma arte que o dono já assinou é o portão mentindo — a mesma coisa que me fez parar de
+contar `pending` como falha no §6.9. Ela é a régua da próxima geração, e o lote 08 pinta com ela.
+
+Enquanto isso, o `spr_grill_fogueira_no_chao_evo1` existe no registro como `pending` **sem slot no
+dado**: é a imagem do "nível zero" que o dono pediu, antes de existir a churrasqueira correspondente em
+`churrasqueiras.json`. O portão de geometria foi ensinado a reportar isso como conceito em vez de
+quebrar com "id não está em churrasqueiras.json".
