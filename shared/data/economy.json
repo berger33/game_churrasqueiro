@@ -1,7 +1,7 @@
 {
   "$schema": "schema/economy.schema.json",
   "_comment": "Economy curves & targets. The simulator (tools/studio/run-sim.ts) asserts the `targets` block; balance changes must keep them green.",
-  "version": 11,
+  "version": 12,
   "currencies": {
     "coins": {
       "id": "coins",
@@ -165,6 +165,20 @@
       1,
       2
     ],
+    "churrasqueiraUnlockPacingTurns": {
+      "ze_da_esquina": [
+        4,
+        12
+      ],
+      "parrilla_chef_cisma": [
+        32,
+        60
+      ],
+      "fornalha_dragao_manso": [
+        70,
+        115
+      ]
+    },
     "restaurantUnlockPacingTurns": {
       "espetinho_rua": [
         28,
@@ -219,7 +233,8 @@
       0.4,
       0.62
     ],
-    "_pacingNote": "Measured pacing at skill 0.55, 1500-turn campaign: espetinho_rua 34 (day ~3), trailer 90 (day 8), bairro 146 (day 12), premium 247 (day 21), festival 430 (day 36), rede_nacional 1180 (day 98), assuming 12 turns/day. This is intentionally brisker early than the original plan: the first three establishments land inside the player's first fortnight because early retention is priority 2. The 430->1180 gap is filled by the collection (37), achievements (58), prestige tracks, the region route, weekly events and the Brasa Pass rather than by a new restaurant.",
+    "_pacingNote": "Measured pacing 2026-09-25 after wiring the owned grill into the sim (economy v12): espetinho_rua 32 (day ~3), trailer 89 (day 7), bairro 147 (day 12), premium 243 (day 20), festival 418 (day 35), rede_nacional 1185 (day 99), assuming 12 turns/day. Grill path: ze_da_esquina 7, parrilla 45, fornalha 90. Restaurant bands were kept: adding the 51k grill sink did not move establishment pacing outside +-20%. The 418->1185 gap is filled by the collection (37), achievements (58), prestige tracks, the region route, weekly events and the Brasa Pass rather than by a new restaurant.",
+    "_grillPacingNote": "The harness used to play every turn on the restaurant default 3-zone grill. Players start on 1-zone lata_valente and buy along 1F->2F->3F->Fornalha (must max current evo before the next unlock, same as the prototype Home CTA). First measurement with the old heatBase+0.85 ramp: fornalha peaked at 2.47 heat, campaign burn 20.3%, lost 11.4%, L15/L30 income 20% below band. Heat is now the default zone profile * heatBase, capped at 1.70. Re-measured: burn 5.7%, lost 6.9%, all restaurant/income targets still inside the existing bands.",
     "_spendRatioNote": "The harness is a deliberately greedy spender, so a ratio near 1.0 is the desired outcome (no coin accumulation). The LOWER bound is the real guardrail: it catches sinks that are too cheap or income that is too high, i.e. inflation.",
     "_incomePlateauNote": "L30 and L50 income are deliberately close (measured 95.4k vs 96.7k at skill 0.55). Level difficulty is capped at d=1.0, so after level 30 income is stable and progression becomes horizontal: restaurants, collection, prestige tracks and cosmetics rather than raw coin income. Pushing coin income past L30 would only put bigger numbers on screen without adding decisions.",
     "_bandDerivationNote": "Bands are +-20% around the measured curve above; they are regression guards, not aspirational targets. Raising restaurant coin costs alone does NOT slow pacing: the greedy harness spends the coins it cannot sink into a pricier restaurant on upgrades instead, raising income (sink substitution). Measured: raising bairro 12k->15k moved its unlock from turn 185 to 146, i.e. faster. Slow pacing by reducing income or by scaling ALL sinks together, never one sink alone."

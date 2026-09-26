@@ -78,6 +78,12 @@ coverage/
 Thumbs.db
 *.swp
 
+# ─── C# core check (tools/csharp: built by CI, not by Unity) ─────────────────
+# The rule above ignores Unity's generated *.csproj; these two are hand-written.
+!tools/csharp/**/*.csproj
+tools/csharp/**/bin/
+tools/csharp/**/obj/
+
 # ─── Generated (regenerable from shared/data + tools) ───────────────────────
 tools/**/out/
 shared/generated/
@@ -85,3 +91,7 @@ Assets/Data/Generated/
 
 # Rendered verification frames (artifacts, not source)
 prototype/shots/
+
+# AI art: raw model outputs (1.4–2.6 MB each). The processed masters in Assets/Art are the
+# source of truth; the raw files only matter for re-processing (docs/22-ARTE_2D_PLANO.md §8).
+art/source/

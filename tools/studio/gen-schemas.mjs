@@ -25,7 +25,23 @@ const DATA = join(ROOT, 'shared', 'data');
 const SCHEMA = join(ROOT, 'shared', 'schema');
 const CHECK = process.argv.includes('--check');
 
-/** Hand-authored constraints, keyed by table then JSON-pointer-ish path. */
+/**
+ * Hand-authored constraints, keyed by table then field path. A path spells a
+ * field the way it sits in the data: `items[].category` is the `category` of
+ * every element of the top-level `items` array, `a.b` walks into an object, and
+ * `a[].b[].c` into an array nested in an array.
+ *
+ *   enum list   replaces whatever shape was observed (the list is the contract;
+ *               `check-schema` then rejects any row outside it)
+ *   null        an open vocabulary: plain `string`, never auto-detected as an
+ *               enum — for ids that grow with content (voice sets, upgrade
+ *               categories, store product types)
+ *
+ * Every path must name a field that exists in its table, and the generator
+ * exits 1 if one does not. These overrides were once keyed `items[].category`
+ * but looked up as `items.category`, so not one of them ever applied and
+ * nothing noticed (docs/18-STATUS.md §7).
+ */
 const OVERRIDES = {
   'ingredients.json': {
     title: 'Ingredients',
@@ -64,7 +80,8 @@ const OVERRIDES = {
   'events.json': { title: 'Live events' },
   'collection.json': { title: 'Collection' },
   'employees.json': { title: 'Employees', enums: { 'roles[].rarity': ['common', 'uncommon', 'rare', 'epic'] } },
-  'remoteconfig_defaults.json': { title: 'Remote Config defaults' }
+  'remoteconfig_defaults.json': { title: 'Remote Config defaults' },
+  'tutorial.json': { title: 'FTUE script (six-step first run, docs/05-UX_FLOW.md section 4)', minItems: { steps: 6 } }
 };
 
 /**
@@ -85,11 +102,11 @@ const ID_RE = '^[a-z][a-z0-9_]*$';
  */
 const ID_PATTERNS = {
   'iap.json': {
-    products: '^[a-z][a-z0-9_]*(\\.[a-z0-9]+)+$',
+    'products[]': '^[a-z][a-z0-9_]*(\\.[a-z0-9]+)+$',
     '*': ID_RE
   },
   // Quality tiers are referenced from C# and settings, so they are uppercase.
-  'performance.json': { qualityLevels: '^[A-Z][A-Z0-9_]*$', '*': ID_RE }
+  'performance.json': { 'qualityLevels[]': '^[A-Z][A-Z0-9_]*$', '*': ID_RE }
 };
 
 function typeOf(v) {
@@ -124,8 +141,20 @@ function mergeValue(acc, v) {
   acc.values.push(v);
 }
 
-function emitForObserved(acc, overrideEnum, path) {
-  if (overrideEnum) return { enum: overrideEnum };
+/**
+ * The override for a field path, and a note that it was used. `undefined` =
+ * none declared, `null` = open vocabulary, array = enum.
+ */
+function overrideFor(path) {
+  if (!ENUM_LOOKUP.has(path)) return undefined;
+  ENUM_USED.add(path);
+  return ENUM_LOOKUP.get(path);
+}
+
+/** `path` is the field's full path (see OVERRIDES); array elements append `[]`. */
+function emitForObserved(acc, override, path) {
+  if (Array.isArray(override)) return { enum: override };
+  const open = override === null;
 
   const types = [...acc.types];
   // object
@@ -134,7 +163,7 @@ function emitForObserved(acc, overrideEnum, path) {
   // array
   if (types.includes('array')) {
     const schema = { type: 'array' };
-    if (acc.items) schema.items = emitForObserved(acc.items, null, path);
+    if (acc.items) schema.items = emitForObserved(acc.items, overrideFor(`${path}[]`), `${path}[]`);
     return schema;
   }
 
@@ -145,6 +174,7 @@ function emitForObserved(acc, overrideEnum, path) {
       // Hex colours are a recognisable, checkable shape.
       const allHex = acc.values.length > 0 && acc.values.every((s) => /^#[0-9A-Fa-f]{6}$/.test(s));
       if (allHex) return { type: 'string', pattern: '^#[0-9A-Fa-f]{6}$' };
+      if (open) return { type: 'string' };
       // A closed vocabulary observed across many rows is very likely an enum.
       const distinct = [...new Set(acc.values)].sort();
       if (acc.values.length >= 4 && distinct.length <= Math.max(4, acc.values.length / 2)) {
@@ -169,7 +199,7 @@ function buildObjectSchema(objs, path) {
     const acc = { types: new Set(), values: [], objs: [], items: null, nullable: false };
     for (const o of objs) if (o[k] !== undefined) mergeValue(acc, o[k]);
     const childPath = path ? `${path}.${k}` : k;
-    props[k] = emitForObserved(acc, ENUM_LOOKUP.get(childPath), k);
+    props[k] = emitForObserved(acc, overrideFor(childPath), childPath);
     if (k === 'id' && props[k].type === 'string') {
       const pat = ID_PATTERN_BY_PATH.get(path) ?? ID_PATTERN_BY_PATH.get('*') ?? ID_RE;
       props[k] = { type: 'string', pattern: pat };
@@ -181,20 +211,23 @@ function buildObjectSchema(objs, path) {
   return schema;
 }
 
-// Flatten the override enum map into dotted paths relative to each array.
+/** The current table's overrides by field path (null entries kept: open vocabulary). */
 const ENUM_LOOKUP = new Map();
-/** Id patterns for the table currently being derived, keyed by array path. */
+/** Override paths that matched a field while deriving the current table. */
+const ENUM_USED = new Set();
+/** Id patterns for the table currently being derived, keyed by array path (`products[]`). */
 let ID_PATTERN_BY_PATH = new Map();
+/** Override paths that matched nothing — each one a constraint that silently never applied. */
+const unusedOverrides = [];
 
 function derive(tableFile) {
   const data = JSON.parse(readFileSync(join(DATA, tableFile), 'utf8'));
   const cfg = OVERRIDES[tableFile] ?? { title: tableFile.replace('.json', '') };
 
   ENUM_LOOKUP.clear();
+  ENUM_USED.clear();
   ID_PATTERN_BY_PATH = new Map(Object.entries(ID_PATTERNS[tableFile] ?? { '*': ID_RE }));
-  for (const [k, v] of Object.entries(cfg.enums ?? {})) {
-    if (v) ENUM_LOOKUP.set(k, v);
-  }
+  for (const [k, v] of Object.entries(cfg.enums ?? {})) ENUM_LOOKUP.set(k, v);
 
   const properties = {};
   const required = [];
@@ -206,7 +239,7 @@ function derive(tableFile) {
     const val = data[key];
     if (Array.isArray(val)) {
       const itemSchema = val.length && typeof val[0] === 'object' && val[0] !== null
-        ? buildObjectSchema(val, key)
+        ? buildObjectSchema(val, `${key}[]`)
         : { type: val.length ? typeOf(val[0]).type : 'string' };
       const arr = { type: 'array', items: itemSchema };
       const min = cfg.minItems?.[key];
@@ -221,6 +254,10 @@ function derive(tableFile) {
       properties[key] = typeOf(val);
     }
     required.push(key);
+  }
+
+  for (const path of ENUM_LOOKUP.keys()) {
+    if (!ENUM_USED.has(path)) unusedOverrides.push(`${tableFile}: override "${path}" matches no field`);
   }
 
   return {
@@ -252,6 +289,12 @@ for (const f of tables) {
     writeFileSync(out, text);
     written++;
   }
+}
+
+if (unusedOverrides.length) {
+  console.error('[schema] FAIL — OVERRIDES that constrain nothing (fix the path in gen-schemas.mjs):');
+  for (const u of unusedOverrides) console.error('  · ' + u);
+  process.exit(1);
 }
 
 if (CHECK) {

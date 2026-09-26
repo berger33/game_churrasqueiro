@@ -1,6 +1,9 @@
 import { clamp, levelForXp, upgradeCost, xpForLevel } from './data.ts';
-import type { GameDatabase } from './types.ts';
+import type { ChurrasqueiraDef, ChurrasqueiraEvolution, GameDatabase } from './types.ts';
 import type { TurnResult } from './turn.ts';
+
+/** Index-0 grill in `churrasqueiras.json`. Free, one zone, the FTUE starter. */
+export const STARTER_CHURRASQUEIRA_ID = 'lata_valente';
 
 export interface PlayerState {
   coins: number;
@@ -9,6 +12,10 @@ export interface PlayerState {
   level: number;
   restaurantIndex: number;
   upgradeLevels: Record<string, number>;
+  /** Equipped grill id. Empty only on pre-v2 saves, before migrate. */
+  churrasqueiraId: string;
+  /** Evolution 1..3 per owned grill; 0 / missing = not owned. */
+  churrasqueiraLevels: Record<string, number>;
   counters: Record<string, number>;
   lastSeenUnixSec: number;
 }
@@ -21,6 +28,8 @@ export function newPlayerState(): PlayerState {
     level: 1,
     restaurantIndex: 0,
     upgradeLevels: {},
+    churrasqueiraId: STARTER_CHURRASQUEIRA_ID,
+    churrasqueiraLevels: { [STARTER_CHURRASQUEIRA_ID]: 1 },
     counters: {},
     lastSeenUnixSec: 0
   };
@@ -152,6 +161,106 @@ export function unlockRestaurant(db: GameDatabase, p: PlayerState, index: number
   p.restaurantIndex = index;
   addCounter(p, 'restaurantsUnlocked', index + 1);
   return true;
+}
+
+// ── Churrasqueira progression (1F → 2F → 3F → Fornalha) ──────────────────────
+
+export function churrasqueirasInOrder(db: GameDatabase): ChurrasqueiraDef[] {
+  return [...(db.churrasqueiras?.churrasqueiras ?? [])].sort((a, b) => a.index - b.index);
+}
+
+export function equippedChurrasqueira(db: GameDatabase, p: PlayerState): ChurrasqueiraDef | undefined {
+  const owned = db.churrasqueiraById.get(p.churrasqueiraId);
+  if (owned) return owned;
+  return churrasqueirasInOrder(db)[0];
+}
+
+export function equippedEvolution(db: GameDatabase, p: PlayerState): ChurrasqueiraEvolution | undefined {
+  const ch = equippedChurrasqueira(db, p);
+  if (!ch) return undefined;
+  const lv = p.churrasqueiraLevels[ch.id] ?? 1;
+  return ch.evolutions.find((e) => e.level === lv) ?? ch.evolutions[0];
+}
+
+export type ChurrasqueiraStep =
+  | { kind: 'evolve'; id: string; toLevel: number; costCoins: number; costEmbers: number }
+  | { kind: 'unlock'; id: string; costCoins: number };
+
+/**
+ * Next spend on the grill path. You must max the equipped grill (evo 3) before
+ * the next one is offered — same rule the prototype Home CTA uses.
+ */
+export function nextChurrasqueiraStep(db: GameDatabase, p: PlayerState): ChurrasqueiraStep | null {
+  const ch = equippedChurrasqueira(db, p);
+  if (!ch) return null;
+  const lv = p.churrasqueiraLevels[ch.id] ?? 1;
+  const nextEvo = ch.evolutions.find((e) => e.level === lv + 1);
+  if (nextEvo) {
+    return {
+      kind: 'evolve',
+      id: ch.id,
+      toLevel: nextEvo.level,
+      costCoins: nextEvo.costCoins,
+      costEmbers: nextEvo.costEmbers ?? 0
+    };
+  }
+  const next = churrasqueirasInOrder(db).find((c) => c.index === ch.index + 1);
+  if (!next) return null;
+  if (p.level < next.unlockLevel) return null;
+  return { kind: 'unlock', id: next.id, costCoins: next.unlockCostCoins };
+}
+
+export function nextChurrasqueiraCost(db: GameDatabase, p: PlayerState): number {
+  const step = nextChurrasqueiraStep(db, p);
+  return step ? step.costCoins : Infinity;
+}
+
+export function evolveChurrasqueira(db: GameDatabase, p: PlayerState): LedgerEntry | null {
+  const step = nextChurrasqueiraStep(db, p);
+  if (!step || step.kind !== 'evolve') return null;
+  if (p.coins < step.costCoins) return null;
+  if (p.embers < step.costEmbers) return null;
+  p.coins -= step.costCoins;
+  p.embers -= step.costEmbers;
+  p.churrasqueiraLevels[step.id] = step.toLevel;
+  addCounter(p, 'churrasqueiraEvolutions', 1);
+  addCounter(p, 'coinsSpentTotal', step.costCoins);
+  addCounter(p, 'coinsSpentSession', step.costCoins);
+  return {
+    currency: 'coins',
+    amount: -step.costCoins,
+    source: `churrasqueira_evolve:${step.id}`,
+    balance: p.coins
+  };
+}
+
+export function unlockChurrasqueira(db: GameDatabase, p: PlayerState, id: string): LedgerEntry | null {
+  const step = nextChurrasqueiraStep(db, p);
+  if (!step || step.kind !== 'unlock' || step.id !== id) return null;
+  const next = db.churrasqueiraById.get(id);
+  if (!next) return null;
+  if (p.level < next.unlockLevel) return null;
+  if (p.coins < step.costCoins) return null;
+  p.coins -= step.costCoins;
+  p.churrasqueiraId = id;
+  p.churrasqueiraLevels[id] = 1;
+  addCounter(p, 'churrasqueirasUnlocked', 1);
+  addCounter(p, 'coinsSpentTotal', step.costCoins);
+  addCounter(p, 'coinsSpentSession', step.costCoins);
+  return {
+    currency: 'coins',
+    amount: -step.costCoins,
+    source: `churrasqueira_unlock:${id}`,
+    balance: p.coins
+  };
+}
+
+/** Buy the next grill step (evolve current, else unlock next) if affordable. */
+export function buyNextChurrasqueira(db: GameDatabase, p: PlayerState): LedgerEntry | null {
+  const step = nextChurrasqueiraStep(db, p);
+  if (!step) return null;
+  if (step.kind === 'evolve') return evolveChurrasqueira(db, p);
+  return unlockChurrasqueira(db, p, step.id);
 }
 
 // ── Idle / offline ───────────────────────────────────────────────────────────

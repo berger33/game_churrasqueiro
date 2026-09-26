@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Replays the TypeScript reference against the C# core: every generated table
+    binds losslessly, GameData.Load is clean, tools/golden/vectors.json (cooking,
+    scoring, effective heat) and tools/golden/tutorial-vectors.json (the FTUE)
+    agree to 1e-9. See Program.cs. Run by `npm run check-csharp`.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <AssemblyName>Churrasco.Parity</AssemblyName>
+    <RootNamespace>Churrasco.Parity</RootNamespace>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../core/Churrasco.Core.csproj" />
+  </ItemGroup>
+</Project>

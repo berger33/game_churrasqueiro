@@ -1,0 +1,38 @@
+# Long-horizon economy. ~8 s here, documented as ~7 min on slower runners,
+# so it is not on the per-PR critical path (docs/12-BUILD.md §5 item 6).
+# Failing this means a pacing / inflation regression that the short sim
+# is allowed to skip.
+
+name: Nightly
+
+on:
+  schedule:
+    # 08:00 America/Sao_Paulo (11:00 UTC) — morning for the BR team.
+    - cron: '0 11 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: nightly-${{ github.workflow }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  sim-long:
+    name: Long-horizon economy
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: sim:long
+        run: npm run sim:long

@@ -21,9 +21,10 @@ export function loadDatabase(): GameDatabase {
     customers: readJson('customers.json') as RawDataBundle['customers'],
     restaurants: readJson('restaurants.json') as RawDataBundle['restaurants'],
     upgrades: readJson('upgrades.json') as RawDataBundle['upgrades'],
-    economy: readJson('economy.json') as RawDataBundle['economy']
+    economy: readJson('economy.json') as RawDataBundle['economy'],
+    churrasqueiras: readJson('churrasqueiras.json') as RawDataBundle['churrasqueiras']
   };
-  cached = createDatabase(raw);
+  cached = createDatabase(raw as RawDataBundle);
   return cached;
 }
 

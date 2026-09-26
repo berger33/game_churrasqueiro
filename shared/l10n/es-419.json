@@ -37,6 +37,7 @@
   "ui.feedback.customerLeft": "El cliente se fue…",
   "ui.result.title": "FIN DEL TURNO",
   "ui.result.coins": "Monedas",
+  "ui.result.levelBonus": "Bono del nivel",
   "ui.result.perfect": "Perfectos",
   "ui.result.burned": "Quemados",
   "ui.result.bestCombo": "Mejor combo",
@@ -46,7 +47,10 @@
   "ui.stage.medium": "al punto",
   "ui.stage.well": "bien cocido",
   "ui.stage.burned": "quemado",
-  "ui.tut.1": "Arrastra la carne de la mesa a la brasa.",
-  "ui.tut.3": "Toca la carne para darla vuelta. Ambos lados deben dorarse.",
+  "ui.title.promise": "¡60 s para tu primer PERFECTO! · Sin anuncios",
+  "ui.tut.flip": "TOCA PARA DAR VUELTA",
+  "ui.tut.serve": "ARRASTRA HASTA EL CLIENTE",
+  "ui.tut.skip": "SALTAR",
+  "ui.tut.upgrade": "MEJORA TU PARRILLA",
   "ui.error.offline": "Sin conexión. Puedes seguir jugando."
 }

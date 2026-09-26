@@ -6,9 +6,10 @@
   "license": "UNLICENSED",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
+    "gates": "node tools/studio/run-gates.mjs",
     "typecheck": "tsc --noEmit",
     "validate": "node --experimental-strip-types tools/studio/validate-data.ts",
     "gen-schemas": "node tools/studio/gen-schemas.mjs",
@@ -21,6 +22,7 @@
     "gen-csharp-types": "node tools/studio/gen-csharp-types.mjs",
     "check-csharp-types": "node tools/studio/gen-csharp-types.mjs --check",
     "check-vectors": "node --experimental-strip-types tools/studio/gen-vectors.ts --check",
+    "check-csharp": "node tools/csharp/check.mjs",
     "balance-report": "node --experimental-strip-types tools/studio/balance-report.ts",
     "sync-data": "node tools/studio/sync-data.mjs",
     "verify-data-sync": "node tools/studio/sync-data.mjs --check",

@@ -28,6 +28,10 @@ const MIME = {
   '.css': 'text/css; charset=utf-8',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
+  '.webp': 'image/webp',
+  '.wav': 'audio/wav',
+  '.mp3': 'audio/mpeg',
+  '.ogg': 'audio/ogg',
   '.ico': 'image/x-icon'
 };
 
@@ -85,6 +89,16 @@ const server = createServer(async (req, res) => {
       if (!file.startsWith(L10N)) return send(res, 403, 'forbidden', 'text/plain');
       if (!existsSync(file)) return send(res, 404, 'not found', 'text/plain');
       return send(res, 200, await readFile(file), MIME['.json']);
+    }
+
+    // Audio assets — real foley + 3400K music (Assets/Audio -> /audio and /public/audio)
+    if (path.startsWith('/audio/') || path.startsWith('/public/audio/')) {
+      const rel = path.startsWith('/public/audio/') ? path.slice('/public/audio/'.length) : path.slice('/audio/'.length);
+      const file = join(ROOT, 'Assets', 'Audio', normalize(rel));
+      const rootAudio = join(ROOT, 'Assets', 'Audio');
+      if (!file.startsWith(rootAudio)) return send(res, 403, 'forbidden', 'text/plain');
+      if (!existsSync(file)) return send(res, 404, 'not found', 'text/plain');
+      return send(res, 200, await readFile(file), MIME[extname(file)] ?? 'application/octet-stream');
     }
 
     if (path === '/' || path === '/index.html') {

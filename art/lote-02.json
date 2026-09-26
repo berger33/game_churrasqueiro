@@ -1,0 +1,129 @@
+{
+  "_comment": "Lote 02 — completa a primeira hora de jogo (docs/22-ARTE_2D_PLANO.md §6): as comidas que desbloqueiam cedo, os clientes que faltavam (econômico e vizinho já vêm no Quintal) e a lata nas evoluções 2 e 3. Prompts exatos em art/prompts/lote-02.md, gravados antes de gerar. Brutos em art/source/lote-02 (fora do git).",
+  "batch": "lote-02",
+  "date": "2026-09-25",
+  "sourceDir": "art/source/lote-02",
+  "assets": [
+    {
+      "source": "food_espetinho_frango.png",
+      "mode": "grid", "cols": 2, "rows": 3,
+      "category": "food", "subject": "espetinho_frango", "label": "Espetinho de frango",
+      "cells": ["raw", "rare", "medium", "well", "burned", "served"],
+      "states": ["raw", "rare", "medium", "well", "burned"],
+      "maxTiltDeg": 6,
+      "out": "Assets/Art/Sprites/Food",
+      "notes": "gerado inclinado (~20°); os 5 estados são girados juntos",
+      "review": { "verdict": "ok", "note": "gerado inclinado; os 5 estados foram girados juntos" }
+    },
+    {
+      "source": "food_coracao_frango.png",
+      "mode": "grid", "cols": 2, "rows": 3,
+      "category": "food", "subject": "coracao_frango", "label": "Coração de frango",
+      "cells": ["raw", "rare", "medium", "well", "burned", "served"],
+      "states": ["raw", "rare", "medium", "well", "burned"],
+      "maxTiltDeg": 6,
+      "out": "Assets/Art/Sprites/Food",
+      "notes": "o selado saiu mais claro que o cru e que o ao ponto",
+      "review": { "verdict": "warn", "note": "selado claro demais entre o cru e o ao ponto" }
+    },
+    {
+      "source": "food_frango_coxa.png",
+      "mode": "grid", "cols": 2, "rows": 3,
+      "category": "food", "subject": "frango_coxa", "label": "Coxa de frango",
+      "cells": ["raw", "rare", "medium", "well", "burned", "served"],
+      "states": ["raw", "rare", "medium", "well", "burned"],
+      "out": "Assets/Art/Sprites/Food",
+      "review": { "verdict": "ok" }
+    },
+    {
+      "source": "food_asinha_frango.png",
+      "mode": "grid", "cols": 2, "rows": 3,
+      "category": "food", "subject": "asinha_frango", "label": "Asinha de frango",
+      "cells": ["raw", "rare", "medium", "well", "burned", "served"],
+      "states": ["raw", "rare", "medium", "well", "burned"],
+      "out": "Assets/Art/Sprites/Food",
+      "review": { "verdict": "ok" }
+    },
+    {
+      "source": "food_fraldinha.png",
+      "mode": "grid", "cols": 2, "rows": 3,
+      "category": "food", "subject": "fraldinha", "label": "Fraldinha",
+      "cells": ["raw", "rare", "medium", "well", "burned", "served"],
+      "states": ["raw", "rare", "medium", "well", "burned"],
+      "out": "Assets/Art/Sprites/Food",
+      "review": { "verdict": "ok" }
+    },
+    {
+      "source": "food_legumes_grelhados.png",
+      "mode": "grid", "cols": 2, "rows": 3,
+      "category": "food", "subject": "legumes_grelhados", "label": "Legumes grelhados",
+      "cells": ["raw", "rare", "medium", "well", "burned", "served"],
+      "states": ["raw", "rare", "medium", "well", "burned"],
+      "out": "Assets/Art/Sprites/Food",
+      "review": { "verdict": "ok", "note": "a bandeja mantém o contorno em todos os estados" }
+    },
+    {
+      "source": "food_vinagrete.png",
+      "mode": "grid", "cols": 2, "rows": 2,
+      "category": "food", "subject": "vinagrete", "label": "Vinagrete (preparo)", "kind": "prep",
+      "cells": ["raw", "prep", "ready", "served"],
+      "states": ["raw", "prep", "ready"],
+      "align": false,
+      "cellLabels": { "raw": "ingredientes", "prep": "picado", "ready": "pronto", "served": "servido" },
+      "out": "Assets/Art/Sprites/Food",
+      "notes": "cookMethod=prep: o progresso de preparo 0→1 troca os quadros; a forma muda de propósito (tábua → tigela), por isso sem alinhamento",
+      "review": { "verdict": "ok", "note": "item de preparo, não vai à grelha: 4 etapas" }
+    },
+    {
+      "source": "char_clientes_b.png",
+      "mode": "components", "minAreaFrac": 0.012,
+      "category": "character", "label": "Clientes (lote B)",
+      "out": "Assets/Art/Sprites/Characters",
+      "names": [
+        { "name": "spr_char_customer_economico",  "at": [190, 210],  "label": "pão-duro (econômico)" },
+        { "name": "spr_char_customer_generoso",   "at": [545, 210],  "label": "generoso" },
+        { "name": "spr_char_customer_rival_a",    "at": [875, 210],  "label": "rival (a)" },
+        { "name": "spr_char_customer_rival_b",    "at": [1200, 210], "label": "rival (b) · extra" },
+        { "name": "spr_char_customer_vip",        "at": [175, 575],  "label": "VIP" },
+        { "name": "spr_char_customer_vizinho",    "at": [530, 575],  "label": "vizinho" },
+        { "name": "spr_char_customer_turista_a",  "at": [1195, 580], "label": "turista (a): camisa floral + câmera" },
+        { "name": "spr_char_customer_turista_b",  "at": [860, 580],  "label": "turista (b) · extra, sem câmera" }
+      ],
+      "notes": "pedidos 6 retratos em 2×3; vieram 8 em 2×4 (um rival homem e um turista sem câmera a mais, viram variantes b)",
+      "review": { "verdict": "warn", "note": "8 retratos em vez de 6: vieram de brinde um rival homem e um turista sem câmera (variantes b). Todos seguem o look de customers.json; o chinelo do vizinho não aparece num busto." }
+    },
+    {
+      "source": "grill_lata_valente_evo2.png",
+      "mode": "single", "hole": true,
+      "category": "grill", "name": "spr_grill_lata_valente_evo2", "label": "evo 2 — Tijolinho de Apoio",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": { "verdict": "ok", "note": "mesmo tambor e mesma câmera da evo 1; agora sobre tijolos e com remendos rebitados" }
+    },
+    {
+      "source": "grill_lata_valente_evo3.png",
+      "mode": "single", "hole": true,
+      "category": "grill", "name": "spr_grill_lata_valente_evo3", "label": "evo 3 — Aprovada pela Vó",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": { "verdict": "ok", "note": "pintada, base de alvenaria, pano de prato xadrez e vasinho de ervas" }
+    }
+  ],
+  "compare": ["spr_grill_lata_valente_evo1"],
+  "preview": {
+    "background": "bg_restaurant_quintal",
+    "grill": "spr_grill_lata_valente_evo3",
+    "embers": "t_fx_embers_medium",
+    "onGrill": [
+      ["spr_food_fraldinha_medium", 0.22, 0.5, 80],
+      ["spr_food_espetinho_frango_medium", 0.52, 0.42, 86],
+      ["spr_food_frango_coxa_rare", 0.8, 0.55, 62]
+    ],
+    "benchItems": [
+      ["spr_food_espetinho_frango_raw", 76], ["spr_food_coracao_frango_raw", 76], ["spr_food_frango_coxa_raw", 58],
+      ["spr_food_asinha_frango_raw", 64], ["spr_food_vinagrete_raw", 62]
+    ],
+    "orders": [
+      ["spr_char_customer_generoso", ["spr_food_frango_coxa_served", "spr_food_vinagrete_served"], 0.8],
+      ["spr_char_customer_vip", ["spr_food_fraldinha_served", "spr_food_legumes_grelhados_served"], 0.45]
+    ]
+  }
+}

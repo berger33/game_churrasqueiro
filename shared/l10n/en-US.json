@@ -37,6 +37,7 @@
   "ui.feedback.customerLeft": "The customer left…",
   "ui.result.title": "TURN COMPLETE",
   "ui.result.coins": "Coins",
+  "ui.result.levelBonus": "Level bonus",
   "ui.result.perfect": "Perfect",
   "ui.result.burned": "Burnt",
   "ui.result.bestCombo": "Best combo",
@@ -46,7 +47,10 @@
   "ui.stage.medium": "medium",
   "ui.stage.well": "well done",
   "ui.stage.burned": "burnt",
-  "ui.tut.1": "Drag the meat from the bench onto the coals.",
-  "ui.tut.3": "Tap the meat to flip it. Both sides need to brown.",
+  "ui.title.promise": "60 s to your first PERFECT! · No ads",
+  "ui.tut.flip": "TAP TO FLIP",
+  "ui.tut.serve": "DRAG TO THE CUSTOMER",
+  "ui.tut.skip": "SKIP",
+  "ui.tut.upgrade": "UPGRADE YOUR GRILL",
   "ui.error.offline": "Offline. You can keep playing normally."
 }

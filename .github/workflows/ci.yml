@@ -1,0 +1,65 @@
+# Per-PR / per-push gates. These used to run by hand, which is how the
+# ideal-zone mechanic shipped as dead code (docs/18-STATUS.md §4.1):
+# tsconfig.json was strict, but no job ever ran `tsc`.
+#
+# Keep this step list in lockstep with `tools/studio/run-gates.mjs`
+# (`npm run gates` locally). Long-horizon pacing is nightly.yml.
+# The Unity build is not in this file (no Unity toolchain), but the engine-free
+# C# core is: `check-csharp` compiles Assets/Scripts/Core as netstandard2.1 /
+# C# 9 with warnings as errors and replays the golden vectors against it.
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  gates:
+    name: Studio gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # 22, not 20: `node --experimental-strip-types` (validate, sim, …)
+          # was added in 22.6. Node 20 exits 9 on that flag.
+          node-version: '22'
+          cache: npm
+
+      # For check-csharp. The core targets netstandard2.1 (Unity's API level);
+      # the parity runner is a net8.0 console app.
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install
+        run: npm ci
+
+      # Same 14 gates as `npm run gates`. Separate steps so a failure
+      # names the gate in the GitHub UI instead of collapsing into exit 9.
+      - run: npm run typecheck
+      - run: npm run validate
+      - run: npm run check-schema
+      - run: npm run verify-schemas
+      - run: npm run check-l10n
+      - run: npm run check-csharp-types
+      - run: npm run verify-data-sync
+      - run: npm test
+      - run: npm run sim
+      - run: npm run check-vectors
+      - run: npm run check-art
+      - run: npm run check-render
+      - run: npm run check-shots
+      - run: npm run check-csharp

@@ -58,6 +58,37 @@ export function deriveStats(db: GameDatabase, restaurant: RestaurantDef, levels:
   };
 }
 
+/**
+ * Apply churrasqueira evolution overrides on top of restaurant-derived stats
+ * (data-driven 1F→2F→3F). The equipped grill *replaces* the restaurant's
+ * hardware (zones, base slots, charcoal bonus) but additive upgrades
+ * (`grill_size`, `charcoal_duration`) still stack — otherwise buying those
+ * tracks would be a dead sink the moment a churrasqueira is equipped.
+ */
+export function applyChurrasqueiraToStats(
+  stats: DerivedStats,
+  db: GameDatabase,
+  churrasqueiraId: string,
+  evoLevel: number,
+  restaurant?: RestaurantDef
+): DerivedStats {
+  const ch = db.churrasqueiraById?.get(churrasqueiraId);
+  if (!ch) return stats;
+  const evo = ch.evolutions.find(e => e.level === evoLevel) ?? ch.evolutions[0];
+  if (!evo) return stats;
+  const extraSlots = restaurant ? Math.max(0, stats.slotsPerZone - restaurant.grill.slotsPerZone) : 0;
+  const baseCharcoal = db.grill.charcoal.baseDurationSec;
+  const extraCharcoal = restaurant
+    ? (stats.charcoalDurationSec / baseCharcoal) - 1 - restaurant.grill.charcoalDurationBonus
+    : 0;
+  return {
+    ...stats,
+    slotsPerZone: evo.slotsPerZone + extraSlots,
+    zoneCount: evo.zoneCount,
+    charcoalDurationSec: baseCharcoal * (1 + (evo.charcoalBonus ?? 0) + extraCharcoal)
+  };
+}
+
 // ── Food runtime ─────────────────────────────────────────────────────────────
 
 export type DonenessStageId = 'raw' | 'rare' | 'medium' | 'well' | 'burned' | string;
@@ -149,6 +180,74 @@ export function createGrill(stats: DerivedStats, db: GameDatabase): GrillRuntime
   return { zones, charcoalT: 0, charcoalEfficiency: 1, refilling: 0, stats };
 }
 
+/**
+ * Hard cap on a churrasqueira zone. Default `high` is 1.55; going much past
+ * that turns the "premium grill" into an incinerator. Measured on the old
+ * `heatBase + 0.85·t` ramp: fornalha evo 3 peaked at 2.47, campaign burn
+ * 20.3 %, lost customers 11.4 %, L15/L30 income 20 % below the 3-zone curve.
+ */
+export const CHURRASQUEIRA_HEAT_CAP = 1.7;
+
+/**
+ * Zone heat for an equipped evolution.
+ *
+ * - 1-zone (FTUE lata): cooks at `heatBase` so the starter is slow and hard to burn.
+ * - n-zone: the default table profile (0.55 / 1.0 / 1.55) remapped by relative
+ *   position, scaled by `heatBase`. A hotter grill is a hotter *profile*, not
+ *   a hotter floor plus a fixed 0.85 add on top.
+ */
+export function churrasqueiraZoneHeat(
+  evo: { zoneCount: number; heatBase: number },
+  zoneIndex: number,
+  db: GameDatabase
+): number {
+  const n = evo.zoneCount;
+  if (n <= 1) return evo.heatBase;
+  const table = db.grill.zones;
+  if (table.length === 0) return evo.heatBase;
+  const tIndex = Math.round(zoneIndex * (table.length - 1) / (n - 1));
+  const profile = table[tIndex]?.heatMultiplier ?? 1;
+  return Math.min(CHURRASQUEIRA_HEAT_CAP, profile * evo.heatBase);
+}
+
+/** Patch grill zones heat to match churrasqueira evolution. */
+export function patchGrillForChurrasqueira(grill: GrillRuntime, db: GameDatabase, churrasqueiraId: string, evoLevel: number): void {
+  const ch = db.churrasqueiraById?.get(churrasqueiraId);
+  if (!ch) return;
+  const evo = ch.evolutions.find(e => e.level === evoLevel) ?? ch.evolutions[0];
+  if (!evo) return;
+  const newZones: GrillRuntime['zones'] = [];
+  for (let i = 0; i < evo.zoneCount; i++) {
+    const old = grill.zones[i];
+    newZones.push({ index: i, heat: churrasqueiraZoneHeat(evo, i, db), items: old ? [...old.items] : [] });
+  }
+  grill.zones = newZones;
+  grill.stats.zoneCount = evo.zoneCount;
+  // slotsPerZone is already set by applyChurrasqueiraToStats (evo base + grill_size).
+}
+
+/**
+ * Runtime zone index for a data-table zone id (`low` / `medium` / `high`), or `-1`
+ * for `none` / unknown ids.
+ *
+ * The table always describes three zones, but the runtime grill does not have to:
+ * churrasqueira evolutions ship 1-, 2- and 3-zone grills (`lata_valente` has one).
+ * Using the table index directly pointed `high` at a zone that does not exist and
+ * crashed the skill policy on every starter grill. The id is mapped by its
+ * *relative* position (cool end → cool end, hot end → hot end); when the counts
+ * match this is the identity, so the default grill behaves exactly as before.
+ */
+export function runtimeZoneIndex(g: GrillRuntime, db: GameDatabase, zoneId: string): number {
+  if (zoneId === 'none') return -1;
+  const table = db.grill.zones;
+  const t = table.findIndex((z) => z.id === zoneId);
+  const n = g.zones.length;
+  if (t < 0 || n === 0) return -1;
+  if (n === table.length) return t;
+  if (n === 1 || table.length === 1) return 0;
+  return Math.round((t / (table.length - 1)) * (n - 1));
+}
+
 export function grillSlotsFree(g: GrillRuntime): number {
   const cap = g.stats.slotsPerZone;
   let free = 0;
@@ -163,7 +262,8 @@ export function zoneIsFull(g: GrillRuntime, zoneIndex: number): boolean {
 
 /** Effective heat of a zone, including charcoal efficiency and upgrade bonuses. */
 export function effectiveHeat(g: GrillRuntime, zoneIndex: number, db: GameDatabase): number {
-  const base = db.grill.zones[zoneIndex]?.heatMultiplier ?? 1;
+  // Prefer churrasqueira-patched heat stored on the grill runtime; fallback to db table for legacy
+  const base = g.zones[zoneIndex]?.heat ?? db.grill.zones[zoneIndex]?.heatMultiplier ?? 1;
   const top = g.zones.length - 1;
   const bonus = zoneIndex === top ? g.stats.highZoneBonus : g.stats.highZoneBonus * (zoneIndex / Math.max(1, top)) * 0.5;
   return (base + bonus) * g.charcoalEfficiency;

@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { loadAndValidate } from '../load-data.ts';
 import {
-  applyTurnResult, buyUpgrade, canUnlockRestaurant, computeOfflineEarnings, costFor,
-  createSessionEconomy, levelUpCoinReward, newPlayerState, recordLedger, unlockRestaurant
+  applyTurnResult, buyNextChurrasqueira, buyUpgrade, canUnlockRestaurant, computeOfflineEarnings, costFor,
+  createSessionEconomy, evolveChurrasqueira, equippedChurrasqueira, equippedEvolution, levelUpCoinReward,
+  newPlayerState, nextChurrasqueiraStep, recordLedger, STARTER_CHURRASQUEIRA_ID, unlockChurrasqueira,
+  unlockRestaurant
 } from '../../sim-core/src/economy.ts';
 import { levelForXp, totalXpForLevel, upgradeCost, xpForLevel } from '../../sim-core/src/data.ts';
 import type { TurnResult } from '../../sim-core/src/turn.ts';
@@ -104,6 +106,93 @@ describe('economy service', () => {
     expect(p.restaurantIndex).toBe(1);
     expect(unlockRestaurant(db, p, 1)).toBe(false); // cannot re-buy
     expect(unlockRestaurant(db, p, 2)).toBe(true);
+  });
+});
+
+describe('churrasqueira sink', () => {
+  it('starts the player on the free 1-zone starter', () => {
+    const p = newPlayerState();
+    expect(p.churrasqueiraId).toBe(STARTER_CHURRASQUEIRA_ID);
+    expect(p.churrasqueiraLevels[STARTER_CHURRASQUEIRA_ID]).toBe(1);
+    const ch = equippedChurrasqueira(db, p)!;
+    const evo = equippedEvolution(db, p)!;
+    expect(ch.index).toBe(0);
+    expect(ch.unlockCostCoins).toBe(0);
+    expect(evo.zoneCount).toBe(1);
+    expect(evo.costCoins).toBe(0);
+  });
+
+  it('refuses to evolve without coins and deducts when it can', () => {
+    const p = newPlayerState();
+    const step = nextChurrasqueiraStep(db, p);
+    expect(step?.kind).toBe('evolve');
+    expect(evolveChurrasqueira(db, p)).toBeNull();
+    p.coins = 10_000;
+    const entry = evolveChurrasqueira(db, p);
+    expect(entry).not.toBeNull();
+    expect(entry!.source).toBe(`churrasqueira_evolve:${STARTER_CHURRASQUEIRA_ID}`);
+    expect(p.churrasqueiraLevels[STARTER_CHURRASQUEIRA_ID]).toBe(2);
+    expect(p.coins).toBe(10_000 - (step as { costCoins: number }).costCoins);
+  });
+
+  it('must max the current grill before the next one is offered', () => {
+    const p = newPlayerState();
+    p.coins = 99_999;
+    p.level = 80;
+    expect(nextChurrasqueiraStep(db, p)?.kind).toBe('evolve');
+    expect(unlockChurrasqueira(db, p, 'ze_da_esquina')).toBeNull();
+    expect(evolveChurrasqueira(db, p)).not.toBeNull(); // 1 → 2
+    expect(evolveChurrasqueira(db, p)).not.toBeNull(); // 2 → 3
+    const step = nextChurrasqueiraStep(db, p);
+    expect(step).toEqual({ kind: 'unlock', id: 'ze_da_esquina', costCoins: expect.any(Number) });
+  });
+
+  it('unlocks the next grill in order, equips it at evo 1, and cannot skip', () => {
+    const p = newPlayerState();
+    p.coins = 99_999;
+    p.level = 80;
+    evolveChurrasqueira(db, p);
+    evolveChurrasqueira(db, p);
+    expect(unlockChurrasqueira(db, p, 'parrilla_chef_cisma')).toBeNull();
+    const entry = unlockChurrasqueira(db, p, 'ze_da_esquina');
+    expect(entry).not.toBeNull();
+    expect(entry!.source).toBe('churrasqueira_unlock:ze_da_esquina');
+    expect(p.churrasqueiraId).toBe('ze_da_esquina');
+    expect(p.churrasqueiraLevels['ze_da_esquina']).toBe(1);
+    expect(equippedEvolution(db, p)!.zoneCount).toBe(2);
+  });
+
+  it('gates unlocks on player level', () => {
+    const p = newPlayerState();
+    p.coins = 99_999;
+    p.level = 1;
+    evolveChurrasqueira(db, p);
+    evolveChurrasqueira(db, p);
+    expect(nextChurrasqueiraStep(db, p)).toBeNull();
+    expect(buyNextChurrasqueira(db, p)).toBeNull();
+    p.level = 4;
+    const entry = buyNextChurrasqueira(db, p);
+    expect(entry?.source).toBe('churrasqueira_unlock:ze_da_esquina');
+  });
+
+  it('walks the whole 1F→2F→3F→Fornalha path', () => {
+    const p = newPlayerState();
+    p.coins = 99_999;
+    p.level = 80;
+    const ids: string[] = [];
+    let guard = 0;
+    while (guard++ < 20) {
+      const step = nextChurrasqueiraStep(db, p);
+      if (!step) break;
+      if (step.kind === 'unlock') ids.push(step.id);
+      expect(buyNextChurrasqueira(db, p)).not.toBeNull();
+    }
+    expect(ids).toEqual(['ze_da_esquina', 'parrilla_chef_cisma', 'fornalha_dragao_manso']);
+    expect(p.churrasqueiraId).toBe('fornalha_dragao_manso');
+    expect(p.churrasqueiraLevels['fornalha_dragao_manso']).toBe(3);
+    expect(nextChurrasqueiraStep(db, p)).toBeNull();
+    expect(p.counters['churrasqueiraEvolutions']).toBe(8); // 2 per grill × 4
+    expect(p.counters['churrasqueirasUnlocked']).toBe(3);
   });
 });
 

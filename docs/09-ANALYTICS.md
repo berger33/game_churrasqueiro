@@ -12,9 +12,27 @@ parameter that is not declared for that event — so a stray field cannot ship s
 
 ## 2. Taxonomy
 
-47 events, every one declared with its parameters and types. The full list lives in
+48 events, every one declared with its parameters and types. The full list lives in
 `shared/data/analytics.json`; the brief's §59 minimum set is asserted by
 `tools/studio/test/data.test.ts`.
+
+`tools/sim-core/src/analytics.ts` is the runtime contract (`checkAnalyticsEvent`): unknown
+event, missing or undeclared parameter, wrong type. The design prototype runs every event it
+logs through it, drops undeclared parameters, and exposes the log as
+`globalThis.__churrascoAnalytics`; `npm run check-shots` asserts the FTUE funnel from that log.
+`npm run validate` fails if the FTUE director can send an event — or a parameter — that
+`analytics.json` does not declare.
+
+**FTUE events** (`tutorial_start`, `_step`, `_complete`, `_abandon`, `_skip`): exact firing
+rules are in docs/05-UX_FLOW.md §4.3 — one `tutorial_step` per step per install (never
+re-sent on resume), one `tutorial_abandon` per step, `elapsed_ms` = active FTUE time.
+`tutorial_skip` was added in v5 when the FTUE became skippable (docs/20 P1 #8, docs/21).
+
+**`daily_reward{day_index, streak}`** fires when a day of the 7-day calendar is claimed — at
+most once per calendar day. `day_index` is 1-based (1–7, the day the card shows), like
+`step_index`; `streak` is the login streak at the moment of the claim. The prototype sends it
+from both claim paths (`RESGATAR` and the day's card); `npm run check-render` asserts one event
+for one claim, and none for a second tap the same day.
 
 Common parameters attached to every event: `session_id`, `ab_test_id`, `app_version`,
 `content_version`, `quality_level`.
@@ -27,7 +45,7 @@ Every question in the brief maps to a query:
 |---|---|
 | How many installed? | `count(distinct users) where event = first_open` |
 | How many started the tutorial? | `tutorial_start` |
-| How many finished it? | `tutorial_complete` — and `tutorial_abandon{step}` says exactly where the rest stopped |
+| How many finished it? | `tutorial_complete` — and `tutorial_abandon{step}` / `tutorial_skip{step}` say exactly where the rest stopped |
 | How many finished the first match? | `level_complete where level_id = level_001` |
 | Who came back tomorrow? | `session_start where days_since_install >= 1` |
 | Who reached restaurant 2? | `restaurant_upgrade where restaurant_index >= 1` |

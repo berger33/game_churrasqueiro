@@ -1,0 +1,41 @@
+{
+  "$schema": "schema/tutorial.schema.json",
+  "_comment": "FTUE script: the six-step first run of docs/05-UX_FLOW.md section 4, under 60 s, no store / ads / pass, one panel deep. Steps 1-5 are one scripted turn (level_001's first clear) on the 1-zone starter grill; step 6 is on Home. Run by tools/sim-core/src/tutorial.ts (TutorialDirector + TutorialTurn), tested in tools/studio/test/tutorial.test.ts, cross-checked by npm run validate (ids, l10n keys, analytics events, step-6 affordability).",
+  "_coach": "flipPromptAtSideDoneness: the flip prompt waits for a browned face-down side (docs/20: 'espere dourar'). serveReadyMinDoneness: the serve prompt waits until a serve scores PERFEITO. holdBelowWindowHi: while the guided plate waits for its flip or serve, no side passes perfectWindow[1] minus this, so it can neither overcook nor burn (docs/19 section 6). idleHintSec: step 5 has no prompt; the hand returns after this much idle time.",
+  "version": 1,
+  "variant": "six_step_v1",
+  "targetDurationSec": 60,
+  "turn": {
+    "levelId": "level_001",
+    "churrasqueiraId": "lata_valente",
+    "ingredientId": "linguica_toscana",
+    "customers": [
+      { "customerId": "comum", "order": ["linguica_toscana"] },
+      { "customerId": "vizinho", "order": ["linguica_toscana"] }
+    ],
+    "customerPatienceSec": 900,
+    "safetyLimitSec": 600,
+    "windDownSec": 1.2
+  },
+  "coach": {
+    "flipPromptAtSideDoneness": 0.55,
+    "serveReadyMinDoneness": 0.74,
+    "holdBelowWindowHi": 0.02,
+    "idleHintSec": 4,
+    "handLoopSec": 0.9
+  },
+  "skip": {
+    "showAfterSec": 2,
+    "hitSizePx": 48,
+    "labelKey": "ui.tut.skip"
+  },
+  "upgradeTrackId": "grill_size",
+  "steps": [
+    { "id": "place", "index": 1, "screen": "play", "gesture": "drag", "completesOn": "placed", "event": "tutorial_step" },
+    { "id": "flip", "index": 2, "screen": "play", "gesture": "tap", "completesOn": "flipped", "event": "tutorial_step", "hintKey": "ui.tut.flip" },
+    { "id": "serve", "index": 3, "screen": "play", "gesture": "drag", "completesOn": "served", "event": "tutorial_step", "hintKey": "ui.tut.serve" },
+    { "id": "perfect", "index": 4, "screen": "play", "gesture": "none", "completesOn": "reward_landed", "event": "tutorial_step" },
+    { "id": "order", "index": 5, "screen": "play", "gesture": "none", "completesOn": "order_completed", "event": "tutorial_complete" },
+    { "id": "upgrade", "index": 6, "screen": "home", "gesture": "tap", "completesOn": "upgrade_bought", "event": "tutorial_step", "hintKey": "ui.tut.upgrade" }
+  ]
+}

@@ -75,7 +75,7 @@ Rule: a layer may reference the layers below it, never above or beside it. `Sim`
 | **UI** | `Churrasco.UI` | Design system, screens, transitions | `DesignSystem`, `Screen` |
 | **Localization** | `Churrasco.Platform` | Table lookup, pluralisation, fallback | `Localizer` |
 | **RemoteConfig** | `Churrasco.Platform` | Fetch, defaults, typed accessors, kill switches | `RemoteConfigService` |
-| **Tutorial** | `Churrasco.Gameplay` | Contextual steps, masking, completion | `TutorialDirector` |
+| **Tutorial** | `Churrasco.Gameplay` | Contextual steps, masking, completion | `TutorialDirector` — reference rules in `tools/sim-core/src/tutorial.ts`, script in `shared/data/tutorial.json` (docs/05 §4); C# port in `Assets/Scripts/Core/Tutorial.cs`, replayed against the TypeScript by `npm run check-csharp` |
 | **Notifications** | `Churrasco.Platform` | Scheduling, opt-out, dedupe | `NotificationService` |
 | **CloudServices** | `Churrasco.Platform` | Optional backend seam (deferred) | `ICloudSave`, `ILeaderboardBackend` |
 

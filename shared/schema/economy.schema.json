@@ -297,6 +297,9 @@
         "_comment": {
           "type": "string"
         },
+        "_grillPacingNote": {
+          "type": "string"
+        },
         "_incomePlateauNote": {
           "type": "string"
         },
@@ -305,6 +308,34 @@
         },
         "_spendRatioNote": {
           "type": "string"
+        },
+        "churrasqueiraUnlockPacingTurns": {
+          "type": "object",
+          "properties": {
+            "fornalha_dragao_manso": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "parrilla_chef_cisma": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "ze_da_esquina": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          "required": [
+            "fornalha_dragao_manso",
+            "parrilla_chef_cisma",
+            "ze_da_esquina"
+          ]
         },
         "coinSpendRatio": {
           "type": "array",
@@ -430,9 +461,11 @@
       "required": [
         "_bandDerivationNote",
         "_comment",
+        "_grillPacingNote",
         "_incomePlateauNote",
         "_pacingNote",
         "_spendRatioNote",
+        "churrasqueiraUnlockPacingTurns",
         "coinSpendRatio",
         "dailyCoinIncomeAtLevel",
         "firstUpgradeAffordableAfterTurns",

@@ -75,7 +75,8 @@ embers = 3, granted only on every 5th level
 | 24 progression upgrade tracks | 1 084 000 |
 | 3 prestige tracks (long-tail) | 5 274 620 |
 | 7 establishments | 5 010 500 |
-| **Total** | **11 369 120** |
+| 4 churrasqueiras (unlock + 3 evolutions each) | 51 100 |
+| **Total** | **11 420 220** |
 
 Upgrade cost curve: `cost(l) = round(base · growth^(l−1) / 10) · 10` — always a multiple of 10
 and strictly increasing (asserted by test for every track).
@@ -104,20 +105,23 @@ rate as one who is away for 8 hours, which makes short absences strictly better 
 | `turnsPerSession` | 3–5 | 4 (assumed) |
 | `firstUpgradeAffordableAfterTurns` | 1–2 | 1 |
 | `unlock:espetinho_rua` | 28–45 | 32 |
-| `unlock:trailer` | 72–115 | 87 |
-| `unlock:churrascaria_bairro` | 115–185 | 143 |
+| `unlock:trailer` | 72–115 | 89 |
+| `unlock:churrascaria_bairro` | 115–185 | 147 |
 | `unlock:churrascaria_premium` | 195–315 | 243 |
-| `unlock:festival` | 340–550 | 445 |
-| `unlock:rede_nacional` | 950–1450 | 1180 |
-| `income:level5` | 9 000–14 000 | 10 616 |
-| `income:level15` | 36 000–56 000 | 46 482 |
-| `income:level30` | 78 000–122 000 | 97 564 |
-| `income:level50` | 98 000–152 000 | 123 153 |
+| `unlock:festival` | 340–550 | 418 |
+| `unlock:rede_nacional` | 950–1450 | 1185 |
+| `grill:ze_da_esquina` | 4–12 | 7 |
+| `grill:parrilla_chef_cisma` | 32–60 | 45 |
+| `grill:fornalha_dragao_manso` | 70–115 | 90 |
+| `income:level5` | 9 000–14 000 | 10 793 |
+| `income:level15` | 36 000–56 000 | 41 115 |
+| `income:level30` | 78 000–122 000 | 98 262 |
+| `income:level50` | 98 000–152 000 | 115 926 |
 | `coinSpendRatio` | 0.70–0.99 | 0.741 |
-| `coinSpike` (max ÷ median turn) | ≤ 6 | 1.69 |
+| `coinSpike` (max ÷ median turn) | ≤ 6 | 1.70 |
 | `perfectRateAtSkillMid` | 0.40–0.62 | 0.557 |
 
-**15 of 15 met** on `restaurants` v6 + `economy` v11 (`npm run sim:long`, 1 500 turns, skill 0.55).
+**18 of 18 met** on `restaurants` v6 + `economy` v12 (`npm run sim:long`, 1 500 turns). The skill-curve contract is still measured on the default 3-zone grill; campaign pacing now plays the grill the player actually owns.
 
 Bands are ~±20 % around the measured value: tight enough to catch a regression, wide enough
 that legitimate tuning does not trip them.
@@ -165,30 +169,57 @@ already implemented, used two lines further down). Ideal-zone hits at skill 0.55
 | perfect rate @ skill 0.55 | 48.4 % | **55.7 %** |
 | coins/turn @ skill 0.55 | 712 | **793** |
 
-All 15 targets still pass on both horizons, so this was a *fidelity* correction rather than a
+All 15 restaurant/income targets still pass on both horizons, so this was a *fidelity* correction rather than a
 rescue: the published numbers now describe the game as designed. Every figure in §5 and §7 was
 re-derived, the 98 golden vectors were regenerated, and `tools/studio/test/policy.test.ts` now
 asserts ideal-zone behaviour directly so the mechanic cannot silently stop running again.
 
+### 5.4 Fourth fidelity gap: the sim never played the player's grill
+
+`run-sim.ts` spent coins on restaurants and upgrades, then played every turn on the
+restaurant's default 3-zone grill. Players start on 1-zone `lata_valente` and buy along
+1F → 2F → 3F → Fornalha (51 100 coins, must max the current evolution before the next
+unlock — same rule as the prototype Home CTA).
+
+Wiring that path in (`economy` v12) surfaced a second defect: zone heat was
+`heatBase + 0.85 · t`, so `fornalha_dragao_manso` evo 3 peaked at **2.47** against a
+default `high` of 1.55. Campaign burn **20.3 %**, lost customers **11.4 %**, L15/L30
+income **20 %** below band. The premium grill was an incinerator.
+
+**Fix:** `churrasqueiraZoneHeat()` uses the default zone profile scaled by `heatBase`,
+capped at 1.70. Additive upgrades (`grill_size`, `charcoal_duration`) still stack on
+the equipped evolution — otherwise those tracks were a dead sink the moment a
+churrasqueira was equipped.
+
+Re-measured (1 500 turns): restaurant pacing stayed inside the existing bands, spend
+ratio stayed **0.741**, campaign burn **5.7 %**. Three grill-unlock targets were added
+around the measured 7 / 45 / 90.
+
 ## 7. Measured pacing
 
-1 500 turns at 12 turns/day:
+1 500 turns at 12 turns/day, playing the owned grill:
 
 | Establishment | Turn | ≈ Day |
 |---|---|---|
 | Espetinho de Rua | 32 | 3 |
-| Trailer | 87 | 7 |
-| Churrascaria de Bairro | 143 | 12 |
+| Trailer | 89 | 7 |
+| Churrascaria de Bairro | 147 | 12 |
 | Churrascaria Premium | 243 | 20 |
-| Festival | 445 | 37 |
-| Rede Nacional | 1180 | 98 |
+| Festival | 418 | 35 |
+| Rede Nacional | 1185 | 99 |
 
-Coins per turn by tier: **934 → 3 009 → 7 362 → 8 062 → 7 919 → 10 334 → 11 813.**
-Income per day by level: **10.6 k (L5) → 46.5 k (L15) → 97.6 k (L30) → 123.2 k (L50).**
-Spend ratio **0.741**; earned 14 607 368 vs spent 10 822 120 over the campaign.
+| Churrasqueira | Turn | ≈ Day |
+|---|---|---|
+| Zé da Esquina (2F) | 7 | 1 |
+| Parrilla Chef Cisma (3F) | 45 | 4 |
+| Fornalha Dragão Manso | 90 | 8 |
+
+Coins per turn by tier: **913 → 2 712 → 6 631 → 8 019 → 8 014 → 10 329 → 12 021.**
+Income per day by level: **10.8 k (L5) → 41.1 k (L15) → 98.3 k (L30) → 115.9 k (L50).**
+Spend ratio **0.741**; earned 14 665 839 vs spent 10 873 220 over the campaign.
 
 The first three establishments land inside the player's first fortnight — deliberate, since
-early retention is priority 2. The **445 → 1180 gap (≈ 61 days)** carries no new restaurant
+early retention is priority 2. The **418 → 1185 gap (≈ 64 days)** carries no new restaurant
 and is filled by the collection (37), achievements (58), prestige tracks, the region route,
 weekly events and the Brasa Pass. Whether that holds a mid-core player is **unvalidated**;
 it needs D30/D60 telemetry before V1.0 (see docs/18-STATUS.md §3).

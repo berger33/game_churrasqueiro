@@ -12,8 +12,9 @@ import { TurnSimulation } from '../sim-core/src/turn.ts';
 import { SkillPolicy } from '../sim-core/src/policy.ts';
 import { Rng } from '../sim-core/src/rng.ts';
 import {
-  applyTurnResult, buyUpgrade, canUnlockRestaurant, costFor, createSessionEconomy, newPlayerState,
-  recordLedger, unlockRestaurant, type PlayerState, type SessionEconomy
+  applyTurnResult, buyNextChurrasqueira, buyUpgrade, canUnlockRestaurant, costFor,
+  createSessionEconomy, equippedChurrasqueira, equippedEvolution, newPlayerState,
+  nextChurrasqueiraCost, recordLedger, unlockRestaurant, type PlayerState, type SessionEconomy
 } from '../sim-core/src/economy.ts';
 import { clamp } from '../sim-core/src/data.ts';
 
@@ -39,6 +40,8 @@ export interface ProgressionReport {
   totalCoinsEarned: number;
   totalCoinsSpent: number;
   turnsToUnlock: Record<string, number>;
+  /** Turn (1-based) at which each non-starter churrasqueira was unlocked. */
+  turnsToUnlockGrill: Record<string, number>;
   coinsPerTurnByRestaurant: Record<number, { turns: number; avg: number; min: number; max: number }>;
   perfectRate: number;
   burnedRate: number;
@@ -100,6 +103,7 @@ export function simulateProgression(opts: SimOptions = {}): ProgressionReport {
   const session = createSessionEconomy();
   const outcomes: LevelOutcome[] = [];
   const turnsToUnlock: Record<string, number> = {};
+  const turnsToUnlockGrill: Record<string, number> = {};
   const perRestaurant = new Map<number, number[]>();
   const dailyAtLevel = new Map<number, { coins: number; turns: number }>();
 
@@ -107,6 +111,8 @@ export function simulateProgression(opts: SimOptions = {}): ProgressionReport {
     const level = levelAt(li);
     // Players get better with practice but never become perfect.
     const skill = clamp(skillFloor + (p.level - 1) * 0.014, skillFloor, skillCeiling);
+    const grill = equippedChurrasqueira(db, p);
+    const evo = equippedEvolution(db, p);
     const sim = new TurnSimulation(
       db,
       {
@@ -114,6 +120,8 @@ export function simulateProgression(opts: SimOptions = {}): ProgressionReport {
         levelId: level.id,
         upgradeLevels: { ...p.upgradeLevels },
         seed: seed + level.index,
+        churrasqueiraId: grill?.id,
+        churrasqueiraLevel: evo?.level ?? 1,
         overrides: {
           turnLengthSec: level.turnLengthSec,
           spawnIntervalSec: level.spawnIntervalSec,
@@ -145,12 +153,31 @@ export function simulateProgression(opts: SimOptions = {}): ProgressionReport {
     p.coins += level.rewards.coins;
     session.faucets['level_reward'] = (session.faucets['level_reward'] ?? 0) + level.rewards.coins;
 
-    // Sinks: unlock the next establishment first, then spend down on upgrades.
+    // Sinks: restaurant (identity beat) first, then the grill path (the Home CTA),
+    // then upgrades. The grill used to be invisible to this harness — every turn
+    // ran on the restaurant's default 3-zone grill, so the 15 targets described
+    // a game the player does not play (they start on 1-zone lata_valente).
     if (canUnlockRestaurant(db, p, p.restaurantIndex + 1)) {
       const before = p.coins;
       if (unlockRestaurant(db, p, p.restaurantIndex + 1)) {
         session.sinks['restaurant_unlock'] = (session.sinks['restaurant_unlock'] ?? 0) + (before - p.coins);
         turnsToUnlock[db.restaurantByIndex.get(p.restaurantIndex)!.id] = outcomes.length + 1;
+      }
+    }
+    let boughtGrill = true;
+    while (boughtGrill) {
+      boughtGrill = false;
+      const grillCost = nextChurrasqueiraCost(db, p);
+      if (grillCost !== Infinity && p.coins >= grillCost) {
+        const beforeId = p.churrasqueiraId;
+        const entry = buyNextChurrasqueira(db, p);
+        if (entry) {
+          recordLedger(session, [entry]);
+          if (p.churrasqueiraId !== beforeId) {
+            turnsToUnlockGrill[p.churrasqueiraId] = outcomes.length + 1;
+          }
+          boughtGrill = true;
+        }
       }
     }
     let bought = true;
@@ -159,9 +186,12 @@ export function simulateProgression(opts: SimOptions = {}): ProgressionReport {
       for (const trackId of UPGRADE_PRIORITY) {
         const cost = costFor(db, trackId, p.upgradeLevels[trackId] ?? 0);
         if (cost === Infinity) continue;
-        // Keep a reserve so the next restaurant unlock is always in sight.
+        // Keep a reserve so the next restaurant *and* the next grill step stay in sight.
         const nextRestaurant = db.restaurantByIndex.get(p.restaurantIndex + 1);
-        const reserve = nextRestaurant ? nextRestaurant.unlockCostCoins * 0.15 : 0;
+        const restaurantReserve = nextRestaurant ? nextRestaurant.unlockCostCoins * 0.15 : 0;
+        const grillStepCost = nextChurrasqueiraCost(db, p);
+        const grillReserve = grillStepCost === Infinity ? 0 : grillStepCost * 0.15;
+        const reserve = Math.max(restaurantReserve, grillReserve);
         if (p.coins - reserve >= cost) {
           const entry = buyUpgrade(db, p, trackId);
           if (entry) {
@@ -227,6 +257,7 @@ export function simulateProgression(opts: SimOptions = {}): ProgressionReport {
     totalCoinsEarned: session.faucetTotal(),
     totalCoinsSpent: session.sinkTotal(),
     turnsToUnlock,
+    turnsToUnlockGrill,
     coinsPerTurnByRestaurant,
     perfectRate: totalPerfect / Math.max(1, totalPerfect + totalGood + totalBurned),
     burnedRate: totalBurned / Math.max(1, totalPerfect + totalGood + totalBurned),
@@ -410,6 +441,23 @@ export function checkTargets(
       : 'skill curve unavailable'
   });
 
+  const grillPacing = targets['churrasqueiraUnlockPacingTurns'] as Record<string, [number, number]> | undefined;
+  if (grillPacing) {
+    for (const [rid, raw] of Object.entries(grillPacing)) {
+      const id = `grill:${rid}`;
+      const turn = report.turnsToUnlockGrill[rid];
+      if (turn === undefined) {
+        if (horizon < raw[0]) {
+          checks.push(skipIfShort(id, 'not reached in this run'));
+        } else {
+          checks.push({ id, pass: false, detail: 'never unlocked during the simulated run' });
+        }
+      } else {
+        checks.push({ id, pass: inRange(turn, raw), detail: `unlocked at turn ${turn}, target ${raw[0]}-${raw[1]}` });
+      }
+    }
+  }
+
   return checks;
 }
 
@@ -429,7 +477,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   console.log('── CHURRASCO! economy simulation ─────────────────────────────');
   console.log(`turns simulated: ${report.outcomes.length}`);
-  console.log(`final level: ${report.player.level}   restaurant: ${report.player.restaurantIndex}   coins left: ${report.player.coins}`);
+  const grillId = report.player.churrasqueiraId;
+  const grillLv = report.player.churrasqueiraLevels[grillId] ?? 1;
+  console.log(`final level: ${report.player.level}   restaurant: ${report.player.restaurantIndex}   grill: ${grillId} evo ${grillLv}   coins left: ${report.player.coins}`);
   console.log(`coins earned: ${report.totalCoinsEarned}   spent: ${report.totalCoinsSpent}   spend ratio: ${report.session.spendRatio().toFixed(3)}`);
   console.log(`perfect rate: ${(report.perfectRate * 100).toFixed(1)}%   burned rate: ${(report.burnedRate * 100).toFixed(1)}%   lost customers: ${(report.lostRate * 100).toFixed(1)}%`);
   console.log(`avg turn length: ${report.avgTurnDurationSec.toFixed(1)}s`);
@@ -446,6 +496,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   console.log('');
   console.log('turn at which each establishment was unlocked:');
   for (const [k, v] of Object.entries(report.turnsToUnlock)) console.log(`  ${k.padEnd(22)} turn ${v}`);
+  console.log('');
+  console.log('turn at which each churrasqueira was unlocked:');
+  if (Object.keys(report.turnsToUnlockGrill).length === 0) {
+    console.log('  (starter only — no further grill purchased in this run)');
+  } else {
+    for (const [k, v] of Object.entries(report.turnsToUnlockGrill)) console.log(`  ${k.padEnd(22)} turn ${v}`);
+  }
   console.log('');
   console.log('target checks:');
   let failed = 0;

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-17T15:47:36.115Z",
+  "generatedAt": "2026-09-25T06:33:40.166Z",
   "source": "shared/data",
   "files": {
     "achievements.json": {
@@ -11,8 +11,12 @@
       "bytes": 3138
     },
     "analytics.json": {
-      "sha256": "e7b78c0aa4ad97a2b4c5bfdb8948f442b436ecdc408f1e988914b4218781db4a",
-      "bytes": 9172
+      "sha256": "aa92dcf22bd7d5b4790f3a7065851ef3adaffa37b82ef4ba7287e9410dcdf009",
+      "bytes": 9511
+    },
+    "churrasqueiras.json": {
+      "sha256": "206d2b8b7050de85b2275a75415d5ea813d7ac6f02bde232fdf0934cc3af3ed8",
+      "bytes": 6427
     },
     "collection.json": {
       "sha256": "a1d97536f01cd9e5376c9323704f0a282df77190733cfb4aebd968d805f16cb0",
@@ -23,8 +27,8 @@
       "bytes": 5918
     },
     "economy.json": {
-      "sha256": "f5136ae451b13f0022e2363f649c43ce194475140f18b944b1d78a49a1f8aa68",
-      "bytes": 6495
+      "sha256": "c20dda5f72e99c175fcda0d9bea4f043cbc8b8f361c6fbd1c056fbd12c0b1375",
+      "bytes": 7308
     },
     "employees.json": {
       "sha256": "f26f360cd0bef72a53538346ecc2fa386d9ecc930963cf150584b2b015323488",
@@ -77,6 +81,10 @@
     "route.json": {
       "sha256": "b2907a7efd6ee9f7f9ad9e55c71629517b174a53a8967bebea2f84e009318222",
       "bytes": 4538
+    },
+    "tutorial.json": {
+      "sha256": "1a96d005e37e1861939273424bc1099516ca7403401fd5ac20ae9ebb9096d548",
+      "bytes": 2540
     },
     "upgrades.json": {
       "sha256": "b8cb1d3be8fd365bf86c1c57f0aa8067016439fb0f1d248a75aee58f338c1a25",

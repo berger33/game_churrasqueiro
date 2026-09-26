@@ -43,6 +43,7 @@ green tests precisely because the strict `tsconfig.json` was never wired to a sc
 ```bash
 npm install
 
+npm run gates             # the 14 per-PR CI gates, same list GitHub Actions runs
 npm run typecheck         # tsc --noEmit over tools/, prototype/ and shared/ (strict)
 npm run validate          # referential + semantic integrity of every data table
 npm run check-schema      # every table against its JSON Schema contract (+ negative pass)
@@ -80,6 +81,10 @@ npm run proto             # design-verification prototype on http://0.0.0.0:5173
 | [16-PRIVACY.md](docs/16-PRIVACY.md) | LGPD/GDPR, data disclosure, consent |
 | [17-BACKLOG.md](docs/17-BACKLOG.md) | Prioritised backlog |
 | [18-STATUS.md](docs/18-STATUS.md) | What is built, what is verified, what is open |
+| [19-AUDITORIA_COMERCIAL.md](docs/19-AUDITORIA_COMERCIAL.md) | Commercial audit and what it changed (pt-BR) |
+| [20-AUDITORIA_PRIMEIRA_IMPRESSAO_UX.md](docs/20-AUDITORIA_PRIMEIRA_IMPRESSAO_UX.md) | First-impression / first-90-seconds UX audit (pt-BR) |
+| [21-5S_TEST_20.md](docs/21-5S_TEST_20.md) | Guided 5-second test, n=20 (pt-BR) |
+| [22-ARTE_2D_PLANO.md](docs/22-ARTE_2D_PLANO.md) | Professional 2D art plan: AI generation in batches of 10, cut-out pipeline, approval, integration (pt-BR) |
 
 ## Current status
 
@@ -87,11 +92,15 @@ See [docs/18-STATUS.md](docs/18-STATUS.md) for an honest, itemised account of wh
 implemented and verified versus what is still open. Short version:
 
 - **Implemented and verified here:** the complete data layer, the cooking/scoring/economy
-  rules, the level generator, the save system, the balance simulator with guardrails, and a
-  playable design-verification prototype.
-- **Implemented but not compilable in this environment:** the Unity C# client. The sandbox
-  has no Unity Editor and no .NET SDK (Microsoft download endpoints are unreachable), so the
-  C# has not been through a compiler. This is stated plainly rather than glossed over.
+  rules, the level generator, the save system, the balance simulator with guardrails, a
+  playable design-verification prototype, and the per-PR CI gates (`npm run gates` /
+  `.github/workflows/ci.yml`).
+- **Compiled and parity-checked in CI:** the engine-free C# core (`Assets/Scripts/Core` —
+  data classes, cooking/scoring rules, the FTUE director, the analytics contract):
+  `npm run check-csharp` builds it as Unity would and replays the golden vectors against it
+  (it SKIPs on a machine without the .NET 8 SDK; CI always runs it).
+- **Not yet compiled anywhere:** the Unity-side layer (`Assets/Scripts/Services`, scenes) —
+  there is no Unity Editor in this environment. This is stated plainly rather than glossed over.
 - **Not started:** 3D/2D art assets, recorded audio, Firebase/AdMob SDK integration
   (requires credentials and a store account).
 

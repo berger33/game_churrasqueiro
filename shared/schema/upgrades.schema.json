@@ -74,19 +74,12 @@
             "type": "integer"
           },
           "category": {
-            "enum": [
-              "charcoal",
-              "employees",
-              "grill",
-              "prep",
-              "prestige",
-              "restaurant",
-              "service"
-            ]
+            "type": "string"
           },
           "currency": {
             "enum": [
-              "coins"
+              "coins",
+              "embers"
             ]
           },
           "descKey": {

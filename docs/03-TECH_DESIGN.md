@@ -70,6 +70,15 @@ The Unity EditMode test `SimParityTests` replays the same seeds and asserts the 
 If the C# drifts, the test names the first divergent tick. **This is the mechanism that stops
 the verified rules and the shipped rules from becoming two different games.**
 
+**What runs today** (no Unity needed): `npm run gen-vectors` writes `tools/golden/vectors.json`
+(cooking, scoring, economy, full turns) and `tools/golden/tutorial-vectors.json` (the FTUE), and
+`npm run check-csharp` — a CI gate — builds `Assets/Scripts/Core` as netstandard2.1 / C# 9 and
+replays them with `tools/csharp/parity` to 1e-9. Vectors for code that has no C# port yet
+(`EconomyRules.cs`, `TurnSimulation.cs`) are reported as not ported. Two porting rules the
+first run taught: round with `MathUtil.RoundHalfUp` (JavaScript's `Math.round`), never
+`Math.Round` (halves to even); and the generated table classes need case-insensitive binding
+(Newtonsoft's default; `PropertyNameCaseInsensitive` in System.Text.Json).
+
 ## 4. Frame budget
 
 Target 60 FPS on HIGH/MEDIUM, 30 FPS on LOW (§2).
@@ -121,6 +130,13 @@ so cold start after the first run is faster still.
   (`detectClockTampering`) and offline earnings are clamped instead of granted.
 - Cloud save seam exists (`ICloudSave`) but is not implemented — see
   [00-SPEC_AUDIT.md](00-SPEC_AUDIT.md#5-scope-decisions-for-the-commercial-mvp-84).
+
+Schema history (`SAVE_SCHEMA_VERSION` = 3):
+
+| Version | Adds | Migration from the previous version |
+|---|---|---|
+| v2 | `player.churrasqueiraId`, `player.churrasqueiraLevels` | grants the starter `lata_valente` at level 1 |
+| v3 | `progress.tutorial` (`TutorialState \| null`), `progress.ftueDone` | the FTUE counts as done — a pre-v3 save belongs to someone who already played (05-UX_FLOW §4.3) |
 
 All of this is implemented and unit-tested in `tools/sim-core/src/save.ts`; the C# port is
 `Assets/Scripts/Platform/SaveService.cs`.

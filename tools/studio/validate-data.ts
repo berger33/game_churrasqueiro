@@ -9,6 +9,8 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { DATA_DIR, loadAndValidate, readJson } from './load-data.ts';
 import { validateDatabase } from '../sim-core/src/data.ts';
+import { costFor } from '../sim-core/src/economy.ts';
+import { TUTORIAL_EVENT_PARAMS, TUTORIAL_TRIGGERS, type TutorialTable } from '../sim-core/src/tutorial.ts';
 import { generateLevels } from './gen-levels.ts';
 
 type Problem = { file: string; message: string };
@@ -23,7 +25,8 @@ const requiredFiles = [
   'ingredients.json', 'grill.json', 'customers.json', 'restaurants.json', 'upgrades.json',
   'economy.json', 'employees.json', 'achievements.json', 'missions.json', 'events.json',
   'collection.json', 'regions.json', 'route.json', 'pass.json', 'iap.json', 'ads.json',
-  'analytics.json', 'performance.json', 'remoteconfig_defaults.json'
+  'analytics.json', 'performance.json', 'remoteconfig_defaults.json', 'churrasqueiras.json',
+  'tutorial.json'
 ];
 
 for (const f of requiredFiles) {
@@ -247,7 +250,100 @@ for (let i = 1; i < levels.length; i++) {
   if (rising > 3) fail('levels', `${levels[i]!.id}: ${rising} consecutive difficulty increases (frustration streak)`);
 }
 
-// ── 5. No literal localisation strings in gameplay tables ───────────────────
+// ── 5. The FTUE script (docs/05-UX_FLOW.md §4) ──────────────────────────────
+// A tutorial that points at a missing id, sends an undeclared event or asks for
+// an upgrade the player cannot afford is a first-run dead end, so every link out
+// of tutorial.json is checked here rather than discovered on a fresh install.
+const tut = readJson('tutorial.json') as TutorialTable;
+{
+  const T = 'tutorial.json';
+  const steps = tut.steps ?? [];
+  steps.forEach((st, i) => {
+    if (st.index !== i + 1) fail(T, `step "${st.id}": index ${st.index} at position ${i} — indices must be contiguous from 1`);
+    if (!(TUTORIAL_TRIGGERS as readonly string[]).includes(st.completesOn)) {
+      fail(T, `step "${st.id}": completesOn "${st.completesOn}" is not a trigger the director knows (${TUTORIAL_TRIGGERS.join(', ')})`);
+    }
+  });
+  if (new Set(steps.map((st) => st.id)).size !== steps.length) fail(T, 'duplicate step id');
+  if (new Set(steps.map((st) => st.completesOn)).size !== steps.length) fail(T, 'two steps complete on the same trigger — the second could never complete');
+  if (steps.filter((st) => st.event === 'tutorial_complete').length !== 1) fail(T, 'exactly one step must send tutorial_complete');
+  const firstHome = steps.findIndex((st) => st.screen === 'home');
+  if (firstHome >= 0 && steps.slice(firstHome).some((st) => st.screen === 'play')) {
+    fail(T, 'play steps after a home step — the scripted turn must be one contiguous block');
+  }
+  if (tut.targetDurationSec > 60) fail(T, `targetDurationSec ${tut.targetDurationSec} breaks the under-60-s rule (docs/05 §4)`);
+
+  // Every event the director can send must be declared, with exactly its params.
+  const declared = new Map(analyticsEventsForTutorial().map((e) => [e.name, e.params]));
+  for (const [name, params] of Object.entries(TUTORIAL_EVENT_PARAMS)) {
+    const d = declared.get(name);
+    if (!d) { fail(T, `the director sends "${name}" but analytics.json does not declare it`); continue; }
+    const want = [...params].sort().join(',');
+    const have = Object.keys(d).sort().join(',');
+    if (want !== have) fail(T, `"${name}" params differ — director sends [${want}], analytics.json declares [${have}]`);
+  }
+
+  // Referential integrity.
+  const turn = tut.turn;
+  const level = levelsForTutorial().find((l) => l.id === turn.levelId);
+  if (!level) fail(T, `turn.levelId "${turn.levelId}" is not an authored level`);
+  const ch = db.churrasqueiraById.get(turn.churrasqueiraId);
+  if (!ch) fail(T, `turn.churrasqueiraId "${turn.churrasqueiraId}" is not in churrasqueiras.json`);
+  else if (ch.unlockLevel > 1 || ch.unlockCostCoins > 0) fail(T, `turn.churrasqueiraId "${ch.id}" is not the free starter grill`);
+  const ing = db.ingredientById.get(turn.ingredientId);
+  if (!ing) fail(T, `turn.ingredientId "${turn.ingredientId}" does not exist`);
+  else {
+    if (ing.cookMethod !== 'grill' || ing.sides < 2) fail(T, `${ing.id}: the FTUE teaches the flip, so its item must be grilled and have >= 2 sides`);
+    if (level && ing.unlock.restaurantIndex > level.restaurantIndex) fail(T, `${ing.id} is not unlocked at ${level.id}'s restaurant`);
+    // Coach thresholds must describe a reachable, holdable PERFEITO.
+    const [lo, hi] = ing.perfectWindow;
+    const c = tut.coach;
+    const ceiling = hi - c.holdBelowWindowHi;
+    if (!(c.serveReadyMinDoneness >= lo && c.serveReadyMinDoneness < ceiling)) {
+      fail(T, `coach: serveReadyMinDoneness ${c.serveReadyMinDoneness} must sit in [${lo}, ${ceiling.toFixed(2)}) — the perfect window under the hold ceiling`);
+    }
+    if (!(c.flipPromptAtSideDoneness > 0 && c.flipPromptAtSideDoneness < ceiling)) {
+      fail(T, `coach: flipPromptAtSideDoneness ${c.flipPromptAtSideDoneness} must be above 0 and below the hold ceiling ${ceiling.toFixed(2)}`);
+    }
+    if (c.holdBelowWindowHi <= 0 || c.holdBelowWindowHi >= hi - lo) fail(T, 'coach: holdBelowWindowHi must be inside the perfect window');
+  }
+  if (turn.customers.length < 2) fail(T, 'turn.customers: step 3 serves the first customer, step 5 needs a second one');
+  for (const cu of turn.customers) {
+    const def = db.customerById.get(cu.customerId);
+    if (!def) { fail(T, `turn.customers: unknown customer "${cu.customerId}"`); continue; }
+    // The hold targets the ingredient's own window; a picky customer would narrow it.
+    if (def.toleranceScale < 1) fail(T, `turn.customers: ${def.id} narrows the perfect window (toleranceScale ${def.toleranceScale}) — the guided serve could miss`);
+    if (cu.order.length === 0 || cu.order.some((o) => o !== turn.ingredientId)) {
+      fail(T, `turn.customers: ${def.id} must order only ${turn.ingredientId} — one variable at a time`);
+    }
+  }
+  if (turn.customerPatienceSec <= turn.safetyLimitSec) fail(T, 'turn.customerPatienceSec must outlast turn.safetyLimitSec — nobody may leave during the FTUE');
+  if (tut.skip.hitSizePx < 44) fail(T, `skip.hitSizePx ${tut.skip.hitSizePx} < 44 (docs/21: the 36x28 X was found by only 60%)`);
+
+  // Step 6 must be affordable from a fresh install. Guaranteed income of the
+  // scripted turn, counting nothing a player could miss: level reward + first
+  // clear + the turn-end bonus for the one guided PERFEITO.
+  const track = db.upgradeById.get(tut.upgradeTrackId);
+  if (!track) fail(T, `upgradeTrackId "${tut.upgradeTrackId}" is not an upgrade track`);
+  else if (track.currency !== 'coins') fail(T, `upgradeTrackId "${track.id}" costs ${track.currency}; a fresh install has none`);
+  else if (level) {
+    const bonus = db.economy.reward.turnEndBonus;
+    const guaranteed = level.rewards.coins + level.rewards.firstClearBonus.coins + bonus.base + bonus.perPerfect;
+    const cost = costFor(db, track.id, 0);
+    if (guaranteed < cost) {
+      fail(T, `step 6 unreachable: the FTUE guarantees ${guaranteed} coins but ${track.id} level 1 costs ${cost}`);
+    }
+  }
+}
+
+function analyticsEventsForTutorial(): { name: string; params: Record<string, string> }[] {
+  return (readJson('analytics.json') as { events: { name: string; params: Record<string, string> }[] }).events;
+}
+function levelsForTutorial(): { id: string; restaurantIndex: number; rewards: { coins: number; firstClearBonus: { coins: number } } }[] {
+  return (readJson('levels.json') as { levels: { id: string; restaurantIndex: number; rewards: { coins: number; firstClearBonus: { coins: number } } }[] }).levels;
+}
+
+// ── 6. No literal localisation strings in gameplay tables ───────────────────
 const accented = /[à-üÀ-Ü]/;
 for (const f of ['ingredients.json', 'customers.json', 'restaurants.json', 'upgrades.json', 'achievements.json', 'missions.json', 'events.json', 'collection.json']) {
   const raw = readFileSync(join(DATA_DIR, f), 'utf8');
@@ -265,6 +361,7 @@ console.log(`upgrade tracks : ${db.upgradeById.size}`);
 console.log(`achievements   : ${achievements.achievements.length}`);
 console.log(`collection     : ${collection.entries.length} entries in ${collection.categories.length} categories`);
 console.log(`analytics      : ${analytics.events.length} events`);
+console.log(`tutorial       : ${tut.steps.length} steps (${tut.variant}), target < ${tut.targetDurationSec}s`);
 console.log(`authored levels: ${levels.length}`);
 console.log('');
 

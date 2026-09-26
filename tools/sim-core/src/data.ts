@@ -16,16 +16,21 @@ export function createDatabase(raw: RawDataBundle): GameDatabase {
     restaurants: raw.restaurants,
     upgrades: raw.upgrades,
     economy: raw.economy,
+    churrasqueiras: raw.churrasqueiras,
     ingredientById: new Map(),
     customerById: new Map(),
     restaurantByIndex: new Map(),
-    upgradeById: new Map()
+    upgradeById: new Map(),
+    churrasqueiraById: new Map()
   };
 
   for (const it of raw.ingredients.items) db.ingredientById.set(it.id, it);
   for (const c of raw.customers.customers) db.customerById.set(c.id, c);
   for (const r of raw.restaurants.restaurants) db.restaurantByIndex.set(r.index, r);
   for (const u of raw.upgrades.tracks) db.upgradeById.set(u.id, u);
+  if (raw.churrasqueiras) {
+    for (const ch of raw.churrasqueiras.churrasqueiras) db.churrasqueiraById.set(ch.id, ch);
+  }
 
   return db;
 }
@@ -82,6 +87,44 @@ export function validateDatabase(db: GameDatabase): string[] {
       prev = cost;
     }
     if (u.effect.delta === 0) problems.push(`upgrade ${u.id}: effect delta is 0`);
+  }
+
+  // Churrasqueiras validation (1F → 2F → 3F progression)
+  if (db.churrasqueiras) {
+    const seen = new Set<string>();
+    const indices = new Set<number>();
+    for (const ch of db.churrasqueiras.churrasqueiras) {
+      if (seen.has(ch.id)) problems.push(`churrasqueira: duplicate id \"${ch.id}\"`);
+      seen.add(ch.id);
+      if (indices.has(ch.index)) problems.push(`churrasqueira ${ch.id}: duplicate index ${ch.index}`);
+      indices.add(ch.index);
+      if (ch.fileiras < 1 || ch.fileiras > 3) problems.push(`churrasqueira ${ch.id}: fileiras must be 1..3`);
+      if (ch.fileiras !== ch.evolutions[0]?.zoneCount) problems.push(`churrasqueira ${ch.id}: fileiras mismatch zoneCount of evo 1`);
+      if (ch.evolutions.length !== 3) problems.push(`churrasqueira ${ch.id}: expected 3 evolutions`);
+      ch.evolutions.forEach((evo, i) => {
+        if (evo.level !== i + 1) problems.push(`churrasqueira ${ch.id} evo ${evo.level}: level should be ${i + 1}`);
+        if (evo.zoneCount < 1 || evo.zoneCount > 3) problems.push(`churrasqueira ${ch.id} evo ${evo.level}: zoneCount 1..3`);
+        if (evo.slotsPerZone < 2 || evo.slotsPerZone > 4) problems.push(`churrasqueira ${ch.id} evo ${evo.level}: slotsPerZone 2..4`);
+        if (evo.heatBase < 0.5 || evo.heatBase > 1.7) problems.push(`churrasqueira ${ch.id} evo ${evo.level}: heatBase out of range`);
+      });
+      // monotonic unlock levels
+      if (ch.unlockLevel < 1) problems.push(`churrasqueira ${ch.id}: unlockLevel must be >=1`);
+      const evo1 = ch.evolutions[0];
+      if (evo1 && evo1.costCoins !== 0) problems.push(`churrasqueira ${ch.id}: evolution 1 must cost 0 (granted on unlock)`);
+    }
+    // indices contiguous 0..n-1
+    const sorted = [...indices].sort((a,b)=>a-b);
+    sorted.forEach((v,i)=> { if (v!==i) problems.push(`churrasqueira indices must be contiguous from 0 (found ${v} at ${i})`); });
+    // fileiras monotonic non-decreasing by index
+    const byIdx = [...db.churrasqueiras.churrasqueiras].sort((a,b)=>a.index-b.index);
+    const starter = byIdx[0];
+    if (starter && (starter.unlockCostCoins !== 0 || starter.unlockLevel !== 1)) {
+      problems.push(`churrasqueira ${starter.id}: starter (index 0) must be free at level 1`);
+    }
+    for (let i=1;i<byIdx.length;i++) {
+      if (byIdx[i]!.fileiras < byIdx[i-1]!.fileiras) problems.push(`churrasqueira ${byIdx[i]!.id}: fileiras must not decrease vs previous tier`);
+      if (byIdx[i]!.unlockLevel <= byIdx[i-1]!.unlockLevel) problems.push(`churrasqueira ${byIdx[i]!.id}: unlockLevel must increase`);
+    }
   }
 
   return problems;
