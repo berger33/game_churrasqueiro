@@ -1,0 +1,93 @@
+{
+  "batch": "lote-08",
+  "status": "pending",
+  "checks": {
+    "generatedImages": 10,
+    "processedSprites": 10,
+    "oneSpritePerImage": true,
+    "approvedReferenceOnly": true,
+    "magentaResidualPixels": 0
+  },
+  "sprites": [
+    {
+      "name": "ic_coin",
+      "width": 842,
+      "height": 842,
+      "opaquePixels": 530721,
+      "partialAlphaPixels": 2203,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "ic_ember",
+      "width": 538,
+      "height": 706,
+      "opaquePixels": 227776,
+      "partialAlphaPixels": 1727,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "ic_star",
+      "width": 838,
+      "height": 811,
+      "opaquePixels": 393597,
+      "partialAlphaPixels": 2446,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "ic_clock",
+      "width": 779,
+      "height": 898,
+      "opaquePixels": 485192,
+      "partialAlphaPixels": 2277,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "ic_flame",
+      "width": 586,
+      "height": 736,
+      "opaquePixels": 269658,
+      "partialAlphaPixels": 1936,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "ic_check",
+      "width": 772,
+      "height": 670,
+      "opaquePixels": 245881,
+      "partialAlphaPixels": 1907,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "ic_chest",
+      "width": 808,
+      "height": 713,
+      "opaquePixels": 449594,
+      "partialAlphaPixels": 2304,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "ic_booster",
+      "width": 492,
+      "height": 810,
+      "opaquePixels": 306219,
+      "partialAlphaPixels": 2040,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "ic_lock",
+      "width": 718,
+      "height": 863,
+      "opaquePixels": 434435,
+      "partialAlphaPixels": 2879,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "ic_grill_size",
+      "width": 866,
+      "height": 817,
+      "opaquePixels": 368410,
+      "partialAlphaPixels": 5318,
+      "magentaResidualPixels": 0
+    }
+  ]
+}

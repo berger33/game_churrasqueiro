@@ -1,0 +1,129 @@
+{
+  "_comment": "Lote 08 — primeira das quatro rodadas pedidas pelo dono para substituir, uma imagem por sprite, os 33 assets ainda pending do lote 03. Esta rodada cobre os 9 ícones centrais de UI e ic_grill_size. Prompts exatos em art/prompts/lote-08.md. Nenhum asset entra no runtime antes da aprovação explícita.",
+  "batch": "lote-08",
+  "date": "2026-09-26",
+  "sourceDir": "art/source/lote-08",
+  "reviewLayout": "icons",
+  "assets": [
+    {
+      "source": "ic_coin.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_coin",
+      "label": "Interface · moeda",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Moeda, não medalha; chama em relevo; lê a 32 px e em cinza."
+      }
+    },
+    {
+      "source": "ic_ember.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_ember",
+      "label": "Interface · brasa premium",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Silhueta de brasa/cristal com núcleo quente; distingue-se da moeda e da chama simples."
+      }
+    },
+    {
+      "source": "ic_star.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_star",
+      "label": "Interface · estrela",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Cinco pontas arredondadas, contorno limpo e leitura imediata a 32 px."
+      }
+    },
+    {
+      "source": "ic_clock.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_clock",
+      "label": "Interface · relógio",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Timer sem dígitos; ponteiro e marcações permanecem legíveis a 32 px."
+      }
+    },
+    {
+      "source": "ic_flame.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_flame",
+      "label": "Interface · chama",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Três lóbulos conectados; nenhum fragmento solto; leitura imediata em cinza."
+      }
+    },
+    {
+      "source": "ic_check.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_check",
+      "label": "Interface · confirmação",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Check sem placa de fundo; contraste e forma preservados a 32 px."
+      }
+    },
+    {
+      "source": "ic_chest.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_chest",
+      "label": "Interface · baú",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Baú fechado e sem recompensa pintada; fecho ainda lê a 32 px."
+      }
+    },
+    {
+      "source": "ic_booster.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_booster",
+      "label": "Interface · booster",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Raio inteiramente dentro da garrafa; frasco e símbolo permanecem distintos a 32 px."
+      }
+    },
+    {
+      "source": "ic_lock.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_lock",
+      "label": "Interface · cadeado",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Cadeado fechado; arco e fechadura permanecem legíveis em cinza."
+      }
+    },
+    {
+      "source": "ic_grill_size.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_grill_size",
+      "label": "Upgrade · grelha maior",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Seta toca a moldura da grelha e forma um cluster único; comunica capacidade, sem chama."
+      }
+    }
+  ]
+}

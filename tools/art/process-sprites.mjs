@@ -446,7 +446,11 @@ function processSingle(img, lab, comps, spec) {
 
 function parseCsv(text) {
   const rows = [];
-  for (const line of text.split('\n')) {
+  for (const rawLine of text.split('\n')) {
+    // The registry was created with CRLF. Without removing the trailing CR,
+    // the final header becomes "notes\r" and re-processing a batch silently
+    // drops the review notes frozen on every approved row.
+    const line = rawLine.endsWith('\r') ? rawLine.slice(0, -1) : rawLine;
     if (!line.trim()) continue;
     const cells = []; let cur = '', q = false;
     for (let i = 0; i < line.length; i++) {
@@ -464,8 +468,11 @@ const csvCell = (v) => (/[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '
 async function updateRegistry(entries) {
   const byName = new Map();
   const order = [];
+  let newline = '\n';
   if (existsSync(REGISTRY)) {
-    const [head, ...rows] = parseCsv(await readFile(REGISTRY, 'utf8'));
+    const text = await readFile(REGISTRY, 'utf8');
+    newline = text.includes('\r\n') ? '\r\n' : '\n';
+    const [head, ...rows] = parseCsv(text);
     for (const r of rows) {
       const o = Object.fromEntries(head.map((k, i) => [k, r[i] ?? '']));
       byName.set(o.name, o); order.push(o.name);
@@ -480,7 +487,7 @@ async function updateRegistry(entries) {
   }
   const lines = [REGISTRY_COLUMNS.join(',')];
   for (const n of order) lines.push(REGISTRY_COLUMNS.map((k) => csvCell(byName.get(n)[k] ?? '')).join(','));
-  await writeFile(REGISTRY, lines.join('\n') + '\n');
+  await writeFile(REGISTRY, lines.join(newline) + newline);
 }
 
 // ── main ─────────────────────────────────────────────────────────────────────

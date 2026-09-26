@@ -1,39 +1,45 @@
-# Prompt de retomada — próximo passo após lote 07
+# Prompt de retomada — decisão do lote 08
 
-Continuar o `game_churrasqueiro` a partir do `main` atualizado após o merge do PR #12, que inclui a aprovação do lote 07 e este handoff. Trabalhe na branch atribuída à nova sessão, baseada nesse `main`; não altere `main` diretamente nem reutilize a branch da sessão anterior.
+Continuar o `game_churrasqueiro` na branch atribuída à sessão, a partir do estado que gerou a
+primeira das quatro rodadas de substituição dos 33 sprites `pending` do antigo lote 03.
 
 ## Estado confirmado
 
-- Lotes 01–02 e 04–07 aprovados. Runtime do protótipo: **211 sprites, 3,44 MB WebP**.
-- Lote 07: 10/10 imagens, 34/34 sprites `approved`; masters e runtime versionados. A aprovação valida a arte, não integra as novas telas de coleção, eventos, loja/IAP, Brasa Pass, mapa/rota ou conquistas.
-- Lote 03 continua aguardando decisão do dono. Não mude seu registro/status, não integre seus assets e não o trate como aprovado.
-- Chapa evo 3 e fornalha evo 2–3 do lote 06 têm desvios explicitamente autorizados; não os altere e não afrouxe `holeValidation`.
-- O mapa do lote 07 tem divisões internas ilustrativas, não limites cartográficos oficiais; a miniatura inox da coleção não tem a manivela do prompt. Foram aceitos pelo dono junto com o lote completo.
-- Registro técnico e revisão: `art/review/lote-07.md`, `art/review/lote-07-checks.json`, `art/review/lote-07.jpg`, `art/review/lote-07-preview.jpg`.
-- Runtime contém assets aprovados, mas não é prova de integração funcional. A montagem do lote 07 é estática, não screenshot do jogo.
+- Lotes 01–02 e 04–07 aprovados. Runtime aprovado: **211 sprites, 3,44 MB WebP**.
+- O dono pediu refazer os 33 pending como imagens individuais em quatro rodadas: 10 + 10 + 10 + 3.
+- **Lote 08 entregue:** 10 imagens individuais, cobrindo `ic_coin`, `ic_ember`, `ic_star`,
+  `ic_clock`, `ic_flame`, `ic_check`, `ic_chest`, `ic_booster`, `ic_lock` e `ic_grill_size`.
+- As dez imagens foram processadas em dez masters, estão `pending` e passaram na revisão
+  técnica: objeto único, leitura a 32 px e em cinza, zero pixels magenta residuais.
+- Entregáveis: `art/prompts/lote-08.md`, `art/lote-08.json`,
+  `art/review/lote-08.jpg`, `art/review/lote-08-preview.jpg` e
+  `art/review/lote-08-checks.json`.
+- Os 23 pending restantes continuam fora do runtime. O runtime não foi reconstruído com
+  `--include-pending` e nenhuma decisão antiga foi convertida em aprovação.
 
-## Tarefa imediata — docs/23 §1.4: `check-art-registry`
+## Próximo passo imediato
 
-Implementar um gate de CI com verificações efetivas (não asserts que possam ser neutralizados):
+Aguardar a decisão explícita do dono sobre o lote 08.
 
-1. Todo arquivo asset sob `Assets/Art` tem exatamente uma linha no `Assets/Art/ASSET_REGISTRY.csv` e todo caminho do registro aponta para um arquivo existente.
-2. Detectar nomes duplicados, linhas malformadas e status inválidos. Respeitar `sprites.manifest.json` e os metadados já existentes sem reescrever notas/CRLF do CSV.
-3. O runtime (`prototype/assets/art/index.json` e os WebP listados) só contém sprites com status `approved`; todo item listado existe e dimensões/IDs conferem com o manifesto.
-4. Incluir testes positivos e negativos que demonstrem que o gate falha quando: um master não tem linha; uma linha aponta para arquivo inexistente; um asset `pending` entra no runtime; há registro duplicado. Não editar dados reais para passar os testes.
-5. Registrar o comando no runner `tools/studio/run-gates.mjs` e nos docs aplicáveis. Rodar o teste do gate, `npm run gates` e verificar a lista/ordem de gates. Não alterar arte, gameplay, simulação ou `holeValidation`.
-6. `check-csharp` pode ser SKIP localmente se `dotnet` não estiver disponível, mas o CI deve executá-lo. Não declarar todos os gates verdes sem evidência do CI.
+- Se disser **aprovar/ok**: aplicar `node tools/art/set-status.mjs lote-08 approved`, reconstruir
+  o runtime com `node tools/art/build-runtime.mjs`, conferir que ele sobe de 211 para 221
+  sprites e executar os gates de arte/render.
+- Se pedir refação: manter status `pending`, registrar os pontos e refazer somente os itens
+  rejeitados antes de abrir a rodada seguinte.
+- Só depois da decisão final do lote 08 planejar e gravar os prompts do lote 09, com 10 dos 23
+  sprites restantes. Preservar famílias visuais e usar apenas referências aprovadas.
 
-Antes de mexer, leia `docs/22-ARTE_2D_PLANO.md` §§3, 7 e 11; `docs/23-PLANO_IMPLEMENTACAO.md` §§0, 1.4 e 8; `docs/04-ART_STYLE.md` §11; e inspecione os gates existentes. Se a implementação exigir alguma alteração de contrato do registro, explique-a e atualize a documentação antes de mudar os dados.
+## Depois da sequência 08–11
 
-## Depois do gate
+Retomar o gate `check-art-registry` (`docs/23` passo 1.4), os ícones de cosmético nos dados
+(passo 1.5) e o fechamento do snapshot em `docs/18-STATUS.md`. As peças de ASO/store que antes
+ocupavam o nome “lote 08” foram adiadas para o lote 12 ou posterior.
 
-- Atualize o passo 1.4 do docs/23 com os resultados reais e a branch/PR.
-- Não comece automaticamente o passo 1.5, as telas do metajogo nem o lote 08. O passo 0.1 (decisão do lote 03) permanece bloqueado pelo dono; o 0.3 exige atualizar `18-STATUS.md` quando autorizado/concluído.
-- Faça commit e push somente na branch atribuída à sessão. Peça revisão antes de qualquer merge.
+## Segurança do fluxo
 
-## Persistência / segurança
-
-- Confira `git status`, branch e base antes de editar; preserve trabalho local. Após wipe, faça fetch explícito da branch da sessão e compare o estado antes de qualquer `reset --hard`.
-- Não mude status de assets sem decisão explícita do dono. Não reprocese lote 07 nem regenere artes já versionadas.
-- Masters, spec, prompts, relatórios e handoffs são versionados; raws e referências continuam ignorados.
-- Não incorporar branches/PRs antigos de experimentos. Não apagar nem mesclar branches alheias sem conferir seus PRs e autorização explícita.
+- Revisão técnica `ok` não equivale à aprovação do dono.
+- Não alterar status sem decisão explícita.
+- Não iniciar lote 09 automaticamente.
+- Não integrar pending no runtime versionado.
+- Brutos e referências são descartáveis/gitignored; masters, prompts, spec e revisão são
+  versionados.

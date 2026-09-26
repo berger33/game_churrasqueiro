@@ -4,8 +4,9 @@
 **Status:**
 
 - Lotes 01–02 e 04–06 **aprovados**; assets empacotados e usados pelo protótipo conforme descrito em §7.1 (a integração varia por família).
-- Lote 03 gerado e processado, **aguardando decisão do dono**; não foi alterado neste checkpoint.
+- Lote 03: dos 33 sprites que ainda estavam `pending`, os primeiros 10 foram substituídos individualmente no **lote 08**; os outros 23 continuam no lote 03.
 - Lote 07 (10 imagens, 34 sprites) **aprovado pelo dono em 2026-09-26**; incluído no runtime do protótipo, que agora tem **211 sprites, 3,44 MB WebP**.
+- Lote 08 (10 imagens → 10 sprites: os 9 ícones centrais de UI + `ic_grill_size`) foi gerado, recortado e revisado tecnicamente em 2026-09-26; está **aguardando aprovação do dono** e não entrou no runtime.
 - A aprovação e presença no bundle não significam que as novas telas de coleção, eventos, loja/IAP, passe, mapa ou conquistas estejam implementadas; ver §7.1.
 - A auditoria do que ainda falta gerar está em §2.
 
@@ -232,7 +233,9 @@ proíbem roupa e props magenta; a camisa salmão da mãe (lote 01) passou porque
 | **05** | costela, cupim · ícones de upgrade 2/3 e 3/3 · cosméticos (5) · funcionários (5) · fundos premium, festival e rede nacional · categorias da coleção (10) — 53 sprites | **aprovado e integrado 26/09** |
 | **06** | evoluções 2 e 3 de chapa, inox e fornalha (6) · VFX: fumaça/faíscas, PERFEITO/moedas/confete (2 folhas) · coleção: molhos e equipamentos (2 folhas) | planejado |
 | **07** | coleção: churrasqueiras especiais + medalha · banners de eventos (11, em 3 folhas) · arte da loja/IAP (7 produtos, 2 folhas) · Brasa Pass · mapa da rota · medalhas de conquista · key art da tela-título | planejado |
-| **08** | loja das stores (3 conceitos de ícone, feature graphic) · sobras e refações acumuladas | planejado |
+| **08** | refação individual dos pending do lote 03 (1/4): 9 ícones centrais de UI + `ic_grill_size` | **10 imagens geradas e processadas; pending, aguardando aprovação** |
+| **09–11** | continuação da refação individual dos 23 pending restantes: 10 + 10 + 3 imagens | planejado; cada lote só começa após decisão do anterior |
+| **12+** | loja das stores (3 conceitos de ícone, feature graphic) · demais sobras/refações | planejado |
 
 ### 6.1 Resultado do lote 01
 
@@ -359,6 +362,26 @@ sobrescrever o melhor raw sem backup — regens podem regredir por variância.
 
 Os masters passaram na verificação de recorte com zero pixels magenta residuais. Os avisos de toque de borda e demais notas visuais estão em `art/review/lote-07.md` e `art/review/lote-07-checks.json`. **Assets incluídos no bundle não significam telas implementadas:** eventos, IAP/loja, Brasa Pass, rota, coleção e conquistas ainda precisam de UI e lógica próprias (§7.1).
 
+### 6.8 Resultado do lote 08 — aguardando aprovação
+
+Primeira das quatro rodadas pedidas pelo dono para substituir os 33 sprites `pending` do lote
+03 por **uma geração individual por sprite** (10 + 10 + 10 + 3). A rodada cobre `ic_coin`,
+`ic_ember`, `ic_star`, `ic_clock`, `ic_flame`, `ic_check`, `ic_chest`, `ic_booster`, `ic_lock`
+e `ic_grill_size`.
+
+- 10 chamadas produziram 10 imagens e 10 sprites; nenhum erro ou chamada perdida;
+- referência remontada exclusivamente de seis ícones `approved` do lote 05;
+- exatamente um objeto por imagem, sem texto, placas de fundo ou componentes extras;
+- 0 pixels magenta residuais nos 10 masters recortados;
+- as dez silhuetas continuam legíveis a 32 px no HUD escuro e em escala de cinza sobre claro;
+- `ic_grill_size` mantém a seta tocando a grelha, como um cluster único, sem chama;
+- registro e manifesto continuam `pending`; o runtime aprovado permanece com 211 sprites.
+
+Entregáveis: `art/prompts/lote-08.md`, `art/lote-08.json`,
+`art/review/lote-08.jpg`, `art/review/lote-08-preview.jpg` e
+`art/review/lote-08-checks.json`. O veredito `ok` do arquivo de lote é revisão técnica, não a
+aprovação do dono.
+
 ## 7. Integração no jogo
 
 Só começa depois da aprovação do lote. Nenhum código do jogo muda enquanto a arte está em revisão.
@@ -450,8 +473,9 @@ ele não existe neste ambiente. **Ponto de decisão: lote 03.**
 
 ## 11. Próximos passos
 
-1. **Lote 07:** 10 imagens / 34 sprites aprovados pelo dono; masters e assets no runtime (211 sprites, 3,44 MB WebP). Isso não fecha a implementação das telas de metajogo (§7.1).
-2. **Lote 03:** aguardar decisão do dono; não alterar o registro nem o runtime até a decisão.
-3. **Lote 08 / lacunas restantes:** planejar as 5 peças de ASO/store e os itens ainda ⬜ em §2; prompts devem ser versionados antes de gerar.
+1. **Lote 08:** revisar e obter decisão explícita sobre as 10 imagens entregues. Se aprovado, aplicar `set-status` e reconstruir o runtime; se houver refação, ela precede o lote 09.
+2. **Lotes 09–11:** somente após a decisão do lote anterior, gerar os 23 pending restantes em 10 + 10 + 3 imagens, com prompt gravado antes e referência aprovada.
+3. **Lote 07:** 10 imagens / 34 sprites aprovados pelo dono; masters e assets no runtime (211 sprites, 3,44 MB WebP). Isso não fecha a implementação das telas de metajogo (§7.1).
 4. **Gate `check-art-registry`:** todo arquivo em `Assets/Art` tem linha no registro, toda linha aponta para arquivo existente e o runtime só contém `approved` (promessa de docs/04 §11).
 5. **Unity:** implementar o `AssetPostprocessor` lendo `sprites.manifest.json` (§7.2).
+6. **ASO/store:** as peças antes previstas para o lote 08 ficam para o lote 12 ou posterior, após a sequência de refações.

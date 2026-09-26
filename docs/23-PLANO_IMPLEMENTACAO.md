@@ -82,6 +82,11 @@ aprovação do dono → `set-status` → `build-runtime`.
   Escopo conforme `art/lote-07.json` e docs/22 §6.7 (não os conceitos de store, que ficam para lote futuro). O mapa tem divisões internas não cartográficas; inox da coleção sem manivela. O dono aprovou o lote completo ciente das ressalvas.
   **Limite:** inclusão dos assets no bundle não implementa as telas/fluxos de coleção, eventos, IAP, passe, mapa ou conquistas. A montagem não é screenshot do jogo; ver §7.1 de docs/22.
   Verifica: `set-status` (34/34 approved) → `build-runtime` (211 sprites) → gates locais 13/14; `check-csharp` SKIP por ausência de dotnet no sandbox. CI remoto ainda não registrado para esta branch; validar em CI/ambiente .NET antes de merge.
+- [ ] **1.3-A — Substituir os 33 sprites pending do lote 03 em 4 rodadas individuais (10 + 10 + 10 + 3).**
+  - Lote 08: **10/10 gerados e processados em 2026-09-26**, revisão técnica `ok`, aguardando aprovação do dono. Abrange os 9 ícones centrais de UI + `ic_grill_size`; zero pixels magenta residuais; runtime aprovado não foi alterado.
+  - Lotes 09–11: 23 imagens restantes; não iniciar o próximo sem decisão explícita sobre o anterior.
+  Verifica: `art/review/lote-08-preview.jpg` (cor + 32 px + cinza), `art/review/lote-08-checks.json` e registro `pending`.
+  Pronto quando: as quatro rodadas tiverem decisão final e só as aprovadas estiverem no runtime.
 - [ ] **1.4 — Gate `check-art-registry` no CI.**
   Ações: todo arquivo em `Assets/Art` tem linha no registro; toda linha aponta para um
   arquivo existente; o runtime só contém `approved` (promessa de docs/04 §11).
@@ -158,10 +163,11 @@ Cada passo, ao ser aberto, ganha sub-passos próprios neste documento (mesmo for
 
 ## 8. Próximo passo imediato
 
-👉 **Fase 1, passo 1.4** (`check-art-registry`) + fechar a Fase 0: passo 0.1
-(decisão pendente do lote 03) e passo 0.3 (snapshot do `18-STATUS.md`). O lote 07 foi
-aprovado e seus assets estão no runtime; suas telas de metajogo continuam por implementar.
-Prompt de retomada para a próxima sessão: `docs/24-PROMPT_PROXIMA_SESSAO.md`.
+👉 **Revisar o lote 08 e registrar a decisão do dono.** Não gerar o lote 09 antes dessa
+decisão. Depois da sequência de refações, retomar o passo 1.4 (`check-art-registry`) e fechar
+a Fase 0 com a decisão final dos antigos pending e o snapshot de `18-STATUS.md`. O lote 07
+continua aprovado no runtime; suas telas de metajogo continuam por implementar. Prompt de
+retomada: `docs/24-PROMPT_PROXIMA_SESSAO.md`.
 
 **Registro de progresso:**
 
@@ -174,3 +180,4 @@ Prompt de retomada para a próxima sessão: `docs/24-PROMPT_PROXIMA_SESSAO.md`.
 | 2026-09-26 | 1.2 (lote 06) | parcial: 5/10 processados (24 sprites: inox evo 3 + VFX + coleção); 5 grills falharam no holeValidation | `arena/01a0df03-game-churrasqueiro` | 3ª passada no próximo turno (upgrades compactos); limite de 10 gerações atingido de novo |
 | 2026-09-26 | 1.2 (lote 06) | 10/10: chapa evo 2 passou na 7ª passada ([ALTA]); chapa evo 3 + fornalhas evo 2–3 implementadas com desvio documentado e autorização do dono | `arena/01a0df03-game-churrasqueiro` | 29 sprites approved; runtime 177 sprites (3,11 MB); contrato mantido no spec para refação futura |
 | 2026-09-26 | 1.3 (lote 07) | 10/10 imagens, 34/34 sprites aprovados; runtime reconstruído para 211 sprites / 3,44 MB WebP | `arena/01a0dfd3-game-churrasqueiro` | 13/14 gates locais; `check-csharp` SKIP sem dotnet. Aprovação cobre arte, não integração das telas de metajogo; desvios aceitos descritos em docs/22 §6.7 |
+| 2026-09-26 | 1.3-A (lote 08) | 10 imagens individuais geradas e recortadas; 10 sprites `pending`, revisão técnica ok | `arena/01a0e001-game-churrasqueiro` | 9 ícones centrais + `ic_grill_size`; zero magenta residual; revisão a 32 px/cinza entregue; aguarda aprovação do dono |

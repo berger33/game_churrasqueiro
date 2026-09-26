@@ -147,15 +147,15 @@
     },
     "ic_booster": {
       "file": "Assets/Art/UI/Icons/ic_booster.png",
-      "w": 192,
-      "h": 291,
+      "w": 492,
+      "h": 810,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-08/ic_booster.png",
+      "batch": "lote-08"
     },
     "ic_brasa_mastery": {
       "file": "Assets/Art/UI/Icons/ic_brasa_mastery.png",
@@ -219,27 +219,27 @@
     },
     "ic_check": {
       "file": "Assets/Art/UI/Icons/ic_check.png",
-      "w": 274,
-      "h": 243,
+      "w": 772,
+      "h": 670,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-08/ic_check.png",
+      "batch": "lote-08"
     },
     "ic_chest": {
       "file": "Assets/Art/UI/Icons/ic_chest.png",
-      "w": 290,
-      "h": 283,
+      "w": 808,
+      "h": 713,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-08/ic_chest.png",
+      "batch": "lote-08"
     },
     "ic_churrasqueiro": {
       "file": "Assets/Art/UI/Icons/ic_churrasqueiro.png",
@@ -267,27 +267,27 @@
     },
     "ic_clock": {
       "file": "Assets/Art/UI/Icons/ic_clock.png",
-      "w": 282,
-      "h": 293,
+      "w": 779,
+      "h": 898,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-08/ic_clock.png",
+      "batch": "lote-08"
     },
     "ic_coin": {
       "file": "Assets/Art/UI/Icons/ic_coin.png",
-      "w": 283,
-      "h": 284,
+      "w": 842,
+      "h": 842,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-08/ic_coin.png",
+      "batch": "lote-08"
     },
     "ic_col_acompanhamentos": {
       "file": "Assets/Art/UI/Icons/ic_col_acompanhamentos.png",
@@ -495,27 +495,27 @@
     },
     "ic_ember": {
       "file": "Assets/Art/UI/Icons/ic_ember.png",
-      "w": 204,
-      "h": 291,
+      "w": 538,
+      "h": 706,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-08/ic_ember.png",
+      "batch": "lote-08"
     },
     "ic_flame": {
       "file": "Assets/Art/UI/Icons/ic_flame.png",
-      "w": 249,
-      "h": 307,
+      "w": 586,
+      "h": 736,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-08/ic_flame.png",
+      "batch": "lote-08"
     },
     "ic_garcom": {
       "file": "Assets/Art/UI/Icons/ic_garcom.png",
@@ -543,15 +543,15 @@
     },
     "ic_grill_size": {
       "file": "Assets/Art/UI/Icons/ic_grill_size.png",
-      "w": 326,
-      "h": 189,
+      "w": 866,
+      "h": 817,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-08/ic_grill_size.png",
+      "batch": "lote-08"
     },
     "ic_heat": {
       "file": "Assets/Art/UI/Icons/ic_heat.png",
@@ -603,15 +603,15 @@
     },
     "ic_lock": {
       "file": "Assets/Art/UI/Icons/ic_lock.png",
-      "w": 232,
-      "h": 293,
+      "w": 718,
+      "h": 863,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-08/ic_lock.png",
+      "batch": "lote-08"
     },
     "ic_music": {
       "file": "Assets/Art/UI/Icons/ic_music.png",
@@ -687,15 +687,15 @@
     },
     "ic_star": {
       "file": "Assets/Art/UI/Icons/ic_star.png",
-      "w": 272,
-      "h": 260,
+      "w": 838,
+      "h": 811,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_core.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-08/ic_star.png",
+      "batch": "lote-08"
     },
     "ic_table": {
       "file": "Assets/Art/UI/Icons/ic_table.png",
