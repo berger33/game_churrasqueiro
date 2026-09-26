@@ -40,6 +40,30 @@ const head = parseLine(csv[0]);
 const iName = head.indexOf('name'), iStatus = head.indexOf('status');
 const statusOf = new Map(csv.slice(1).map((l) => { const c = parseLine(l); return [c[iName], c[iStatus]]; }));
 
+// ── a família manda no inclinado ──────────────────────────────────────────────────────────────
+// Um vão "em nível" não é defeito absoluto: é. O que reprovava arte no §6.10.3 era o vão a 0° numa
+// grelha cujas irmãs assinadas o dono medem 6–10° — o jogador vê a churrasqueira virar na tela no
+// instante da evolução. Daí medir por grelha, não no mundo: `flat` só faz sentido contra o piso da
+// PRÓPRIA família, e o sinal (para cima ou para baixo à direita) é da família também. As duas evo 3
+// do lote 11 voltaram rejeitadas por causa disso: passavam na régua global com o MÓVEL tombado
+// (docs/22 §6.13), e a zé assinada tem o vão a +1,7° — uma régua de 4° do mundo inteiro a acusaria.
+const famTilt = new Map();
+for (const r of rows) {
+  if (!r.got || typeof r.got.tiltDeg !== 'number') continue;
+  if ((statusOf.get(r.name) ?? 'unknown') !== 'approved') continue;
+  const list = famTilt.get(r.cap.id) ?? [];
+  list.push({ evo: r.cap.evo, tilt: r.got.tiltDeg });
+  famTilt.set(r.cap.id, list);
+}
+const famStats = (id, selfEvo) => {
+  // as irmãs, nunca a própria linha: a evo 1 assinada a 1,7° não pode ser acusada pela régua dela
+  // mesma — só por uma irmã assinada que incline mais.
+  const l = (famTilt.get(id) ?? []).filter((x) => x.evo !== selfEvo && Math.abs(x.tilt) >= 2);
+  if (!l.length) return null;
+  const abs = l.map((x) => Math.abs(x.tilt));
+  return { min: Math.min(...abs), max: Math.max(...abs), sign: Math.sign(l.reduce((a, x) => a + x.tilt, 0)), list: l };
+};
+
 const fmt = (n) => String(n).padStart(4);
 console.log(`\n── churrasqueiras: boca pintada × grade prometida ─────────────────────────`);
 console.log(`   padrão: comida ${art.foodFootprint.width}×${art.foodFootprint.height} px · leito ${art.bedWidthOnScreen}–${art.maxBedWidthOnScreen} px · topo ≤ ${art.maxTiltDeg}°`);
@@ -63,7 +87,17 @@ for (const r of rows.sort((a, b) => a.cap.id.localeCompare(b.cap.id) || a.cap.ev
   const avisos = [];
   if (r.got.mouthInvaded) avisos.push(['invadida', `só ${Math.round(r.got.fill * 100)} % do quadrilátero do vão é magenta de verdade: tem coisa pintada para dentro da boca (balcão, tampa, apoio, grade). A régua de vagas lê o vão inteiro — é esse pedaço pintado que come o espaço do prato.`]);
   if (r.got.mouthTooNarrow) avisos.push(['estreita', `boca em ${Math.round(r.got.widthFrac * 100)} % da largura do sprite (< ${Math.round(MOUTH_WIDTH_HINT * 100)} %): o teto de tela ganha da régua do leito e a comida encosta. Não reprova — as artes aprovadas antes desta regra também medem menos. É a régua da PRÓXIMA geração.`]);
-  if (r.got.flatMouth) avisos.push(['nivelada', `boca em ${r.got.tiltDeg}° — vista de frente sem câmera: topo, boca e base saem perfeitamente nivelados, e é isso que o dono lê como "sem inclinação na imagem". As grelhas carimbadas por ele medem −8,6° a −6,1°; \`make-ref.mjs guide --roll 7\` já entrega o desenho de partida com essa inclinação.`]);
+  const fam = famStats(r.cap.id, r.cap.evo);
+  if (r.got.flatMouth && (fam || !ships)) {
+    // com família assinada inclinada, o piso dela é que vale; sem família (ou com família nivelada),
+    // vale o piso global, que é a leitura "planta baixa" que ele devolve.
+    const piso = fam ? fam.min : MOUTH_TILT_MIN_HINT;
+    if (Math.abs(r.got.tiltDeg) < piso - 0.5) {
+      avisos.push(['nivelada', `vão a ${r.got.tiltDeg}°, mais nivelado que qualquer assinada desta grelha (${fam ? fam.list.map((x) => `evo${x.evo} ${x.tilt}°`).join(', ') : 'as carimbadas por ele medem −8,6° a −6,1°'}) — na tela, evoluir faz a churrasqueira virar. \`make-ref.mjs guide … --mouth-tilt 7\` cisalha o vão do desenho de partida nesse ângulo (e casa o sinal com a família sozinho); o CORPO fica de nível — não é mais a foto tombada de \`--roll\`, que foi o defeito do docs/22 §6.13.`]);
+    }
+  } else if (fam && fam.sign && Math.sign(r.got.tiltDeg) === -fam.sign && Math.abs(r.got.tiltDeg) >= 2) {
+    avisos.push(['nivelada', `sentido da inclinação contrário às assinadas da mesma grelha (${r.got.tiltDeg}° aqui, ${fam.list.map((x) => `evo${x.evo} ${x.tilt}°`).join(', ')} lá) — o vão "espelha" na evolução. O \`guide --mouth-tilt\` já inverte o sinal sozinho quando o manifesto existe; se apareceu este aviso, é gerar o guia de novo antes de repintar.`]);
+  }
   for (const [kind, msg] of avisos) {
     if (kind === 'invadida') invaded++; else if (kind === 'estreita') narrow++; else flat++;
     console.log(`   ${''.padEnd(20)}⚕ ${msg}`);
@@ -80,7 +114,7 @@ for (const step of ladder) {
   prev = step;
 }
 const caps = ladder.map((s) => s.cap);
-if (flat) console.log(`   ⚕ ${flat} grelha(s) com a boca em nível (|inclinação| < ${MOUTH_TILT_MIN_HINT}°) — planta baixa, não foto. Piso da próxima geração; as aprovadas de 0° continuam assinadas pelo dono.`);
+if (flat) console.log(`   ⚕ ${flat} grelha(s) com o vão mais nivelado que as assinadas da PRÓPRIA grelha (piso global < ${MOUTH_TILT_MIN_HINT}°) — planta baixa, não foto. Régua de desenho de partida, não de aprovação: o que se cobra delas é casar com a família, e o corpo fica de pé — foi tombar a foto (docs/22 §6.13) que reprovou arte com a régua verde.`);
 if (invaded) console.log(`   ⚕ ${invaded} grelha(s) com o vão invadido por detalhe pintado (< ${Math.round(MOUTH_FILL_HINT * 100)} % de cheio).`);
 if (narrow) console.log(`   ⚕ ${narrow} grelha(s) com boca estreita demais para a largura do sprite (< ${Math.round(MOUTH_WIDTH_HINT * 100)} %) — régua nova, ainda só aviso: é o piso da próxima geração.`);
 console.log(`\n   escada de vagas: ${caps.join(' → ')}  (monótona: ${ladderBad ? 'NÃO' : 'sim'})`);

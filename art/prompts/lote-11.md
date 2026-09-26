@@ -15,15 +15,31 @@ tem arte nenhuma no jogo).
 
 ## Geometria de cada item (sai do dado, não da minha prosa)
 
-Gerada por `node tools/art/make-ref.mjs guide … --roll 7` e conferida pelo MESMO detector que julga o
-sprite pintado (`process-sprites.mjs --dry-run`):
+Gerada por `node tools/art/make-ref.mjs guide … --mouth-tilt 7` e conferida pelo MESMO detector que julga o
+sprite pintado (`process-sprites.mjs --dry-run`) — boca = vão **perpendicular**, a caixa é maior de `tan 7° × 80 %`
+por causa do cisalhamento:
 
 | item | quadro do guia | boca do guia | grade prometida | vaga |
 |---|---|---|---|---|
-| `ze_da_esquina` evo 3 | 1408×912 | 1126×377 px = **2,99:1** (80 % da largura) | 2 fileiras × 3 vagas | 86×60 px |
-| `parrilla_chef_cisma` evo 3 | 1408×1360 | 1126×565 px = **1,99:1** (80 % da largura) | 3 fileiras × 3 vagas | 86×60 px |
+| `ze_da_esquina` evo 3 | 1408×1232 | 1126×377 px = **2,99:1** (80 % da largura), vão descendo 7° para a direita | 2 fileiras × 3 vagas | 86×60 px |
+| `parrilla_chef_cisma` evo 3 | 1408×1680 | 1126×565 px = **1,99:1** (80 % da largura), vão subindo 7° para a direita | 3 fileiras × 3 vagas | 86×60 px |
 
-Aceite (as mesmas réguas do lote 09/10, sem exceção): faixa de brasa ≥ 60 px por fileira · boca entre
+**O sentido da inclinação não é escolha de ninguém: é da FAMÍLIA.** Medido no manifesto, a `ze_da_esquina` assinada
+desce o vão para a direita (+1,7° no evo 1, +10,2° no evo 2) e a `parrilla_chef_cisma` sobe (−6,1° / −6,8°). Uma
+evo nova com o sinal trocado faz a churrasqueira "virar" na tela na hora da evolução, que é o que o jogador está
+olhando. Desde esta rodada o `make-ref guide` lê o sinal das evo anteriores da mesma grelha e **inverte o
+`--mouth-tilt` sozinho** se ele contradisser a família (imprime o porquê na linha `[guide]`); o guia não tem mais
+como nascer torto. Não virou gate do `check-grill-geometry`: sinal é gosto do dono, e a régua dele é o olho.
+
+**O lote foi entregue e devolvido pelo dono** (2ª rodada dele, não do lote 06): *"as 2 que você fez agora estão
+estranhas, com o lado direito mais alto que o esquerdo, me refiro à churrasqueira em si e não à grade; em tese, a
+área da grade seria essa mesma, mas a churrasqueira está na diagonal"*. Lido ao pé da letra, o defeito era o
+**método**, não a régua: o guia tinha `--roll 7`, que gira a silhueta inteira, e o `[CAMERA]` pedia *"a foto é
+tombada, nada nela está em nível"*. O modelo obedeceu e pôs o MÓVEL na diagonal — com a boca passando em todas as
+réguas. Corrigido: o guia agora cisalha só o vão (`--mouth-tilt`), o corpo é desenhado de nível, e nenhuma frase de
+prompt pede quadro inclinado.
+
+Aceite (as mesmas réguas do lote 09/10, sem exceção) + o olho dele, que é anterior à régua: faixa de brasa ≥ 60 px por fileira · boca entre
 0,72 e 0,90 da largura do recorte · `cheio` ≥ 0,85 · |rolo do vão| entre 4° e 12° · altura da boca ≤ 248 px
 na tela · conform necessário ≤ ×1,4 (passou disso, regenera — esticar a boca 2,3× é redesenhar a grelha).
 
@@ -36,27 +52,26 @@ tira da lateral, face interna da tampa, brilho de calor no vão.
 ## Bloco comum (as duas grelhas)
 
 ```
-[CAMERA] This is a photograph of a real object, not a technical drawing. The camera sits only 10–15
-degrees above the cooking opening, and the WHOLE FRAME is rotated counter-clockwise by about 8 degrees —
-the way a phone photo is tipped, nothing in it is level: the floor under the wheels runs uphill to the
-right, and the top edge of the opening rises toward the right by those same 8 degrees. Do NOT raise the
-camera higher and do NOT look down into the box. The cooking opening is a VERTICAL WINDOW cut into the
-FRONT WALL of the object, like the door of an oven — never a horizontal coal bed seen from above, never
-an ellipse, never a parallelogram floor. Because it is a vertical plane, it keeps its height. You may
-also see a narrow strip of one side panel, which is what makes the object read as three-dimensional.
-This is the same amount of world the reference grills show — copy how much depth they show, not what
-they are.
-[MOUTH] The FIRST reference image is a layout guide, not artwork: a flat dark silhouette with ONE bright
-magenta quadrilateral inside it, tipped by those same degrees. That quadrilateral IS the cooking
-opening: paint the object so its opening covers exactly that magenta shape — same four corners, same
-width, same height, same tip. For this grill the opening is 2.99 times wider than tall (the chapa) /
-1.99 times wider than tall (the parrilla): that ratio is the whole job, because the game places the
-food inside it, one row of embers per band. Do not shrink it, do not flatten it into a letterbox slit,
-do not draw a smaller window inside the frame, and do not straighten the drawing back to horizontal. The
-opening stays EMPTY MAGENTA: no grate, no bars, no flames, no coals, no ash, no food, no gloss, nothing
-painted there — the game draws the food and the heat bands itself. Its height IS the row count: 2 rows
-of food for the chapa, 3 rows for the parrilla, and never a taller rim or a splash guard eating the
-leftover height.
+[CAMERA] This is a photograph of a real object standing on the floor — not a technical drawing, and not a
+tipped photo either. THE OBJECT IS LEVEL: its base is parallel to the bottom edge of the image, both feet at
+the same height, its corners vertical, its hood horizontal. Do NOT rotate the picture, no dutch angle, nothing
+leans. The ONLY thing in the whole drawing that is not level is the COOKING OPENING: its two long edges slope by
+about 7 degrees, in the direction the guide draws them, because a camera placed a little above the object sees a
+rectangular hole in a vertical wall that way. The camera sits only 10–15 degrees above the opening — do NOT raise
+it higher and do NOT look down into the box. The opening is a WINDOW CUT INTO THE FRONT WALL of the object, like
+the door of an oven — never a horizontal coal bed seen from above, never an ellipse, never a parallelogram
+floor. Because it is a vertical plane, it keeps its height. A narrow strip of one side panel may show: depth is
+painted with the corner of the wall and the inner face of the opening, never by tipping the object over.
+[MOUTH] The FIRST reference image is a layout guide, not artwork: a flat dark silhouette, LEVEL, with ONE bright
+magenta PARALLELOGRAM inside it. That parallelogram IS the cooking opening: paint the object so its opening
+covers exactly that shape — same four corners, same width, same height, same slope AND the same slope direction
+as the guide. For this grill the opening is 2.99 times wider than tall (the chapa) / 1.99 times wider than tall
+(the parrilla): that ratio is the whole job, because the game places the food inside it, one row of embers per
+band. Do not shrink it, do not flatten it into a letterbox slit, do not draw a smaller window inside the frame.
+The opening stays EMPTY MAGENTA and nothing crosses it: no grate, no bars, no flames, no coals, no ash, no food,
+no gloss, no brick, no inner lining, no pot, no towel — the game draws the food and the heat bands itself, and
+anything that rises into the mouth eats one row of slots. Its height IS the row count: 2 rows of food for the
+chapa, 3 rows for the parrilla, and never a taller rim or a splash guard eating the leftover height.
 [ENCLOSED] The opening is a hole surrounded on all four sides by the object's own material: the magenta
 of the opening must never touch the magenta of the background anywhere, not at the top, not at a corner.
 [SIZE OF THE DRAWING] The magenta opening must span 80–89 % of the width of the FINISHED DRAWING, and
@@ -80,15 +95,15 @@ wall — red bricks laid WITHOUT mortar, visibly offset and chipped, four course
 a WIDE rectangular opening cut through it, three bricks per row of the opening's width, so the window is
 nearly three times as wide as it is tall. Above the opening a striped canvas awning on two slim poles,
 its edge tucked INSIDE the width of the brickwork; below the opening a rough concrete lintel course, and
-set into the front face under it a small black deep-fryer with one wire basket hanging on its rim and a
-blue gas ring beside it, both painted flat on the front, never sticking out sideways. Two cinder blocks on
-the ground at the feet. Warm ember light leaks through the gaps in the lowest brick course and glows up
+flat against the front face under that lintel — entirely BELOW it, its top edge separated from the bottom edge
+of the opening by the full thickness of the stone — a small black deep-fryer with one wire basket resting on
+its rim, never sticking out sideways and never rising into the mouth. Warm ember light leaks through the gaps in the lowest brick course and glows up
 onto the underside of the lintel. The brickwork on the left shows its narrow side face, so the wall reads
 as thick. Soot, heat-blued brick, one fraying towel over a corner brick.
 [IDENTITY] This is a brick street cart, not a stainless appliance: no chrome, no glass, no knobs.
 ```
 
-Guia: `art/source/lote-11/guides/g_ze_da_esquina_e3.png` · referências: a evo 1 aprovada da mesma
+Guia: `art/source/lote-11/guides/g_ze_da_esquina_e3_level.png` · referências: a evo 1 aprovada da mesma
 identidade (`ref_mesma_familia_e1.png`, à esquerda) e as duas assinadas com a câmera que ele gosta
 (`ref_cameras_aprovadas.png`).
 
@@ -98,8 +113,8 @@ identidade (`ref_mesma_familia_e1.png`, à esquerda) e as duas assinadas com a c
 [STYLE] The SAME chef's parrilla the previous level painted, now the professional one: a tall
 cream-rendered masonry body with a dark brick firebox recess, brushed stainless steel everywhere it is
 metal. The opening is a TALL rectangular window in the front wall, three bands high, its steel frame
-rolled and riveted, carrying inside its top edge a set of parallel spit rods with forks and a crank
-chain-and-sprocket on the left cheek. On the steel hood above the window, one large blank round
+rolled and riveted, with a set of parallel spit rods and forks lying on the ledge ABOVE the top edge of the opening and a
+chain-and-sprocket crank on the left cheek, OUTSIDE the opening — nothing hangs into the window. On the steel hood above the window, one large blank round
 thermometer dial with a red needle — the size of a dinner plate, mounted flat, no letters. A row of
 adjustment holes with a steel handle in one of them runs down each cheek: the grate height is adjustable
 and the drawing must show the mechanism. Below the window, a dark brick front with a narrow horizontal
@@ -109,7 +124,7 @@ a puddle of warm light. Clean, engineered, slightly show-off: this is the grill 
 dial.
 ```
 
-Guia: `art/source/lote-11/guides/g_parrilla_chef_cisma_e3.png` · mesmas duas referências de câmera, e a
+Guia: `art/source/lote-11/guides/g_parrilla_chef_cisma_e3_level.png` · mesmas duas referências de câmera, e a
 evo 1 da identidade ao lado no `ref_mesma_familia_e1.png`.
 
 ## 3) `food_maminha` — a folha de 6 quadros (raw · rare · medium · well · burned · served)
@@ -154,8 +169,8 @@ inteira.
 ## Referências (o `art/source/` não é versionado; os comandos refazem tudo)
 
 ```
-node tools/art/make-ref.mjs guide art/source/lote-11/guides/g_ze_da_esquina_e3.png      1408 --grill ze_da_esquina      --evo 3 --roll 7
-node tools/art/make-ref.mjs guide art/source/lote-11/guides/g_parrilla_chef_cisma_e3.png 1408 --grill parrilla_chef_cisma --evo 3 --roll 7
+node tools/art/make-ref.mjs guide art/source/lote-11/guides/g_ze_da_esquina_e3_level.png      1408 --grill ze_da_esquina      --evo 3 --mouth-tilt 7
+node tools/art/make-ref.mjs guide art/source/lote-11/guides/g_parrilla_chef_cisma_e3_level.png 1408 --grill parrilla_chef_cisma --evo 3 --mouth-tilt 7
 node tools/art/make-ref.mjs grid  art/source/lote-11/refs/ref_mesma_familia_e1.png   2400 1200 2 1 spr_grill_ze_da_esquina_evo1 spr_grill_parrilla_chef_cisma_evo1
 node tools/art/make-ref.mjs grid  art/source/lote-11/refs/ref_cameras_aprovadas.png  2400 1200 2 1 spr_grill_tambor_vertical_evo1 spr_grill_lata_valente_evo1
 node tools/art/make-ref.mjs grid  art/source/lote-11/refs/ref_sheet_contra_file.png  1600 2400 2 3 spr_food_contra_file_raw spr_food_contra_file_rare spr_food_contra_file_medium spr_food_contra_file_well spr_food_contra_file_burned spr_food_contra_file_served
@@ -163,6 +178,11 @@ node tools/art/make-ref.mjs grid  art/source/lote-11/refs/ref_pratos_servidos.pn
 ```
 
 ## O que as rodadas mediram (a régua e o olho, separados)
+
+A maminha não tem rodada nova: o bruto `food_maminha_r2.png` era `art/source/` (gitignored) e o workspace foi
+resetado no meio do lote. O que está assinável é o master já processado dele em `Assets/Art/` — `process-sprites`
+para esta linha imprime `1 source(s) skipped (raw missing)` e é isso: repintá-la exige gerar o bruto de novo, com
+a folha de 6 quadros deste arquivo.
 
 A grelha a gás ensinou que as duas coisas não são a mesma (docs/22 §6.10.4). Este lote foi medido com
 elas separadas de propósito: passar na régua com um vão que ele vai chamar de "sem inclinação" é
@@ -174,7 +194,7 @@ retrabalho, e acertar o olho com uma boca que não comporta a grade é mentira n
 |---|---|---|---|---|---|---|---|
 | r1 | 1,63:1 | 110 px ✓ | — | 0,33 ✗ | — | nenhum | monte de areia no chão + botijão e fritadeira alargando o recorte; **tijolo pintado dentro do vão** (a boca virou seta) |
 | r2 | 2,74:1 | 66 px ✓ | −6,8° ✓ | 0,67 ⚕ | 1,02 | nenhum | toldo **flutuando** acima da parede, separado dela por um vão de fundo |
-| **r3** | **2,28:1** | **79 px ✓** | **−6,7° ✓** | **0,69 ⚕** | **1,01** | **nenhum** | **adotada** — boca mais alta que o guia (sobra leito, nunca falta), toldo parafusado, tudo dentro do vão limpo |
+| r3 | 2,28:1 | 79 px ✓ | −6,7° ✓ | 0,69 ⚕ | 1,01 | nenhum | ~~adotada~~ **devolvida pelo dono**: a régua passava e o MÓVEL estava na diagonal (base −7,3°, topo −4,4° caindo para o mesmo lado = quadro rodado) |
 | r4 | 2,93:1 ✓ | 61 px ✓ | −4,1° ⚕ | 0,62 ⚕ | 1,01 | nenhum | a razão exata, mas o vão no piso do que ele chama de "sem inclinação" (as assinadas medem −8,6° a −6,1°) |
 | r5 | 2,98:1 ✓ | 60 px ✓ | — | 0,67 ⚕ | 1,01 | **×1,304** ✗ | o vão *pintado* veio em 3,89:1 (barra de carta) e o pipeline esticou a arte inteira 30 % para conformar — preço que a folha não precisa pagar |
 
@@ -183,21 +203,37 @@ retrabalho, e acertar o olho com uma boca que não comporta a grade é mentira n
 | rodada | boca pintada | faixa/vaga | vão | b/larg | `cheio` | conform | o que estava errado |
 |---|---|---|---|---|---|---|---|
 | r1 | 1,49:1 | 80 px ✓ | ~0° ⚕ | 0,58 ⚕ | — | nenhum | espetos e corrente pendurados **dentro** do vão (o detector fechou o buraco embaixo deles) e a manivela do lado direito esticando o recorte |
-| **r2** | **1,65:1** | **73 px ✓** | **−6,4° ✓** | **0,58 ⚕** | **1,01** | **nenhum** | **adotada** — espetos na bandeja sob o capô, corrente na bochecha externa, tijolo do fogão visível na parede interna do recesso (profundidade sem invadir o vão) |
+| r2 | 1,65:1 | 73 px ✓ | −6,4° ✓ | 0,58 ⚕ | 1,01 | nenhum | ~~adotada~~ **devolvida pelo dono**: corpo tombado (base −10,6°) com o topo em nível — a mesma foto inclinada |
 
-Duas coisas que a folha de medição não resolve sozinha e ficam registradas:
+**A repintura (roda `l`), com o corpo de nível e o vão cisalhado pelo guia:**
 
-1. **`b/larg` 0,58–0,69 contra o piso novo de 0,72.** É AVISO do padrão, não reprovação, e as próprias
-   evo 1 assinadas dessas duas identidades medem 0,48 e 0,61 — as duas novas estão *acima* das suas
-   irmãs. Baixar a moldura abaixo dos pilares de tijolo e das quatro pernas é o que faltaria para 0,72,
-   e é pedir ao modelo um objeto sem pilares: a identidade custa a largura. Fica para ele decidir se
-   aceita a troca.
-2. **`cheio` é cego a entalhe** (a lacuna já escrita no §6.10.3): um espeto atravessando o canto do vão
+| item | boca pintada | faixa/vaga | vão | b/larg | `cheio` | conform | veredito |
+|---|---|---|---|---|---|---|---|
+| `ze` l1 | 2,84:1 | 63 px ✓ | +4,5° ✓ | 0,63 ⚕ | 1,01 | nenhum | corpo de nível (base **+0,7°**, topo **0,0°**) — mas a fritadeira sobe para dentro do vão |
+| `ze` l2 | 2,68:1 | ✓ | — | 0,62 ⚕ | — | nenhum | toldo flutuando e uma moldura de tijolo pintada DENTRO do vão |
+| `ze` l3 | 1,81:1 ✗ | — | — | 0,55 ✗ | — | nenhum | encolheu a boca e engrossou a parede: o oposto do que o guia pediu |
+| `ze` l4 | 1,87:1 ✗ | 96 px ✓ | −7° | 0,68 ⚕ | 1,0 | nenhum | boca limpa e funda demais (2,99 → 1,87), parede quadrada |
+| **`ze` l5** | **2,89:1 ✓** | **62 px ✓** | **+3,8° ⚕** | **0,72 ✓** | **1,01** | **nenhum** | **adotada** — a razão do guia na boca, vão descendo para a direita como o evo 1/evo 2 assinados, fritadeira abaixo da verga |
+| `cisma` l1 | 1,45:1 ⚕ | 83 px ✓ | +6,2° | 0,59 ⚕ | 1,01 | ×0,732 | corpo de nível, mas o vão saiu alto demais e o pipeline teve de esticar a tela |
+| `cisma` l2 | 1,49:1 ⚕ | — | — | 0,46 ✗ | — | nenhum | boca pequena, e o que parece comida dentro da porta de brasa |
+| **`cisma` l3** | **1,72:1 ✓** | **70 px ✓** | **−6,0° ✓** | **0,61 ⚕** | **1,01** | **nenhum** | **adotada** — vão largo-baixo sem conform, sinal casado com a família (−6,1° / −6,8°) |
+
+As três coisas que a folha de medição não resolve sozinha e ficam registradas:
+
+1. **`b/larg`.** A zé adotada chegou a **0,72**, o piso do padrão; a cisma ficou em **0,61**, que é AVISO e não
+   reprovação — as evo 1 assinadas dessas duas identidades medem 0,48 e 0,61, ou seja, a cisma nova está *no
+   nível da irmã mais velha*. Baixar a moldura abaixo dos pilares de tijolo e das quatro pernas é o que faltaria
+   para as duas chegarem a 0,72, e é pedir ao modelo um objeto sem pilares: a identidade custa a largura.
+2. **O piso de 4° do rolo do vão.** A zé adotada mede **3,8°** — 0,2° abaixo da banda 4–12°, e a evo 1 assinada
+   dela mede 1,7°. Registado como está: para a chapa de rua, vão quase em nível é a família, não um defeito, e a
+   régua que importa aqui é a fileira de 60 px (62 ✓). Se ele quiser o vão mais caído, é regenerar com
+   `--mouth-tilt 9` no mesmo guia.
+3. **`cheio` é cego a entalhe** (a lacuna já escrita no §6.10.3): um espeto atravessando o canto do vão
    não muda o índice, porque o quadrilátero ajustado acompanha o recorte. As duas repinturas tiraram o
    que havia dentro do vão por *desenho*, não por régua — foi a frase "the rods and the crank live ABOVE
    and BESIDE the opening, never inside it" que resolveu, e ela entra no bloco comum dos próximos lotes.
 
-Rejeitar uma rodada não é apagar a prova: as cinco chapa e as duas inox estão em `art/source/lote-11/`
+Rejeitar uma rodada não é apagar a prova: as cinco chapa do lote 06, as três últimas e as cinco `l` estão em `art/source/lote-11/`
 (gitignored, vivas até o próximo reset). Trocar a adotada é um comando por item:
 
 ```

@@ -1,11 +1,11 @@
 {
-  "_comment": "Lote 11 — as duas evoluções 3 que a régua do lote 06 reprovou (chapa 19 px de faixa, inox 35 px, as duas com boca em nível) e a folha inteira da maminha (presa desde o lote 05 pela regra 'comida entra inteira'). As grelhas são pedidas dentro do guia derivado do dado (`make-ref.mjs guide --grill <id> --evo 3 --roll 7`), com o vão lido como janela da parede frontal e não como cama de brasa vista de cima. Cinco rodadas para a chapa, duas para o inox; a medição de cada uma está em art/prompts/lote-11.md. Nada entra no runtime sem aprovação do dono.",
+  "_comment": "Lote 11 — as duas evoluções 3 que a régua do lote 06 reprovou (chapa 19 px de faixa, inox 35 px, as duas com boca em nível) e a folha inteira da maminha (presa desde o lote 05 pela regra 'comida entra inteira'). As grelhas são pedidas dentro do guia derivado do dado (`make-ref.mjs guide --grill <id> --evo 3 --mouth-tilt 7`, que cisalha SÓ o vão e deixa o corpo de nível — o `--roll` da primeira entrega deste lote girava a silhueta inteira e o dono devolveu as duas pelo móvel estar na diagonal). Com a boca lida como janela da parede frontal e não como cama de brasa vista de cima. Cinco rodadas para a chapa, três para o inox; a medição de cada uma está em art/prompts/lote-11.md. Nada entra no runtime sem aprovação do dono.",
   "batch": "lote-11",
   "date": "2026-09-26",
   "sourceDir": "art/source/lote-11",
   "assets": [
     {
-      "source": "spr_grill_ze_da_esquina_evo3_r3.png",
+      "source": "spr_grill_ze_da_esquina_evo3_l5.png",
       "mode": "single",
       "hole": true,
       "grill": "ze_da_esquina",
@@ -14,10 +14,10 @@
       "name": "spr_grill_ze_da_esquina_evo3",
       "label": "Chapa e3 'Com Fritadeira' 2×3 — tijolo a seco largo, toldo parafusado, fritadeira na frente",
       "out": "Assets/Art/Sprites/Grills",
-      "notes": "repintura do lote 06 (boca 9,23:1 com faixa de 19 px não comportava as 6 vagas, e o topo a 0°). Medido: boca 2,28:1 · vaga 86×79 px · vão a -6,7° · cheio 1,01 · sem conform. Foi a r3 de cinco: a r1 veio com areia no chão e tijolo pintado DENTRO do vão (boca 1,63:1, recorte 0,33); a r2 consertou o vão mas deixou o toldo solto no ar; a r4 acertou a razão pedida (2,93:1) com o vão a -4,1°, no piso do que o dono lê como 'sem inclinação'; a r5 acertou a razão (2,98:1) mas o vão pintado veio em 3,89:1 e o conform precisou esticar a arte ×1,304 — a folha mostra a r3, que não precisou de nenhuma cirurgia de pixel, e as duas com razão exata estão em art/source/lote-11/ se ele preferir trocar por um comando"
+      "notes": "repintura 2 — a primeira entrega deste lote foi DEVOLVIDA pelo dono: \"as 2 que você fez agora estão estranhas, com o lado direito mais alto que o esquerdo, me refiro à churrasqueira em si e não à grade\". Medido nela: base −7,3° e topo −4,4°, caindo para o mesmo lado = foto tombada, e a régua do vão não via isso. Adotada (l5): boca 2,89:1 (o guia pedia 2,99:1) · vaga 86×62 px · vão +3,8° DESCENDO à direita, o sinal da família (evo 1 +1,7°, evo 2 +10,2°) · cheio 1,01 · sem conform · corpo de nível, base −0,2° e topo +0,4°. Do guia torto ao adotado: l1 tinha o corpo certo mas a fritadeira subindo para dentro do vão; l2, toldo solto e tijolo pintado dentro da boca; l3 encolheu a boca para 0,55 da largura; l4 limpou o vão mas o abriu fundo demais (1,87:1). l5 é a primeira em que boca, corpo e família batem ao mesmo tempo. Nada entra no runtime sem a assinatura dele."
     },
     {
-      "source": "spr_grill_parrilla_chef_cisma_evo3_r2.png",
+      "source": "spr_grill_parrilla_chef_cisma_evo3_l3.png",
       "mode": "single",
       "hole": true,
       "grill": "parrilla_chef_cisma",
@@ -26,7 +26,7 @@
       "name": "spr_grill_parrilla_chef_cisma_evo3",
       "label": "Inox e3 'Termômetro que Não Mente' 3×3 — alvenaria + inox, espetos na bandeja de cima, manivela de altura",
       "out": "Assets/Art/Sprites/Grills",
-      "notes": "repintura do lote 06 (boca 3,46:1 com faixa de 35 px para 3 fileiras de 60 px). Medido: boca 1,65:1 · vaga 86×73 px · vão a -6,4° · cheio 1,01 · sem conform — as 9 vagas comportam os pratos de 86 px com folga. A r1 pintou os espetos E a corrente dentro do vão (boca invadida, recorte 0,58 com a manivela para fora); a r2 tirou tudo para fora do vão e o detector fechou um retângulo limpo. Razão 1,65:1 contra 1,99:1 pedidas: a boca veio mais alta que o guia, o que só sobra leito, nunca falta — se ele quiser a razão exata, `--evo 3` regenera com a frase da boca repetida"
+      "notes": "repintura 2 — devolvida com o corpo tombado (base −10,6° com o topo em nível). Adotada (l3): boca 1,72:1 (pedido 1,99:1) · vaga 86×70 px · vão −6,0° SUBINDO à direita, o sinal da família (evo 1 −6,1°, evo 2 −6,8°) · cheio 1,01 · sem conform. As pernas sobem 9,3° para a direita, e é assim na evo 1 assinada, onde sobem 12,5°: câmera levemente à esquerda do objeto, não foto inclinada. l1 veio com o vão alto demais (1,45:1) e o pipeline teve de esticá-la em ×0,732 para caber na tela; l2 encolheu a boca para 0,46 da largura do recorte. l3 é a que não precisa de nenhuma cirurgia de pixel."
     },
     {
       "source": "food_maminha_r2.png",
@@ -36,8 +36,21 @@
       "category": "food",
       "subject": "maminha",
       "label": "Maminha (folha inteira regerada: cunha triangular + célula 6 como prato)",
-      "cells": ["raw", "rare", "medium", "well", "burned", "served"],
-      "states": ["raw", "rare", "medium", "well", "burned"],
+      "cells": [
+        "raw",
+        "rare",
+        "medium",
+        "well",
+        "burned",
+        "served"
+      ],
+      "states": [
+        "raw",
+        "rare",
+        "medium",
+        "well",
+        "burned"
+      ],
       "out": "Assets/Art/Sprites/Food",
       "notes": "o lote 04 entregou a célula 6 como mais um bife queimado; o reforço do 05 não foi assinado e, pela regra 'comida entra inteira', os 6 quadros ficaram fora do jogo. Folha regerada de uma vez contra a do contra-filé (mesmo layout, mesma luz): cunha triangular com capa de gordura só na aresta longa, cinco estados com o mesmo contorno, e a célula 6 é tábua redonda com cinco fatias em leque contra a fibra + sal grosso + cebolinha. Assinada, ela fecha 14 das 16 comidas; faltam costela (nv 34) e cupim (nv 44), que ainda não foram gerados"
     }
@@ -51,24 +64,92 @@
     "grill": "spr_grill_parrilla_chef_cisma_evo3",
     "_note": "as 9 vagas do inox e3 ocupadas ao tamanho real de comida (86 px), na grade 3×3 que o dado promete: é isto que a régua cobrava e o lote 06 não entregou (35 px de faixa)",
     "onGrill": [
-      ["spr_food_picanha_medium", 0.26, 0.17, 86],
-      ["spr_food_contra_file_rare", 0.5, 0.17, 86],
-      ["spr_food_linguica_toscana_medium", 0.74, 0.17, 86],
-      ["spr_food_maminha_medium", 0.26, 0.5, 86],
-      ["spr_food_fraldinha_well", 0.5, 0.5, 86],
-      ["spr_food_asinha_frango_medium", 0.74, 0.5, 86],
-      ["spr_food_queijo_coalho_well", 0.26, 0.83, 86],
-      ["spr_food_pao_de_alho_medium", 0.5, 0.83, 86],
-      ["spr_food_espetinho_misto_well", 0.74, 0.83, 86]
+      [
+        "spr_food_picanha_medium",
+        0.26,
+        0.17,
+        86
+      ],
+      [
+        "spr_food_contra_file_rare",
+        0.5,
+        0.17,
+        86
+      ],
+      [
+        "spr_food_linguica_toscana_medium",
+        0.74,
+        0.17,
+        86
+      ],
+      [
+        "spr_food_maminha_medium",
+        0.26,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_fraldinha_well",
+        0.5,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_asinha_frango_medium",
+        0.74,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_queijo_coalho_well",
+        0.26,
+        0.83,
+        86
+      ],
+      [
+        "spr_food_pao_de_alho_medium",
+        0.5,
+        0.83,
+        86
+      ],
+      [
+        "spr_food_espetinho_misto_well",
+        0.74,
+        0.83,
+        86
+      ]
     ],
     "benchItems": [
-      ["spr_food_maminha_raw", 62],
-      ["spr_food_contra_file_raw", 62],
-      ["spr_food_pao_de_alho_raw", 62]
+      [
+        "spr_food_maminha_raw",
+        62
+      ],
+      [
+        "spr_food_contra_file_raw",
+        62
+      ],
+      [
+        "spr_food_pao_de_alho_raw",
+        62
+      ]
     ],
     "orders": [
-      ["spr_char_customer_vizinho", ["spr_food_maminha_served", "spr_food_pao_de_alho_served"], 0.8],
-      ["spr_char_customer_generoso", ["spr_food_picanha_served", "spr_food_linguica_toscana_served"], 0.4]
+      [
+        "spr_char_customer_vizinho",
+        [
+          "spr_food_maminha_served",
+          "spr_food_pao_de_alho_served"
+        ],
+        0.8
+      ],
+      [
+        "spr_char_customer_generoso",
+        [
+          "spr_food_picanha_served",
+          "spr_food_linguica_toscana_served"
+        ],
+        0.4
+      ]
     ]
   }
 }

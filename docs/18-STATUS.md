@@ -4,7 +4,7 @@
 `arena/01a0de76-game-churrasqueiro` · on top of `main` after **PR #6 was merged** (`3e6ea7f`) + the
 progression/art work of PR #7 (`arena/01a0daed-game-churrasqueiro`) — the art pass below is that merge
 plus the rejected lote 03 and its reprocess (docs/22 §6.5); **o estado vivo da arte, lote a lote, está em
-§9 abaixo e em docs/22 §6.11**. Earlier snapshot line, kept for history:
+§9 abaixo e em docs/22 §6.12–§6.13**. Earlier snapshot line, kept for history:
 `arena/01a0d72a-game-churrasqueiro`
 (PR #5 fast-forwarded, then the six-step FTUE — see "FTUE" below and docs/05-UX_FLOW.md §4 —
 then its follow-ups: see "FTUE follow-ups" below; then the AI 2D art pass, lotes 01–03, integrated in the prototype — see
@@ -664,10 +664,14 @@ specification. The prototype proves art *direction*, not the art *budget*.
    - **lote 06 (as 6 evoluções)** — 4 de 6 no padrão (duas sem nenhum conform), 2 `redo` por boca rasa;
      as duas reprovadas foram repintadas no lote 11, então o lote 06 hoje só tem arte aprovável:
      `set-status.mjs lote-06 approved` passa a régua e embarca 4 sprites (zé e2, inox e2, fornalha e2/e3).
-   - **lote 11 entregue, aguardando aprovação** (docs/22 §6.11) — as duas evo 3 repintadas dentro de
-     guias derivados do dado, sem conform (chapa 86×79 px por vaga a -6,7°; inox 86×73 px a -6,4°), e a
-     folha inteira da maminha com a célula 6 como tábua fatiada. 8 linhas `pending`; com a assinatura dele
-     elas entram no jogo de uma vez, porque comida entra inteira.
+   - **lote 11 na segunda entrega, aguardando aprovação** (docs/22 §6.12–§6.13) — a primeira foi
+     devolvida pelo olho do dono: *"as 2 que você fez agora estão estranhas, com o lado direito mais alto
+     que o esquerdo, me refiro à churrasqueira em si e não à grade"*. Régua verde, móvel na diagonal, e a
+     culpa era do método: o guia girava a foto inteira (`--roll`) e o `[CAMERA]` pedia o quadro tombado.
+     `make-ref guide` agora cisalha só o vão (`--mouth-tilt`) e casa o sentido da inclinação com a família
+     assinada. Repinturas adotadas: chapa boca 2,89:1, vaga 86×62 px, vão +3,8°, corpo a −0,2°/+0,4°;
+     inox 1,72:1, 86×70 px, vão −6,0° (a família sobe 6° também). Mais a folha inteira da maminha com a
+     célula 6 como tábua fatiada. 8 linhas `pending`; com a assinatura dele entram no jogo de uma vez.
    - **grelhas, o que falta decidir** (docs/22 §6.8): decidir o letreiro pintado na chapa nova; gerar as
      12 evoluções ainda sem arte (evo 2–3 de praça, nenô, tambor, cais, orla e campeão — os guias já
      medem certo); e o `b/larg` 0,58–0,69 das repinturas contra o piso novo de 0,72, que é aviso e hoje

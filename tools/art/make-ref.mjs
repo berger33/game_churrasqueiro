@@ -8,7 +8,8 @@
  *   node tools/art/make-ref.mjs grid   <out.png> <W> <H> <cols> <rows> <sprite>...
  *   node tools/art/make-ref.mjs single <out.png> <W> <H> <sprite>
  *   node tools/art/make-ref.mjs guide  <out.png> <W> <H> <cart|box|masonry>
-   node tools/art/make-ref.mjs guide  <out.png> [W] --grill <id> --evo <n> [--roll <graus>]
+   node tools/art/make-ref.mjs guide  <out.png> [W] --grill <id> --evo <n> [--mouth-tilt <graus>]
+   node tools/art/make-ref.mjs guide  <out.png> [W] --grill <id> --evo <n> --roll <graus>   # legado: tomba o móvel todo
  *
  * <sprite> is a manifest name (spr_food_picanha_raw). Each sprite is centred in its cell and
  * scaled down only if it does not fit in 88 % of the cell.
@@ -67,9 +68,29 @@ const STYLE_BODIES = {
   campeao: { body: [0.03, 0.13, 0.97, 0.60], base: { kind: 'plinth', from: 0.60, to: 0.96, inset: 0.02 }, shelf: [0.97, 0.32, 1.00, 0.46], chimney: null, counter: [0.0, 0.075, 1.0, 0.115] },
 };
 
+// ── o sentido da inclinação é da FAMÍLIA, não da física ─────────────────────────────────────
+// As artes assinadas da MESMA grelha já decidiram se o vão sobe ou desce para a direita. A evo
+// nova tem de casar com as vizinhas de escada, senão o jogador vê a churrasqueira "virar" ao
+// evoluir (o lote 11 quase perdeu a zé assim: a régua do vão passava, o sentido era o inverso do
+// evo 1/evo 2 assinados). Medido no manifesto, onde y cresce para baixo: tiltDeg > 0 = o vão
+// DESCE para a direita. Sem manifesto ou sem família assinada, vale o sinal pedido na linha de
+// comando. Retorna +1, -1, ou 0 quando não há maioria.
+function familyMouthSign(man, grillId, upToEvo) {
+  let pos = 0, neg = 0;
+  for (let e = 1; e < upToEvo; e++) {
+    const q = man.sprites?.[`spr_grill_${grillId}_evo${e}`]?.hole?.quad;
+    if (!q) continue;
+    const deg = (Math.atan2(q[1][1] - q[0][1], q[1][0] - q[0][0]) * 180) / Math.PI;
+    if (deg > 1) pos++; else if (deg < -1) neg++;
+  }
+  return pos > neg ? 1 : neg > pos ? -1 : 0;
+}
+
 async function drawGuide(out, kindOrOpts) {
   const standard = await loadStandard(ROOT);
-  const { grillId, evo, W = 1408, roll = 0 } = kindOrOpts;
+  const { grillId, evo, W = 1408, roll = 0, mouthTilt = 0 } = kindOrOpts;
+  let tilt = +mouthTilt || 0;
+  let tiltNote = '';
   const ch = standard.churrasqueiras.find((c) => c.id === grillId);
   if (!ch) throw new Error(`churrasqueira ${grillId} não está em churrasqueiras.json`);
   const style = ch.visual?.style ?? 'inox';
@@ -85,9 +106,32 @@ async function drawGuide(out, kindOrOpts) {
   // mouth leak past the body in the first place.)
   const MOUTH_W = 0.8, MOUTH_H = 0.42;
   const Wm = Math.round(W);
-  const H = Math.max(768, Math.ceil((MOUTH_W * Wm / aspect) / MOUTH_H / 16) * 16);
+  // `--mouth-tilt <graus>` é a câmera, `--roll` era a foto. O vão é cisalhado (o topo e a base sobem
+  // para a direita por dy) sobre um CORPO DE NÍVEL, e a altura perpendicular do vão continua sendo a
+  // que o dado promete — a bbox cresce de dy, e o quadro cresce com ela para nenhum canto ser cortado.
+  // O rolo do quadro inteiro entrou como remédio para "sem inclinação na imagem" (docs/22 §6.10.3) e
+  // o dono devolveu as duas evo 3 do lote 11 pelo motivo oposto: "as churrasqueiras estão com o lado
+  // direito mais alto, a grade pode ser assim, mas a churrasqueira está na diagonal". Inclinam-se as
+  // barras da grade; o móvel fica de pé no chão.
+  const mHpx = (MOUTH_W * Wm) / aspect;
+  if (tilt) {
+    const mp = join(ROOT, 'Assets', 'Art', 'sprites.manifest.json');
+    let fam = 0;
+    if (existsSync(mp)) {
+      try { fam = familyMouthSign(JSON.parse(await readFile(mp, 'utf8')), grillId, evo || 1); } catch { fam = 0; }
+    }
+    // o guia cisalha empurrando o lado ESQUERDO para baixo, então `tilt > 0` = vão SUBINDO para a
+    // direita = tiltDeg NEGATIVO no detector. O sinal trocado é o único jeito de o guia nascer
+    // casado com a família sem que alguém precise lembrar de passar `--mouth-tilt -7`.
+    if (fam === 1 && tilt > 0) { tilt = -tilt; tiltNote = ` — sinal trocado para casar com ${grillId} assinada (vão descendo à direita)`; }
+    else if (fam === -1 && tilt < 0) { tilt = -tilt; tiltNote = ` — sinal trocado para casar com ${grillId} assinada (vão subindo à direita)`; }
+    else if (fam) tiltNote = ' — sinal da família assinada';
+  }
+  const dy = Math.tan((tilt * Math.PI) / 180) * MOUTH_W * Wm;
+  const bboxHpx = mHpx + Math.abs(dy);
+  const H = Math.max(768, Math.ceil(bboxHpx / MOUTH_H / 16) * 16);
   const mwFrac = MOUTH_W;
-  const mH = (MOUTH_W * Wm / aspect) / H;
+  const mH = bboxHpx / H;
   const mTop = 0.5 - mH / 2 - 0.06;
   const mouth = [0.5 - mwFrac / 2, mTop, 0.5 + mwFrac / 2, mTop + mH];
   const body = [0.5 - mwFrac / 2 - 0.045, mTop - 0.05, 0.5 + mwFrac / 2 + 0.045, mouth[3] + 0.17];
@@ -135,7 +179,18 @@ async function drawGuide(out, kindOrOpts) {
     for (const cx of [bi, 1 - bi - 0.025]) ctx.fillRect(cx * W, base.from * H, W * 0.026, (base.to - base.from) * H);
   }
   if (g.counter) rect(g.counter, NEAR, W * 0.006);   // bancada do campeão: sempre acima do corpo
-  rect(mouth, '#FF00FF');   // the opening: painted by the model, detected by process-sprites
+  if (tilt) {
+    // o vão cisalhado: arestas esquerda/direita verticais, topo e base subindo para a direita
+    const [x0, yTop, x1, yBot] = [mouth[0] * W, mouth[1] * H, mouth[2] * W, mouth[3] * H];
+    ctx.fillStyle = '#FF00FF';
+    ctx.beginPath();
+    // o lado esquerdo desce dy: lido da esquerda para a direita o vão SOBE, que é como a
+    // abertura fecha para o lado que se afasta de uma câmera posta acima e à esquerda.
+    ctx.moveTo(x0, yTop + dy); ctx.lineTo(x1, yTop); ctx.lineTo(x1, yBot - dy); ctx.lineTo(x0, yBot);
+    ctx.closePath(); ctx.fill();
+  } else {
+    rect(mouth, '#FF00FF');   // the opening: painted by the model, detected by process-sprites
+  }
   // Caráter do estilo, desenhado na faixa entre a boca e a base — nunca sobre o magenta.
   const bandTop = mouth[3] + 0.012, bandBot = body[3] - 0.012;
   if (g.spits) {
@@ -151,7 +206,8 @@ async function drawGuide(out, kindOrOpts) {
     ctx.arc(body[2] * W + W * 0.012, ((bandTop + bandBot) / 2) * H, H * 0.022, 0, Math.PI * 2); ctx.fill();
   }
   const mwp = (mouth[2] - mouth[0]) * W, mhp = (mouth[3] - mouth[1]) * H;
-  console.log(`[guide] ${grillId} e${evo} (${style}) ${W}×${H}${roll ? ` com a câmera rolada ${roll}°` : ''}: boca ${Math.round(mwp)}×${Math.round(mhp)} px `
+  const perp = mhp - Math.abs(dy);   // o que o detector vê é a bbox; o que a comida ocupa é a perpendicular
+  console.log(`[guide] ${grillId} e${evo} (${style}) ${W}×${H}${tilt ? ` corpo de nível, vão cisalhado ${tilt}°${tiltNote}` : roll ? ` com a câmera rolada ${roll}° (legado: tomba o móvel inteiro)` : ''}: boca ${Math.round(mwp)}×${Math.round(perp)} px de vão perpendicular (${Math.round(mhp)} px de caixa com o cisalhamento) `
     + `= ${(mwp / mhp).toFixed(2)}:1 · ${cap.zoneCount}×${cap.slotsPerZone} vagas · leito ${need.bedW} px na tela `
     + `· vaga ${need.cellW}×${need.cellH} → ${out}`);
   return c;
@@ -161,7 +217,7 @@ await mkdir(dirname(join(ROOT, out)), { recursive: true });
 if (mode === 'guide') {
   const grillId = flags.grill, evo = +(flags.evo ?? 1);
   if (!grillId) { console.error('usage: make-ref.mjs guide <out.png> [W] --grill <id> --evo <n>'); process.exit(2); }
-  await writeFile(join(ROOT, out), (await drawGuide(out, { grillId, evo, W: +W || 1408, roll: +(flags.roll ?? 0) })).toBuffer('image/png'));
+  await writeFile(join(ROOT, out), (await drawGuide(out, { grillId, evo, W: +W || 1408, roll: +(flags.roll ?? 0), mouthTilt: +(flags['mouth-tilt'] ?? 0) })).toBuffer('image/png'));
   process.exit(0);
 }
 const manifest = existsSync(join(ROOT, 'Assets', 'Art', 'sprites.manifest.json'))

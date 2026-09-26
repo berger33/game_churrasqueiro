@@ -11,17 +11,18 @@
 - **Lote 10 assinado (2026-09-26)**: a grelha a gás na sétima rodada (`r7`) passou nas três réguas com
   a câmera que o dono pede e ele mandou assiná-la. O atlas foi re-embarcado: **127 → 128 sprites**, e a
   fornalha do degrau 7 deixou de cair no leito procedural. §6.10.4 é a geometria que este lote ensinou.
-- **Lote 11 entregue, aguardando aprovação** (§6.11): as duas evoluções 3 que a régua do lote 06
-  reprovou (chapa com faixa de 19 px, inox com 35 px, as duas com o vão em nível) e a folha inteira da
-  maminha, presa desde o lote 05 pela regra "comida entra inteira". As grelhas nasceram dentro de guias
-  derivados do dado e nenhuma das duas precisou de conform.
+- **Lote 11 na segunda entrega, aguardando aprovação** (§6.12–§6.13): as duas evoluções 3 que a régua do
+  lote 06 reprovou (chapa com faixa de 19 px, inox com 35 px, as duas com o vão em nível) e a folha inteira
+  da maminha, presa desde o lote 05 pela regra "comida entra inteira". A primeira entrega passou em tudo e
+  foi devolvida pelo olho: o MÓVEL estava na diagonal, porque o guia girava a foto inteira. O `guide` agora
+  cisalha só o vão (`--mouth-tilt`) e casa o sentido da inclinação com a família assinada.
 - **A regra que o lote 06 ensinou na prática:** `set-status.mjs <lote> approved` roda a régua da grelha
   antes de assinar e recusa o **lote inteiro** se uma linha reprovar. Um lote com 4 artes sadias e 2
   tortas não é aprovado "em bloco com exceções" — são as 2 repintadas (este lote) ou os 4 aprovados por
   nome. Foi por isso que o lote 06 ficou parado.
 - A auditoria completa do que falta está em §2. A numeração dos lotes seguiu a escada de 10 identidades
   (docs/23) a partir do lote 07; a tabela de §6 registra a origem do conteúdo, e o histórico real de cada
-  rodada está em §6.8–§6.11.
+  rodada está em §6.8–§6.13.
 
 > **Por quê.** A mecânica agrada, mas o visual do protótipo (tudo desenhado por código em
 > `prototype/src/foods.ts`, `theme.ts` e `main.ts`) ainda parece amador. Este plano troca cada
@@ -767,7 +768,7 @@ quadro** — e o rolo do quadro é exatamente o que o `tiltDeg` do vão mede. Du
   para a direita". Com isso a r7 fechou −7,2° · recorte 0,74 · boca 2:1 · `cheio` 1,00 — verde em tudo, e é a
   que vai para a assinatura dele.
 
-### 6.11 Lote 11 — as duas evo 3 que a régua reprovou, e a maminha inteira (2026-09-26)
+### 6.12 Lote 11 — as duas evo 3 que a régua reprovou, e a maminha inteira (2026-09-26)
 
 O dono assinou a grelha a gás (lote 10) e pediu duas coisas: **embarcá-la** e **repintar as duas
 evoluções 3 que a régua do leito não deixa aprovar**, junto com a maminha. As três estavam em situações
@@ -810,3 +811,65 @@ linhas novas em `pending`, `build-runtime --dry-run` avisando que continuam no l
 `ze_da_esquina: evo2, evo3 · parrilla_chef_cisma: evo2, evo3 · fornalha_dragao_manso: evo2, evo3`.
 Nada deste lote entra no jogo sem `set-status lote-11 approved` — e aprovado, ele embarca 8 sprites de uma
 vez, porque a maminha entra inteira.
+
+**As duas evo 3 desta seção foram devolvidas pelo dono na leitura** — régua verde, objeto torto. A correção
+do método está em §6.13, e são as duas artes `l5`/`l3` que estão em `art/lote-11.json` hoje.
+
+### 6.13 O lote 11 devolvido na leitura: a churrasqueira estava na diagonal (2026-09-26)
+
+> *"as 2 que você fez agora estão estranhas, com o lado direito mais alto que o esquerdo, me refiro a
+> churrasqueira em si e não a grade; em tese, a área da grade seria essa mesma, mas a churrasqueira está na
+> diagonal."*
+
+As duas evo 3 do §6.12 mediam bem: boca 2,28:1 e 1,65:1, `cheio` 1,01, zero conform, rolo do vão dentro da
+banda pedida. Ele não leu a régua, leu o objeto, e o objeto estava tombado. A causa era minha e estava escrita
+em dois lugares, um em cada ferramenta:
+
+1. `tools/art/make-ref.mjs guide … --roll 7` — o remédio que o §6.10.3 pediu ("a boca em nível é lida como
+   planta baixa") girava a **silhueta inteira**: boca, corpo, pernas, toldo.
+2. O bloco `[CAMERA]` de `art/prompts/lote-11.md`: *"This is a photograph … the WHOLE FRAME is rotated
+   counter-clockwise by about 8 degrees — nothing in it is level: the floor under the wheels runs uphill to
+   the right"*.
+
+O modelo obedeceu às duas, a régua só media o vão, e a folha foi assinada por mim com o móvel torto. Uma foto
+tombada de um móvel é exatamente o defeito que ele descreveu.
+
+**O que a ferramenta faz agora.** `guide` ganhou `--mouth-tilt <graus>`: o corpo é desenhado de nível e só o
+vão é cisalhado em paralelogramo, com a altura **perpendicular** que o dado promete preservada — a bbox
+cresce de `tan θ × 80 %` da largura e o quadro cresce junto, para nenhum canto do vão ser cortado na hora de
+medir. `--roll` continua aceito, marcado como legado na ajuda e no log. A linha de trabalho das grelhas passa
+a ser:
+
+    node tools/art/make-ref.mjs guide art/source/lote-NN/guides/g_<id>_e<n>_level.png 1408 --grill <id> --evo <n> --mouth-tilt 7
+    node tools/art/process-sprites.mjs art/lote-NN.json --dry-run     # o guia tem de passar no MESMO detector
+
+**O sentido da inclinação é da FAMÍLIA, e a ferramenta passou a saber disso.** Medido no manifesto,
+`ze_da_esquina` assina o vão DESCENDO para a direita (+1,7° no evo 1, +10,2° no evo 2) e
+`parrilla_chef_cisma` SUBINDO (−6,1° / −6,8°). Uma evo nova com o sinal trocado faz a grelha "virar" na tela
+no instante em que o jogador evolui — é a mesma classe de defeito, só que lida na escada, não na peça.
+`drawGuide` agora lê as evo anteriores da MESMA grelha no manifesto e inverte o `--mouth-tilt` que contradiz
+a família, imprimindo o motivo na linha `[guide]`. Não virou checagem de `gates`: sinal é gosto, e o juiz do
+gosto é ele; a ferramenta só não tem mais como entregar o guia torto.
+
+**A régua de tombamento do corpo NÃO existe, e é preciso registrar por quê.** Tentei medi-la (mínimos
+quadrados na última linha opaca por coluna, 15–85 % da largura, base e topo) antes de escrever qualquer
+gate, e o número não sustenta reprovação: nas grelhas que o dono ASSINOU, |base| média 7,8° com máximo de
+16,2° (`lata_valente_evo2` a −16,2°, `parrilla_do_cais_evo1` a +14,3°, o topo da `grelha_de_praca_evo1` a
++16,6°), porque fundo redondo de tambor, curva de barrica e aba de toldo mandam mais na máscara do que a
+linha de chão. Um gate assim reprovaria arte assinada e aprovaria arte rejeitada. O que a medida fez de útil
+foi provar o padrão da foto tombada no lote devolvido — **base e topo caindo para o mesmo lado** (zé −7,3° /
+−4,4°, cisma −10,6° / 0,0°) — e isso vai na folha de revisão como evidência, não no `gates`.
+
+**As duas repinturas, medidas contra o guia novo.**
+
+| # | Sprite | boca | faixa/vaga | vão | corpo (base / topo) |
+|---|---|---|---|---|---|
+| 1 | `spr_grill_ze_da_esquina_evo3` | 2,89:1 (pedia 2,99) | 62 px ✓ | +3,8° (família +1,7/+10,2) | −0,2° / +0,4° |
+| 2 | `spr_grill_parrilla_chef_cisma_evo3` | 1,72:1 (pedia 1,99) | 70 px ✓ | −6,0° (família −6,1/−6,8) | 0,0° no topo; pernas +9,3° como na evo 1 assinada (+12,5°) |
+
+Cinco rodadas no guia novo para a chapa, três para o inox, todas medidas e tabeladas em
+`art/prompts/lote-11.md`. O que decidiu a adotada da chapa não foi a boca nem o corpo — todos de nível desde a
+`l1` — foi a fritadeira fora do vão e o `b/larg` 0,72. A maminha não mudou de arte: o bruto estava em
+`art/source/` (gitignored) e o workspace foi resetado no meio do lote, então o que está assinável é o master
+já processado; refazer um bruto é um comando por item porque os comandos de guia e de referência vivem
+versionados no arquivo de prompt — foi isso, e não o disco, que salvou esta repintura.

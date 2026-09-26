@@ -2065,43 +2065,43 @@
     },
     "spr_grill_parrilla_chef_cisma_evo3": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_parrilla_chef_cisma_evo3.png",
-      "w": 929,
-      "h": 990,
+      "w": 828,
+      "h": 1074,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "grill",
-      "source": "art/source/lote-11/spr_grill_parrilla_chef_cisma_evo3_r2.png",
+      "source": "art/source/lote-11/spr_grill_parrilla_chef_cisma_evo3_l3.png",
       "grill": "parrilla_chef_cisma",
       "evo": 3,
       "hole": {
         "bbox": [
-          174,
-          284,
-          542,
-          329
+          222,
+          330,
+          507,
+          295
         ],
         "quad": [
           [
-            174,
-            342
+            223,
+            383
           ],
           [
-            685,
-            285
+            727,
+            330
           ],
           [
-            715,
-            549
+            727,
+            554
           ],
           [
-            204,
-            611
+            223,
+            623
           ]
         ],
-        "tiltDeg": -6.4,
-        "areaFrac": 0.1518
+        "tiltDeg": -6,
+        "areaFrac": 0.1328
       },
       "batch": "lote-11"
     },
@@ -2287,43 +2287,43 @@
     },
     "spr_grill_ze_da_esquina_evo3": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_ze_da_esquina_evo3.png",
-      "w": 1102,
-      "h": 841,
+      "w": 1193,
+      "h": 741,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "grill",
-      "source": "art/source/lote-11/spr_grill_ze_da_esquina_evo3_r3.png",
+      "source": "art/source/lote-11/spr_grill_ze_da_esquina_evo3_l5.png",
       "grill": "ze_da_esquina",
       "evo": 3,
       "hole": {
         "bbox": [
-          158,
-          234,
-          763,
-          334
+          177,
+          176,
+          855,
+          296
         ],
         "quad": [
           [
-            161,
-            320
+            183,
+            176
           ],
           [
-            893,
-            234
+            1027,
+            232
           ],
           [
-            920,
-            476
+            1027,
+            471
           ],
           [
-            189,
-            567
+            184,
+            416
           ]
         ],
-        "tiltDeg": -6.7,
-        "areaFrac": 0.1978
+        "tiltDeg": 3.8,
+        "areaFrac": 0.2309
       },
       "batch": "lote-11"
     },
