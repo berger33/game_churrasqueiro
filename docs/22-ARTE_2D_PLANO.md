@@ -595,3 +595,24 @@ Rodapé de infraestrutura, pago pelo próprio lote: `build-runtime.mjs --dry-run
 dele, `build-runtime` **apagava e re-escrevia** o atlas de runtime antes de qualquer coisa — rodá-lo
 "para ver o aviso" de um lote pendente re-escrevia o jogo com o que estivesse `approved` (e 6 grelhas
 estavam `pending`). Hoje o dry-run mede, avisa e não toca em `prototype/assets/art`.
+
+#### 6.9.1 A montagem com os u/v do motor, e o que ela mostrou no topo da escada
+
+A prévia do lote 06 não espalha os pratos "bonitinho": ela usa os mesmos `u = 0.14 + 0.72·(i+0.5)/S`
+e `v = (j+0.5)/Z` que `toGrillScreen` usa. Com isso, a fornalha e3 (3×4 = 12 vagas no teto de
+`maxBedWidthOnScreen` = 408 px) dá célula de **73 px** para comida desenhada a **86 px** — os pratos
+encostam nos vizinhos, e encostam *no jogo também*, não é defeito da montagem.
+
+Isso é o padrão fazendo exatamente o que foi especificado: a promessa é "nunca pior que o leito
+procedural" (célula 73 px ≥ 56 px que o procedural dá para S=4), não "sempre 86 px de sobra". A 12
+vagas, no teto de largura, faltam 13 px. Três saídas, e todas são escolha do dono, não do pipeline:
+
+1. subir `maxBedWidthOnScreen` (408 → ~450 dá 80 px de célula; 420 é a largura do quadro, então é
+   literalmente encostar nas bordas — o `clamp` existe para a grelha não comer a tela do dedo);
+2. deixar `foodDisplayWidth` cair para a largura da célula quando a grelha está no teto (comida
+   3 % menor no último degrau = invisível, e o toque continua 48 dp porque é o *slot*, não o prato);
+3. aceitar o encosto no topo da escada — "a grelha está cheia" é uma informação, e hoje o jogador já
+   vê isso pelo brilho de borda.
+
+A folha (`art/review/lote-06*.jpg`) mostra a opção 3 como estado atual; a linha de comparação no topo
+da folha existe para ele ver as quatro grelhas em serviço na mesma escala antes de decidir.
