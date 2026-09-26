@@ -465,9 +465,21 @@ ele não existe neste ambiente. **Ponto de decisão: lote 03.**
    - **lote 05** = o que estava no lote 04 (costela, cupim, ícones 2/3 e 3/3, funcionários,
      fundos premium e festival) + esses três reforços (§6).
 3. Lote 04 (§6), com os prompts gravados em `art/prompts/lote-04.md` antes da geração.
-4. Gate `check-art-registry`: todo arquivo em `Assets/Art` tem linha no registro, toda linha
-   aponta para um arquivo que existe, e o runtime só contém `approved` (o CI que `docs/04` §11
-   já promete).
+4. ~~Gate `check-art-registry`~~ — **built** (`npm run check-art-registry`, gate 16, na CI). Cobra
+   quatro coisas: linha `approved` tem master em disco; cada sprite do atlas tem linha no registro e
+   nenhum `rejected` embarca; todo nome pedido em `art/lote-*.json` tem linha; todo lote tem prompt
+   gravado em `art/prompts/`. E uma quinta que o histórico pedia: divergência entre registro e build
+   só passa se estiver **declarada** em `art/frozen-atlas.json` com motivo — os 6 casos hoje listados
+   são exatamente os masters que o lote 05 repintou (maminha ×5, fornalha e1) enquanto o atlas seguia
+   servindo os bytes aprovados antes do conform. Silêncio entre camadas é o que deixou arte recusada
+   quase entrando.
+4b. **Onde cada coisa mora** (conferido arquivo por arquivo, não de memória): `Assets/Art/` = 137
+   arquivos versionados (masters + `ASSET_REGISTRY.csv` + `sprites.manifest.json`); `art/` = 25
+   (specs de lote, prompts, folhas de contato, agora também `frozen-atlas.json`); `prototype/assets/art/`
+   = 126, commitado de propósito para o clone limpo já renderizar a arte aprovada. Fora do git ficam
+   `art/source/` (bruto do modelo, descartável) e `art/guias/` (saem de `make-ref.mjs guide` em um
+   comando). Um reset de sandbox rebateu o `HEAD` para a base da sessão e `git ls-files` respondeu `0`
+   em tudo — antes de "recommitar 36 MB", conferir `git log --oneline -1 -- <caminho>`.
 5. Unity: `AssetPostprocessor` lendo `sprites.manifest.json` (§7.2).
 
 ### 6.6 Lote 05 (1/2) — a maminha refeita, e a regra que faltava na ferramenta

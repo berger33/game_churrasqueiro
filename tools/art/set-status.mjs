@@ -38,6 +38,31 @@ function parseLine(line) {
 }
 const cell = (v) => (/[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
 
+/**
+ * Guard against approving a grill whose painted opening does not hold the grid the data promises
+ * (docs/22 §6.8, docs/23 §5). The ruler is the same one `check-grill-geometry` runs, measured on
+ * the master that is about to be signed off — approving from a contact sheet is how a 19 px band
+ * got into a review pile once already. `--force` overrides, with the reason recorded in the note.
+ */
+async function grillRulerCheck(names) {
+  const targets = names.filter((n) => n.startsWith('spr_grill_'));
+  if (!targets.length) return [];
+  const { loadStandard, report } = await import('./grill-geometry.mjs');
+  const standard = await loadStandard(ROOT);
+  const { rows } = await report(standard);
+  const byName = new Map(rows.map((r) => [r.name, r]));
+  const bad = [];
+  for (const n of targets) {
+    const r = byName.get(n);
+    if (!r) { bad.push(`${n}: sem medição no manifest (rode process-sprites antes de aprovar)`); continue; }
+    if (!r.got.ok) bad.push(`${n}: ${r.got.why} · exige ${r.need.cellW}×${r.need.cellH} por vaga, boca pintada ${r.got.cellW}×${r.got.cellH}`);
+  }
+  return bad;
+}
+
+const force = args.includes('--force');
+if (force) args.splice(args.indexOf('--force'), 1);
+
 const [headLine, ...lines] = (await readFile(REGISTRY, 'utf8')).split('\n').filter((l) => l.trim());
 const head = parseLine(headLine);
 const col = Object.fromEntries(head.map((k, i) => [k, i]));
@@ -56,5 +81,16 @@ const out = lines.map((line) => {
 });
 const missing = [...wanted].filter((n) => !found.has(n));
 if (missing.length) { console.error(`[art] not in ${batch}: ${missing.join(', ')}`); process.exit(1); }
+
+if (status === 'approved' && !force) {
+  const bad = await grillRulerCheck(names.length ? names : [...found]);
+  if (bad.length) {
+    console.error(`[art] NÃO aprovado — ${bad.length} grelha(s) fora do padrão de boca/leito (docs/22 §6.8):`);
+    for (const b of bad) console.error(`  - ${b}`);
+    console.error('[art] ou se regenera com o guia do degrau (`make-ref.mjs guide <out> 1408 --grill <id> --evo <n>`), ou se ajusta a grade em `churrasqueiras.json`, ou — se a decisão for do outro tipo, de linguagem visual — `--force "motivo"`.');
+    process.exit(1);
+  }
+}
+if (status === 'approved' && force) console.log('[art] --force: régua da grelha ignorada por decisão explícita (fica na nota).');
 await writeFile(REGISTRY, [headLine, ...out].join('\n') + '\n');
 console.log(`[art] ${batch}: ${changed} row(s) → ${status}`);

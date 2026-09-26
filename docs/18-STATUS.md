@@ -72,7 +72,15 @@ The redo is lote 04: the same 10 images, the same sprite names, two corrections.
   `process-sprites` now refuses to repaint an `approved`/`superseded` row unless the operator
   reopens it as `pending` (or passes `--allow-repaint`); verified in all three directions.
 - ⚠ **Open**: whether 15 % is acceptable for the steel grills or they get authored as a different
-  object; `check-art-registry` and the Unity import postprocessor are still not written.
+  object; the Unity import postprocessor is still not written. `check-art-registry` is built (gate 16).
+- **Measured, not assumed:** the art record is in git — 137 files under `Assets/Art` (masters +
+  `ASSET_REGISTRY.csv` + manifest), 25 under `art/` (lot specs, prompts, contact sheets) and the 126-file
+  runtime atlas under `prototype/assets/art`, committed on purpose so a fresh clone renders approved art
+  without running `build-runtime`. A sandbox reset had rewound `HEAD` to the session base and `git
+  ls-files` answered `0`, which nearly produced a 36 MB re-commit of files that were already tracked:
+  check `git log --oneline -1 -- <path>` and `origin/<branch>` before concluding anything is unversioned.
+  What a reset really does drop is `art/source/` (raw model output — disposable by design) and
+  `node_modules/`.
 
 ## AI 2D art pass — lotes 01–03, integrated in the prototype (docs/22-ARTE_2D_PLANO.md)
 
@@ -113,8 +121,8 @@ images. Each batch is **approved by the game's owner before the next one is gene
   - `set-status` records approvals;
   - `make-ref` rebuilds references from masters;
   - `build-runtime` produces the approved-only runtime.
-- ⚠ **Not built:** the `check-art-registry` gate; the Unity import postprocessor. Gates:
-  unchanged list (14), all green here except `check-csharp` (needs dotnet; CI runs it).
+- ⚠ **Not built:** the Unity import postprocessor. Gates: the list is **16** now (14 + 
+  `check-grill-geometry` + `check-art-registry`), all green here except `check-csharp` (needs dotnet; CI runs it).
 - **Storage:** raw model outputs are disposable and gitignored, and workspace resets wipe
   them (lotes 01 and 02 raw files are gone). Masters are processed and committed in the same
   turn as generation. Masters: 9.4 + 6.7 MB + lote 03.
@@ -286,7 +294,7 @@ Every claim below was produced by a command run in this checkout.
 | Shot harness | `npm run check-shots` | **OK — ~6 s.** 13 real PNGs: a fresh install (splash, title, FTUE steps 1 / 2-waiting / 2 / 3 / 4, FTUE result, step 6 on Home), then a relaunch that must open on Home (home, empty grill, cooking, result). Asserts the FTUE funnel from `__churrascoAnalytics` — first PERFEITO 16.1 s, step 6 at 38.3 s (< 60 s), 0 misses. 193 painted frames, ~1 390 sim-only ticks, 60 s self-budget. |
 | Prototype server | `node prototype/dev-server.mjs` | listening on `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
 | C# core | `npm run check-csharp` | **CI: builds `Assets/Scripts/Core` (netstandard2.1, C# 9, warnings as errors) and 139 parity checks agree** — 13 tables bind losslessly, `GameData.Load` clean, cooking 48/48, scoring 32/32, effective heat, 44 FTUE vectors; 17 economy/turn vectors listed as not ported. **Here: SKIP** (no .NET SDK); verified during development with an in-process Roslyn compiler |
-| CI | `.github/workflows/ci.yml` + `npm run gates` | **15 gates on ubuntu-latest** (`check-csharp` with `actions/setup-dotnet` 8.0; `check-grill-geometry` grades every shipped grill art against the bed its evolution promises). `check-shots` is in the per-PR list (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. The Unity-side layer is still not compiled — no Unity toolchain. |
+| CI | `.github/workflows/ci.yml` + `npm run gates` | **16 gates on ubuntu-latest** (`check-csharp` with `actions/setup-dotnet` 8.0; `check-grill-geometry` grades every shipped grill art against the bed its evolution promises; `check-art-registry` reconciles registry × shipped atlas × lot specs and refuses undeclared drift). `check-shots` is in the per-PR list (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. The Unity-side layer is still not compiled — no Unity toolchain. |
 
 ### The localisation gate caught a §56 violation
 
@@ -629,5 +637,7 @@ specification. The prototype proves art *direction*, not the art *budget*.
    - lote 05 = the content planned for lote 04 + the three redos from lote 04 (the two steel
      grills with a wider mouth, the maminha's served cell);
    - lotes 05–08 (docs/22 §6);
-   - write the `check-art-registry` gate;
+   - ~~write the `check-art-registry` gate~~ — **built** (gate 16); `set-status approved` now also
+     refuses a grill whose painted mouth does not hold the promised grid, measured with the same ruler
+     as the guide, so approving from a contact sheet alone is no longer possible;
    - Unity import postprocessor (docs/22 §7.2).

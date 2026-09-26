@@ -47,7 +47,8 @@ jobs:
       - name: Install
         run: npm ci
 
-      # Same 14 gates as `npm run gates`. Separate steps so a failure
+      # Same gates as `npm run gates` (tools/studio/run-gates.mjs is the list of record).
+      # Separate steps so a failure
       # names the gate in the GitHub UI instead of collapsing into exit 9.
       - run: npm run typecheck
       - run: npm run validate
@@ -61,6 +62,7 @@ jobs:
       - run: npm run check-vectors
       - run: npm run check-art
       - run: npm run check-grill-geometry
+      - run: npm run check-art-registry
       - run: npm run check-render
       - run: npm run check-shots
       - run: npm run check-csharp
