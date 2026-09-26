@@ -45,12 +45,12 @@ Dependências: 1 e 2 são independentes entre si e podem intercalar; 3 precisa d
 ## 2. Fase 0 — Consolidar a base (V0.1 fechado de verdade)
 
 - [ ] **0.1 — Decisões de aprovação pendentes (dono).**
-  Ações: aprovar ou pedir refação de: (a) lote 03 — fundos (3, sem veredito), maminha
-  (`warn`); ícones e contra-filé já estão `ok`; grills já estão `redo`;
-  (b) lote 04 — as 3 churrasqueiras refeitas com guia (`warn`).
+  Ações: aprovar ou pedir refação do **lote 03** — fundos (3, sem veredito), maminha
+  (`warn`); ícones e contra-filé avaliados `ok`; grills marcados `redo` (refeitos e
+  aprovados no lote 04). Lotes 04 e 05: aprovados em 2026-09-26.
   Verifica: `set-status` aplicado conforme a decisão.
-  Pronto quando: todo asset dos lotes 03–04 tem veredito final (`approved`/`rejected`/`superseded`).
-- [ ] **0.2 — Gates verdes neste checkout.**
+  Pronto quando: todo asset do lote 03 tem veredito final (`approved`/`rejected`/`superseded`).
+- [x] **0.2 — Gates verdes neste checkout.** (2026-09-26: 13/14 verdes, `check-csharp` SKIP sem dotnet — CI executa; FTUE inalterado, 148 sprites no runtime.)
   Ações: `npm install` → `npm run gates` → corrigir o que quebrar.
   Verifica: `npm run gates` (14 gates) + `npm run sim:long`.
   Pronto quando: tudo verde (exceto `check-csharp` SKIP local, verde no CI).
@@ -66,7 +66,7 @@ Ordem = primeira aparição no jogo (docs/22 §2). Cada lote segue o ciclo docs/
 prompts gravados antes → 10 imagens → `process-sprites` → `review-sheet` →
 aprovação do dono → `set-status` → `build-runtime`.
 
-- [ ] **1.1 — Lote 05: fechar comidas, upgrades, funcionários e fundos.**
+- [x] **1.1 — Lote 05: fechar comidas, upgrades, funcionários e fundos.** (2026-09-26: 10 imagens, 53 sprites, aprovado pelo dono e integrado — runtime com 148 sprites.)
   10 imagens: `food_costela`, `food_cupim` (últimas 2 comidas) ·
   `ui_icons_upgrades_b/c` (18 ícones restantes, ids de `upgrades.json`) ·
   `ui_icons_cosmetics` (5 cosméticos) · `char_funcionarios` (5 cargos de `employees.json`) ·
@@ -161,9 +161,8 @@ Cada passo, ao ser aberto, ganha sub-passos próprios neste documento (mesmo for
 
 ## 8. Próximo passo imediato
 
-👉 **Fase 0, passo 0.2** (gates verdes) em paralelo com **Fase 1, passo 1.1** (lote 05,
-já com conteúdo definido acima) — arte nova entra como `pending` e só integra após o
-"ok" do dono no passo 0.1.
+👉 **Fase 1, passo 1.2** (lote 06, conteúdo em docs/22 §6) + fechar a Fase 0:
+passo 0.1 (só falta a decisão do lote 03) e passo 0.3 (snapshot do `18-STATUS.md`).
 
 **Registro de progresso:**
 
@@ -171,3 +170,4 @@ já com conteúdo definido acima) — arte nova entra como `pending` e só integ
 |---|---|---|---|---|
 | 2026-09-26 | — | plano criado (este documento) | `arena/01a0df03-game-churrasqueiro` | ponto de partida |
 | 2026-09-26 | 1.1 (lote 05) | 10 imagens geradas, 53 sprites processados, `pending` | `arena/01a0df03-game-churrasqueiro` | aguardando aprovação do dono |
+| 2026-09-26 | 0.2 + 1.1 | lote 05 aprovado e integrado; gates 13/14 verdes | `arena/01a0df03-game-churrasqueiro` | runtime 148 sprites (2,38 MB); descoberto que o lote 04 já estava approved |

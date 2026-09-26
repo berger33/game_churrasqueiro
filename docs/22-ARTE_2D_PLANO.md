@@ -4,7 +4,11 @@
 **Status:**
 
 - Lotes 01 e 02 **aprovados** e **integrados no protótipo** (§7.1).
-- Lote 03 gerado e processado, **aguardando aprovação**; nenhuma imagem do lote 04 é gerada antes do "ok".
+- Lote 03 gerado e processado, **aguardando aprovação** (único lote pendente).
+- Lote 04 (refação das 3 churrasqueiras com guia de layout) **aprovado pelo dono em
+  2026-09-26** e integrado no protótipo.
+- Lote 05 (10 imagens, 53 sprites) **aprovado pelo dono em 2026-09-26** e integrado no
+  protótipo (runtime: 148 sprites, 2,38 MB WebP).
 - A auditoria completa do que falta está em §2.
 
 > **Por quê.** A mecânica agrada, mas o visual do protótipo (tudo desenhado por código em
@@ -73,22 +77,22 @@ O texto exato está em `art/prompts/lote-NN.md`. A partir do lote 02, cada promp
 Contado a partir de **todas** as tabelas de `shared/data` (e não de estimativa). Legenda:
 
 - ✅ aprovado (e, no caso do protótipo, integrado);
-- 🟡 no lote 03, aguardando aprovação;
+- 🟡 em lote entregue, aguardando aprovação (lote indicado);
 - 🔁 refazer;
 - ⬜ falta.
 
 | Família | Fonte nos dados | Precisa | Situação |
 |---|---|---|---|
-| Comidas (5 estados + servido) | `ingredients.json` (16) | 16 folhas | ✅ 12 · 🟡 4 (contra-filé, maminha no 03; costela, cupim no 05) |
-| Churrasqueiras × evolução | `churrasqueiras.json` (4 × 3) | 12 | ✅ 3 (lata evo 1–3) · 🟡 3 (refação evo 1 no 04; versões do 03 marcadas `redo`) · ⬜ 6 (evo 2–3 dessas) |
-| Fundos dos restaurantes | `restaurants.json` (7) | 7 | ✅ 1 (quintal) · 🟡 6 (espetinho de rua, trailer, bairro no 03; premium, festival, rede no 05) |
+| Comidas (5 estados + servido) | `ingredients.json` (16) | 16 folhas | ✅ 14 · 🟡 2 (contra-filé, maminha no 03) |
+| Churrasqueiras × evolução | `churrasqueiras.json` (4 × 3) | 12 | ✅ 6 (lata evo 1–3 + chapa, inox, fornalha evo 1) · ⬜ 6 (evo 2–3 dessas) |
+| Fundos dos restaurantes | `restaurants.json` (7) | 7 | ✅ 4 (quintal + premium, festival, rede no 05) · 🟡 3 (espetinho de rua, trailer, bairro no 03) |
 | Clientes | `customers.json` (11 tipos) | 11+ | ✅ 11 tipos, 14 retratos (variantes a/b) |
-| Funcionários | `employees.json` (5 cargos) | 5 | 🟡 5 (lote 05) |
+| Funcionários | `employees.json` (5 cargos) | 5 | ✅ 5 (lote 05) |
 | Ícones de interface | moedas (`economy.json`: `ic_coin`, `ic_ember`) + HUD, diária, resultado | 9 | 🟡 9 (lote 03) |
-| Ícones de upgrade | `upgrades.json` (`tracks[].icon`, 27) | 27 | 🟡 27 (9 no 03, 18 no 05) |
-| Ícones de cosméticos | `upgrades.json` (`cosmeticTracks`, 5) | 5 | 🟡 5 (lote 05; fiação nos dados: docs/23 passo 1.5) |
-| Coleção: itens | `collection.json` (37 entradas) | 37 | 16 usam os sprites de comida (✅ 12 · 🟡 4) · ⬜ 21 próprios (4 molhos, 9 equipamentos, 7 churrasqueiras especiais, 1 medalha) |
-| Coleção: categorias | `collection.json` (10) | 10 | 🟡 10 (lote 05) |
+| Ícones de upgrade | `upgrades.json` (`tracks[].icon`, 27) | 27 | ✅ 18 (lote 05) · 🟡 9 (lote 03) |
+| Ícones de cosméticos | `upgrades.json` (`cosmeticTracks`, 5) | 5 | ✅ 5 (lote 05; fiação nos dados: docs/23 passo 1.5) |
+| Coleção: itens | `collection.json` (37 entradas) | 37 | 16 usam os sprites de comida (✅ 14 · 🟡 2) · ⬜ 21 próprios (4 molhos, 9 equipamentos, 7 churrasqueiras especiais, 1 medalha) |
+| Coleção: categorias | `collection.json` (10) | 10 | ✅ 10 (lote 05) |
 | Eventos | `events.json` (4 semanais + 7 sazonais) | 11 | ⬜ 11 banners |
 | Loja (IAP) | `iap.json` (7 produtos) | 7 | ⬜ 7 |
 | Brasa Pass | `pass.json` | 1–2 | ⬜ arte da temporada |
@@ -100,9 +104,10 @@ Contado a partir de **todas** as tabelas de `shared/data` (e não de estimativa)
 
 **Totais:**
 
-- 20 imagens aprovadas (lotes 01–02) viraram 92 sprites;
-- o lote 03 tem 10 imagens (36 sprites), das quais 3 vão para refação;
-- para cobrir tudo faltam cerca de **40 imagens**, em 4 lotes.
+- 33 imagens aprovadas (lotes 01–02, 04–05) viraram 148 sprites (runtime 2,38 MB WebP);
+- o lote 03 tem 10 imagens (36 sprites) aguardando decisão do dono: as 3 churrasqueiras
+  estão marcadas `redo` (refeitas e aprovadas no lote 04), o resto segue pendente;
+- para cobrir tudo faltam cerca de **25 imagens**, em 3 lotes (06–08, §6).
 
 O logotipo continua tipográfico (Baloo 2 com efeitos): texto gerado por IA erra letras.
 
@@ -224,10 +229,11 @@ proíbem roupa e props magenta; a camisa salmão da mãe (lote 01) passou porque
 | **01** | picanha, linguiça toscana, pão de alho, queijo coalho, espetinho misto · churrasqueira lata (evo 1) · fundo quintal · brasas (3 calores) · bancada · clientes A | **aprovado e integrado** |
 | **02** | espetinho de frango, coração, coxa, asinha, fraldinha, legumes, vinagrete · clientes B (+ turista com camisa floral) · lata evo 2 e evo 3 | **aprovado e integrado** |
 | **03** | 9 ícones de interface · 9 ícones de upgrade · chapa, inox e fornalha (evo 1) · fundos espetinho de rua, trailer, churrascaria de bairro · contra-filé, maminha | **entregue, aguardando aprovação** (3 churrasqueiras para refazer) |
-| **04** | refação de chapa, inox e fornalha (evo 1) **com guia de layout** · costela, cupim · ícones de upgrade 2/3 e 3/3 · funcionários (5) · fundos churrascaria premium e festival | proposto |
-| **05** | evoluções 2 e 3 de chapa, inox e fornalha (6) · fundo rede nacional · ícones de cosméticos (5) · categorias da coleção (10) · coleção: molhos e equipamentos (1/2) | planejado |
-| **06** | coleção 2/2 (churrasqueiras especiais, medalha) · banners de eventos (11, em 3 folhas) · arte da loja (7 produtos, 2 folhas) · Brasa Pass · VFX (fumaça, faíscas, PERFEITO, moedas/confete) | planejado |
-| **07** | mapa da rota · medalhas de conquista · key art da tela-título · loja das stores (3 conceitos de ícone, feature graphic) · sobras e refações | planejado |
+| **04** | refação de chapa, inox e fornalha (evo 1) **com guia de layout** (3 imagens) | **aprovado e integrado 26/09** |
+| **05** | costela, cupim · ícones de upgrade 2/3 e 3/3 · cosméticos (5) · funcionários (5) · fundos premium, festival e rede nacional · categorias da coleção (10) — 53 sprites | **aprovado e integrado 26/09** |
+| **06** | evoluções 2 e 3 de chapa, inox e fornalha (6) · VFX: fumaça/faíscas, PERFEITO/moedas/confete (2 folhas) · coleção: molhos e equipamentos (2 folhas) | planejado |
+| **07** | coleção: churrasqueiras especiais + medalha · banners de eventos (11, em 3 folhas) · arte da loja/IAP (7 produtos, 2 folhas) · Brasa Pass · mapa da rota · medalhas de conquista · key art da tela-título | planejado |
+| **08** | loja das stores (3 conceitos de ícone, feature graphic) · sobras e refações acumuladas | planejado |
 
 ### 6.1 Resultado do lote 01
 
@@ -305,6 +311,19 @@ proporção e na posição exatas (~1,4:1, ≥ 75 % da largura, borda de cima ho
 magenta. O modelo pinta por cima da composição dada, em vez de interpretar "vista de cima".
 Os guias entram em `tools/art/make-ref.mjs` como um modo novo.
 
+### 6.5 Resultado do lote 05
+
+| # | Imagem | Sprites | Avaliação |
+|---|---|---|---|
+| 1 | `food_costela` | 6 | ✅ grelha de 3 costelas com ossos; contorno mantido nos 5 estados; servida na tábua oval com flor de sal |
+| 2 | `food_cupim` | 6 | ✅ triangular com capa de gordura; servido fatiado em leque |
+| 3 | `ui_icons_upgrades_b` | 9 | ✅ balcão, pratos, bandeja, ampulheta com coração, mesa, planta, luminária, porta aberta, letreiro: família coesa com a folha (a), lê a 32 px e em cinza |
+| 4 | `ui_icons_upgrades_c` | 9 | ✅ violão, cloche, balde de carvão, garfo de churrasco, caixa registradora, prancheta, louros com brasa, rostinhos, coroa com lojas |
+| 5 | `ui_icons_cosmetics` | 5 | ✅ avental, touca, faca dourada, churrasqueira vermelha, neon de chama; 3 avisos "touches cell edge" no recorte, sem sangramento visível |
+| 6 | `char_funcionarios` | 5 | ✅ exatamente 5 bustos, um por cargo, sem roupa magenta; avatares circulares legíveis |
+| 7–9 | fundos premium, festival, rede | 3 | ✅ salão nobre com adega; festival ao crepúsculo sem pessoas; flagship com vista da cidade; 9:16, sem texto |
+| 10 | `ui_icons_collection` | 10 | ✅ as 10 categorias, uma por célula 5×2 |
+
 ## 7. Integração no jogo
 
 Só começa depois da aprovação do lote. Nenhum código do jogo muda enquanto a arte está em revisão.
@@ -313,7 +332,7 @@ Só começa depois da aprovação do lote. Nenhum código do jogo muda enquanto 
 
 | Peça | Como |
 |---|---|
-| Build | `node tools/art/build-runtime.mjs` gera `prototype/assets/art/*.webp` + `index.json` **só com as linhas `approved`** do registro (lotes 01–02: 92 sprites, 1,41 MB). Tamanhos ≈ 3× o que a tela desenha. `--include-pending` serve para olhar um lote antes de aprovar e nunca é versionado |
+| Build | `node tools/art/build-runtime.mjs` gera `prototype/assets/art/*.webp` + `index.json` **só com as linhas `approved`** do registro (lotes 01–02, 04–05: 148 sprites, 2,38 MB). Tamanhos ≈ 3× o que a tela desenha. `--include-pending` serve para olhar um lote antes de aprovar e nunca é versionado |
 | Carregamento | `prototype/src/sprites.ts` carrega no navegador (e no `check-shots`) e não bloqueia nada: até decodificar, e em qualquer falha, o jogo desenha o procedural |
 | Comida | crossfade entre dois quadros vizinhos pelo ponto contínuo. As âncoras saem dos limiares de `ingredients.json` (meio de cada estágio): o quadro na tela concorda com o rótulo CRU/SELADO/… das regras. Bancada = quadro cru; pedido = servido; mão do FTUE = cru |
 | Churrasqueira | fundo → brasas por zona dentro da boca (crossfade entre as faixas fraco/médio/forte pelo calor da zona, que cai quando o carvão acaba) → grelha paralela à borda → moldura pintada → comida. Vale também para a tela-título e para a miniatura do card da Home |
@@ -395,13 +414,12 @@ ele não existe neste ambiente. **Ponto de decisão: lote 03.**
 ## 11. Próximos passos
 
 1. ~~Aprovação dos lotes 01 e 02~~: **aprovados** e integrados no protótipo.
-2. **Aprovação do lote 03.** Recomendação:
-   - aprovar ícones, fundos e as duas carnes;
-   - refazer chapa, inox e fornalha no lote 04 com guia de layout;
-   - decidir se a maminha fica.
-3. Lote 04 (§6), com os prompts gravados em `art/prompts/lote-04.md` antes da geração.
+2. **Aprovação pendente (dono): só o lote 03.** Recomendação: aprovar ícones, fundos e
+   as duas carnes (grills já marcados `redo`, refeitos e aprovados no lote 04).
+3. Lote 06 (§6), com os prompts gravados em `art/prompts/lote-06.md` antes da geração.
 4. Gate `check-art-registry`: todo arquivo em `Assets/Art` tem linha no registro, toda linha
    aponta para um arquivo que existe, e o runtime só contém `approved` (o CI que `docs/04` §11
    já promete).
 5. Unity: `AssetPostprocessor` lendo `sprites.manifest.json` (§7.2).
 ).
+ssetPostprocessor` lendo `sprites.manifest.json` (§7.2).
