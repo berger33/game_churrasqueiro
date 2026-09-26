@@ -1,0 +1,314 @@
+{
+  "_comment": "Lote 05 — fecha famílias inteiras (docs/23-PLANO_IMPLEMENTACAO.md passo 1.1, docs/22 §2): as 2 últimas comidas, os 18 ícones de upgrade restantes (nomes = upgrades.json tracks[].icon), os 5 cosméticos (ids novos ic_cos_* — fiação nos dados no passo 1.5), os 5 funcionários de employees.json, os 3 últimos fundos e as 10 categorias de collection.json. Prompts exatos em art/prompts/lote-05.md.",
+  "batch": "lote-05",
+  "date": "2026-09-26",
+  "sourceDir": "art/source/lote-05",
+  "assets": [
+    {
+      "source": "food_costela.png",
+      "mode": "grid",
+      "cols": 2,
+      "rows": 3,
+      "category": "food",
+      "subject": "costela",
+      "label": "Costela",
+      "cells": [
+        "raw",
+        "rare",
+        "medium",
+        "well",
+        "burned",
+        "served"
+      ],
+      "states": [
+        "raw",
+        "rare",
+        "medium",
+        "well",
+        "burned"
+      ],
+      "out": "Assets/Art/Sprites/Food",
+      "review": {
+        "verdict": "ok",
+        "note": "aprovado pelo dono em 2026-09-26"
+      }
+    },
+    {
+      "source": "food_cupim.png",
+      "mode": "grid",
+      "cols": 2,
+      "rows": 3,
+      "category": "food",
+      "subject": "cupim",
+      "label": "Cupim",
+      "cells": [
+        "raw",
+        "rare",
+        "medium",
+        "well",
+        "burned",
+        "served"
+      ],
+      "states": [
+        "raw",
+        "rare",
+        "medium",
+        "well",
+        "burned"
+      ],
+      "out": "Assets/Art/Sprites/Food",
+      "review": {
+        "verdict": "ok",
+        "note": "aprovado pelo dono em 2026-09-26"
+      }
+    },
+    {
+      "source": "ui_icons_upgrades_b.png",
+      "mode": "icons",
+      "cols": 3,
+      "rows": 3,
+      "category": "ui",
+      "label": "Ícones de upgrade (2/3)",
+      "names": [
+        "ic_counter",
+        "ic_plate",
+        "ic_tray",
+        "ic_patience",
+        "ic_table",
+        "ic_decor",
+        "ic_lighting",
+        "ic_capacity",
+        "ic_sign"
+      ],
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "aprovado pelo dono em 2026-09-26"
+      }
+    },
+    {
+      "source": "ui_icons_upgrades_c.png",
+      "mode": "icons",
+      "cols": 3,
+      "rows": 3,
+      "category": "ui",
+      "label": "Ícones de upgrade (3/3)",
+      "names": [
+        "ic_music",
+        "ic_garcom",
+        "ic_auxiliar",
+        "ic_churrasqueiro",
+        "ic_caixa",
+        "ic_gerente",
+        "ic_brasa_mastery",
+        "ic_clientela",
+        "ic_imperio"
+      ],
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "aprovado pelo dono em 2026-09-26"
+      }
+    },
+    {
+      "source": "ui_icons_cosmetics.png",
+      "mode": "icons",
+      "cols": 5,
+      "rows": 1,
+      "category": "ui",
+      "label": "Ícones de cosméticos",
+      "names": [
+        "ic_cos_apron",
+        "ic_cos_hat",
+        "ic_cos_knife",
+        "ic_cos_grill",
+        "ic_cos_sign"
+      ],
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "aprovado pelo dono em 2026-09-26"
+      }
+    },
+    {
+      "source": "char_funcionarios.png",
+      "mode": "components",
+      "minAreaFrac": 0.012,
+      "category": "character",
+      "label": "Funcionários",
+      "out": "Assets/Art/Sprites/Characters",
+      "names": [
+        {
+          "name": "spr_char_staff_garcom",
+          "at": [
+            138,
+            384
+          ],
+          "label": "garçom"
+        },
+        {
+          "name": "spr_char_staff_auxiliar",
+          "at": [
+            413,
+            384
+          ],
+          "label": "auxiliar"
+        },
+        {
+          "name": "spr_char_staff_churrasqueiro",
+          "at": [
+            688,
+            384
+          ],
+          "label": "churrasqueiro"
+        },
+        {
+          "name": "spr_char_staff_caixa",
+          "at": [
+            963,
+            384
+          ],
+          "label": "caixa"
+        },
+        {
+          "name": "spr_char_staff_gerente",
+          "at": [
+            1238,
+            384
+          ],
+          "label": "gerente"
+        }
+      ],
+      "review": {
+        "verdict": "ok",
+        "note": "aprovado pelo dono em 2026-09-26"
+      }
+    },
+    {
+      "source": "bg_churrascaria_premium.png",
+      "mode": "opaque",
+      "category": "background",
+      "name": "bg_restaurant_churrascaria_premium",
+      "label": "fundo: churrascaria premium",
+      "out": "Assets/Art/Backgrounds",
+      "review": {
+        "verdict": "ok",
+        "note": "aprovado pelo dono em 2026-09-26"
+      }
+    },
+    {
+      "source": "bg_festival.png",
+      "mode": "opaque",
+      "category": "background",
+      "name": "bg_restaurant_festival",
+      "label": "fundo: festival da brasa (crepúsculo)",
+      "out": "Assets/Art/Backgrounds",
+      "review": {
+        "verdict": "ok",
+        "note": "aprovado pelo dono em 2026-09-26"
+      }
+    },
+    {
+      "source": "bg_rede_nacional.png",
+      "mode": "opaque",
+      "category": "background",
+      "name": "bg_restaurant_rede_nacional",
+      "label": "fundo: rede nacional (flagship)",
+      "out": "Assets/Art/Backgrounds",
+      "review": {
+        "verdict": "ok",
+        "note": "aprovado pelo dono em 2026-09-26"
+      }
+    },
+    {
+      "source": "ui_icons_collection.png",
+      "mode": "icons",
+      "cols": 5,
+      "rows": 2,
+      "category": "ui",
+      "label": "Ícones das categorias da coleção",
+      "names": [
+        "ic_col_carnes",
+        "ic_col_aves",
+        "ic_col_linguicas",
+        "ic_col_queijos",
+        "ic_col_paes",
+        "ic_col_acompanhamentos",
+        "ic_col_espetinhos",
+        "ic_col_molhos",
+        "ic_col_equipamentos",
+        "ic_col_churrasqueiras"
+      ],
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "aprovado pelo dono em 2026-09-26"
+      }
+    }
+  ],
+  "preview": {
+    "background": "bg_restaurant_festival",
+    "grill": "spr_grill_lata_valente_evo3",
+    "embers": "t_fx_embers_medium",
+    "onGrill": [
+      [
+        "spr_food_costela_medium",
+        0.22,
+        0.5,
+        72
+      ],
+      [
+        "spr_food_cupim_rare",
+        0.52,
+        0.45,
+        72
+      ],
+      [
+        "spr_food_picanha_medium",
+        0.8,
+        0.52,
+        62
+      ]
+    ],
+    "benchItems": [
+      [
+        "spr_food_costela_raw",
+        62
+      ],
+      [
+        "spr_food_cupim_raw",
+        62
+      ],
+      [
+        "spr_food_contra_file_raw",
+        62
+      ],
+      [
+        "spr_food_maminha_raw",
+        62
+      ],
+      [
+        "spr_food_picanha_raw",
+        64
+      ]
+    ],
+    "orders": [
+      [
+        "spr_char_customer_vip",
+        [
+          "spr_food_costela_served",
+          "spr_food_queijo_coalho_served"
+        ],
+        0.8
+      ],
+      [
+        "spr_char_customer_tio_do_churrasco",
+        [
+          "spr_food_cupim_served",
+          "spr_food_pao_de_alho_served"
+        ],
+        0.35
+      ]
+    ]
+  }
+}
