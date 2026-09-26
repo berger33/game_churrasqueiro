@@ -604,31 +604,46 @@ specification. The prototype proves art *direction*, not the art *budget*.
 
 1. ~~**Compile the C# core** (`dotnet build` in CI) and add golden-vector parity~~ — **done**:
    `npm run check-csharp` (gate 14), 162 checks agree (see "FTUE follow-ups").
+
+
+
 2. ~~Write `TurnSimulation.cs`~~ and the economy vectors — **done**: `EconomyRules.cs` carries the
    meta (139 → 150 checks), and `TurnSimulation.cs` + `SkillPolicy.cs` now replay the 12 golden turns in
    CI (150 → 162). The four churrasqueira functions were already in `Rules.cs`, and the turn port reads
    them through the same constructor order the reference uses. What still waits:
    `EconomyRules.ApplyTurnResult`, `SaveSystem.cs` v4 (`progress.charcoalType`) and the
    `TutorialTurn` glue the turn port unblocked.
-3. Write the Unity scene layer and run the feel pass.
-4. ~~Confirm the 767-turn mid-game gap with telemetry before V1.0.~~ — the ladder was rebuilt to
+3. **Three monetization ideas were measured, not debated** — comandas (queue ×2 pays +26 % at L1 and
+   +66…+91 % mid-ladder, while doubling *items* on top of that is what pushes lost customers to 18-24 %
+   and stars to 1.4-1.6), the blower and the water bottle (a heat boost measures as a *loss* — −2 to
+   −10 % coins, +2 to +8 pp burned — because at heat 1,70 the perfect window is 0,3 s wide and one second
+   of +35 % crosses all of it; cooling buys precision instead: +3 pp perfect, money flat), and the
+   currency (there is no diamond in this game: `embers`/Brasas is the premium one and it has four faucets
+   and **zero** sinks — `costEmbers` on evolutions is 0, every upgrade track is priced in `coins`, and the
+   `tip_2x`/`xp_2x` boosters granted by the starter pack, the daily and the pass do nothing). The study,
+   its numbers and the four decisions are `docs/24`; the instrument is
+   `tools/studio/probe-monetization.ts`. Deciding the comanda *before* writing `ApplyTurnResult` is the
+   cheap order: that function is where booster state and the embers sink would land.
+4. Write `EconomyRules.ApplyTurnResult` + `SaveSystem.cs` v4, and `TutorialTurn`'s glue.
+5. Write the Unity scene layer and run the feel pass.
+6. ~~Confirm the 767-turn mid-game gap with telemetry before V1.0.~~ — the ladder was rebuilt to
    answer it without waiting for telemetry (docs/23): ten grills now buy at turns 3 / 7 / 19 / 50 / 61 /
    95 / 184 / 309 / 509 where there used were three (7 / 45 / 90), and the new screens sit past the
    measured horizon on purpose. Telemetry still confirms or kills the tail.
-5. Grow en-US / es-419 from 8.8 % stub to full coverage before any non-BR launch (the percentage fell
+7. Grow en-US / es-419 from 8.8 % stub to full coverage before any non-BR launch (the percentage fell
    because pt-BR grew to 615 keys with the ten-grill ladder, not because translations were removed).
-5b. ~~Port the charcoal multipliers to C# with `= 1` initializers (docs/23 §6.1) together with
+7b. ~~Port the charcoal multipliers to C# with `= 1` initializers (docs/23 §6.1) together with
    `TurnSimulation.cs`~~ — **done**: `DerivedStats.Charcoal{Duration,Heat}Mult = 1`, consumption in
    `TickGrill`, price in `TurnSimulation.RefillCharcoal`; the 12 golden turns replay with the purse and
    the burn unchanged, which is precisely what the `= 1` was protecting.
-6. ~~**Prototype FTUE**~~ — **done** (see "FTUE" at the top and docs/05 §4). Follow-ups:
+8. ~~**Prototype FTUE**~~ — **done** (see "FTUE" at the top and docs/05 §4). Follow-ups:
    - ~~Port `tutorial.ts` to the Unity `TutorialDirector`~~ — **done** (`Assets/Scripts/Core/
      Tutorial.cs`, 44 FTUE vectors agree); `TutorialTurn`'s glue follows `TurnSimulation.cs`.
    - ~~`SaveGame` v3 should carry `progress.tutorial`~~ — **done** (see "FTUE follow-ups").
    - ~~`gen-schemas.mjs` enum `OVERRIDES` never apply~~ — **fixed and guarded**.
    - ~~The Home daily-strip hit box sits below the drawn strip~~ — **fixed**, with the
      calendar modal's three hit-box bugs and the unlimited claims it was hiding.
-7. **Professional 2D art** (docs/22):
+9. **Professional 2D art** (docs/22):
    - ~~get lotes 01–02 approved~~ — **approved and integrated in the prototype**;
    - ~~lote 03~~ — **rejected whole by the owner** and reprocessed as lote 04, which is
      **awaiting approval** (icons, backgrounds, both meats are the keepers; see "Lote 03
