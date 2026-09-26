@@ -205,7 +205,7 @@ public static class Program
         // O alicerce dos vetores de turno, conferido antes deles: se o `Rng` divergir em um bit,
         // "coins 628 ≠ 631" é sintoma, não diagnóstico — aqui a falha nomeia o sorteio.
         var rngSec = report.Section("golden.rng");
-        foreach (var v in (doc["rng"]?.AsArray() ?? new JsonArray())) RngStream(v, rngSec);
+        foreach (var v in (doc["rng"]?.AsArray() ?? new JsonArray())) RngStream(v!, rngSec);
     }
 
     private static void Cook(GameData data, DerivedStats stats, JsonNode v, Section s)
