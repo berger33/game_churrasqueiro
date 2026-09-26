@@ -34,8 +34,8 @@
         0.5
       ],
       "category": "background",
-      "source": "art/source/lote-03/bg_espetinho_rua.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-09/bg_restaurant_espetinho_rua.png",
+      "batch": "lote-09"
     },
     "bg_restaurant_festival": {
       "file": "Assets/Art/Backgrounds/bg_restaurant_festival.png",
@@ -82,8 +82,8 @@
         0.5
       ],
       "category": "background",
-      "source": "art/source/lote-03/bg_trailer.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-09/bg_restaurant_trailer.png",
+      "batch": "lote-09"
     },
     "bg_route_brasil": {
       "file": "Assets/Art/Backgrounds/bg_route_brasil.png",
@@ -111,15 +111,15 @@
     },
     "ic_auto_refill": {
       "file": "Assets/Art/UI/Icons/ic_auto_refill.png",
-      "w": 230,
-      "h": 304,
+      "w": 663,
+      "h": 786,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-09/ic_auto_refill.png",
+      "batch": "lote-09"
     },
     "ic_auxiliar": {
       "file": "Assets/Art/UI/Icons/ic_auxiliar.png",
@@ -135,15 +135,15 @@
     },
     "ic_board": {
       "file": "Assets/Art/UI/Icons/ic_board.png",
-      "w": 292,
-      "h": 254,
+      "w": 704,
+      "h": 808,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-09/ic_board.png",
+      "batch": "lote-09"
     },
     "ic_booster": {
       "file": "Assets/Art/UI/Icons/ic_booster.png",
@@ -195,27 +195,27 @@
     },
     "ic_charcoal": {
       "file": "Assets/Art/UI/Icons/ic_charcoal.png",
-      "w": 285,
-      "h": 300,
+      "w": 752,
+      "h": 802,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-09/ic_charcoal.png",
+      "batch": "lote-09"
     },
     "ic_charcoal_quality": {
       "file": "Assets/Art/UI/Icons/ic_charcoal_quality.png",
-      "w": 276,
-      "h": 280,
+      "w": 834,
+      "h": 825,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-09/ic_charcoal_quality.png",
+      "batch": "lote-09"
     },
     "ic_check": {
       "file": "Assets/Art/UI/Icons/ic_check.png",
@@ -555,15 +555,15 @@
     },
     "ic_heat": {
       "file": "Assets/Art/UI/Icons/ic_heat.png",
-      "w": 257,
-      "h": 315,
+      "w": 620,
+      "h": 765,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-09/ic_heat.png",
+      "batch": "lote-09"
     },
     "ic_imperio": {
       "file": "Assets/Art/UI/Icons/ic_imperio.png",
@@ -579,15 +579,15 @@
     },
     "ic_knife": {
       "file": "Assets/Art/UI/Icons/ic_knife.png",
-      "w": 296,
-      "h": 290,
+      "w": 768,
+      "h": 786,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-09/ic_knife.png",
+      "batch": "lote-09"
     },
     "ic_lighting": {
       "file": "Assets/Art/UI/Icons/ic_lighting.png",
@@ -663,27 +663,27 @@
     },
     "ic_speed": {
       "file": "Assets/Art/UI/Icons/ic_speed.png",
-      "w": 285,
-      "h": 285,
+      "w": 918,
+      "h": 911,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-09/ic_speed.png",
+      "batch": "lote-09"
     },
     "ic_stability": {
       "file": "Assets/Art/UI/Icons/ic_stability.png",
-      "w": 312,
-      "h": 267,
+      "w": 874,
+      "h": 634,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "ui",
-      "source": "art/source/lote-03/ui_icons_upgrades_a.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-09/ic_stability.png",
+      "batch": "lote-09"
     },
     "ic_star": {
       "file": "Assets/Art/UI/Icons/ic_star.png",

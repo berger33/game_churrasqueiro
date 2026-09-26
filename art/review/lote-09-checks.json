@@ -1,0 +1,112 @@
+{
+  "batch": "lote-09",
+  "status": "pending",
+  "checks": {
+    "generatedImages": 10,
+    "processedSprites": 10,
+    "oneSpritePerImage": true,
+    "approvedReferencesOnly": true,
+    "uiMagentaResidualPixels": 0,
+    "iconsReviewedAt32px": true,
+    "grayscaleReviewed": true,
+    "backgroundsArePortrait9x16": true
+  },
+  "warnings": [
+    {
+      "name": "bg_restaurant_espetinho_rua",
+      "message": "Dois carrinhos espelhados nas bordas em vez de um carrinho somente à direita; centro permanece livre, sem pessoas ou texto."
+    }
+  ],
+  "sprites": [
+    {
+      "name": "ic_heat",
+      "category": "ui",
+      "width": 620,
+      "height": 765,
+      "opaquePixels": 285195,
+      "partialAlphaPixels": 2188,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "ic_stability",
+      "category": "ui",
+      "width": 874,
+      "height": 634,
+      "opaquePixels": 374542,
+      "partialAlphaPixels": 4340,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "ic_speed",
+      "category": "ui",
+      "width": 918,
+      "height": 911,
+      "opaquePixels": 554293,
+      "partialAlphaPixels": 4555,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "ic_charcoal",
+      "category": "ui",
+      "width": 752,
+      "height": 802,
+      "opaquePixels": 492999,
+      "partialAlphaPixels": 2271,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "ic_charcoal_quality",
+      "category": "ui",
+      "width": 834,
+      "height": 825,
+      "opaquePixels": 484234,
+      "partialAlphaPixels": 2263,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "ic_auto_refill",
+      "category": "ui",
+      "width": 663,
+      "height": 786,
+      "opaquePixels": 364052,
+      "partialAlphaPixels": 2423,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "ic_knife",
+      "category": "ui",
+      "width": 768,
+      "height": 786,
+      "opaquePixels": 172621,
+      "partialAlphaPixels": 1933,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "ic_board",
+      "category": "ui",
+      "width": 704,
+      "height": 808,
+      "opaquePixels": 530796,
+      "partialAlphaPixels": 3025,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "bg_restaurant_espetinho_rua",
+      "category": "background",
+      "width": 768,
+      "height": 1376,
+      "opaquePixels": 1056768,
+      "partialAlphaPixels": 0,
+      "magentaResidualPixels": null
+    },
+    {
+      "name": "bg_restaurant_trailer",
+      "category": "background",
+      "width": 768,
+      "height": 1376,
+      "opaquePixels": 1056768,
+      "partialAlphaPixels": 0,
+      "magentaResidualPixels": null
+    }
+  ]
+}

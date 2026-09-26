@@ -1,6 +1,6 @@
 {
   "batch": "lote-08",
-  "status": "pending",
+  "status": "approved",
   "checks": {
     "generatedImages": 10,
     "processedSprites": 10,
@@ -89,5 +89,10 @@
       "partialAlphaPixels": 5318,
       "magentaResidualPixels": 0
     }
-  ]
+  ],
+  "ownerApproval": {
+    "date": "2026-09-26",
+    "decision": "approved",
+    "instruction": "seguir para o lote 09; merge somente após completar as 33 imagens"
+  }
 }

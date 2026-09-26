@@ -37,6 +37,11 @@
    "w": 110,
    "h": 128
   },
+  "ic_booster": {
+   "file": "ic_booster.webp",
+   "w": 78,
+   "h": 128
+  },
   "ic_brasa_mastery": {
    "file": "ic_brasa_mastery.webp",
    "w": 128,
@@ -52,6 +57,16 @@
    "w": 128,
    "h": 110
   },
+  "ic_check": {
+   "file": "ic_check.webp",
+   "w": 128,
+   "h": 111
+  },
+  "ic_chest": {
+   "file": "ic_chest.webp",
+   "w": 128,
+   "h": 113
+  },
   "ic_churrasqueiro": {
    "file": "ic_churrasqueiro.webp",
    "w": 111,
@@ -61,6 +76,16 @@
    "file": "ic_clientela.webp",
    "w": 128,
    "h": 124
+  },
+  "ic_clock": {
+   "file": "ic_clock.webp",
+   "w": 111,
+   "h": 128
+  },
+  "ic_coin": {
+   "file": "ic_coin.webp",
+   "w": 128,
+   "h": 128
   },
   "ic_col_acompanhamentos": {
    "file": "ic_col_acompanhamentos.webp",
@@ -147,6 +172,16 @@
    "w": 97,
    "h": 128
   },
+  "ic_ember": {
+   "file": "ic_ember.webp",
+   "w": 98,
+   "h": 128
+  },
+  "ic_flame": {
+   "file": "ic_flame.webp",
+   "w": 102,
+   "h": 128
+  },
   "ic_garcom": {
    "file": "ic_garcom.webp",
    "w": 128,
@@ -157,6 +192,11 @@
    "w": 97,
    "h": 128
   },
+  "ic_grill_size": {
+   "file": "ic_grill_size.webp",
+   "w": 128,
+   "h": 121
+  },
   "ic_imperio": {
    "file": "ic_imperio.webp",
    "w": 128,
@@ -165,6 +205,11 @@
   "ic_lighting": {
    "file": "ic_lighting.webp",
    "w": 119,
+   "h": 128
+  },
+  "ic_lock": {
+   "file": "ic_lock.webp",
+   "w": 106,
    "h": 128
   },
   "ic_music": {
@@ -186,6 +231,11 @@
    "file": "ic_sign.webp",
    "w": 122,
    "h": 128
+  },
+  "ic_star": {
+   "file": "ic_star.webp",
+   "w": 128,
+   "h": 124
   },
   "ic_table": {
    "file": "ic_table.webp",
@@ -1622,11 +1672,16 @@
  },
  "icons": {
   "ic_auxiliar": "ic_auxiliar",
+  "ic_booster": "ic_booster",
   "ic_brasa_mastery": "ic_brasa_mastery",
   "ic_caixa": "ic_caixa",
   "ic_capacity": "ic_capacity",
+  "ic_check": "ic_check",
+  "ic_chest": "ic_chest",
   "ic_churrasqueiro": "ic_churrasqueiro",
   "ic_clientela": "ic_clientela",
+  "ic_clock": "ic_clock",
+  "ic_coin": "ic_coin",
   "ic_col_acompanhamentos": "ic_col_acompanhamentos",
   "ic_col_aves": "ic_col_aves",
   "ic_col_carnes": "ic_col_carnes",
@@ -1644,14 +1699,19 @@
   "ic_cos_sign": "ic_cos_sign",
   "ic_counter": "ic_counter",
   "ic_decor": "ic_decor",
+  "ic_ember": "ic_ember",
+  "ic_flame": "ic_flame",
   "ic_garcom": "ic_garcom",
   "ic_gerente": "ic_gerente",
+  "ic_grill_size": "ic_grill_size",
   "ic_imperio": "ic_imperio",
   "ic_lighting": "ic_lighting",
+  "ic_lock": "ic_lock",
   "ic_music": "ic_music",
   "ic_patience": "ic_patience",
   "ic_plate": "ic_plate",
   "ic_sign": "ic_sign",
+  "ic_star": "ic_star",
   "ic_table": "ic_table",
   "ic_tray": "ic_tray"
  }

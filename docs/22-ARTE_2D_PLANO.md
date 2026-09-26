@@ -4,9 +4,10 @@
 **Status:**
 
 - Lotes 01–02 e 04–06 **aprovados**; assets empacotados e usados pelo protótipo conforme descrito em §7.1 (a integração varia por família).
-- Lote 03: dos 33 sprites que ainda estavam `pending`, os primeiros 10 foram substituídos individualmente no **lote 08**; os outros 23 continuam no lote 03.
-- Lote 07 (10 imagens, 34 sprites) **aprovado pelo dono em 2026-09-26**; incluído no runtime do protótipo, que agora tem **211 sprites, 3,44 MB WebP**.
-- Lote 08 (10 imagens → 10 sprites: os 9 ícones centrais de UI + `ic_grill_size`) foi gerado, recortado e revisado tecnicamente em 2026-09-26; está **aguardando aprovação do dono** e não entrou no runtime.
+- Lote 03: dos 33 sprites que estavam `pending`, 10 foram substituídos e aprovados no **lote 08**, 10 foram substituídos e aguardam decisão no **lote 09**, e 13 continuam atribuídos ao lote 03.
+- Lote 07 (10 imagens, 34 sprites) **aprovado pelo dono em 2026-09-26**; incluído no runtime do protótipo.
+- Lote 08 (10 imagens → 10 sprites: os 9 ícones centrais de UI + `ic_grill_size`) foi **aprovado pelo dono em 2026-09-26** e integrado; runtime aprovado: **221 sprites, 3,49 MB WebP**.
+- Lote 09 (10 imagens → 10 sprites: 8 ícones de upgrade + 2 fundos) foi gerado, recortado e revisado tecnicamente; está **aguardando aprovação**. O fundo Espetinho de Rua tem dois carrinhos espelhados em vez de um só à direita; o centro permanece livre.
 - A aprovação e presença no bundle não significam que as novas telas de coleção, eventos, loja/IAP, passe, mapa ou conquistas estejam implementadas; ver §7.1.
 - A auditoria do que ainda falta gerar está em §2.
 
@@ -103,9 +104,10 @@ Contado a partir de **todas** as tabelas de `shared/data` (e não de estimativa)
 
 **Totais:**
 
-- 53 imagens aprovadas (lotes 01–02, 04–07) viraram 211 sprites no runtime do protótipo (3,44 MB WebP);
-- o lote 03 continua com 10 imagens (36 sprites) aguardando decisão do dono; as 3 churrasqueiras
-  estão marcadas `redo` (refeitas e aprovadas no lote 04), e o restante segue sem decisão;
+- 63 imagens aprovadas (lotes 01–02, 04–08) viraram 221 sprites no runtime do protótipo (3,49 MB WebP);
+- dos 33 sprites pendentes remanescentes do lote 03, 10 já foram substituídos e aprovados no
+  lote 08, 10 foram substituídos no lote 09 e aguardam decisão, e 13 ainda serão refeitos nos
+  lotes 10–11; as 3 churrasqueiras antigas já haviam sido refeitas e aprovadas no lote 04;
 - o lote 07 concluiu as artes de coleção, eventos, IAP, Brasa Pass, mapa, molduras de conquistas e key art;
 - permanecem itens da auditoria marcados ⬜, incluindo as 5 peças de ASO/store, props e refações. O lote 08 fica para a próxima cobertura; consultar a tabela, sem inferir aprovação ou integração de telas.
 
@@ -233,8 +235,9 @@ proíbem roupa e props magenta; a camisa salmão da mãe (lote 01) passou porque
 | **05** | costela, cupim · ícones de upgrade 2/3 e 3/3 · cosméticos (5) · funcionários (5) · fundos premium, festival e rede nacional · categorias da coleção (10) — 53 sprites | **aprovado e integrado 26/09** |
 | **06** | evoluções 2 e 3 de chapa, inox e fornalha (6) · VFX: fumaça/faíscas, PERFEITO/moedas/confete (2 folhas) · coleção: molhos e equipamentos (2 folhas) | planejado |
 | **07** | coleção: churrasqueiras especiais + medalha · banners de eventos (11, em 3 folhas) · arte da loja/IAP (7 produtos, 2 folhas) · Brasa Pass · mapa da rota · medalhas de conquista · key art da tela-título | planejado |
-| **08** | refação individual dos pending do lote 03 (1/4): 9 ícones centrais de UI + `ic_grill_size` | **10 imagens geradas e processadas; pending, aguardando aprovação** |
-| **09–11** | continuação da refação individual dos 23 pending restantes: 10 + 10 + 3 imagens | planejado; cada lote só começa após decisão do anterior |
+| **08** | refação individual dos pending do lote 03 (1/4): 9 ícones centrais de UI + `ic_grill_size` | **10/10 aprovados e integrados; runtime 221** |
+| **09** | refação individual (2/4): 8 upgrades + fundos Espetinho de Rua e Trailer | **10 imagens geradas e processadas; pending, aguardando aprovação** |
+| **10–11** | 13 pending restantes: fundo Churrascaria de Bairro + 12 estados de contra-filé/maminha, em 10 + 3 imagens | planejado; cada lote só começa após decisão do anterior |
 | **12+** | loja das stores (3 conceitos de ícone, feature graphic) · demais sobras/refações | planejado |
 
 ### 6.1 Resultado do lote 01
@@ -362,7 +365,7 @@ sobrescrever o melhor raw sem backup — regens podem regredir por variância.
 
 Os masters passaram na verificação de recorte com zero pixels magenta residuais. Os avisos de toque de borda e demais notas visuais estão em `art/review/lote-07.md` e `art/review/lote-07-checks.json`. **Assets incluídos no bundle não significam telas implementadas:** eventos, IAP/loja, Brasa Pass, rota, coleção e conquistas ainda precisam de UI e lógica próprias (§7.1).
 
-### 6.8 Resultado do lote 08 — aguardando aprovação
+### 6.8 Resultado do lote 08 — aprovado em 2026-09-26
 
 Primeira das quatro rodadas pedidas pelo dono para substituir os 33 sprites `pending` do lote
 03 por **uma geração individual por sprite** (10 + 10 + 10 + 3). A rodada cobre `ic_coin`,
@@ -375,12 +378,31 @@ e `ic_grill_size`.
 - 0 pixels magenta residuais nos 10 masters recortados;
 - as dez silhuetas continuam legíveis a 32 px no HUD escuro e em escala de cinza sobre claro;
 - `ic_grill_size` mantém a seta tocando a grelha, como um cluster único, sem chama;
-- registro e manifesto continuam `pending`; o runtime aprovado permanece com 211 sprites.
+- o dono aprovou o lote em 2026-09-26 e pediu seguir ao lote 09; o merge só ocorrerá ao completar as 33 imagens;
+- `set-status` marcou 10/10 como `approved`/`ai-assisted-reviewed`; runtime reconstruído de 211 para **221 sprites / 3,49 MB WebP**.
 
 Entregáveis: `art/prompts/lote-08.md`, `art/lote-08.json`,
 `art/review/lote-08.jpg`, `art/review/lote-08-preview.jpg` e
-`art/review/lote-08-checks.json`. O veredito `ok` do arquivo de lote é revisão técnica, não a
-aprovação do dono.
+`art/review/lote-08-checks.json`.
+
+### 6.9 Resultado do lote 09 — aguardando aprovação
+
+Segunda rodada individual: oito upgrades (`ic_heat`, `ic_stability`, `ic_speed`,
+`ic_charcoal`, `ic_charcoal_quality`, `ic_auto_refill`, `ic_knife`, `ic_board`) e os fundos
+`bg_restaurant_espetinho_rua` e `bg_restaurant_trailer`.
+
+- 10 imagens produzidas e 10 sprites processados; uma chamada falhou ao ler a referência do
+  `ic_stability` e foi repetida com sucesso, sem alterar o prompt;
+- referências exclusivamente `approved`: ícones dos lotes 05/08 e fundos Quintal/Festival;
+- oito ícones legíveis a 32 px no HUD escuro e em escala de cinza; zero magenta residual;
+- Trailer: centro livre, sem pessoas ou texto, composição e estilo coerentes;
+- Espetinho de Rua: centro livre, sem pessoas ou texto, mas o modelo espelhou o carrinho e
+  entregou dois pontos de espetinho, um em cada borda, em vez de um só à direita — `warn` para
+  decisão explícita do dono;
+- as 10 linhas permanecem `pending`; o runtime aprovado continua com 221 sprites.
+
+Entregáveis: `art/prompts/lote-09.md`, `art/lote-09.json`, `art/review/lote-09.jpg`,
+`art/review/lote-09-preview.jpg` e `art/review/lote-09-checks.json`.
 
 ## 7. Integração no jogo
 
@@ -390,7 +412,7 @@ Só começa depois da aprovação do lote. Nenhum código do jogo muda enquanto 
 
 | Peça | Como |
 |---|---|
-| Build | `node tools/art/build-runtime.mjs` gera `prototype/assets/art/*.webp` + `index.json` **só com as linhas `approved`** do registro (agora 211 sprites, 3,44 MB WebP). Tamanhos ≈ 3× o que a tela desenha. `--include-pending` serve para olhar um lote antes de aprovar e nunca é versionado |
+| Build | `node tools/art/build-runtime.mjs` gera `prototype/assets/art/*.webp` + `index.json` **só com as linhas `approved`** do registro (agora 221 sprites, 3,49 MB WebP após o lote 08). Tamanhos ≈ 3× o que a tela desenha. `--include-pending` serve para olhar um lote antes de aprovar e nunca é versionado |
 | Carregamento | `prototype/src/sprites.ts` carrega no navegador (e no `check-shots`) e não bloqueia nada: até decodificar, e em qualquer falha, o jogo desenha o procedural |
 | Comida | crossfade entre dois quadros vizinhos pelo ponto contínuo. As âncoras saem dos limiares de `ingredients.json` (meio de cada estágio): o quadro na tela concorda com o rótulo CRU/SELADO/… das regras. Bancada = quadro cru; pedido = servido; mão do FTUE = cru |
 | Churrasqueira | fundo → brasas por zona dentro da boca (crossfade entre as faixas fraco/médio/forte pelo calor da zona, que cai quando o carvão acaba) → grelha paralela à borda → moldura pintada → comida. Vale também para a tela-título e para a miniatura do card da Home |
@@ -398,10 +420,10 @@ Só começa depois da aprovação do lote. Nenhum código do jogo muda enquanto 
 | Clientes | retrato circular por tipo; variantes a/b escolhidas pelo `uid`, então cada cliente mantém o rosto |
 | Cena | fundo pintado do restaurante do turno (e do quintal na tela-título), com degradê para o HUD ficar legível; as luzes procedurais saem quando a pintura já tem as suas |
 | Bancada | bancada pintada com a borda de trás cruzando a tela e as vagas como tapetes translúcidos |
-| Ícones | `coinIcon`, `flameIcon`, `starIcon`, `clockIcon` e `checkIcon` usam os ícones pintados, e os cards de upgrade usam o `icon` de cada trilha. Entram sozinhos quando o lote 03 for aprovado e o build refeito |
+| Ícones | `coinIcon`, `flameIcon`, `starIcon`, `clockIcon` e `checkIcon` já usam os ícones aprovados do lote 08; `ic_grill_size` também está no runtime. Os outros oito upgrades entram após eventual aprovação do lote 09 |
 | Harnesses | `check-art` e `check-render` rodam sem `Image` e testam o procedural. `check-shots` tem um shim de `Image`, espera todos os sprites decodificarem e gera as capturas com a arte; é delas que saem as screenshots reais da loja |
 
-**Lote 07 aprovado e empacotado, sem integração das novas telas de metajogo.** Os 34 sprites aparecem em `prototype/assets/art/index.json` (runtime total: 211 sprites, 3,44 MB WebP), mas os novos IDs de banners, coleção, IAP, passe, mapa, molduras de conquista e key art não são referenciados pelo código de `prototype/src`. Portanto, loja/eventos/rota/passe/conquistas continuam sem telas funcionais; a montagem `art/review/lote-07-preview.jpg` é uma composição estática, não screenshot do jogo. Os assets antigos continuam usados nas áreas descritas acima.
+**Lote 07 aprovado e empacotado, sem integração das novas telas de metajogo.** Seus 34 sprites aparecem em `prototype/assets/art/index.json`; o runtime atual totaliza 221 sprites / 3,49 MB após a aprovação do lote 08. Os IDs de banners, coleção, IAP, passe, mapa, molduras de conquista e key art ainda não são referenciados pelo código de `prototype/src`. Portanto, loja/eventos/rota/passe/conquistas continuam sem telas funcionais; a montagem `art/review/lote-07-preview.jpg` é uma composição estática, não screenshot do jogo.
 
 **Aprovar um lote = dois comandos:** `node tools/art/set-status.mjs lote-NN approved` e
 `node tools/art/build-runtime.mjs`.
@@ -473,9 +495,9 @@ ele não existe neste ambiente. **Ponto de decisão: lote 03.**
 
 ## 11. Próximos passos
 
-1. **Lote 08:** revisar e obter decisão explícita sobre as 10 imagens entregues. Se aprovado, aplicar `set-status` e reconstruir o runtime; se houver refação, ela precede o lote 09.
-2. **Lotes 09–11:** somente após a decisão do lote anterior, gerar os 23 pending restantes em 10 + 10 + 3 imagens, com prompt gravado antes e referência aprovada.
-3. **Lote 07:** 10 imagens / 34 sprites aprovados pelo dono; masters e assets no runtime (211 sprites, 3,44 MB WebP). Isso não fecha a implementação das telas de metajogo (§7.1).
+1. **Lote 09:** revisar os oito upgrades e os dois fundos, com decisão explícita sobre o aviso do Espetinho de Rua (dois carrinhos espelhados). Se aprovado, aplicar `set-status` e rebuild; se houver refação, ela precede o lote 10.
+2. **Lotes 10–11:** somente após a decisão do lote 09, gerar os 13 pending restantes em 10 + 3 imagens, com prompt gravado antes e referências aprovadas.
+3. **Merge:** conforme decisão do dono, somente depois de completar as 33 imagens; commits intermediários permanecem na branch da sessão.
 4. **Gate `check-art-registry`:** todo arquivo em `Assets/Art` tem linha no registro, toda linha aponta para arquivo existente e o runtime só contém `approved` (promessa de docs/04 §11).
 5. **Unity:** implementar o `AssetPostprocessor` lendo `sprites.manifest.json` (§7.2).
 6. **ASO/store:** as peças antes previstas para o lote 08 ficam para o lote 12 ou posterior, após a sequência de refações.

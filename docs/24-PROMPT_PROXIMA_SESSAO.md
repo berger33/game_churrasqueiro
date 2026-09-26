@@ -1,45 +1,51 @@
-# Prompt de retomada — decisão do lote 08
+# Prompt de retomada — decisão do lote 09
 
-Continuar o `game_churrasqueiro` na branch atribuída à sessão, a partir do estado que gerou a
-primeira das quatro rodadas de substituição dos 33 sprites `pending` do antigo lote 03.
+Continuar o `game_churrasqueiro` na branch atribuída à sessão, durante a substituição dos 33
+sprites que estavam `pending` no antigo lote 03. O dono determinou quatro rodadas individuais
+(10 + 10 + 10 + 3) e que o merge só ocorrerá depois de completar as 33 imagens.
 
 ## Estado confirmado
 
-- Lotes 01–02 e 04–07 aprovados. Runtime aprovado: **211 sprites, 3,44 MB WebP**.
-- O dono pediu refazer os 33 pending como imagens individuais em quatro rodadas: 10 + 10 + 10 + 3.
-- **Lote 08 entregue:** 10 imagens individuais, cobrindo `ic_coin`, `ic_ember`, `ic_star`,
-  `ic_clock`, `ic_flame`, `ic_check`, `ic_chest`, `ic_booster`, `ic_lock` e `ic_grill_size`.
-- As dez imagens foram processadas em dez masters, estão `pending` e passaram na revisão
-  técnica: objeto único, leitura a 32 px e em cinza, zero pixels magenta residuais.
-- Entregáveis: `art/prompts/lote-08.md`, `art/lote-08.json`,
-  `art/review/lote-08.jpg`, `art/review/lote-08-preview.jpg` e
-  `art/review/lote-08-checks.json`.
-- Os 23 pending restantes continuam fora do runtime. O runtime não foi reconstruído com
-  `--include-pending` e nenhuma decisão antiga foi convertida em aprovação.
+- Lotes 01–02 e 04–08 aprovados.
+- **Lote 08 aprovado pelo dono em 2026-09-26:** 10/10 linhas `approved`, runtime reconstruído
+  de 211 para **221 sprites / 3,49 MB WebP**.
+- **Lote 09 entregue:** 10 imagens individuais — oito upgrades (`ic_heat`, `ic_stability`,
+  `ic_speed`, `ic_charcoal`, `ic_charcoal_quality`, `ic_auto_refill`, `ic_knife`, `ic_board`)
+  e dois fundos (`bg_restaurant_espetinho_rua`, `bg_restaurant_trailer`).
+- Os oito ícones passaram na revisão a 32 px e em cinza, com zero magenta residual.
+- Trailer: técnico `ok`, centro livre, sem texto/pessoas.
+- Espetinho de Rua: técnico `warn`; o modelo espelhou o carrinho e entregou dois pontos, um em
+  cada borda, em vez de um só à direita. O centro continua livre, sem texto ou pessoas.
+- Lote 09 permanece `pending` e fora do runtime aprovado.
+- Restam 13 sprites para os lotes 10–11: fundo Churrascaria de Bairro e 12 estados individuais
+  de contra-filé/maminha.
+
+## Entregáveis do lote 09
+
+- `art/prompts/lote-09.md`
+- `art/lote-09.json`
+- `art/review/lote-09.jpg`
+- `art/review/lote-09-preview.jpg`
+- `art/review/lote-09-checks.json`
 
 ## Próximo passo imediato
 
-Aguardar a decisão explícita do dono sobre o lote 08.
+Aguardar decisão explícita do dono sobre o lote 09, especialmente sobre o fundo Espetinho de
+Rua com dois carrinhos.
 
-- Se disser **aprovar/ok**: aplicar `node tools/art/set-status.mjs lote-08 approved`, reconstruir
-  o runtime com `node tools/art/build-runtime.mjs`, conferir que ele sobe de 211 para 221
-  sprites e executar os gates de arte/render.
-- Se pedir refação: manter status `pending`, registrar os pontos e refazer somente os itens
-  rejeitados antes de abrir a rodada seguinte.
-- Só depois da decisão final do lote 08 planejar e gravar os prompts do lote 09, com 10 dos 23
-  sprites restantes. Preservar famílias visuais e usar apenas referências aprovadas.
-
-## Depois da sequência 08–11
-
-Retomar o gate `check-art-registry` (`docs/23` passo 1.4), os ícones de cosmético nos dados
-(passo 1.5) e o fechamento do snapshot em `docs/18-STATUS.md`. As peças de ASO/store que antes
-ocupavam o nome “lote 08” foram adiadas para o lote 12 ou posterior.
+- Se aprovar o lote completo: `node tools/art/set-status.mjs lote-09 approved --note "..."`,
+  `node tools/art/build-runtime.mjs`, confirmar runtime 231 sprites e executar gates.
+- Se aprovar parcialmente: passar os nomes aprovados ao `set-status`; manter os recusados
+  `pending`/`rejected` e refazê-los antes do lote 10.
+- Se pedir refação do fundo: não aprovar esse nome e regenerar apenas
+  `bg_restaurant_espetinho_rua` com guia/composição mais restritiva.
+- Não começar o lote 10 antes da decisão.
 
 ## Segurança do fluxo
 
-- Revisão técnica `ok` não equivale à aprovação do dono.
-- Não alterar status sem decisão explícita.
-- Não iniciar lote 09 automaticamente.
-- Não integrar pending no runtime versionado.
-- Brutos e referências são descartáveis/gitignored; masters, prompts, spec e revisão são
-  versionados.
+- Revisão técnica não equivale à aprovação do dono.
+- Não integrar `pending` no runtime versionado.
+- Não abrir/mesclar PR antes de completar as 33 imagens.
+- Brutos/referências são gitignored; masters, prompts, specs e revisões são versionados.
+- Depois dos lotes 10–11, retomar `check-art-registry`, os dados de cosméticos e o snapshot de
+  `docs/18-STATUS.md`.

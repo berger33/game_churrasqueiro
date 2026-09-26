@@ -77,4 +77,7 @@ Este lote entra como `pending`. Geração, recorte e revisão técnica **não s�
   como parte da coluna `notes`, podendo apagar notas congeladas de assets aprovados. O parser
   passou a remover esse `\r` e a preservar o estilo de quebra de linha original; reprocessar
   o lote altera somente as dez linhas esperadas.
-- O runtime aprovado não foi reconstruído e continua com 211 sprites.
+- Entrega inicial: o runtime permaneceu com 211 sprites enquanto o lote aguardava decisão.
+- **Aprovação posterior:** o dono aprovou 10/10 em 2026-09-26, pediu seguir ao lote 09 e
+  determinou merge somente depois das 33 imagens. `set-status` aplicado; runtime reconstruído
+  para 221 sprites / 3,49 MB WebP.
