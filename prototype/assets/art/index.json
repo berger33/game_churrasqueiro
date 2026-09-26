@@ -658,6 +658,38 @@
     "tiltDeg": -6.7
    }
   },
+  "spr_grill_fornalha_dragao_manso_evo1": {
+   "file": "spr_grill_fornalha_dragao_manso_evo1.webp",
+   "w": 905,
+   "h": 1100,
+   "hole": {
+    "bbox": [
+     129,
+     238.7,
+     673.7,
+     337.3
+    ],
+    "quad": [
+     [
+      129.9,
+      318.9
+     ],
+     [
+      764,
+      238.7
+     ],
+     [
+      801.8,
+      492.1
+     ],
+     [
+      154.8,
+      573.2
+     ]
+    ],
+    "tiltDeg": -7.2
+   }
+  },
   "spr_grill_grelha_de_praca_evo1": {
    "file": "spr_grill_grelha_de_praca_evo1.webp",
    "w": 1100,
@@ -1125,6 +1157,9 @@
   },
   "fornalha_da_orla": {
    "1": "spr_grill_fornalha_da_orla_evo1"
+  },
+  "fornalha_dragao_manso": {
+   "1": "spr_grill_fornalha_dragao_manso_evo1"
   },
   "grelha_de_praca": {
    "1": "spr_grill_grelha_de_praca_evo1"
