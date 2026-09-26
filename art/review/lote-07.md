@@ -1,10 +1,10 @@
-# Lote 07 — completo para revisão; não aprovado
+# Lote 07 — aprovado pelo dono; assets no runtime
 
 2026-09-26 · checkpoint do PR #11 (`8540b05`, main) · continuação nesta sessão na branch `arena/01a0dfd3-game-churrasqueiro`.
 
 ## Estado
 
-**10/10 imagens, 34/34 sprites. Todos os 34 registros continuam `pending`.** A imagem 05, `iap_a.png`, foi gerada com o prompt literal 05 e a referência aprovada `lote07_rewards`; os quatro novos sprites foram processados e acrescentados sem alterar as linhas anteriores do registro.
+**10/10 imagens, 34/34 sprites. O dono aprovou o lote completo; os 34 registros estão `approved` / `ai-assisted-reviewed`.** A imagem 05, `iap_a.png`, foi gerada com o prompt literal 05 e a referência aprovada `lote07_rewards`; os quatro novos sprites foram processados e acrescentados sem alterar as linhas anteriores do registro.
 
 - Spec de recorte: `art/lote-07.json`; prompts literais: `art/prompts/lote-07.md`.
 - Masters PNG: `Assets/Art` (versionados). Raw gerado e referências ficam em `art/source` (ignorados).
@@ -12,16 +12,17 @@
 - Montagem estática: `art/review/lote-07-preview.jpg`. **Não é captura do jogo nem material de store.** Nenhuma dessas telas/funcionalidades foi integrada.
 - Evidências técnicas por sprite: `art/review/lote-07-checks.json`.
 
-**Este checkpoint não é aprovação de arte.** Não executar `set-status`, `build-runtime` nem integrar antes do “ok” explícito do dono para o lote completo. Lotes 01–02 e 04–06 permanecem aprovados; lote 03 e os desvios autorizados do lote 06 ficaram intocados.
+O “ok” explícito do dono foi dado para o lote completo em 2026-09-26. As ressalvas visuais abaixo foram apresentadas e aceitas. Lotes 01–02 e 04–06 permanecem aprovados; lote 03 e os desvios autorizados do lote 06 ficaram intocados.
 
 ## Verificações
 
 - `node art/prepare-lote-07.mjs`: os raws antigos de IAP 2/2 e medalhas não existem após wipe; masters versionados foram mantidos.
 - `node tools/art/process-sprites.mjs art/lote-07.json`: processou os 4 novos sprites e pulou as outras 9 fontes brutas ausentes, sem apagar masters.
 - `node tools/art/review-sheet.mjs art/lote-07.json`: **10/10 imagens, 34/34 sprites**; folha e montagem regeneradas.
-- Verificação dos 34 PNGs: dimensões conferem com o manifesto; **0 pixels magenta residuais** pela métrica `(R > 150 && B > 150 && min(R,B)-G > 80 && A > 0)`; todos os 34 estados são `pending` no lote 07.
-- `ASSET_REGISTRY.csv`: os primeiros 58.171 bytes do HEAD foram preservados byte a byte (incluindo CRLF, notas e estados); somente 4 linhas novas foram anexadas com CRLF, todas `pending`.
-- Manifesto: 34 sprites do lote 07 (30 do checkpoint anterior + 4 novos); todas as entradas anteriores ao lote 07 permanecem inalteradas. Runtime permanece o do main: **177 sprites, 3,11 MB WebP**; nenhum arquivo do runtime foi alterado.
+- Verificação dos 34 PNGs: dimensões conferem com o manifesto; **0 pixels magenta residuais** pela métrica `(R > 150 && B > 150 && min(R,B)-G > 80 && A > 0)`; todos os 34 estados são `approved` / `ai-assisted-reviewed`.
+- `ASSET_REGISTRY.csv`: linhas fora do lote 07 preservadas byte a byte; 34 linhas aprovadas com CRLF e notes inalteradas.
+- Manifesto: 34 sprites do lote 07 (30 do checkpoint + 4 novos); entradas anteriores inalteradas. Runtime reconstruído: **211 sprites, 3,44 MB WebP**.
+- `npm run gates`: 13/14 gates locais; `check-csharp` SKIP por falta de `dotnet` no sandbox (CI executará).
 - Sem alterações de gameplay, `holeValidation`, lote 03 ou sprites do lote 06.
 
 ## Pontos para inspeção visual do lote completo
@@ -35,6 +36,6 @@
 7. **Miniaturas:** teste em cor 32 px e cinza 48 px incluído para coleção/IAP/medalhas. Centros das molduras de medalhas opacos e vazios para símbolos sobrepostos.
 8. **Key art e montagem:** key art é ilustração para tela-título, não screenshot. A montagem inteira é uma prévia estática, não prova que eventos, mapa, IAP ou passe existam no jogo.
 
-## Próximo passo
+## Estado após aprovação
 
-Apresentar a folha completa e a montagem e aguardar o “ok” do dono para o lote 07 inteiro. Se houver pedido de alteração, registrar primeiro no prompt/spec. Somente após aprovação explícita: `set-status` → `build-runtime` → `npm run gates` → atualizar docs 22/23, distinguindo os assets incluídos no runtime das telas realmente implementadas.
+Aprovação, `set-status`, `build-runtime` e gates locais concluídos. A folha e a montagem documentam a revisão aprovada. Próximo passo técnico: `check-art-registry` (docs/23 §1.4); decisão do lote 03 continua pendente. As telas e fluxos de coleção, eventos, IAP/loja, passe, rota e conquistas continuam não implementados: assets no bundle não equivalem a integração funcional.

@@ -1,15 +1,13 @@
 # 22 — Plano de Arte 2D Profissional (gerada por IA, em lotes de 10)
 
-**Data:** 2026-09-25 · branch `arena/01a0d72a-game-churrasqueiro`
+**Atualizado:** 2026-09-26 · branch `arena/01a0dfd3-game-churrasqueiro`
 **Status:**
 
-- Lotes 01 e 02 **aprovados** e **integrados no protótipo** (§7.1).
-- Lote 03 gerado e processado, **aguardando aprovação** (único lote pendente).
-- Lote 04 (refação das 3 churrasqueiras com guia de layout) **aprovado pelo dono em
-  2026-09-26** e integrado no protótipo.
-- Lote 05 (10 imagens, 53 sprites) **aprovado pelo dono em 2026-09-26** e integrado no
-  protótipo (runtime: 148 sprites, 2,38 MB WebP).
-- A auditoria completa do que falta está em §2.
+- Lotes 01–02 e 04–06 **aprovados**; assets empacotados e usados pelo protótipo conforme descrito em §7.1 (a integração varia por família).
+- Lote 03 gerado e processado, **aguardando decisão do dono**; não foi alterado neste checkpoint.
+- Lote 07 (10 imagens, 34 sprites) **aprovado pelo dono em 2026-09-26**; incluído no runtime do protótipo, que agora tem **211 sprites, 3,44 MB WebP**.
+- A aprovação e presença no bundle não significam que as novas telas de coleção, eventos, loja/IAP, passe, mapa ou conquistas estejam implementadas; ver §7.1.
+- A auditoria do que ainda falta gerar está em §2.
 
 > **Por quê.** A mecânica agrada, mas o visual do protótipo (tudo desenhado por código em
 > `prototype/src/foods.ts`, `theme.ts` e `main.ts`) ainda parece amador. Este plano troca cada
@@ -76,8 +74,8 @@ O texto exato está em `art/prompts/lote-NN.md`. A partir do lote 02, cada promp
 
 Contado a partir de **todas** as tabelas de `shared/data` (e não de estimativa). Legenda:
 
-- ✅ aprovado (e, no caso do protótipo, integrado);
-- 🟡 em lote entregue, aguardando aprovação (lote indicado);
+- ✅ arte aprovada e masters no repositório (a presença no runtime ou a integração da tela é indicada à parte);
+- 🟡 em lote entregue, aguardando decisão do dono (lote indicado);
 - 🔁 refazer;
 - ⬜ falta.
 
@@ -91,23 +89,24 @@ Contado a partir de **todas** as tabelas de `shared/data` (e não de estimativa)
 | Ícones de interface | moedas (`economy.json`: `ic_coin`, `ic_ember`) + HUD, diária, resultado | 9 | 🟡 9 (lote 03) |
 | Ícones de upgrade | `upgrades.json` (`tracks[].icon`, 27) | 27 | ✅ 18 (lote 05) · 🟡 9 (lote 03) |
 | Ícones de cosméticos | `upgrades.json` (`cosmeticTracks`, 5) | 5 | ✅ 5 (lote 05; fiação nos dados: docs/23 passo 1.5) |
-| Coleção: itens | `collection.json` (37 entradas) | 37 | 16 usam os sprites de comida (✅ 14 · 🟡 2) · ⬜ 21 próprios (4 molhos, 9 equipamentos, 7 churrasqueiras especiais, 1 medalha) |
+| Coleção: itens | `collection.json` (37 entradas) | 37 | 16 usam sprites de comida (✅ 14 · 🟡 2) · ✅ 21 próprios (4 molhos, 9 equipamentos, 6 grillSkin, Coroa da Brasa, Medalha da Picanha; lotes 06–07) |
 | Coleção: categorias | `collection.json` (10) | 10 | ✅ 10 (lote 05) |
-| Eventos | `events.json` (4 semanais + 7 sazonais) | 11 | ⬜ 11 banners |
-| Loja (IAP) | `iap.json` (7 produtos) | 7 | ⬜ 7 |
-| Brasa Pass | `pass.json` | 1–2 | ⬜ arte da temporada |
-| Mapa / rota | `regions.json` (5) + `route.json` (16 paradas) | 1–2 | ⬜ mapa |
-| Conquistas | `achievements.json` (58) | molduras por nível | ⬜ 1 folha de medalhas |
+| Eventos | `events.json` (4 semanais + 7 sazonais) | 11 | ✅ 11 banners (lote 07; telas/fluxos de evento não integrados) |
+| Loja (IAP) | `iap.json` (7 produtos) | 7 | ✅ 7 ilustrações (lote 07; loja/fluxo de compra não integrado) |
+| Brasa Pass | `pass.json` | 1–2 | ✅ arte da temporada (lote 07; tela/passe não integrado) |
+| Mapa / rota | `regions.json` (5) + `route.json` (16 paradas) | 1–2 | ✅ fundo ilustrado (lote 07; divisões internas não cartográficas; rota/pins não integrados) |
+| Conquistas | `achievements.json` (58) | molduras por nível | ✅ 5 molduras tiers 1–5 (lote 07; tela de conquistas não integrada) |
 | Brasas / VFX | `grill.json` (3 zonas) + efeitos | 3 + ~12 | ✅ brasas (3) · ⬜ fumaça, faíscas, PERFEITO, moedas/confete |
 | Props | cenas de `restaurants.json` | 1 + ~4 | ✅ bancada · ⬜ tábua, pratos, pegador |
 | Loja das stores | `docs/15-ASO.md` | 5 | ⬜ 3 conceitos de ícone, feature graphic, key art |
 
 **Totais:**
 
-- 43 imagens aprovadas (lotes 01–02, 04–06) viraram 177 sprites (runtime 3,11 MB WebP);
-- o lote 03 tem 10 imagens (36 sprites) aguardando decisão do dono: as 3 churrasqueiras
-  estão marcadas `redo` (refeitas e aprovadas no lote 04), o resto segue pendente;
-- para cobrir tudo faltam cerca de **15 imagens**, em 2 lotes (07–08, §6).
+- 53 imagens aprovadas (lotes 01–02, 04–07) viraram 211 sprites no runtime do protótipo (3,44 MB WebP);
+- o lote 03 continua com 10 imagens (36 sprites) aguardando decisão do dono; as 3 churrasqueiras
+  estão marcadas `redo` (refeitas e aprovadas no lote 04), e o restante segue sem decisão;
+- o lote 07 concluiu as artes de coleção, eventos, IAP, Brasa Pass, mapa, molduras de conquistas e key art;
+- permanecem itens da auditoria marcados ⬜, incluindo as 5 peças de ASO/store, props e refações. O lote 08 fica para a próxima cobertura; consultar a tabela, sem inferir aprovação ou integração de telas.
 
 O logotipo continua tipográfico (Baloo 2 com efeitos): texto gerado por IA erra letras.
 
@@ -344,6 +343,22 @@ sobrescrever o melhor raw sem backup — regens podem regredir por variância.
 | 9 | `col_molhos` | 4 | ✅ campanha, alho, pimenta, farofa |
 | 10 | `col_equipamentos` | 9 | ✅ espeto, grelha, faca, moquém, abanador, sal grosso, livro dourado, carvão, mapa |
 
+### 6.7 Resultado do lote 07 — aprovado em 2026-09-26
+
+10 imagens → 34 sprites. O dono aprovou o lote completo após revisar `art/review/lote-07.jpg` e `art/review/lote-07-preview.jpg`. Todas as linhas mudaram para `approved`/`ai-assisted-reviewed`; o runtime foi reconstruído. Os desvios abaixo foram apresentados na revisão e aceitos como parte da aprovação do lote:
+
+| # | Imagem | Sprites | Resultado / ressalvas |
+|---|---|---:|---|
+| 1 | `col_churrasqueiras` | 8 | 6 grillSkin + Coroa da Brasa + Medalha da Picanha. A inox não tem a manivela do prompt; são ícones de coleção, não grills de gameplay. |
+| 2–4 | banners de eventos | 11 | 4 semanais + 4 sazonais A + 3 sazonais B; proporções diferentes acomodadas com `contain`. |
+| 5–6 | `iap_a`, `iap_b` | 7 | 4 produtos + 3 produtos; imagem 05 completada na continuação. Na folha IAP 2/2 só a linha superior foi recortada; extras não registrados. |
+| 7 | `brasa_pass` | 1 | Arte de temporada; conteúdo textual e benefícios continuam sendo overlays. |
+| 8 | `mapa_rota` | 1 | Silhueta ilustrada do Brasil; as divisões internas pintadas **não são limites cartográficos oficiais**. Sem caminhos ou pins. |
+| 9 | `medalhas_conquista` | 5 | Molduras tiers 1–5; a linha superior foi selecionada, centros vazios para símbolos. |
+| 10 | `key_art_titulo` | 1 | Ilustração da tela-título; não é screenshot de gameplay ou de loja. |
+
+Os masters passaram na verificação de recorte com zero pixels magenta residuais. Os avisos de toque de borda e demais notas visuais estão em `art/review/lote-07.md` e `art/review/lote-07-checks.json`. **Assets incluídos no bundle não significam telas implementadas:** eventos, IAP/loja, Brasa Pass, rota, coleção e conquistas ainda precisam de UI e lógica próprias (§7.1).
+
 ## 7. Integração no jogo
 
 Só começa depois da aprovação do lote. Nenhum código do jogo muda enquanto a arte está em revisão.
@@ -352,7 +367,7 @@ Só começa depois da aprovação do lote. Nenhum código do jogo muda enquanto 
 
 | Peça | Como |
 |---|---|
-| Build | `node tools/art/build-runtime.mjs` gera `prototype/assets/art/*.webp` + `index.json` **só com as linhas `approved`** do registro (lotes 01–02, 04–05: 148 sprites, 2,38 MB). Tamanhos ≈ 3× o que a tela desenha. `--include-pending` serve para olhar um lote antes de aprovar e nunca é versionado |
+| Build | `node tools/art/build-runtime.mjs` gera `prototype/assets/art/*.webp` + `index.json` **só com as linhas `approved`** do registro (agora 211 sprites, 3,44 MB WebP). Tamanhos ≈ 3× o que a tela desenha. `--include-pending` serve para olhar um lote antes de aprovar e nunca é versionado |
 | Carregamento | `prototype/src/sprites.ts` carrega no navegador (e no `check-shots`) e não bloqueia nada: até decodificar, e em qualquer falha, o jogo desenha o procedural |
 | Comida | crossfade entre dois quadros vizinhos pelo ponto contínuo. As âncoras saem dos limiares de `ingredients.json` (meio de cada estágio): o quadro na tela concorda com o rótulo CRU/SELADO/… das regras. Bancada = quadro cru; pedido = servido; mão do FTUE = cru |
 | Churrasqueira | fundo → brasas por zona dentro da boca (crossfade entre as faixas fraco/médio/forte pelo calor da zona, que cai quando o carvão acaba) → grelha paralela à borda → moldura pintada → comida. Vale também para a tela-título e para a miniatura do card da Home |
@@ -362,6 +377,8 @@ Só começa depois da aprovação do lote. Nenhum código do jogo muda enquanto 
 | Bancada | bancada pintada com a borda de trás cruzando a tela e as vagas como tapetes translúcidos |
 | Ícones | `coinIcon`, `flameIcon`, `starIcon`, `clockIcon` e `checkIcon` usam os ícones pintados, e os cards de upgrade usam o `icon` de cada trilha. Entram sozinhos quando o lote 03 for aprovado e o build refeito |
 | Harnesses | `check-art` e `check-render` rodam sem `Image` e testam o procedural. `check-shots` tem um shim de `Image`, espera todos os sprites decodificarem e gera as capturas com a arte; é delas que saem as screenshots reais da loja |
+
+**Lote 07 aprovado e empacotado, sem integração das novas telas de metajogo.** Os 34 sprites aparecem em `prototype/assets/art/index.json` (runtime total: 211 sprites, 3,44 MB WebP), mas os novos IDs de banners, coleção, IAP, passe, mapa, molduras de conquista e key art não são referenciados pelo código de `prototype/src`. Portanto, loja/eventos/rota/passe/conquistas continuam sem telas funcionais; a montagem `art/review/lote-07-preview.jpg` é uma composição estática, não screenshot do jogo. Os assets antigos continuam usados nas áreas descritas acima.
 
 **Aprovar um lote = dois comandos:** `node tools/art/set-status.mjs lote-NN approved` e
 `node tools/art/build-runtime.mjs`.
@@ -433,13 +450,8 @@ ele não existe neste ambiente. **Ponto de decisão: lote 03.**
 
 ## 11. Próximos passos
 
-1. ~~Aprovação dos lotes 01 e 02~~: **aprovados** e integrados no protótipo.
-2. **Aprovação pendente (dono): só o lote 03.** Recomendação: aprovar ícones, fundos e
-   as duas carnes (grills já marcados `redo`, refeitos e aprovados no lote 04).
-3. Lote 06 (§6), com os prompts gravados em `art/prompts/lote-06.md` antes da geração.
-4. Gate `check-art-registry`: todo arquivo em `Assets/Art` tem linha no registro, toda linha
-   aponta para um arquivo que existe, e o runtime só contém `approved` (o CI que `docs/04` §11
-   já promete).
-5. Unity: `AssetPostprocessor` lendo `sprites.manifest.json` (§7.2).
-).
-ssetPostprocessor` lendo `sprites.manifest.json` (§7.2).
+1. **Lote 07:** 10 imagens / 34 sprites aprovados pelo dono; masters e assets no runtime (211 sprites, 3,44 MB WebP). Isso não fecha a implementação das telas de metajogo (§7.1).
+2. **Lote 03:** aguardar decisão do dono; não alterar o registro nem o runtime até a decisão.
+3. **Lote 08 / lacunas restantes:** planejar as 5 peças de ASO/store e os itens ainda ⬜ em §2; prompts devem ser versionados antes de gerar.
+4. **Gate `check-art-registry`:** todo arquivo em `Assets/Art` tem linha no registro, toda linha aponta para arquivo existente e o runtime só contém `approved` (promessa de docs/04 §11).
+5. **Unity:** implementar o `AssetPostprocessor` lendo `sprites.manifest.json` (§7.2).

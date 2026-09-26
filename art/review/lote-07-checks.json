@@ -6,13 +6,8 @@
   "plannedImages": 10,
   "processedSprites": 34,
   "expectedSprites": 34,
-  "approval": "pending — no owner approval received",
-  "sourceIapAExists": true,
+  "approval": "approved — owner gave explicit ok for the complete batch on 2026-09-26",
   "existingManifestEntriesUnchanged": true,
-  "runtimeUnchanged": true,
-  "registryOldRowsBytePreserved": true,
-  "registryNewRows": 4,
-  "registryNewRowsStatus": "pending",
   "registryLineEndings": "CRLF",
   "checks": [
     {
@@ -22,8 +17,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 33546,
       "partiallyTransparentPixels": 1890,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_col_g_tambor",
@@ -32,8 +28,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 35053,
       "partiallyTransparentPixels": 1972,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_col_g_inox",
@@ -42,8 +39,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 35129,
       "partiallyTransparentPixels": 1682,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_col_g_premium",
@@ -52,8 +50,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 32189,
       "partiallyTransparentPixels": 1719,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_col_g_fogo_chao",
@@ -62,8 +61,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 48745,
       "partiallyTransparentPixels": 3220,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_col_g_neon",
@@ -72,8 +72,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 33063,
       "partiallyTransparentPixels": 1669,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_col_coroa_da_brasa",
@@ -82,8 +83,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 49056,
       "partiallyTransparentPixels": 2089,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_col_medalha_picanha",
@@ -92,8 +94,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 23269,
       "partiallyTransparentPixels": 1839,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_event_segunda_linguica",
@@ -102,8 +105,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 23389,
       "partiallyTransparentPixels": 3889,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_event_terca_picanha",
@@ -112,8 +116,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 22975,
       "partiallyTransparentPixels": 2935,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_event_quarta_espetinho",
@@ -122,8 +127,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 23309,
       "partiallyTransparentPixels": 3898,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_event_fds_brasa",
@@ -132,8 +138,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 24803,
       "partiallyTransparentPixels": 2640,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_event_carnaval",
@@ -142,8 +149,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 22322,
       "partiallyTransparentPixels": 3633,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_event_festa_junina",
@@ -152,8 +160,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 23112,
       "partiallyTransparentPixels": 3245,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_event_ferias",
@@ -162,8 +171,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 22564,
       "partiallyTransparentPixels": 3809,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_event_inverno",
@@ -172,8 +182,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 23103,
       "partiallyTransparentPixels": 3264,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_event_primavera",
@@ -182,8 +193,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 27439,
       "partiallyTransparentPixels": 4354,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_event_natal",
@@ -192,8 +204,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 25752,
       "partiallyTransparentPixels": 3892,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_event_anonovo",
@@ -202,8 +215,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 25039,
       "partiallyTransparentPixels": 4243,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_iap_starter",
@@ -212,8 +226,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 80468,
       "partiallyTransparentPixels": 3482,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_iap_noads",
@@ -222,8 +237,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 40378,
       "partiallyTransparentPixels": 1797,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_iap_embers_small",
@@ -232,8 +248,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 33474,
       "partiallyTransparentPixels": 1655,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_iap_embers_medium",
@@ -242,8 +259,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 71063,
       "partiallyTransparentPixels": 1991,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_iap_embers_large",
@@ -252,8 +270,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 58130,
       "partiallyTransparentPixels": 2222,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_iap_pass_season",
@@ -262,8 +281,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 50534,
       "partiallyTransparentPixels": 2068,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_iap_pass_bundle",
@@ -272,8 +292,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 62166,
       "partiallyTransparentPixels": 2424,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_pass_temporada",
@@ -282,8 +303,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 42974,
       "partiallyTransparentPixels": 7616,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "bg_route_brasil",
@@ -292,8 +314,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 0,
       "partiallyTransparentPixels": 0,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_achievement_tier1",
@@ -302,8 +325,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 29144,
       "partiallyTransparentPixels": 1542,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_achievement_tier2",
@@ -312,8 +336,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 29356,
       "partiallyTransparentPixels": 1633,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_achievement_tier3",
@@ -322,8 +347,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 34411,
       "partiallyTransparentPixels": 1752,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_achievement_tier4",
@@ -332,8 +358,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 32958,
       "partiallyTransparentPixels": 2055,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "spr_achievement_tier5",
@@ -342,8 +369,9 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 40786,
       "partiallyTransparentPixels": 1945,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     },
     {
       "name": "bg_title_key_art",
@@ -352,8 +380,23 @@
       "residualMagentaPixels": 0,
       "transparentPixels": 0,
       "partiallyTransparentPixels": 0,
-      "status": "pending",
-      "batch": "lote-07"
+      "status": "approved",
+      "batch": "lote-07",
+      "source": "ai-assisted-reviewed"
     }
-  ]
+  ],
+  "registryBatchStatus": "34/34 approved (source=ai-assisted-reviewed)",
+  "registryNonBatchRowsBytePreserved": true,
+  "registryNotesPreserved": true,
+  "runtimeAfterApproval": {
+    "sprites": 211,
+    "webpBytes": 3442288,
+    "display": "3.44 MB WebP"
+  },
+  "runtimeUnchangedBeforeApproval": true,
+  "runtimeRebuiltAfterApproval": true,
+  "registryAddedDuringCompletion": 4,
+  "sourceIapAProcessed": true,
+  "registryRowsOutsideBatchBytePreserved": true,
+  "registryBatchNotesUnchanged": true
 }

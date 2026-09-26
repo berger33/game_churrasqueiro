@@ -176,4 +176,4 @@ TECHNICAL: One continuous full-bleed opaque portrait illustration, 9:16 composit
 - Processamento completado: 10/10 imagens, 34/34 sprites. As outras nove fontes brutas não existiam após wipe; o processador as pulou e manteve os masters versionados. `art/prepare-lote-07.mjs` também pulou os raws ausentes de IAP 2/2 e medalhas.
 - IAP 2/2 e medalhas: o modelo duplicou linhas; somente a linha superior foi selecionada pelos recortes especificados, sem sobrescrever os originais. Variantes extras não entram na contagem nem no registro.
 - O relatório técnico atualizado está em `art/review/lote-07-checks.json`; folha completa e montagem estática em `art/review/lote-07.jpg` e `art/review/lote-07-preview.jpg`.
-- Todos os 34 sprites continuam `pending`; runtime não foi alterado e nenhuma aprovação foi concedida.
+- O dono aprovou o lote completo em 2026-09-26. `set-status` marcou 34/34 como `approved`/`ai-assisted-reviewed`; runtime rebuild: 211 sprites, 3,44 MB WebP. Telas de metajogo não foram integradas.

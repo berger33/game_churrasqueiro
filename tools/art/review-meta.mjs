@@ -73,7 +73,9 @@ export async function reviewMeta({ root, batch, manifest, status, font }) {
   g.fillStyle = P.bg; g.fillRect(0, 0, width, height);
   text(g, `${batch.batch.replace('lote-', 'Lote ')} · arte 2D · revisão de conteúdo`, margin, 65, 46);
   text(g, `${completed}/${batch.assets.length} imagens · ${assets.size}/${expected} sprites · ${batch.date} · ${state}`, margin, 118, 27, P.gold);
-  text(g, `Registro: ${status}. Só o “ok” do dono aprova o lote completo.`, margin, 162, 24);
+  text(g, status.startsWith('aprovado')
+    ? `Registro: ${status}. Aprovação de arte não implica integração funcional das telas.`
+    : `Registro: ${status}. Só o “ok” do dono aprova o lote completo.`, margin, 162, 24);
   text(g, 'Xadrez = transparência · miniaturas: 32 px em cor / 48 px em cinza · textos desta folha são overlays de revisão.', margin, 204, 23, P.muted);
   let y = 240;
   for (let row = 0; row < rowHeights.length; row++) {
@@ -115,7 +117,12 @@ export async function reviewMeta({ root, batch, manifest, status, font }) {
     }
     y += ph + gap;
   }
-  text(g, incomplete ? 'PARCIAL PARA PRESERVAÇÃO — falta IAP 1/2. Não é uma solicitação de aprovação.' : 'Aguardando decisão do dono sobre o lote completo. Nenhuma integração autorizada por esta folha.', margin, y + 30, 27, P.gold);
+  const footer = incomplete
+    ? 'PARCIAL PARA PRESERVAÇÃO — falta imagem. Não é uma solicitação de aprovação.'
+    : status.startsWith('aprovado')
+      ? 'Lote aprovado pelo dono. Esta folha não demonstra integração funcional das telas.'
+      : 'Aguardando decisão do dono sobre o lote completo. Nenhuma integração autorizada por esta folha.';
+  text(g, footer, margin, y + 30, 27, P.gold);
   const dir = join(root, 'art/review'); await mkdir(dir, { recursive: true });
   await writeFile(join(dir, `${batch.batch}.jpg`), c.toBuffer('image/jpeg', 90));
   console.log(`[review] art/review/${batch.batch}.jpg ${width}×${height} · ${completed}/${batch.assets.length}`);
@@ -161,7 +168,12 @@ export async function reviewMeta({ root, batch, manifest, status, font }) {
     }
     ctx.restore();
   }
-  text(ctx, `${state} · Registro: ${status}. Runtime inalterado.`, 28, 984, 24, P.gold);
+  const previewFooter = incomplete
+    ? `${state} · Montagem parcial de revisão; não é captura do jogo.`
+    : status.startsWith('aprovado')
+      ? `${state} · Montagem estática; telas funcionais não integradas.`
+      : `${state} · Runtime inalterado enquanto aguarda aprovação.`;
+  text(ctx, previewFooter, 28, 984, 24, P.gold);
   await writeFile(join(dir, `${batch.batch}-preview.jpg`), preview.toBuffer('image/jpeg', 90));
   console.log(`[review] art/review/${batch.batch}-preview.jpg ${preview.width}×${preview.height}`);
 }

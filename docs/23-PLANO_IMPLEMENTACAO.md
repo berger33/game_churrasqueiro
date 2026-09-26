@@ -76,15 +76,12 @@ aprovação do dono → `set-status` → `build-runtime`.
   7/7 fundos · 5/5 cosméticos · 10/10 categorias.
   Verifica: `process-sprites` + `review-sheet` sem erro; folha em `art/review/lote-05*.jpg`.
   Pronto quando: lote aprovado pelo dono e runtime reconstruído.
-- [ ] **1.2 — Lote 06: coleção, eventos, loja, passe e VFX.**
-  10 imagens: coleção própria (molhos, equipamentos, churrasqueiras especiais, medalha,
-  em 2 folhas) · banners de eventos (11, em 3 folhas) · arte da loja/IAP (7 produtos,
-  2 folhas) · Brasa Pass (1) · VFX (fumaça, faíscas, PERFEITO, moedas/confete, 2 folhas).
-  Verifica e pronto: idem 1.1.
-- [ ] **1.3 — Lote 07: mapa, conquistas, key art e sobras.**
-  10 imagens: mapa da rota · folha de medalhas de conquista · key art da tela-título ·
-  3 conceitos de ícone + feature graphic da loja · sobras e refações acumuladas.
-  Verifica e pronto: idem 1.1.
+- [x] **1.2 — Lote 06: coleção, VFX e evoluções de churrasqueira.** (2026-09-26: 10 imagens, 29 sprites aprovados; desvios autorizados documentados em docs/22 §6.6.)
+  A arte aprovada está no runtime; não relaxar `holeValidation` nem alterar as evoluções autorizadas sem novo pedido.
+- [x] **1.3 — Lote 07: coleção, eventos, loja/IAP, passe, mapa, medalhas e key art.** (2026-09-26: 10 imagens, 34 sprites aprovados e incluídos no runtime; runtime total 211 sprites, 3,44 MB WebP.)
+  Escopo conforme `art/lote-07.json` e docs/22 §6.7 (não os conceitos de store, que ficam para lote futuro). O mapa tem divisões internas não cartográficas; inox da coleção sem manivela. O dono aprovou o lote completo ciente das ressalvas.
+  **Limite:** inclusão dos assets no bundle não implementa as telas/fluxos de coleção, eventos, IAP, passe, mapa ou conquistas. A montagem não é screenshot do jogo; ver §7.1 de docs/22.
+  Verifica: `set-status` (34/34 approved) → `build-runtime` (211 sprites) → gates locais 13/14; `check-csharp` SKIP por ausência de dotnet no sandbox, CI executará.
 - [ ] **1.4 — Gate `check-art-registry` no CI.**
   Ações: todo arquivo em `Assets/Art` tem linha no registro; toda linha aponta para um
   arquivo existente; o runtime só contém `approved` (promessa de docs/04 §11).
@@ -161,8 +158,9 @@ Cada passo, ao ser aberto, ganha sub-passos próprios neste documento (mesmo for
 
 ## 8. Próximo passo imediato
 
-👉 **Fase 1, passo 1.3** (lote 07, conteúdo em docs/22 §6) + fechar a Fase 0:
-passo 0.1 (só falta a decisão do lote 03) e passo 0.3 (snapshot do `18-STATUS.md`).
+👉 **Fase 1, passo 1.4** (`check-art-registry`) + fechar a Fase 0: passo 0.1
+(decisão pendente do lote 03) e passo 0.3 (snapshot do `18-STATUS.md`). O lote 07 foi
+aprovado e seus assets estão no runtime; suas telas de metajogo continuam por implementar.
 
 **Registro de progresso:**
 
@@ -174,3 +172,4 @@ passo 0.1 (só falta a decisão do lote 03) e passo 0.3 (snapshot do `18-STATUS.
 | 2026-09-26 | 1.2 (lote 06) | 1ª passada: 10 geradas, 3 ok (VFX fumaça, molhos, equipamentos); 6 grills com perspectiva invertida + confete espalhado vão refazer | `arena/01a0df03-game-churrasqueiro` | limite de 10 gerações do turno atingido; continua no próximo turno |
 | 2026-09-26 | 1.2 (lote 06) | parcial: 5/10 processados (24 sprites: inox evo 3 + VFX + coleção); 5 grills falharam no holeValidation | `arena/01a0df03-game-churrasqueiro` | 3ª passada no próximo turno (upgrades compactos); limite de 10 gerações atingido de novo |
 | 2026-09-26 | 1.2 (lote 06) | 10/10: chapa evo 2 passou na 7ª passada ([ALTA]); chapa evo 3 + fornalhas evo 2–3 implementadas com desvio documentado e autorização do dono | `arena/01a0df03-game-churrasqueiro` | 29 sprites approved; runtime 177 sprites (3,11 MB); contrato mantido no spec para refação futura |
+| 2026-09-26 | 1.3 (lote 07) | 10/10 imagens, 34/34 sprites aprovados; runtime reconstruído para 211 sprites / 3,44 MB WebP | `arena/01a0dfd3-game-churrasqueiro` | 13/14 gates locais; `check-csharp` SKIP sem dotnet. Aprovação cobre arte, não integração das telas de metajogo; desvios aceitos descritos em docs/22 §6.7 |
