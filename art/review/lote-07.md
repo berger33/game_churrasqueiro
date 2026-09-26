@@ -22,7 +22,7 @@ O “ok” explícito do dono foi dado para o lote completo em 2026-09-26. As re
 - Verificação dos 34 PNGs: dimensões conferem com o manifesto; **0 pixels magenta residuais** pela métrica `(R > 150 && B > 150 && min(R,B)-G > 80 && A > 0)`; todos os 34 estados são `approved` / `ai-assisted-reviewed`.
 - `ASSET_REGISTRY.csv`: linhas fora do lote 07 preservadas byte a byte; 34 linhas aprovadas com CRLF e notes inalteradas.
 - Manifesto: 34 sprites do lote 07 (30 do checkpoint + 4 novos); entradas anteriores inalteradas. Runtime reconstruído: **211 sprites, 3,44 MB WebP**.
-- `npm run gates`: 13/14 gates locais; `check-csharp` SKIP por falta de `dotnet` no sandbox (CI executará).
+- `npm run gates`: 13/14 gates locais; `check-csharp` SKIP por falta de `dotnet` no sandbox. Não há execução remota de CI registrada para esta branch; validar esse gate em CI/ambiente .NET antes de qualquer merge.
 - Sem alterações de gameplay, `holeValidation`, lote 03 ou sprites do lote 06.
 
 ## Pontos para inspeção visual do lote completo
