@@ -282,6 +282,71 @@
    "w": 93,
    "h": 200
   },
+  "spr_col_abanador": {
+   "file": "spr_col_abanador.webp",
+   "w": 294,
+   "h": 300
+  },
+  "spr_col_carvao_pet": {
+   "file": "spr_col_carvao_pet.webp",
+   "w": 276,
+   "h": 252
+  },
+  "spr_col_espeto_longo": {
+   "file": "spr_col_espeto_longo.webp",
+   "w": 312,
+   "h": 319
+  },
+  "spr_col_faca_churrasqueiro": {
+   "file": "spr_col_faca_churrasqueiro.webp",
+   "w": 284,
+   "h": 310
+  },
+  "spr_col_farofa": {
+   "file": "spr_col_farofa.webp",
+   "w": 405,
+   "h": 402
+  },
+  "spr_col_grelha_argola": {
+   "file": "spr_col_grelha_argola.webp",
+   "w": 295,
+   "h": 294
+  },
+  "spr_col_livro_dourado": {
+   "file": "spr_col_livro_dourado.webp",
+   "w": 302,
+   "h": 299
+  },
+  "spr_col_mapa_brasa": {
+   "file": "spr_col_mapa_brasa.webp",
+   "w": 295,
+   "h": 250
+  },
+  "spr_col_molho_alho": {
+   "file": "spr_col_molho_alho.webp",
+   "w": 192,
+   "h": 512
+  },
+  "spr_col_molho_campanha": {
+   "file": "spr_col_molho_campanha.webp",
+   "w": 312,
+   "h": 499
+  },
+  "spr_col_molho_pimenta": {
+   "file": "spr_col_molho_pimenta.webp",
+   "w": 179,
+   "h": 512
+  },
+  "spr_col_moquem": {
+   "file": "spr_col_moquem.webp",
+   "w": 290,
+   "h": 315
+  },
+  "spr_col_sal_grosso": {
+   "file": "spr_col_sal_grosso.webp",
+   "w": 295,
+   "h": 280
+  },
   "spr_food_asinha_frango_burned": {
    "file": "spr_food_asinha_frango_burned.webp",
    "w": 240,
@@ -724,6 +789,70 @@
     "tiltDeg": -0.1
    }
   },
+  "spr_grill_fornalha_dragao_manso_evo2": {
+   "file": "spr_grill_fornalha_dragao_manso_evo2.webp",
+   "w": 1100,
+   "h": 614,
+   "hole": {
+    "bbox": [
+     127.9,
+     163.1,
+     845.8,
+     329.4
+    ],
+    "quad": [
+     [
+      191.9,
+      163.9
+     ],
+     [
+      908.9,
+      163.1
+     ],
+     [
+      972.9,
+      490.8
+     ],
+     [
+      127.9,
+      491.6
+     ]
+    ],
+    "tiltDeg": -0.1
+   }
+  },
+  "spr_grill_fornalha_dragao_manso_evo3": {
+   "file": "spr_grill_fornalha_dragao_manso_evo3.webp",
+   "w": 1100,
+   "h": 600,
+   "hole": {
+    "bbox": [
+     221.9,
+     153.1,
+     656.3,
+     328.9
+    ],
+    "quad": [
+     [
+      290.6,
+      154.7
+     ],
+     [
+      808.6,
+      153.9
+     ],
+     [
+      877.3,
+      481.3
+     ],
+     [
+      221.9,
+      481.3
+     ]
+    ],
+    "tiltDeg": -0.1
+   }
+  },
   "spr_grill_lata_valente_evo1": {
    "file": "spr_grill_lata_valente_evo1.webp",
    "w": 1042,
@@ -852,6 +981,70 @@
     "tiltDeg": 0
    }
   },
+  "spr_grill_parrilla_chef_cisma_evo2": {
+   "file": "spr_grill_parrilla_chef_cisma_evo2.webp",
+   "w": 850,
+   "h": 688,
+   "hole": {
+    "bbox": [
+     118,
+     141,
+     613,
+     303
+    ],
+    "quad": [
+     [
+      159,
+      142
+     ],
+     [
+      687,
+      142
+     ],
+     [
+      730,
+      443
+     ],
+     [
+      118,
+      443
+     ]
+    ],
+    "tiltDeg": 0
+   }
+  },
+  "spr_grill_parrilla_chef_cisma_evo3": {
+   "file": "spr_grill_parrilla_chef_cisma_evo3.webp",
+   "w": 873,
+   "h": 712,
+   "hole": {
+    "bbox": [
+     123,
+     147,
+     628,
+     314
+    ],
+    "quad": [
+     [
+      168,
+      147
+     ],
+     [
+      705,
+      147
+     ],
+     [
+      750,
+      460
+     ],
+     [
+      123,
+      460
+     ]
+    ],
+    "tiltDeg": 0
+   }
+  },
   "spr_grill_ze_da_esquina_evo1": {
    "file": "spr_grill_ze_da_esquina_evo1.webp",
    "w": 1024,
@@ -884,10 +1077,89 @@
     "tiltDeg": 0
    }
   },
+  "spr_grill_ze_da_esquina_evo2": {
+   "file": "spr_grill_ze_da_esquina_evo2.webp",
+   "w": 762,
+   "h": 715,
+   "hole": {
+    "bbox": [
+     96,
+     237,
+     571,
+     279
+    ],
+    "quad": [
+     [
+      136,
+      237
+     ],
+     [
+      626,
+      237
+     ],
+     [
+      666,
+      513
+     ],
+     [
+      96,
+      514
+     ]
+    ],
+    "tiltDeg": 0
+   }
+  },
+  "spr_grill_ze_da_esquina_evo3": {
+   "file": "spr_grill_ze_da_esquina_evo3.webp",
+   "w": 1100,
+   "h": 641,
+   "hole": {
+    "bbox": [
+     127,
+     148.7,
+     846.1,
+     318.2
+    ],
+    "quad": [
+     [
+      206.3,
+      148.7
+     ],
+     [
+      891.2,
+      148.7
+     ],
+     [
+      972.2,
+      465.2
+     ],
+     [
+      127,
+      465.2
+     ]
+    ],
+    "tiltDeg": 0
+   }
+  },
   "spr_prop_bancada": {
    "file": "spr_prop_bancada.webp",
    "w": 1200,
    "h": 553
+  },
+  "t_fx_coin": {
+   "file": "t_fx_coin.webp",
+   "w": 189,
+   "h": 188
+  },
+  "t_fx_coin_stack": {
+   "file": "t_fx_coin_stack.webp",
+   "w": 191,
+   "h": 190
+  },
+  "t_fx_confetti": {
+   "file": "t_fx_confetti.webp",
+   "w": 243,
+   "h": 241
   },
   "t_fx_embers_high": {
    "file": "t_fx_embers_high.webp",
@@ -903,6 +1175,41 @@
    "file": "t_fx_embers_medium.webp",
    "w": 1100,
    "h": 167
+  },
+  "t_fx_ring": {
+   "file": "t_fx_ring.webp",
+   "w": 233,
+   "h": 231
+  },
+  "t_fx_smoke_dense": {
+   "file": "t_fx_smoke_dense.webp",
+   "w": 256,
+   "h": 250
+  },
+  "t_fx_smoke_medium": {
+   "file": "t_fx_smoke_medium.webp",
+   "w": 196,
+   "h": 194
+  },
+  "t_fx_smoke_soft": {
+   "file": "t_fx_smoke_soft.webp",
+   "w": 193,
+   "h": 188
+  },
+  "t_fx_spark": {
+   "file": "t_fx_spark.webp",
+   "w": 158,
+   "h": 188
+  },
+  "t_fx_spark_burst": {
+   "file": "t_fx_spark_burst.webp",
+   "w": 166,
+   "h": 123
+  },
+  "t_fx_starburst": {
+   "file": "t_fx_starburst.webp",
+   "w": 241,
+   "h": 240
   }
  },
  "foods": {
@@ -1099,7 +1406,9 @@
  },
  "grills": {
   "fornalha_dragao_manso": {
-   "1": "spr_grill_fornalha_dragao_manso_evo1"
+   "1": "spr_grill_fornalha_dragao_manso_evo1",
+   "2": "spr_grill_fornalha_dragao_manso_evo2",
+   "3": "spr_grill_fornalha_dragao_manso_evo3"
   },
   "lata_valente": {
    "1": "spr_grill_lata_valente_evo1",
@@ -1107,10 +1416,14 @@
    "3": "spr_grill_lata_valente_evo3"
   },
   "parrilla_chef_cisma": {
-   "1": "spr_grill_parrilla_chef_cisma_evo1"
+   "1": "spr_grill_parrilla_chef_cisma_evo1",
+   "2": "spr_grill_parrilla_chef_cisma_evo2",
+   "3": "spr_grill_parrilla_chef_cisma_evo3"
   },
   "ze_da_esquina": {
-   "1": "spr_grill_ze_da_esquina_evo1"
+   "1": "spr_grill_ze_da_esquina_evo1",
+   "2": "spr_grill_ze_da_esquina_evo2",
+   "3": "spr_grill_ze_da_esquina_evo3"
   }
  },
  "backgrounds": {
@@ -1123,9 +1436,19 @@
   "bancada": "spr_prop_bancada"
  },
  "fx": {
+  "coin": "t_fx_coin",
+  "coin_stack": "t_fx_coin_stack",
+  "confetti": "t_fx_confetti",
   "embers_high": "t_fx_embers_high",
   "embers_low": "t_fx_embers_low",
-  "embers_medium": "t_fx_embers_medium"
+  "embers_medium": "t_fx_embers_medium",
+  "ring": "t_fx_ring",
+  "smoke_dense": "t_fx_smoke_dense",
+  "smoke_medium": "t_fx_smoke_medium",
+  "smoke_soft": "t_fx_smoke_soft",
+  "spark": "t_fx_spark",
+  "spark_burst": "t_fx_spark_burst",
+  "starburst": "t_fx_starburst"
  },
  "icons": {
   "ic_auxiliar": "ic_auxiliar",

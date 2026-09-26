@@ -161,7 +161,7 @@ Cada passo, ao ser aberto, ganha sub-passos próprios neste documento (mesmo for
 
 ## 8. Próximo passo imediato
 
-👉 **Fase 1, passo 1.2** (lote 06, conteúdo em docs/22 §6) + fechar a Fase 0:
+👉 **Fase 1, passo 1.3** (lote 07, conteúdo em docs/22 §6) + fechar a Fase 0:
 passo 0.1 (só falta a decisão do lote 03) e passo 0.3 (snapshot do `18-STATUS.md`).
 
 **Registro de progresso:**
@@ -173,3 +173,4 @@ passo 0.1 (só falta a decisão do lote 03) e passo 0.3 (snapshot do `18-STATUS.
 | 2026-09-26 | 0.2 + 1.1 | lote 05 aprovado e integrado; gates 13/14 verdes | `arena/01a0df03-game-churrasqueiro` | runtime 148 sprites (2,38 MB); descoberto que o lote 04 já estava approved |
 | 2026-09-26 | 1.2 (lote 06) | 1ª passada: 10 geradas, 3 ok (VFX fumaça, molhos, equipamentos); 6 grills com perspectiva invertida + confete espalhado vão refazer | `arena/01a0df03-game-churrasqueiro` | limite de 10 gerações do turno atingido; continua no próximo turno |
 | 2026-09-26 | 1.2 (lote 06) | parcial: 5/10 processados (24 sprites: inox evo 3 + VFX + coleção); 5 grills falharam no holeValidation | `arena/01a0df03-game-churrasqueiro` | 3ª passada no próximo turno (upgrades compactos); limite de 10 gerações atingido de novo |
+| 2026-09-26 | 1.2 (lote 06) | 10/10: chapa evo 2 passou na 7ª passada ([ALTA]); chapa evo 3 + fornalhas evo 2–3 implementadas com desvio documentado e autorização do dono | `arena/01a0df03-game-churrasqueiro` | 29 sprites approved; runtime 177 sprites (3,11 MB); contrato mantido no spec para refação futura |

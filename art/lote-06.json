@@ -1,5 +1,5 @@
 {
-  "_comment": "Lote 06 — PARCIAL (6/10 processados): inox evo 2–3 + 2 folhas de VFX + molhos + equipamentos. Faltam 4 grills (chapa evo 2–3, fornalha evo 2–3): 5ª passada ([PROPORCAO]) piorou chapa evo 2 (46,7% — laterais/armários alargaram o corpo); causa raiz: corpo largo com painéis laterais encolhe a boca em %. 6ª passada: proibir painéis/armários laterais, corpo = só a fornalha ao redor da boca. Spec completo com os 10 assets; rodar process após regenerar os 4. Prompts e notas em art/prompts/lote-06.md.",
+  "_comment": "Lote 06 — FINAL (10/10 imagens, 29 sprites): evoluções 2–3 das 3 churrasqueiras, 2 folhas de VFX e coleção própria: molhos (4) + equipamentos (9). 7/10 passam no holeValidation; chapa evo 3 (aspecto 2.343), fornalha evo 2 (aspecto 2.339) e fornalha evo 3 (largura 59.7%) foram implementados com desvio documentado e autorização do dono em 2026-09-26 (candidatos a troca futura) — o contrato segue íntegro neste spec para a eventual refação. Prompts e histórico das 8 passadas em art/prompts/lote-06.md.",
   "batch": "lote-06",
   "date": "2026-09-26",
   "sourceDir": "art/source/lote-06",

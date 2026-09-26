@@ -185,3 +185,21 @@ baixa e comprida demais (aspecto 2.19). Tentativa: proporções numéricas expl�
 - Chapa evo 3 "Com Fritadeira": toldo + fritadeira pequena ACIMA/ao lado do toldo,
   torresmos no vão ABAIXO da boca; nada nas laterais.
 - Fornalha evo 2/3: dragão e chaminé só ACIMA; paredes laterais finas de tijolo.
+
+---
+
+## Resultado da 6ª passada ([SEM-LATERAL]) + 7ª ([ALTA]) e 8ª (reforço largura)
+
+- 6ª: sem armários laterais; larguras 63–65% (fornalha evo 2 passou largura) mas
+  aspectos 2.14–3.15 — bocas curtas; chapa evo 3 pintou faixa escura interna que
+  cortou o magenta detectado.
+- **[ALTA]** (7ª): abertura ALTA (altura mais da metade da largura), vista de cima
+  mais pronunciada, magenta plano de aro a aro, SEM interior escuro.
+- 7ª: **chapa evo 2 PASSOU** (largura 74,9%, aspecto 1.897); chapa evo 3 aspecto
+  2.343; fornalha evo 2 largura 69,4% (só); fornalha evo 3 largura 69,2% (só).
+- 8ª (2 gens, fornalhas): REGREDIU por variância — evo 2 aspecto 2.339, evo 3
+  largura 59,7%; raws melhores da 7ª foram sobrescritos (gitignored, sem backup).
+- Decisão do dono em 2026-09-26: "pode implementar tudo, se precisar no futuro eu
+  troco a imagem" → 3 desvios implementados com nota no registry; contrato
+  mantido no spec para a eventual refação. Lição: nunca sobrescrever o melhor raw
+  sem backup — regens podem regredir.

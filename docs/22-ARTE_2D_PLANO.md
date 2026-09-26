@@ -104,10 +104,10 @@ Contado a partir de **todas** as tabelas de `shared/data` (e não de estimativa)
 
 **Totais:**
 
-- 33 imagens aprovadas (lotes 01–02, 04–05) viraram 148 sprites (runtime 2,38 MB WebP);
+- 43 imagens aprovadas (lotes 01–02, 04–06) viraram 177 sprites (runtime 3,11 MB WebP);
 - o lote 03 tem 10 imagens (36 sprites) aguardando decisão do dono: as 3 churrasqueiras
   estão marcadas `redo` (refeitas e aprovadas no lote 04), o resto segue pendente;
-- para cobrir tudo faltam cerca de **25 imagens**, em 3 lotes (06–08, §6).
+- para cobrir tudo faltam cerca de **15 imagens**, em 2 lotes (07–08, §6).
 
 O logotipo continua tipográfico (Baloo 2 com efeitos): texto gerado por IA erra letras.
 
@@ -323,6 +323,26 @@ Os guias entram em `tools/art/make-ref.mjs` como um modo novo.
 | 6 | `char_funcionarios` | 5 | ✅ exatamente 5 bustos, um por cargo, sem roupa magenta; avatares circulares legíveis |
 | 7–9 | fundos premium, festival, rede | 3 | ✅ salão nobre com adega; festival ao crepúsculo sem pessoas; flagship com vista da cidade; 9:16, sem texto |
 | 10 | `ui_icons_collection` | 10 | ✅ as 10 categorias, uma por célula 5×2 |
+
+### 6.6 Resultado do lote 06
+
+8 passadas de geração nos 6 grills (inversão de perspectiva → guia geométrico →
+upgrades compactos → [SEM-LATERAL] → [ALTA]); 7/10 dentro do contrato, 3 bocas com
+desvio documentado e autorização do dono (candidatas a troca futura). Lição: nunca
+sobrescrever o melhor raw sem backup — regens podem regredir por variância.
+
+| # | Imagem | Sprites | Avaliação |
+|---|---|---|---|
+| 1 | chapa evo 2 — Toldo Novo | 1 | ✅ boca 74,9% / aspecto 1,90; toldo listrado + pratos no vão do carrinho |
+| 2 | chapa evo 3 — Com Fritadeira | 1 | 🟡 boca 76,9% mas aspecto 2,34 (contrato ≤ 1,9); fritadeira + torresmos ok |
+| 3 | inox evo 2 — Altura Regulável | 1 | ✅ boca 72,1% / aspecto 1,88; manivela e cremalheira na chapa, sem cruzar a boca |
+| 4 | inox evo 3 — Termômetro | 1 | ✅ boca 71,9% / aspecto 1,84 |
+| 5 | fornalha evo 2 — Dragão Acordado | 1 | 🟡 boca 76,9% mas aspecto 2,34; dragão desperto no topo, frontal |
+| 6 | fornalha evo 3 — Inferno Bom | 1 | 🟡 aspecto 1,76 mas boca 59,7% (contrato 70%); tijolos com rachaduras de lava, sem interior laranja |
+| 7 | `fx_smoke_sparks` | 5 | ✅ fumaça leve/média/densa + faísca + chuva de faíscas |
+| 8 | `fx_celebration` | 5 | ✅ estouro estrela + moeda + pilha + confete + anel |
+| 9 | `col_molhos` | 4 | ✅ campanha, alho, pimenta, farofa |
+| 10 | `col_equipamentos` | 9 | ✅ espeto, grelha, faca, moquém, abanador, sal grosso, livro dourado, carvão, mapa |
 
 ## 7. Integração no jogo
 
