@@ -35,8 +35,10 @@ para depois do “ok”, conforme a ordem pedida.
 - Folha e montagem regeneradas com `sourceDir` inexistente: hashes idênticos; revisão
   funciona só com masters após wipe.
 - `git -c core.whitespace=cr-at-eol diff --check`: o CRLF do CSV é intencional.
-- `npm run gates` **não executado neste checkpoint**: permanece na etapa pós-aprovação
-  solicitada. Não houve alteração de gameplay, dados de simulação ou runtime.
+- Na geração parcial, `npm run gates` ficou reservado à etapa pós-aprovação. Depois,
+  a pedido do dono, o checkpoint foi preparado para merge via PR #11: **13/14 gates
+  passaram localmente**, `check-csharp` SKIP por falta de dotnet (CI executa).
+  Merge do checkpoint NÃO aprova arte; não houve alteração de gameplay ou runtime.
 - Runtime permanece o do main: **177 sprites, 3,11 MB WebP**.
 - Lote 03 e as 3 bocas autorizadas com desvio do lote 06: **intocados**.
 
@@ -59,6 +61,13 @@ para depois do “ok”, conforme a ordem pedida.
 6. **Miniaturas:** teste em cor 32 px e cinza 48 px incluído para coleção/IAP/medalhas.
    Os centros escuros das medalhas são opacos, próprios para sobrepor símbolos.
 7. Sem texto acidental visível. Não há personagens/mãos neste lote.
+
+## Transferência para nova sessão
+
+O dono solicitou merge do checkpoint via PR #11 para continuar em outra sessão.
+Prompt pronto: `art/review/lote-07-proxima-sessao.md`. Na **nova** sessão, partir do
+main atualizado e trabalhar somente na branch atribuída à nova sessão, não reutilizar
+esta branch. A sequência abaixo serve para retomar **esta mesma sessão** após wipe.
 
 ## Próximo turno — mesma branch, sem regenerar as 9 imagens
 
