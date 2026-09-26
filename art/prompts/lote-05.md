@@ -1,85 +1,131 @@
-# Lote 05 — prompts (reforços do lote 04)
+# Lote 05 — reforço: maminha + escada de churrasqueiras (padrão `grill.art`)
 
-Data: 2026-09-26 · `generate_image` · saída `art/source/lote-05/`.
+Duas frentes no mesmo lote: (a) `spr_food_maminha_served` (recusada no lote 04 e pedida de
+volta em célula limpa, já gerada acima); (b) **as grelhas**, refeitas sob o padrão único de
+perspectiva/leito definido em `shared/data/grill.json` → `art`. Guia de cada arte:
+`node tools/art/make-ref.mjs guide <out.png> 1408 --grill <id> --evo <n>`, e a régua que mede o
+resultado: `node tools/art/check-grill-geometry.mjs --all`.
 
-## O que a primeira tentativa do reforço ensinou
+> **Regra deste lote: a boca define a moldura, nunca o contrário.** A geometria de cada quadro
+> (1408×976, ×1344 ou ×1456) foi calculada a partir das vagas que o dado promete para aquela
+> evolução, e o guia é o próprio pixel do enquadramento. O que se exige do modelo é a razão da
+> abertura; o resto é estilo.
 
-Rodadas com `MOUTH_IS_THE_REF` + o guia chapado (`guide_cart`, `guide_box`), as duas grelhas de
-aço **pioraram**:
+**Identidade visual por degrau (dado em `grill.json.visual`/`evolutions`, e é isso que o dono
+lê na loja):**
+- **lata** (`lata_amassada`): 1 zona × 2–3 vagas, tambor de 200 L deitado.
+- **chapa** (`ze_da_esquina`): 2 zonas × 2–3 vagas, carrinho de chapa com toldo e fritadeira.
+- **inox** (`parrilla_chef_cisma`): 3 zonas × 2–3 vagas, carreta de parrilla com altura ajustável.
+- **fornalha** (`fornalha_dragao_manso`): 3 zonas × 3–4 vagas, alvenaria com chaminé.
+- A escada de vagas é `2→3→3 | 4→4→6 | 6→6→9 | 9→9→12`; nenhum degrau pode reduzir a área útil,
+  e a grade do jogo já garante isso (`check-grill-geometry.mjs`, item 2).
 
-| versão | boca | inclinação do topo |
-|---|---|---|
-| lote 04 (guia + "pinte em volta") | 15 % | +4,3° / +6° |
-| lote 05 pass 1 (guia + "a boca É o retângulo") | **6 % / 9 %** | **−29,9° / −27,3°** |
-| fornalha **aprovada** no lote 04 | 25 % | **0°** |
+## Bloco comum (todo item deste lote)
+```
+[MOUTH_IS_THE_REF] A única geometria que importa é a da abertura de cocção. Meça o quadro do
+guia: a boca deve ocupar ~80% da largura e o percentual de altura indicado na razão da boca —
+nem mais estreita, nem mais rasa. É dentro dela que a comida do jogo é desenhada.
+[STYLE] pixel art isométrica 2:1, fonte ¾, luz vinda de cima, contornos escuros e chapados,
+plano frontal de apoio.
+[SEPARATION] objeto isolado, sem plate, sem sombra projetada, sem piso, fundo sólido #FF00FF.
+[NEGATIVE] sem comida, sem pessoas, sem fumaça, sem texto, sem brasas por cima da boca.
+```
 
-O modelo atendeu ao "vistas de cima a 55°" e pintou a grelha quase de lado: a boca virou um
-paralelogramo fino e inclinado. **E é exatamente isso que o jogo não quer**: `toGrillScreen`
-mapeia as vagas sobre o quadrilátero e as faixas de calor são horizontais, então boca torta
-desperdiça tela e boca rasa mal tem onde colocar comida. A régua real é a da fornalha aprovada —
-**retângulo grande, virado para quem olha, topo horizontal** — e não uma perspectiva área.
+> **O que o modelo errou e por quê (roda 1 deste lote, medida):** pedimos "faixas de brasa dentro
+> da boca". Ele obedeceu, pintou brasa até a borda e a abertura deixou de existir — a fornalha
+> voltou sem furo nenhum e as duas grelhas de aço com um vão de perna como falso buraco
+> (65×72 px e 85×56 px, o detector medindo o vão errado). **No master a boca é vazio magenta**:
+> o fogo que arde na partida é desenhado pelo motor, faixa por faixa, em `drawGrillSprite`.
+> A frase que funciona continua sendo a do lote 04 — `[MOUTH_IS_THE_REF]` + "the opening stays
+> empty magenta" — e o braseiro vai na **frente** do corpo, abaixo da boca.
 
-Correção aplicada a partir daqui:
+## Blocos
 
-- a câmera pedida passa a ser **quase de frente, levemente de cima (~20°)**;
-- a referência deixa de ser o desenho chapado do `make-ref guide` e passa a ser o **master
-  aprovado da fornalha** (`make-ref single … spr_grill_fornalha_dragao_manso_evo1`): o modelo
-  copia a composição de uma arte que já foi aceita, em vez de interpretar uma instrução.
+```
+[MOUTH_IS_THE_REF] The magenta rectangle in the reference is not a region to leave free: it IS
+the cooking opening, and it is the most important part of the image. Paint the grill so that its
+top opening covers exactly that magenta rectangle — same left, right, top and bottom edge, same
+width and height, top edge perfectly horizontal. Do not shrink it, do not move it, do not draw a
+smaller opening inside the frame. The opening stays empty magenta: no grate, no coals, no ash,
+no gloss, no food over it. Everything the grill has — rim, body, legs, wheels, shelf, chimney,
+firebox front — is built around that opening, not instead of it.
+[TECH] The entire background is one perfectly flat, uniform pure magenta (#FF00FF): no gradient,
+no floor, no cast shadows, no grid lines, no cell borders, no frames. No letters, numbers,
+captions, labels or watermark anywhere. Nothing in the artwork itself is magenta or hot pink.
+Pixel art, isometric 2:1 feel, three-quarter view from the front and above at about 55 degrees,
+dark flat outlines, light from above, one single object.
+```
 
-**[CAM_FRONT]** *(novo)*
-> Camera: almost straight on from the front, tilted down by only about 20 degrees, so the cooking opening reads as one large flat rectangle facing the viewer, its top edge and bottom edge perfectly horizontal. The opening is big: at least half the width of the whole image and about a quarter of its area.
+## 1) `spr_grill_fornalha_dragao_manso_evo1` — "Tijolo Refratário" (3×3 = 9 vagas) *(ronda 2)*
+Quadro do guia 1408×1344; **boca 1126×562 px = razão 2,0:1**, 80 % da largura e 42 % da altura.
+**É o item que reprova no portão hoje** (ronda 1: boca de 95×40 px na folha, 40 px para comida
+de 54 px). Brasa na frente do corpo, nunca dentro da boca.
 
-**[MOUTH_MATCHES_REF]** *(novo, substitui o MOUTH_IS_THE_REF para as grelhas de aço)*
-> The reference image is an approved grill from this same game: a masonry barbecue whose firebox opening is a large dark rectangle facing the viewer, with its top edge perfectly horizontal. Copy that composition, not that object: your grill's opening must have the same size, the same position in the frame and the same horizontal top edge as the reference's opening, and the same amount of empty space around the object. Do not tilt the opening, do not draw the grill seen from above, do not make the opening a narrow sliver. Leave the opening empty and dark (no grate, no coals, no food inside it).
+## 2) `spr_grill_ze_da_esquina_evo1` — "Dois Corações" (2×2 = 4 vagas) *(ronda 2)*
+Quadro 1408×976; **boca 1126×406 px = razão 2,8:1**. R1 deu 65×72 px de falso buraco.
 
-## Imagens
+## 3) `spr_grill_parrilla_chef_cisma_evo1` — "Inox Brilhando" (3×2 = 6 vagas) *(ronda 2)*
+Quadro 1408×1456; **boca 1126×611 px = razão 1,85:1** (quase quadrada). R1 deu 85×56 px.
 
-### G1 · `grill_ze_da_esquina_evo1.png` (ref: `guides/ref_grill_fornalha.png`)
-[STYLE] Subject: "Grelha do Zé da Esquina", a humble Brazilian street-corner charcoal grill: a long rectangular firebox of dark, well-seasoned, slightly greasy black steel with faded red-brown paint on its front panel, on a sturdy metal cart frame with two wheels, a small side shelf, a short chimney at the back left corner, honest wear. [CAM_FRONT] [MOUTH_MATCHES_REF] [TECH]
+## 4) `spr_grill_ze_da_esquina_evo2` — "Toldo Novo" (2×2 = 4 vagas)
+Mesma boca do item 2 — o degrau acrescenta toldo, bandeja e copertura, **nunca encolhe o leito**.
 
-### G2 · `grill_parrilla_chef_cisma_evo1.png` (ref: `guides/ref_grill_fornalha.png`)
-[STYLE] Subject: "Parrilla do Chef Cisma", an elegant chef's Argentine-style parrilla: a polished mirror-finish stainless-steel firebox reflecting warm golden light, on four neat steel legs, with a stainless side shelf, a small round thermometer on the front panel and a short stainless chimney at the back left corner. [CAM_FRONT] [MOUTH_MATCHES_REF] [TECH]
+## 5) `spr_grill_parrilla_chef_cisma_evo2` — "Altura Regulável" (3×2 = 6 vagas)
+Mesma boca do item 3; o que muda é a manivela de altura e a prateleira tubular.
 
-## Pass 2 das grelhas de aço — o que as duas tentativas anteriores provaram
+## 6) `spr_grill_ze_da_esquina_evo3` — "Com Fritadeira" (2×3 = 6 vagas)
+Boca 1126×373 px = **razão 3,0:1** em quadro 1408×896 (o leito cresce para 359 px, então a
+boca fica mais larga e mais rasa que a dos degraus 1–2). Acrescenta a fritadeira lateral.
 
-| tentativa | boca | inclinação | por que falhou |
+## 7) `spr_grill_fornalha_dragao_manso_evo2` — "Duas Bocas" (3×3 = 9 vagas)
+Razão 2,0:1 como o e1: o degrau ganha bancada de pedra e segunda chaminé, não mais vagas.
+
+## 8) `spr_grill_parrilla_chef_cisma_evo3` — "8 espetos"? não — ver §Dados abaixo (3×3 = 9 vagas)
+Razão 2,0:1 em quadro 1408×1344, tacho de gordura maior e quebra-chamas.
+
+## 9) `spr_grill_fornalha_dragao_manso_evo3` — "Três Bocas" (3×4 = 12 vagas)
+Razão 2,28:1 em quadro 1408×1184, boca de 1126×494 px: é o único degrau do jogo com 4 vagas por
+zona, e por isso o mais achatado de todos.
+
+## Dados que estes prompts corrigem
+`shared/data/grill.json` prometia, em `l10n`, "3 fileiras, 7 espetos" para `parrilla_chef_cisma`
+evo2 e "8 espetos" para evo3, enquanto a grade diz 3×2 = 6 e 3×3 = 9. A descrição mentiu sobre a
+progressão; foi consertada na própria tabela (nada de arte cobre erro de texto).
+
+---
+
+## Ronda 3 (2) — as duas bocas que ainda reprovam, e o que a medição ensinou
+
+| grelha | pedida | pintada | leitura |
 |---|---|---|---|
-| lote 05 pass 2 (câmera de frente + referência fornalha) | chapa **642×25 px**; inox **sem furo** | — | descrita como "caixa de aço retangular longa", o modelo pinta uma grelha realista: a boca de fogo é uma **fresta**, e a grelha de verdade vem desenhada por cima (por isso o detector não achou área magenta fechada no inox) |
+| fornalha e1 | 1,99:1 | 2,88:1 | "WIDE" demais: o modelo abriu uma fresta comprida e a faixa ficou com 46 px |
+| inox e1 | 1,83:1 | 1,32:1 | virou quadrada **e** o topo entortou 16,5° (a manivela enganou o eixo) |
 
-Ou seja: o problema não é mais a câmera nem a proporção — é o **assunto**. "Firebox retangular de
-aço" não tem leito grande na cabeça do modelo. O único caminho que funcionou neste projeto em
-todas as vezes é o das evoluções da lata (lote 02): **pedir o mesmo objeto da referência, trocando
-só o material** — a referência é a lata aprovada (boca 89 % da largura, 21 % do sprite), não uma
-descrição de composição.
+A lição é que razão numérica não é instrução para modelo de difusão: ele não mede pixels. O que
+funciona é amarrar a boca a **outra parte do próprio objeto**, e o guia já recorta isso — a altura
+da abertura é igual à altura de tudo que existe abaixo dela. A instrução passa a ser essa, e o
+"topo horizontal" volta a ser dito em palavras, com o objeto que costuma entortá-lo nomeado.
 
-**[RECLASS]** *(novo)*
-> Reclassify the subject for the player: this is not a real barbecue, it is the game's COOKING BED — the whole top of the object is one wide open shallow basin of empty dark space where the food sits, exactly like the open drum in the reference image. The reference is an approved asset from this game (a grill made from a cut-open 18-litre drum): keep its silhouette, its proportions, the size and position of its opening and its horizontal top edge; change the material, the paint and the base only. Your opening must stay as large as the reference's: same width, same height, same place in the frame. Do not fill it with a grate, coals, ash or food, and do not turn it into a narrow fire slot or a small window.
+### R3.1 · `spr_grill_fornalha_dragao_manso_evo1.png` (ref: `guides/g_fornalha_e1.png`)
+> [STYLE] Subject: "Fornalha do Brasa Braba, o Dragão Manso", level 1 — big Brazilian masonry
+> barbecue of light warm firebricks with thick mortar joints, heavy stone counter lip around the
+> opening, wide plinth base with a small ash door, short brick chimney at the back left corner with
+> a small wrought-iron dragon weathervane. The fire is NOT in the opening: a broad band of glowing
+> orange embers seen through a brick vent on the FRONT FACE below the opening, split into three
+> stacked rows by thin brick bars. [MOUTH] The cooking opening is a rectangle twice as wide as it
+> is tall, and it is EMPTY MAGENTA. Use a proportion you can see in the object itself: the height
+> of the opening equals the combined height of everything below it — the ember front panel plus the
+> plinth base. Its top edge and its bottom edge are straight, horizontal and parallel to each
+> other. Do not draw a narrow slit, and do not draw a tall window: it is a 2 : 1 rectangle.
+> [TECH] + frame 1408×1360.
 
-### G1b · `grill_ze_da_esquina_evo1.png` (ref: `guides/ref_grill_lata_evo1.png`)
-[STYLE] Subject: the same open-bed grill as the reference image, rebuilt as "Grelha do Zé da Esquina": the long half-barrel body painted in faded red-brown enamel over dark seasoned steel, greasy wear and soot, on a sturdy metal cart frame with two wheels and a small side shelf, a short chimney at the back left. [RECLASS] [TECH]
-
-### G2b · `grill_parrilla_chef_cisma_evo1.png` (ref: `guides/ref_grill_lata_evo1.png`)
-[STYLE] Subject: the same open-bed grill as the reference image, rebuilt as "Parrilla do Chef Cisma": the long half-barrel firebox in polished mirror-finish stainless steel reflecting warm golden light, on four neat steel legs with a stainless side shelf and a small round thermometer on the front panel, a short stainless chimney at the back left. [RECLASS] [TECH]
-
-## Pass 3 das grelhas — "é o leito do jogo", referência = a lata aprovada
-
-| tentativa | boca medida |
-|---|---|
-| chapa | 416×113 px em 1058×706 → **6,3 %** do sprite, topo a −12,4° |
-| inox | **32×31 px** — o modelo pintou a grelha por cima da boca; quase não há furo |
-
-Nem o re-skinning do tambor (o único objeto que sempre funcionou) segurou a boca grande nas duas
-grelhas de aço. **Três rotas esgotadas** — a melhor arte disponível continua sendo a do lote 04
-(15 % do sprite, topo a +4,3° / +6°, ou seja, mais horizontal que a lata aprovada, que tem −8,6°).
-As duas artes do lote 04 foram restauradas do commit `f26f0c4` e continuam `rejected`, com a
-medição na nota do registro, para decisão do dono: aceitar 15 %, ou pedir as duas como objetos
-novos (não como "grelha realista") num lote dedicado.
-
-## O que este lote descobriu na ferramenta (não na arte)
-
-Ao rodar a grade da maminha inteira, as 5 linhas `approved` do lote 04 mantiveram o status
-enquanto os **pixels mudavam**: o congelamento protegia a decisão, não a arte. `process-sprites`
-agora recusa o repaint de linha `approved`/`superseded` e manda registrá-la como `pending` antes
-(`--allow-repaint` para quando só se quer re-codificar os mesmos arquivos). Verificado nos três
-caminhos: 28 linhas do lote 04 → recusa com exit 1; lote com tudo `pending` → processa;
-`--allow-repaint` → processa.
+### R3.2 · `spr_grill_parrilla_chef_cisma_evo1.png` (ref: `guides/g_inox_e1.png`)
+> [STYLE] Subject: "Parrilla do Chef Cisma", level 1 — polished mirror-finish stainless-steel
+> parrilla firebox on four neat steel legs with two solid wheels, a round fat-catching drip bowl
+> hanging underneath, a small round thermometer on the front panel; the height-crank handle is
+> small and must NOT tilt the firebox. The fire is NOT in the opening: three horizontal bands of
+> glowing embers behind steel vents on the FRONT FACE below the opening. [MOUTH] The cooking opening
+> is a WIDE rectangle — clearly wider than tall, ratio 1.85 : 1 — and it is EMPTY MAGENTA, no
+> grate, no coals, no food. Its height equals the combined height of the firebox front panel plus
+> the legs and drip bowl below it. Top edge perfectly horizontal: the whole cart stands level, the
+> crank is an accessory, not a reason to tip the firebox. [TECH] + frame 1408×1472.

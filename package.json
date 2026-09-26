@@ -30,6 +30,7 @@
     "test:watch": "vitest",
     "proto": "node prototype/dev-server.mjs",
     "check-art": "node prototype/art-coverage.mjs",
+    "check-grill-geometry": "node tools/art/check-grill-geometry.mjs",
     "check-render": "npx esbuild prototype/src/main.ts --bundle --format=esm --target=es2022 --outfile=prototype/dist/bundle.js --log-level=warning && node prototype/render-smoke.mjs",
     "check-shots": "node prototype/shoot.mjs",
     "sim:long": "LONG_HORIZON=1500 node --experimental-strip-types tools/studio/run-sim.ts"

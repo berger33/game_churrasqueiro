@@ -15,6 +15,14 @@ import { generateLevels } from './gen-levels.ts';
 
 type Problem = { file: string; message: string };
 
+function readJsonAbs<T = Record<string, unknown>>(p: string): T {
+  return JSON.parse(readFileSync(p, 'utf8')) as T;
+}
+
+
+
+const ROOT = join(DATA_DIR, '..', '..');
+
 const problems: Problem[] = [];
 const fail = (file: string, message: string): void => {
   problems.push({ file, message });
@@ -348,6 +356,34 @@ const accented = /[à-üÀ-Ü]/;
 for (const f of ['ingredients.json', 'customers.json', 'restaurants.json', 'upgrades.json', 'achievements.json', 'missions.json', 'events.json', 'collection.json']) {
   const raw = readFileSync(join(DATA_DIR, f), 'utf8');
   if (accented.test(raw)) fail(f, 'contains accented literal text — use *Key fields and the localisation tables');
+}
+
+// ── A loja promete na tela o mesmo grid que o motor monta ───────────────────
+// `churrasqueiras.json` carries the grid (zoneCount × slotsPerZone) and the l10n text sells it
+// back to the player as "2 fileiras, 4 espetos". Those two drifted (inox evo2 said 7 for a 6-slot
+// grill, evo3 said 8 for a 9-slot one) — and a description the art is drawn to measure becomes a
+// contract nobody checks. The text is data, so it is validated as data.
+const grillDescRe = /^(\d+) fileiras?[^\d]*?(\d+) espetos?/i;
+const l10nPtBr = readJsonAbs(join(ROOT, 'shared', 'l10n', 'pt-BR.json'));
+for (const ch of (readJson('churrasqueiras.json') as {
+  churrasqueiras: { id: string; fileiras?: number; visual?: { style?: string }; evolutions: Record<string, never>[] }[]
+}).churrasqueiras) {
+  const zones = ch.evolutions.map((e) => Number(e.zoneCount));
+  if (ch.fileiras !== undefined && Math.max(...zones) > ch.fileiras) {
+    fail('churrasqueiras.json', `${ch.id}: an evolution has ${Math.max(...zones)} zones but the grill declares "fileiras": ${ch.fileiras}`);
+  }
+  for (const e of ch.evolutions) {
+    const key = (e as { descKey?: string }).descKey;
+    if (!key) continue;
+    const text = l10nPtBr[key];
+    if (typeof text !== 'string') { fail('churrasqueiras.json', `${ch.id} evo${e.level}: descKey "${key}" is not in shared/l10n/pt-BR.json`); continue; }
+    const m = grillDescRe.exec(text);
+    if (!m) continue; // only sentences that promise a grid are held to it
+    const [fileiras, espetos] = [Number(m[1]), Number(m[2])];
+    const cap = Number(e.zoneCount) * Number(e.slotsPerZone);
+    if (fileiras !== Number(e.zoneCount)) fail('churrasqueiras.json', `${ch.id} evo${e.level}: "${text}" promises ${fileiras} fileiras, the grid is ${e.zoneCount}`);
+    if (espetos !== cap) fail('churrasqueiras.json', `${ch.id} evo${e.level}: "${text}" promises ${espetos} vagas, the grid is ${cap} (${e.zoneCount}×${e.slotsPerZone})`);
+  }
 }
 
 // ── Report ──────────────────────────────────────────────────────────────────

@@ -26,6 +26,7 @@
  */
 
 import { createDatabase, validateDatabase } from '../../tools/sim-core/src/data.ts';
+import { grillBedWidthOnScreen, type GrillArtStandard } from '../../tools/sim-core/src/grill-art.ts';
 import { overallDoneness, evenness, stageOf, effectiveHeat, type FoodRuntime } from '../../tools/sim-core/src/cooking.ts';
 import { TurnSimulation, type CustomerRuntime } from '../../tools/sim-core/src/turn.ts';
 import type { GameDatabase, Ingredient, RawDataBundle } from '../../tools/sim-core/src/types.ts';
@@ -61,6 +62,8 @@ const BENCH_TOP = 552;
 const CHIMNEY_W = 68;
 const GRILL_BODY_W = W - 40;
 /** Painted grills (docs/22 §7.1): the opening's width on screen and where its centre sits. */
+/** Fallback only: the bed comes from `db.grill.art` per evolution (docs/22 §6.8), so a table
+ *  without the block still draws the grill it drew yesterday instead of dividing by zero. */
 const GRILL_ART_BED_W = 330;
 const GRILL_ART_HOLE_Y = 342;
 
@@ -1129,18 +1132,32 @@ class Game {
 
   // ── Painted grill (docs/22 §7.1) ─────────────────────────────────────────
   /** Where the painted grill of the active churrasqueira sits; null → the procedural grill. */
+  /**
+   * The bed this grill's art is scaled to: `grill.art` × the grid of *this* evolution. The art gate
+   * (`tools/art/check-grill-geometry.mjs`) refuses a sprite whose opening cannot hold this number,
+   * so the promise and the pixels are checked against the same arithmetic.
+   */
+  private grillBedW(zoneCount: number, slotsPerZone: number): number {
+    const art = (this.db.grill as unknown as { art?: GrillArtStandard }).art;
+    return art ? grillBedWidthOnScreen(art, { zoneCount, slotsPerZone }) : GRILL_ART_BED_W;
+  }
   private grillArtView(hero: boolean): GrillArt | null {
     const ch = hero ? (this.churrasqueiras[0] ?? this.activeChurr()) : this.activeChurr();
     if (!ch) return null;
     const evo = hero ? (this.meta.churrasqueiraLv[ch.id] ?? 1) : (this.activeEvo()?.level ?? 1);
     const g = grillSprite(ch.id, evo);
     if (!g) return null;
+    const spec = ch.evolutions.find((e) => e.level === evo) ?? ch.evolutions[0];
+    // Play uses the live grid (an upgrade can add slots per row); the shop card uses the grid the
+    // evolution promises. Either way the painted opening is what the food is laid out inside.
+    const slots = hero ? (spec?.slotsPerZone ?? 1) : Math.max(spec?.slotsPerZone ?? 1, this.sim?.grill.stats.slotsPerZone ?? 0);
+    const bedW = this.grillBedW(hero ? (spec?.zoneCount ?? this.zoneCount()) : this.zoneCount(), slots);
     const [bx = 0, by = 0, bw = 1, bh = 1] = g.hole.bbox;
     let s: number, gx: number, gy: number;
     if (hero) {
-      s = 330 / g.w; gx = W / 2 - (g.w * s) / 2; gy = 262;
+      s = Math.min(bedW / g.w, (W - 24) / g.w); gx = W / 2 - (g.w * s) / 2; gy = 262;
     } else {
-      s = Math.min(GRILL_ART_BED_W / bw, (W - 12) / g.w);
+      s = Math.min(bedW / bw, (W - 12) / g.w);
       gx = W / 2 - (bx + bw / 2) * s;
       gy = GRILL_ART_HOLE_Y - (by + bh / 2) * s;
     }
@@ -1242,7 +1259,10 @@ class Game {
       if (this.drag?.food === f) continue;
       const p = this.foodScreenPos(f); this.drawFood(ctx, f, p.x, p.y, 1);
     }
-    this.drawCharcoalGauge(ctx, W / 2 - GRILL_ART_BED_W / 2, GRILL_BOTTOM + 8, GRILL_ART_BED_W);
+    // The gauge is as wide as the bed it feeds, so a bigger grill reads as a bigger grill even in
+    // the meter under it.
+    const bedW = this.grillBedW(this.zoneCount(), this.sim.grill.stats.slotsPerZone);
+    this.drawCharcoalGauge(ctx, W / 2 - bedW / 2, GRILL_BOTTOM + 8, bedW);
   }
   private benchItemRect(i: number): { x: number; y: number; w: number; h: number } {
     const w = 74; const gap = 8;

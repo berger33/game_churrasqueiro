@@ -27,7 +27,12 @@ import { existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 
 const ROOT = join(import.meta.dirname, '..', '..');
-const [mode, out, W, H, ...rest] = process.argv.slice(2);
+const rawArgs = process.argv.slice(2);
+const flags = {}; const pos = [];
+for (let i = 0; i < rawArgs.length; i++) {
+  if (rawArgs[i].startsWith('--')) { flags[rawArgs[i].slice(2)] = rawArgs[i + 1]; i++; } else pos.push(rawArgs[i]);
+}
+const [mode, out, W, H, ...rest] = pos;
 if (!['grid', 'single', 'guide'].includes(mode) || !out) {
   console.error('usage: make-ref.mjs grid <out.png> <W> <H> <cols> <rows> <sprite>... | single <out.png> <W> <H> <sprite> | guide <out.png> <W> <H> <cart|box|masonry>');
   process.exit(2);
@@ -41,74 +46,85 @@ if (!['grid', 'single', 'guide'].includes(mode) || !out) {
 // its own width and 21 % of the sprite — because the game maps the food slots and the heat
 // bands onto that quad. A "1.4:1 opening" written into a landscape frame is impossible next
 // to a visible front panel, which is exactly what pushed lote 03 into drawing a small window.
-const GRILL_GUIDES = {
-  box: {
-    body: [0.04, 0.06, 0.96, 0.62], mouth: [0.075, 0.095, 0.925, 0.50],
-    base: { kind: 'legs', from: 0.62, to: 0.92, inset: 0.10 },
-    shelf: [0.96, 0.30, 1.00, 0.46], chimney: [0.09, 0.0, 0.15, 0.075],
-  },
-  cart: {
-    body: [0.06, 0.10, 0.94, 0.60], mouth: [0.10, 0.14, 0.90, 0.50],
-    base: { kind: 'wheels', from: 0.60, to: 0.90, inset: 0.13 },
-    shelf: [0.94, 0.34, 0.99, 0.48], chimney: [0.13, 0.035, 0.19, 0.115],
-  },
-  masonry: {
-    body: [0.03, 0.10, 0.97, 0.66], mouth: [0.09, 0.14, 0.91, 0.52],
-    base: { kind: 'plinth', from: 0.66, to: 0.97, inset: 0.0 },
-    shelf: null, chimney: [0.08, 0.0, 0.16, 0.115],
-  },
+// The guide is generated FROM THE DATA (docs/22 §6.8): the object is picked by
+// `visual.style`, the opening by `requiredMouth(art, {zoneCount, slotsPerZone})` for that
+// exact evolution. So the silhouette, the game's slot math and the art review can never
+// disagree, and a grill with more zones is drawn with a taller bed, not just "bigger".
+import { loadStandard, capacity, requiredMouth } from './grill-geometry.mjs';
+
+const STYLE_BODIES = {
+  lata:    { body: [0.05, 0.10, 0.95, 0.66], base: { kind: 'drum', from: 0.66, to: 0.93, inset: 0.12 }, shelf: null, chimney: null },
+  chapa:   { body: [0.06, 0.10, 0.94, 0.60], base: { kind: 'wheels', from: 0.60, to: 0.90, inset: 0.13 }, shelf: [0.94, 0.34, 0.99, 0.48], chimney: [0.13, 0.035, 0.19, 0.115] },
+  inox:    { body: [0.05, 0.12, 0.95, 0.60], base: { kind: 'legs', from: 0.60, to: 0.90, inset: 0.10 }, shelf: [0.95, 0.30, 1.00, 0.46], chimney: [0.09, 0.0, 0.15, 0.075] },
+  fornalha:{ body: [0.03, 0.10, 0.97, 0.585], base: { kind: 'plinth', from: 0.585, to: 0.97, inset: 0.0 }, shelf: null, chimney: [0.08, 0.0, 0.16, 0.115] },
 };
 
-function drawGuide(out, W, H, kind) {
-  const g = GRILL_GUIDES[kind];
-  if (!g) throw new Error(`unknown guide kind ${kind} (want ${Object.keys(GRILL_GUIDES).join('|')})`);
+async function drawGuide(out, kindOrOpts) {
+  const standard = await loadStandard(ROOT);
+  const { grillId, evo, W = 1408 } = kindOrOpts;
+  const ch = standard.churrasqueiras.find((c) => c.id === grillId);
+  if (!ch) throw new Error(`churrasqueira ${grillId} não está em churrasqueiras.json`);
+  const style = ch.visual?.style ?? 'inox';
+  const g = STYLE_BODIES[style];
+  if (!g) throw new Error(`style ${style} não tem silhueta no make-ref (adicione em STYLE_BODIES)`);
+  const cap = capacity(standard, grillId, evo);
+  const need = requiredMouth(standard.art, cap);
+  const aspect = need.bedW / need.mouthH;
+  // The frame is derived from the mouth, never the other way round: the opening takes MOUTH_W of
+  // the width and MOUTH_H of the height, and the body, the front band and the base are laid out
+  // in what is left. A grill with 3 zones therefore gets a taller, squarer image — which is what
+  // "espaço de acordo com cada uma" means in pixels. (Hard-coded 16:9 frames are what made the
+  // mouth leak past the body in the first place.)
+  const MOUTH_W = 0.8, MOUTH_H = 0.42;
+  const Wm = Math.round(W);
+  const H = Math.max(768, Math.ceil((MOUTH_W * Wm / aspect) / MOUTH_H / 16) * 16);
+  const mwFrac = MOUTH_W;
+  const mH = (MOUTH_W * Wm / aspect) / H;
+  const mTop = 0.5 - mH / 2 - 0.06;
+  const mouth = [0.5 - mwFrac / 2, mTop, 0.5 + mwFrac / 2, mTop + mH];
+  const body = [0.5 - mwFrac / 2 - 0.045, mTop - 0.05, 0.5 + mwFrac / 2 + 0.045, mouth[3] + 0.17];
+  const base = { from: body[3], to: Math.min(0.97, body[3] + 0.24) };
   const c = createCanvas(W, H);
   const ctx = c.getContext('2d');
-  ctx.fillStyle = '#FF00FF';
-  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#FF00FF'; ctx.fillRect(0, 0, W, H);
   const rect = ([x0, y0, x1, y1], fill, r = 0) => {
     const [x, y, w, h] = [x0 * W, y0 * H, (x1 - x0) * W, (y1 - y0) * H];
     ctx.fillStyle = fill;
     if (!r || !ctx.roundRect) { ctx.fillRect(x, y, w, h); return; }
-    ctx.beginPath();
-    ctx.roundRect(x, y, w, h, Math.min(r, w / 2, h / 2));
-    ctx.fill();
+    ctx.beginPath(); ctx.roundRect(x, y, w, h, Math.min(r, w / 2, h / 2)); ctx.fill();
   };
   const BODY = '#4a4038', FAR = '#3d352e', NEAR = '#5b5045';
-  if (g.chimney) rect(g.chimney, FAR);
-  rect(g.body, BODY, W * 0.012);
+  if (g.chimney) rect([g.chimney[0], body[1] - 0.09, g.chimney[2], body[1] + 0.01], FAR);
+  rect(body, BODY, W * 0.012);
   if (g.shelf) rect(g.shelf, NEAR, W * 0.006);
+  ctx.fillStyle = FAR;
+  const bi = g.base.inset;
   if (g.base.kind === 'plinth') {
-    rect([g.base.inset, g.base.from, 1 - g.base.inset, g.base.to], NEAR, W * 0.008);
-    rect([g.base.inset + 0.02, g.base.from + 0.04, 1 - g.base.inset - 0.02, g.base.to - 0.05], FAR);
+    rect([bi, base.from, 1 - bi, base.to], NEAR, W * 0.008);
+    rect([bi + 0.02, base.from + 0.025, 1 - bi - 0.02, base.to - 0.03], FAR);
   } else if (g.base.kind === 'wheels') {
-    ctx.fillStyle = FAR;
-    for (const cx of [g.base.inset + 0.04, 1 - g.base.inset - 0.04]) {
-      ctx.fillRect(cx * W, g.base.from * H, W * 0.018, (g.base.to - g.base.from) * H * 0.7);
-      ctx.beginPath();
-      ctx.arc((cx + 0.009) * W, g.base.to * H - H * 0.045, H * 0.045, 0, Math.PI * 2);
-      ctx.fill();
+    for (const cx of [bi, 1 - bi - 0.02]) {
+      ctx.fillRect(cx * W, base.from * H, W * 0.016, (base.to - base.from) * H * 0.72);
+      ctx.beginPath(); ctx.arc((cx + 0.008) * W, base.to * H - H * 0.04, H * 0.04, 0, Math.PI * 2); ctx.fill();
     }
+  } else if (g.base.kind === 'drum') {
+    ctx.beginPath(); ctx.ellipse(W * 0.5, H * (base.from + 0.015), W * 0.42, H * 0.04, 0, 0, Math.PI * 2); ctx.fill();
   } else {
-    ctx.fillStyle = FAR;
-    for (const cx of [g.base.inset, 1 - g.base.inset - 0.03]) {
-      ctx.fillRect(cx * W, g.base.from * H, W * 0.03, (g.base.to - g.base.from) * H);
-    }
+    for (const cx of [bi, 1 - bi - 0.025]) ctx.fillRect(cx * W, base.from * H, W * 0.026, (base.to - base.from) * H);
   }
-  rect(g.mouth, '#FF00FF'); // the opening: the model must leave exactly this empty
-  // Report the mouth the way the detector will measure it: pixel aspect, share of the frame
-  // width, and share of the object's own bbox (lata aprovada: 89 % × 21 %).
-  const [mwpx, mhpx] = [(g.mouth[2] - g.mouth[0]) * W, (g.mouth[3] - g.mouth[1]) * H];
-  const [bwpx, bhpx] = [(g.body[2] - g.body[0]) * W, (g.base.to - g.body[1]) * H];
-  console.log(`[ref] ${out} ${W}×${H} ${kind}: boca ${Math.round(mwpx)}×${Math.round(mhpx)} px `
-    + `(${(mwpx / mhpx).toFixed(2)}:1), ${Math.round((mwpx / bwpx) * 100)} % da largura do objeto, `
-    + `${Math.round((mwpx * mhpx / (bwpx * bhpx)) * 100)} % do bbox, topo horizontal`);
+  rect(mouth, '#FF00FF');   // the opening: painted by the model, detected by process-sprites
+  const mwp = (mouth[2] - mouth[0]) * W, mhp = (mouth[3] - mouth[1]) * H;
+  console.log(`[guide] ${grillId} e${evo} (${style}) ${W}×${H}: boca ${Math.round(mwp)}×${Math.round(mhp)} px `
+    + `= ${(mwp / mhp).toFixed(2)}:1 · ${cap.zoneCount}×${cap.slotsPerZone} vagas · leito ${need.bedW} px na tela `
+    + `· vaga ${need.cellW}×${need.cellH} → ${out}`);
   return c;
 }
 
 await mkdir(dirname(join(ROOT, out)), { recursive: true });
 if (mode === 'guide') {
-  await writeFile(join(ROOT, out), drawGuide(out, +W, +H, rest[0]).toBuffer('image/png'));
+  const grillId = flags.grill, evo = +(flags.evo ?? 1);
+  if (!grillId) { console.error('usage: make-ref.mjs guide <out.png> [W] --grill <id> --evo <n>'); process.exit(2); }
+  await writeFile(join(ROOT, out), (await drawGuide(out, { grillId, evo, W: +W || 1408 })).toBuffer('image/png'));
   process.exit(0);
 }
 const manifest = existsSync(join(ROOT, 'Assets', 'Art', 'sprites.manifest.json'))

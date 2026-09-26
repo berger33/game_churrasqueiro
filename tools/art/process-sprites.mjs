@@ -24,6 +24,7 @@
  * source=ai-assisted, status=pending; approval flips it to ai-assisted-reviewed/approved.
  */
 import { createCanvas, loadImage } from '@napi-rs/canvas';
+import { loadStandard, capacity, requiredMouth, measuredMouth, conformFactor, scaleHole, CONFORM_LIMIT } from './grill-geometry.mjs';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join, dirname, relative } from 'node:path';
@@ -37,6 +38,16 @@ const REGISTRY_COLUMNS = ['name', 'category', 'source', 'license', 'version', 'a
 // (docs/22-ARTE_2D_PLANO.md §6.4) — the same hole detector that failed lote 03's grills.
 const DRY_RUN = process.argv.includes('--dry-run');
 const ALLOW_REPAINT = process.argv.includes('--allow-repaint');
+// --conform (on by default for an asset that declares `grill`+`evo`): the model is told the ratio
+// of the cooking opening, and across three rounds it delivered 1.31:1, 1.85:1, 2.24:1, 2.77:1 and
+// 2.88:1 for targets of ~2:1. Diffusion does not measure pixels, so the *mouth* is finished in the
+// pipeline instead of being begged for in the prompt: the trimmed sprite is scaled vertically by the
+// factor that puts the opening's on-screen height inside the standard, and the hole geometry written
+// to the manifest is scaled with it, so the game still finds the mouth where the art now has it.
+// It only ever moves the mouth inside its own grill — food is drawn by the engine at its own size.
+// Refuses to lie about it: the factor is recorded in the manifest and printed, and anything beyond
+// ±70 % is rejected as "regenerate this" rather than stretched into a blob.
+const NO_CONFORM = process.argv.includes('--no-conform');
 
 // ── image helpers ────────────────────────────────────────────────────────────
 
@@ -282,6 +293,18 @@ function alignStates(sprites, maxTiltDeg) {
     x.drawImage(toCanvas(s.w, s.h, s.data), -stats[i].cx, -stats[i].cy);
     return { w: W, h: H, data: canvasRgba(c), pivot: [0.5, 0.5], scale: scales[i] };
   });
+}
+
+// ── conforming the painted opening to the standard (docs/22 §6.8) ───────────
+
+function scaleY(sprite, f) {
+  const h2 = Math.max(1, Math.round(sprite.h * f));
+  const c = toCanvas(sprite.w, sprite.h, sprite.data);
+  const out = createCanvas(sprite.w, h2);
+  const x = out.getContext('2d');
+  x.imageSmoothingEnabled = false; // pixel art: nearest neighbour, never a blur
+  x.drawImage(c, 0, 0, sprite.w, sprite.h, 0, 0, sprite.w, h2);
+  return { w: sprite.w, h: h2, data: x.getImageData(0, 0, sprite.w, h2).data };
 }
 
 // ── holes (the grill's cooking opening) ──────────────────────────────────────
@@ -609,10 +632,28 @@ async function main() {
       }
       console.log(`[art]   ${spec.source}: ${tag}`);
     } else if (spec.mode === 'single') {
-      const { sprite, hole } = processSingle(img, lab, comps, spec);
+      let { sprite, hole } = processSingle(img, lab, comps, spec);
+      let conformed = null;
+      if (hole && spec.grill && spec.evo && !NO_CONFORM) {
+        const std = await loadStandard();
+        const cap = capacity(std, spec.grill, +spec.evo);
+        const conf = conformFactor(std.art, hole ? { ...sprite, hole } : sprite, cap);
+        if (conf?.error) { console.error(`[art] ${spec.name}: ${conf.error}`); process.exitCode = 1; }
+        else if (conf) {
+          const before = conf.got;
+          sprite = scaleY(sprite, conf.f);
+          hole = scaleHole(hole, conf.f);
+          const after = measuredMouth(std.art, { ...sprite, hole }, cap);
+          conformed = { factorY: +conf.f.toFixed(3), reason: conf.why, mouthHScreen: [before.mouthHScreen, after.mouthHScreen], aspect: [before.aspect, after.aspect] };
+          hole = { ...hole, conformed };
+          const need = requiredMouth(std.art, cap);
+          console.log(`[art] ${spec.name}: boca conformada ×${conf.f.toFixed(3)} (${conf.why}) → ${after.mouthHScreen} px de altura na tela, ${after.aspect}:1 (pedido ${need.aspect}:1)${after.ok ? '' : ` AINDA FORA: ${after.why}`}`);
+          if (!after.ok) { console.error(`[art] ${spec.name}: conformar não salvou a arte — reprova no padrão grill.art`); process.exitCode = 1; }
+        }
+      }
       const file = await writeSprite(spec.out, spec.name, sprite);
-      put(spec.name, { file, w: sprite.w, h: sprite.h, pivot: [0.5, 0.5], category: spec.category, source: srcRel, ...(hole ? { hole } : {}) });
-      row(spec.name, spec.category, file, spec.notes ?? '');
+      put(spec.name, { file, w: sprite.w, h: sprite.h, pivot: [0.5, 0.5], category: spec.category, source: srcRel, ...(spec.grill ? { grill: spec.grill, evo: +spec.evo } : {}), ...(hole ? { hole } : {}) });
+      row(spec.name, spec.category, file, spec.notes ?? (conformed ? `boca conformada ×${conformed.factorY} pelo padrão grill.art` : ''));
       console.log(`[art] ${spec.name.padEnd(38)} ${sprite.w}×${sprite.h}${hole ? `  hole bbox ${hole.bbox.join(',')}` : ''}`);
       console.log(`[art]   ${spec.source}: ${tag}`);
     } else {

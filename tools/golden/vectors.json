@@ -4,7 +4,7 @@
   "note": "Golden vectors for TS <-> C# parity. Regenerate with `npm run gen-vectors`. Never edit by hand.",
   "dataVersions": {
     "ingredients": 5,
-    "grill": 3,
+    "grill": 5,
     "economy": 12,
     "restaurants": 6,
     "upgrades": 3

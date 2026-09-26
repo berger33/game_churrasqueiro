@@ -1,7 +1,7 @@
 {
   "$schema": "schema/grill.schema.json",
   "_comment": "Grill/heat model. Zones are horizontal bands across the grill bed (top = low, bottom = high) so one-handed vertical dragging changes heat.",
-  "version": 3,
+  "version": 5,
   "zones": [
     {
       "id": "low",
@@ -90,5 +90,24 @@
       "lostCustomer"
     ],
     "_economyNote": "Payout/combo money constants live in economy.json -> reward. Do not duplicate them here."
+  },
+  "art": {
+    "_comment": "Padrão único de perspectiva e de boca para TODAS as churrasqueiras pintadas (docs/04 §5.1, docs/22 §6.8). Regra: a arte nunca pode dar ao jogador MENOS espaço que o leito procedural (proceduralBedWidth × proceduralBedHeight, o GRILL_TOP..GRILL_BOTTOM da tela de 420 px) — e a boca tem de ter altura para zoneCount faixas de comida real (foodFootprint), porque o jogo mapeia as vagas sobre o quadrilátero detectado na pintura. O leito cresce com slotsPerZone até maxBedWidthOnScreen: quem compra mais grelha recebe mais grelha na tela. maxTiltDeg é generoso de propósito (o aro redondo da lata aprovada mede −8,6°): acima de ~12° a boca deixou de ser um topo visto de frente e virou um paralelogramo de vista área, que desperdiça tela.",
+    "maxTiltDeg": 12,
+    "bedWidthOnScreen": 330,
+    "maxBedWidthOnScreen": 408,
+    "foodU": [
+      0.14,
+      0.86
+    ],
+    "cellSlackW": 1.1,
+    "cellSlackH": 1.1,
+    "foodFootprint": {
+      "width": 86,
+      "height": 54
+    },
+    "camera": "quase de frente, ~20° acima; boca retangular com topo e base perfeitamente horizontais",
+    "proceduralBedWidth": 310,
+    "proceduralBedHeight": 248
   }
 }

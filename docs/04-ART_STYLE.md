@@ -80,6 +80,32 @@ palette in `tools/studio/check-contrast` (see [11-QA.md](11-QA.md)).
 - **Proportions (characters):** 3.5 heads tall, hands ~1.4× realistic, feet exaggerated.
   Friendly, never cute-infantile.
 
+### 5.1 Grills: one camera, one bed (`shared/data/grill.json` → `art`)
+
+Every grill in the game is painted to the **same** geometry rule, and the rule is data, not
+mood. The engine maps the food grid onto the painted opening (`toGrillScreen`, u ∈ `foodU` across
+the mouth, one v band per heat zone), so the opening is a *socket the UI plugs food into*:
+
+- **camera:** three-quarter view from the front and above at ~55°, isometric 2:1 feel, light from
+  above, object standing **level** (|mouth top edge| ≤ `maxTiltDeg`). Not an aerial plan view —
+  an aerial opening has no front face for the fire and the player stops reading heat.
+- **bed width on screen:** `grillBedWidthOnScreen(art, {zoneCount, slotsPerZone})` in
+  `tools/sim-core/src/grill-art.ts`, clamped to `bedWidthOnScreen`…`maxBedWidthOnScreen`. A grill
+  with more slots per row gets a wider bed; a painted grill is **never** worse than the procedural
+  fallback it replaces (`proceduralBedWidth`/`proceduralBedHeight` are the floor and the ceiling).
+- **mouth aspect:** derived from that bed and one honest band per zone — ~3:1 for a 1×2 drum, ~2,8:1
+  for a 2×2 cart, ~2:1 for a 3×3 furnace, ~2,3:1 for a 3×4. Bigger grill = wider *and* taller
+  opening, which is why the reference image is generated per evolution, not per style.
+- **the opening is empty**: magenta in the master, transparent in the sprite. Coals, grate and food
+  are drawn by the engine, so a painted grate over the mouth is a defect, not detail.
+- **the fire goes on the front face** below the opening. Embers inside the mouth erase the mouth.
+
+`node tools/art/check-grill-geometry.mjs` measures shipped art against this (it is a CI gate),
+`make-ref.mjs guide --grill <id> --evo <n>` prints the matching layout guide, and the parity of
+engine vs. gate is pinned by `tools/studio/test/grill-art.test.ts`. Where the model misses the
+ratio, the pipeline conforms the mouth (docs/22 §6.8) and records `hole.conformed` on the sprite —
+a conformed grill is visibly a conformed grill in the registry.
+
 ## 6. The food shader (the single most important asset)
 
 One parametrized material, `Custom/FoodDoneness`, drives **all** cooked visuals. It takes:

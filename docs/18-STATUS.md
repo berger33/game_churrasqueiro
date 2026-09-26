@@ -53,6 +53,20 @@ The redo is lote 04: the same 10 images, the same sprite names, two corrections.
   The two steel grills went through **three more prompt routes and lost all three** (measured
   6 %/9 %, a 642×25 slit, a 32×31 "mouth", −12.4° tilt); the lote-04 versions were restored from
   `f26f0c4` as the best available and stay `rejected` for the owner's call (docs/22 §6.7).
+- **The grill standard (docs/22 §6.8)**: perspective and bed size are now *data*
+  (`shared/data/grill.json` → `art`) and a *gate* (`check-grill-geometry.mjs`), because the engine
+  maps the food grid onto the painted opening. Measured verdict: the owner-approved brick furnace
+  could not hold its own 9 slots (bands of 40 px for 54 px of food), the three tin drums were fine,
+  and both steel grills failed for the same reason as the furnace. Fix: the layout guide is
+  generated from the data (so the frame follows the mouth, not the other way round) and the
+  pipeline **conforms** a mouth that came out off-ratio — the approved furnace needed a ×1,64
+  vertical conform to reach 2:1, the new cart needed nothing (2,77:1 against 2,75:1 asked), the
+  new steel needed ×1,22. Diffusion models do not measure pixels: three prompt rounds for ~2:1
+  returned 1,31:1, 2,24:1 and 2,88:1, so the number is enforced in code and recorded as
+  `hole.conformed` instead of being begged for in prose.
+- **The l10n lie about the progression**: `grill.chef_cisma.evo2/evo3` promised "7" and "8"
+  skewers for grids of 6 (3×2) and 9 (3×3). Text corrected, and `validate-data` now holds any
+  "N fileiras, M espetos" sentence to the actual `zoneCount`/`slotsPerZone`.
 - **A process hole, found and closed**: repainting a food sheet kept five `approved` rows
   approved while their pixels changed — the freeze guarded the decision, not the art.
   `process-sprites` now refuses to repaint an `approved`/`superseded` row unless the operator
@@ -272,7 +286,7 @@ Every claim below was produced by a command run in this checkout.
 | Shot harness | `npm run check-shots` | **OK — ~6 s.** 13 real PNGs: a fresh install (splash, title, FTUE steps 1 / 2-waiting / 2 / 3 / 4, FTUE result, step 6 on Home), then a relaunch that must open on Home (home, empty grill, cooking, result). Asserts the FTUE funnel from `__churrascoAnalytics` — first PERFEITO 16.1 s, step 6 at 38.3 s (< 60 s), 0 misses. 193 painted frames, ~1 390 sim-only ticks, 60 s self-budget. |
 | Prototype server | `node prototype/dev-server.mjs` | listening on `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
 | C# core | `npm run check-csharp` | **CI: builds `Assets/Scripts/Core` (netstandard2.1, C# 9, warnings as errors) and 139 parity checks agree** — 13 tables bind losslessly, `GameData.Load` clean, cooking 48/48, scoring 32/32, effective heat, 44 FTUE vectors; 17 economy/turn vectors listed as not ported. **Here: SKIP** (no .NET SDK); verified during development with an in-process Roslyn compiler |
-| CI | `.github/workflows/ci.yml` + `npm run gates` | **14 gates on ubuntu-latest** (`check-csharp` added, with `actions/setup-dotnet` 8.0). `check-shots` is in the per-PR list (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. The Unity-side layer is still not compiled — no Unity toolchain. |
+| CI | `.github/workflows/ci.yml` + `npm run gates` | **15 gates on ubuntu-latest** (`check-csharp` with `actions/setup-dotnet` 8.0; `check-grill-geometry` grades every shipped grill art against the bed its evolution promises). `check-shots` is in the per-PR list (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. The Unity-side layer is still not compiled — no Unity toolchain. |
 
 ### The localisation gate caught a §56 violation
 
@@ -598,6 +612,10 @@ specification. The prototype proves art *direction*, not the art *budget*.
    - ~~lote 03~~ — **rejected whole by the owner** and reprocessed as lote 04, which is
      **awaiting approval** (icons, backgrounds, both meats are the keepers; see "Lote 03
      rejected" above);
+   - **grelhas, o que falta decidir** (docs/22 §6.8): aprovar a fornalha conformada ×1,64 ou
+     repintá-la em 2:1; gerar as 6 evoluções ainda sem arte (zé e2/e3, inox e2/e3, fornalha
+     e2/e3 — os guias já existem e medem certo); decidir o letreiro pintado na chapa nova.
+     Nada disso entra no runtime sem `set-status.mjs lote-05 approved`.
    - lote 05 = the content planned for lote 04 + the three redos from lote 04 (the two steel
      grills with a wider mouth, the maminha's served cell);
    - lotes 05–08 (docs/22 §6);

@@ -496,3 +496,65 @@ pequena e grelha por cima. As duas artes que funcionam neste projeto são objeto
 analogia realista (o tambor cortado e o buraco de alvenaria). As do lote 04, restauradas, são as
 melhores candidatas: boca de 15 % do sprite e topo a 4,3°/6°, mais horizontal que o da lata
 aprovada (−8,6°). Decisão do dono: aceitar os 15 %, ou encomendar as duas como outro objeto.
+
+### 6.8 O padrão de perspectiva e leito — quando a régua virou conta
+
+O dono pediu três coisas: que as grelhas façam sentido com a progressão, que o espaço na tela seja
+de acordo com cada uma, e que exista **uma** perspectiva padrão. As duas primeiras não são
+estéticas: o motor (`toGrillScreen`) joga a comida dentro da boca pintada. Então o padrão virou
+dado — `shared/data/grill.json` → `art` — e a medição virou portão (`check-grill-geometry.mjs`,
+gate 15 no `npm run gates` e no `ci.yml`).
+
+O que a régua mediu, com a arte que estava aprovada:
+
+| grelha | Z×S | pede | tinha | veredicto |
+|---|---|---|---|---|
+| Lata Amassada e1/e2/e3 | 1×2, 1×3, 1×3 | vaga ≥ 86–119 px, faixa ≥ 60 px | 119×106, 95×128, 95×131 | **ok** — uma zona só não precisa de altura |
+| Tijolo Refratário (fornalha) e1 | 3×3 | 86×60 ×3 faixas | 95×**40** | **FALHA** — a aprovada no lote 04 não comporta os 9 pratos |
+| Chapa da Calçada e1 | 2×2 | 119×60 ×2 | 119×**49** | FALHA (arte recusada do lote 04) |
+| Inox Brilhando e1 | 3×2 | 119×60 ×3 | 119×**37** | FALHA (arte recusada do lote 04) |
+
+Ou seja: a fornalha que passou na folha de contato era *linda e inútil* — 3 fileiras de brasa de
+40 px para comida de 54 px, os pratos se sobreporiam entre as fileiras. A régua não tinha opinião
+sobre o desenho; tinha sobre 14 px.
+
+**Guia derivado do dado.** `make-ref.mjs guide <out> <W> --grill <id> --evo <n>` monta a silhueta a
+partir de `visual.style` e **calcula o quadro a partir da boca** (boca = 80 % da largura; altura do
+quadro = boca/0,42), então uma lata 1×2 sai 1408×976 e uma fornalha 3×3 sai 1408×1360. O detector
+do `process-sprites` roda nos próprios guias (`--dry-run`) e devolve a boca pedida — se o guia não
+passa no detector, o guia está errado, não o modelo.
+
+**Razão numérica não cola em difusão.** Três rondas de prompt pedindo ~2:1 para a fornalha
+entregaram 1,31:1, 1,85:1, 2,24:1, 2,77:1 e 2,88:1 — o modelo não mede pixels, e em duas delas a
+boca veio *quadrada* (reprovada por `tooTall`: boca de 302 px na tela contra os 248 px do leito
+procedural que ela substitui). Rascunhei um quarto prompt; em vez de gastar a décima geração, o
+problema foi resolvido onde ele é de verdade geométrico:
+
+- **`conform-mouth.mjs`** escala o sprite na vertical até a boca fechar as faixas (`f` tal que
+  `Z·minCellH ≤ boca_tela ≤ proceduralBedHeight`), escala o `hole` junto (`bbox`, `quad`, e
+  `tiltDeg` = `atan(f·tan θ)`) e grava `hole.conformed = {factorY, reason, before, after}` no
+  manifest e no `ASSET_REGISTRY.csv`. Recusa além de ±70 % (aí é regenerar, não espremer).
+- o mesmo `conformFactor` roda **na entrada** do `process-sprites` para qualquer arte que declare
+  `grill`+`evo` no manifesto (`--no-conform` desliga), então o lote novo já sai conformado;
+- a promessa e a medição usam o **mesmo** `bedW`: a versão antiga recalculava o leito com uma folga
+  própria na medição (395 px) e sem ela na promessa (408/359) — o portão estava 3 % otimista. Isso
+  apareceu como a fornalha "ok" que voltou a reprovar quando a conta foi unificada, que é exatamente
+  o tipo de erro que se quer ter aos gritos e não em produção.
+
+Resultado com a matemática honesta: a fornalha aprovada precisava de **×1,64** (boca 3,27:1 → 2:1,
+faixa 40 → 60 px, topo 0°) e passa; o inox novo de ×1,22; a chapa nova **não precisou de nada**
+(2,77:1 contra 2,75:1 pedidos) — pintura certa existe, ela só não era verificável.
+
+**Consequências na progressão e nos dados.** O leito agora é por evolução, lido de
+`db.grill.art` pelo motor (`grillBedW`), então a lata do FTUE continua em 330 px e a fornalha 3×3
+sobe a 359 px — grelha maior, mesa maior, mesmo tamanho de comida. E a *descrição* da inox mentiu:
+`grill.chef_cisma.evo2.desc` dizia "3 fileiras, 7 espetos" para uma grade 3×2 = 6, evo3 dizia 8
+para 3×3 = 9. Corrigido no pt-BR e travado por regra nova no `validate-data`: se o texto promete um
+grid, ele é conferido contra `zoneCount`/`slotsPerZone`.
+
+**Em aberto (decisão do dono):** (a) aprovar a fornalha conformada ×1,64 — geometria certa, corpo
+esticado, e o toco da chaminé fica mais solto que na versão achatada — ou encomendar repintura em
+2:1; (b) as 6 evoluções que nunca tiveram arte (zé e2/e3, inox e2/e3, fornalha e2/e3) — os guias
+das nove já são gerados e medem certo; (c) o letreiro "GRELHA DO ZÉ DA ESQUINA" que o modelo
+pintou na lateral da chapa (o prompt proibia texto; lido em 86 px vira massa — charme ou defeito é
+escolha dele).

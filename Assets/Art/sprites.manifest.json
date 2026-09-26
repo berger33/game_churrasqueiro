@@ -1432,7 +1432,7 @@
     "spr_grill_fornalha_dragao_manso_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_fornalha_dragao_manso_evo1.png",
       "w": 1166,
-      "h": 767,
+      "h": 1255,
       "pivot": [
         0.5,
         0.5
@@ -1442,32 +1442,46 @@
       "hole": {
         "bbox": [
           153,
-          279,
+          457,
           860,
-          263
+          430
         ],
         "quad": [
           [
             155,
-            279
+            457
           ],
           [
             1010,
-            279
+            457
           ],
           [
             1010,
-            540
+            884
           ],
           [
             155,
-            540
+            884
           ]
         ],
         "tiltDeg": 0,
-        "areaFrac": 0.2517
+        "areaFrac": 0.2517,
+        "conformed": {
+          "factorY": 1.636,
+          "reason": "faixa de brasa rasa demais para a comida",
+          "mouthHScreen": [
+            110,
+            180
+          ],
+          "aspect": [
+            3.27,
+            2
+          ],
+          "date": "2026-09-26"
+        }
       },
-      "batch": "lote-04"
+      "batch": "lote-04",
+      "bedWidth": 359
     },
     "spr_grill_lata_valente_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_lata_valente_evo1.png",
@@ -1591,83 +1605,99 @@
     },
     "spr_grill_parrilla_chef_cisma_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_parrilla_chef_cisma_evo1.png",
-      "w": 1229,
-      "h": 759,
+      "w": 981,
+      "h": 939,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "grill",
-      "source": "art/source/lote-04/grill_parrilla_chef_cisma_evo1.png",
+      "source": "art/source/lote-05/spr_grill_parrilla_chef_cisma_evo1.png",
+      "grill": "parrilla_chef_cisma",
+      "evo": 1,
       "hole": {
         "bbox": [
-          102,
-          135,
-          806,
-          271
+          307,
+          178,
+          560,
+          306
         ],
         "quad": [
           [
-            257,
-            136
+            308,
+            289
           ],
           [
-            906,
-            204
+            865,
+            178
           ],
           [
-            787,
-            403
+            866,
+            355
           ],
           [
-            102,
-            307
+            307,
+            482
           ]
         ],
-        "tiltDeg": 6,
-        "areaFrac": 0.147
+        "tiltDeg": -11.3,
+        "areaFrac": 0.1146,
+        "conformed": {
+          "factorY": 1.224,
+          "reason": "faixa de brasa rasa demais para a comida",
+          "mouthHScreen": [
+            147,
+            180
+          ],
+          "aspect": [
+            2.24,
+            1.83
+          ]
+        }
       },
-      "batch": "lote-04"
+      "batch": "lote-05"
     },
     "spr_grill_ze_da_esquina_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_ze_da_esquina_evo1.png",
-      "w": 1255,
-      "h": 757,
+      "w": 1174,
+      "h": 839,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "grill",
-      "source": "art/source/lote-04/grill_ze_da_esquina_evo1.png",
+      "source": "art/source/lote-05/spr_grill_ze_da_esquina_evo1.png",
+      "grill": "ze_da_esquina",
+      "evo": 1,
       "hole": {
         "bbox": [
-          81,
-          132,
-          809,
-          238
+          203,
+          195,
+          617,
+          223
         ],
         "quad": [
           [
-            81,
-            132
+            204,
+            195
           ],
           [
-            886,
-            192
+            818,
+            267
           ],
           [
-            888,
-            369
+            819,
+            417
           ],
           [
-            91,
-            303
+            203,
+            347
           ]
         ],
-        "tiltDeg": 4.3,
-        "areaFrac": 0.1481
+        "tiltDeg": 6.7,
+        "areaFrac": 0.0957
       },
-      "batch": "lote-04"
+      "batch": "lote-05"
     },
     "spr_prop_bancada": {
       "file": "Assets/Art/Sprites/Props/spr_prop_bancada.png",

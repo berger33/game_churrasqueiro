@@ -15,6 +15,7 @@ namespace Churrasco.Core.Generated
 {
     public sealed class GrillTable
     {
+        public GrillArt Art { get; set; }
         public GrillCharcoal Charcoal { get; set; }
         public GrillInteraction Interaction { get; set; }
         public GrillScoring Scoring { get; set; }
@@ -83,5 +84,25 @@ namespace Churrasco.Core.Generated
     {
         public double T { get; set; }
         public double Value { get; set; }
+    }
+
+    public sealed class GrillArt
+    {
+        public int BedWidthOnScreen { get; set; }
+        public string Camera { get; set; }
+        public double CellSlackH { get; set; }
+        public double CellSlackW { get; set; }
+        public GrillArtFoodFootprint FoodFootprint { get; set; }
+        public List<double> FoodU { get; set; }
+        public int MaxBedWidthOnScreen { get; set; }
+        public int MaxTiltDeg { get; set; }
+        public int ProceduralBedHeight { get; set; }
+        public int ProceduralBedWidth { get; set; }
+    }
+
+    public sealed class GrillArtFoodFootprint
+    {
+        public int Height { get; set; }
+        public int Width { get; set; }
     }
 }
