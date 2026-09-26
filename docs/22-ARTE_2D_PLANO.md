@@ -683,3 +683,15 @@ Enquanto isso, o `spr_grill_fogueira_no_chao_evo1` existe no registro como `pend
 dado**: é a imagem do "nível zero" que o dono pediu, antes de existir a churrasqueira correspondente em
 `churrasqueiras.json`. O portão de geometria foi ensinado a reportar isso como conceito em vez de
 quebrar com "id não está em churrasqueiras.json".
+
+### 6.10.1 O congelamento declarado deixou de ser palavra empenhada (lote 08)
+
+`art/frozen-atlas.json` servia para dizer "este sprite está `pending`, mas o atlas em serviço continua
+entregando os bytes antigos aprovados enquanto o dono decide". Em 2026-09-26, ao rodar `build-runtime`
+de verdade depois de uma aprovação dele, o `check-art-registry` mostrou que seis das linhas declaradas
+não tinham bytes aprovados em commit nenhum: o que o atlas entregava era arte `pending` contada como
+aprovada (125 sprites embarcados, 119 linhas `approved`). A lista foi esvaziada, a história ficou escrita
+no próprio arquivo (versão 2), e o `build-runtime` agora **recusa** construir se houver entrada declarada
+sem o PNG correspondente em `art/frozen-atlas/` — congelar é entregar bytes, não descrever uma intenção.
+Consequência visível e correta: grelha sem aprovação no atlas cai para o leito procedural, e isso é
+informação para a decisão dele, não defeito a esconder.

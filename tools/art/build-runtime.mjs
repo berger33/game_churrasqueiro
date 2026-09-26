@@ -28,6 +28,23 @@ const includePending = args.includes('--include-pending');
 // shipped atlas with whatever is `approved` right now. That is how a pending review silently
 // downgrades the game the player is looking at.
 const DRY_RUN = args.includes('--dry-run');
+// ── congelamento declarado: só vale se os bytes estiverem no repo ──────────
+// `art/frozen-atlas.json` era a frase "o atlas continua servindo os bytes antigos". Um build apaga a
+// pasta de saída, então a frase só é verdade se os bytes estiverem versionados e re-codificados aqui.
+// Sem arquivo, a lista é recusada em vez de ser ignorada em silêncio — arte `pending` embarcada como se
+// fosse aprovada foi exatamente o que este portão deixou passar até 2026-09-26 (docs/22 §6.10).
+const frozenFile = join(ROOT, 'art', 'frozen-atlas.json');
+const frozenDir = join(ROOT, 'art', 'frozen-atlas');
+if (!DRY_RUN && existsSync(frozenFile)) {
+  const declared = JSON.parse(await readFile(frozenFile, 'utf8')).sprites ?? [];
+  const missing = [];
+  for (const f of declared) if (!existsSync(join(frozenDir, `${f.name}.png`))) missing.push(f.name);
+  if (missing.length) {
+    console.error(`[runtime] frozen-atlas.json declara ${missing.length} sprite(s) sem bytes em art/frozen-atlas/: ${missing.join(', ')}`);
+    console.error('[runtime] ou você salva o PNG aprovado ali (é o que "congelado" quer dizer), ou a linha sai da lista — embarcar `pending` como aprovado não é opção.');
+    process.exit(1);
+  }
+}
 const outAt = args.indexOf('--out');
 const OUT = outAt >= 0 ? join(ROOT, args[outAt + 1]) : join(ROOT, 'prototype', 'assets', 'art');
 

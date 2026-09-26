@@ -1,36 +1,5 @@
 {
-  "_comment": "Congelamento declarado (docs/22 §6.10, docs/23). O atlas em serviço (`prototype/assets/art`) foi montado a partir de masters aprovados; depois a esteira reprocessou alguns desses masters (conform de boca, reforço de prompt), e a linha correspondente no registro voltou a `pending` — que é o comportamento certo: master novo exige revisão nova. Enquanto o dono não decidir, o atlas continua servindo os bytes antigos aprovados e o master novo fica esperando. O portão `check-art-registry` exige que cada caso assim esteja listado aqui, com motivo: divergência entre registro e build tem de ser decisão escrita, não ruído. Quando o lote for aprovado (ou recusado), rode `node tools/art/build-runtime.mjs` e a lista se resolve sozinha.",
-  "version": 1,
-  "sprites": [
-    {
-      "name": "spr_grill_fornalha_dragao_manso_evo1",
-      "masterStatus": "pending",
-      "reason": "master reprocessado com boca conformada ×1,636 no lote 05; o atlas serve a versão aprovada antes do conform. Aguardando o veredito do dono sobre a fornalha conformada."
-    },
-    {
-      "name": "spr_food_maminha_raw",
-      "masterStatus": "pending",
-      "reason": "lote 05 refez a maminha inteira (o dono recusou `spr_food_maminha_served` no lote 04); os quatro estados que já estavam embarcados continuam no atlas até a nova aprovação."
-    },
-    {
-      "name": "spr_food_maminha_rare",
-      "masterStatus": "pending",
-      "reason": "igual ao raw — reprocessamento do lote 05, embarque antigo intacto."
-    },
-    {
-      "name": "spr_food_maminha_medium",
-      "masterStatus": "pending",
-      "reason": "igual ao raw — reprocessamento do lote 05, embarque antigo intacto."
-    },
-    {
-      "name": "spr_food_maminha_well",
-      "masterStatus": "pending",
-      "reason": "igual ao raw — reprocessamento do lote 05, embarque antigo intacto."
-    },
-    {
-      "name": "spr_food_maminha_burned",
-      "masterStatus": "pending",
-      "reason": "igual ao raw — reprocessamento do lote 05, embarque antigo intacto. `spr_food_maminha_served` não está aqui: foi recusado e nunca entrou no atlas."
-    }
-  ]
+  "_comment": "Congelamento declarado (docs/22 §6.10) — LISTA VAZIA desde 2026-09-26, e a razão é um erro meu que este arquivo escondia: as seis linhas que havia aqui (5 estados da maminha e a fornalha do lote 05) diziam 'o atlas serve os bytes antigos aprovados enquanto o dono decide'. Não existiam bytes aprovados: nenhuma das seis passou por `approved` em commit algum (conferido em `0479ed7` e `a26408d` no ASSET_REGISTRY.csv). O que o atlas em serviço embarcava era arte `pending` — 125 sprites para 119 linhas aprovadas. O `build-runtime` honesto, feito agora para subir as cinco aprovações do lote 07, expôs isso ao apagar a pasta e re-codificar só o que é aprovado (124). Regra a partir daqui: um congelamento só pode ser declarado se os bytes congelados estiverem no repo em `art/frozen-atlas/<nome>.png`; o `build-runtime` recusa lista declarada sem arquivo, para o 'o atlas continua servindo' nunca mais virar uma frase de conforto.",
+  "version": 2,
+  "sprites": []
 }
