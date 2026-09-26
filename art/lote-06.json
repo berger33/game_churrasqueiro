@@ -1,0 +1,79 @@
+{
+  "_comment": "Lote 06 — PARCIAL (5/10 processados): inox evo 3 + 2 folhas de VFX + molhos + equipamentos. Os outros 5 grills (chapa evo 2–3, inox evo 2, fornalha evo 2–3) falharam no holeValidation (boca pequena/inclinada vs contrato) e serão regenerados com upgrades compactos; voltam a este spec antes da aprovação. Prompts em art/prompts/lote-06.md.",
+  "batch": "lote-06",
+  "date": "2026-09-26",
+  "sourceDir": "art/source/lote-06",
+  "assets": [
+    {
+      "source": "grill_parrilla_chef_cisma_evo3.png",
+      "mode": "single", "hole": true,
+      "holeValidation": {"minAreaFrac": 0.18, "minWidthFrac": 0.70, "minAspectRatio": 1.2, "maxAspectRatio": 1.9, "maxAbsTiltDeg": 2},
+      "category": "grill", "name": "spr_grill_parrilla_chef_cisma_evo3", "label": "Chef Cisma evo 3 — Termômetro que Não Mente",
+      "out": "Assets/Art/Sprites/Grills"
+    },
+    {
+      "source": "fx_smoke_sparks.png",
+      "mode": "components", "minAreaFrac": 0.002,
+      "category": "fx", "label": "VFX: fumaça e faíscas",
+      "out": "Assets/Art/FX",
+      "names": [
+        {"name": "t_fx_smoke_soft", "at": [138, 384], "label": "fumaça leve"},
+        {"name": "t_fx_smoke_medium", "at": [413, 384], "label": "fumaça média"},
+        {"name": "t_fx_smoke_dense", "at": [688, 384], "label": "fumaça densa"},
+        {"name": "t_fx_spark", "at": [963, 384], "label": "faísca"},
+        {"name": "t_fx_spark_burst", "at": [1238, 384], "label": "chuva de faíscas"}
+      ]
+    },
+    {
+      "source": "fx_celebration.png",
+      "mode": "components", "minAreaFrac": 0.002,
+      "category": "fx", "label": "VFX: comemoração",
+      "out": "Assets/Art/FX",
+      "names": [
+        {"name": "t_fx_starburst", "at": [138, 384], "label": "estouro estrela"},
+        {"name": "t_fx_coin", "at": [413, 384], "label": "moeda"},
+        {"name": "t_fx_coin_stack", "at": [688, 384], "label": "pilha de moedas"},
+        {"name": "t_fx_confetti", "at": [963, 384], "label": "confete"},
+        {"name": "t_fx_ring", "at": [1238, 384], "label": "anel"}
+      ]
+    },
+    {
+      "source": "col_molhos.png",
+      "mode": "components", "minAreaFrac": 0.01,
+      "category": "collection", "label": "Coleção: molhos",
+      "out": "Assets/Art/Sprites/Collection",
+      "names": [
+        {"name": "spr_col_molho_campanha", "at": [172, 384], "label": "molho campanha"},
+        {"name": "spr_col_molho_alho", "at": [516, 384], "label": "molho de alho"},
+        {"name": "spr_col_molho_pimenta", "at": [860, 384], "label": "molho de pimenta"},
+        {"name": "spr_col_farofa", "at": [1204, 384], "label": "farofa"}
+      ]
+    },
+    {
+      "source": "col_equipamentos.png",
+      "mode": "icons", "cols": 3, "rows": 3,
+      "category": "collection", "label": "Coleção: equipamentos",
+      "names": ["spr_col_espeto_longo", "spr_col_grelha_argola", "spr_col_faca_churrasqueiro", "spr_col_moquem", "spr_col_abanador", "spr_col_sal_grosso", "spr_col_livro_dourado", "spr_col_carvao_pet", "spr_col_mapa_brasa"],
+      "out": "Assets/Art/Sprites/Collection"
+    }
+  ],
+  "compare": ["spr_grill_parrilla_chef_cisma_evo1"],
+  "preview": {
+    "background": "bg_restaurant_festival",
+    "grill": "spr_grill_parrilla_chef_cisma_evo3",
+    "embers": "t_fx_embers_medium",
+    "onGrill": [
+      ["spr_food_costela_medium", 0.22, 0.5, 72],
+      ["spr_food_cupim_rare", 0.52, 0.45, 72],
+      ["spr_food_picanha_medium", 0.8, 0.52, 62]
+    ],
+    "benchItems": [
+      ["spr_food_costela_raw", 62], ["spr_food_cupim_raw", 62], ["spr_food_picanha_raw", 64],
+      ["spr_food_maminha_raw", 62], ["spr_food_linguica_toscana_raw", 62]
+    ],
+    "orders": [
+      ["spr_char_staff_garcom", ["spr_food_costela_served", "spr_food_queijo_coalho_served"], 0.8],
+      ["spr_char_customer_tio_do_churrasco", ["spr_food_cupim_served", "spr_food_pao_de_alho_served"], 0.35]
+    ]
+  }
+}

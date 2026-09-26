@@ -101,3 +101,24 @@ em pacote denso, todas as peças se tocando.
 - `grill_fornalha_dragao_manso_evo2.png`: [STYLE] [GRILLEVO2: "Dragão Acordado" — the same masonry firebrick barbecue with its short chimney at the back-left like the reference, now with its wrought-iron dragon ornament bigger and awake: spread wings, glowing amber eyes and a slightly open jaw, still friendly] [TOPOPEN] [TECH]
 - `grill_fornalha_dragao_manso_evo3.png`: [STYLE] [GRILLEVO2: "Inferno Bom" — the same masonry barbecue with its short chimney at the back-left and its awake dragon, now with a taller chimney glowing with embers at the rim and thin glowing lava-like cracks across the firebricks] [TOPOPEN] [TECH]
 - `fx_celebration.png` (sem referência): [STYLE] Subject: celebration effects for perfect serves and rewards. [FX5] 1: a radial golden starburst flash with soft rays. 2: a single shiny gold coin with an embossed flame emblem. 3: a short stack of three gold coins. 4: a dense burst cluster of small confetti pieces in red, gold, green and blue (no magenta, no pink), packed tightly with all pieces touching each other. 5: a glowing golden ring, a flat shockwave circle. [TECH]
+
+---
+
+## Resultado da 2ª passada + plano da 3ª (grills)
+
+Inox evo 3 **passou** (boca 28% área · 72% largura · aspecto 1.841 · 0° — espelha a evo 1:
+31% · 74% · 1.839 · 0°) e virou o gabarito. Os outros 5 **falharam no `holeValidation`**:
+
+| Grill | área (≥18%) | largura (≥70%) | inclinação (±2°) | aspecto (1.2–1.9) | causa |
+|---|---|---|---|---|---|
+| chapa evo 2 | 9.2 ❌ | 58.8 ❌ | −5.6° ❌ | 2.65 ❌ | câmera oblíqua 3/4 + toldo alto com mastros |
+| chapa evo 3 | ok | 54.2 ❌ | ok | ok | toldo + prateleira + torresmo estufam a silhueta |
+| inox evo 2 | ok | 49.5 ❌ | −3.2° ❌ | ok | oblíqua + manivela para fora |
+| fornalha evo 2 | ok | 69.2 ❌ (por 0.8pp) | ok | ok | enquadramento um pouco aberto |
+| fornalha evo 3 | 17.5 ❌ | 57.1 ❌ | −14° ❌ | ok | muito oblíqua |
+
+**Regra da 3ª passada (5 imagens):** câmera frontal simétrica como a evo 1 (inclinação 0°);
+upgrades **compactos e colados ao corpo** (toldo como capa próxima, sem mastros altos;
+manivela/termômetro NO painel frontal; dragão/chaminé sem estender a silhueta); a boca
+domina o sprite (≥70% da largura, ≥18% da área). Não afrouxar o contrato: ele garante a
+área de toque jogável.

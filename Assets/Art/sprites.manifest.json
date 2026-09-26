@@ -937,6 +937,162 @@
       "source": "art/source/lote-05/char_funcionarios.png",
       "batch": "lote-05"
     },
+    "spr_col_abanador": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_abanador.png",
+      "w": 294,
+      "h": 300,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "collection",
+      "source": "art/source/lote-06/col_equipamentos.png",
+      "batch": "lote-06"
+    },
+    "spr_col_carvao_pet": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_carvao_pet.png",
+      "w": 276,
+      "h": 252,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "collection",
+      "source": "art/source/lote-06/col_equipamentos.png",
+      "batch": "lote-06"
+    },
+    "spr_col_espeto_longo": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_espeto_longo.png",
+      "w": 312,
+      "h": 319,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "collection",
+      "source": "art/source/lote-06/col_equipamentos.png",
+      "batch": "lote-06"
+    },
+    "spr_col_faca_churrasqueiro": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_faca_churrasqueiro.png",
+      "w": 284,
+      "h": 310,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "collection",
+      "source": "art/source/lote-06/col_equipamentos.png",
+      "batch": "lote-06"
+    },
+    "spr_col_farofa": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_farofa.png",
+      "w": 405,
+      "h": 402,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "collection",
+      "source": "art/source/lote-06/col_molhos.png",
+      "batch": "lote-06"
+    },
+    "spr_col_grelha_argola": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_grelha_argola.png",
+      "w": 295,
+      "h": 294,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "collection",
+      "source": "art/source/lote-06/col_equipamentos.png",
+      "batch": "lote-06"
+    },
+    "spr_col_livro_dourado": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_livro_dourado.png",
+      "w": 302,
+      "h": 299,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "collection",
+      "source": "art/source/lote-06/col_equipamentos.png",
+      "batch": "lote-06"
+    },
+    "spr_col_mapa_brasa": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_mapa_brasa.png",
+      "w": 295,
+      "h": 250,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "collection",
+      "source": "art/source/lote-06/col_equipamentos.png",
+      "batch": "lote-06"
+    },
+    "spr_col_molho_alho": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_molho_alho.png",
+      "w": 219,
+      "h": 585,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "collection",
+      "source": "art/source/lote-06/col_molhos.png",
+      "batch": "lote-06"
+    },
+    "spr_col_molho_campanha": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_molho_campanha.png",
+      "w": 312,
+      "h": 499,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "collection",
+      "source": "art/source/lote-06/col_molhos.png",
+      "batch": "lote-06"
+    },
+    "spr_col_molho_pimenta": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_molho_pimenta.png",
+      "w": 215,
+      "h": 614,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "collection",
+      "source": "art/source/lote-06/col_molhos.png",
+      "batch": "lote-06"
+    },
+    "spr_col_moquem": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_moquem.png",
+      "w": 290,
+      "h": 315,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "collection",
+      "source": "art/source/lote-06/col_equipamentos.png",
+      "batch": "lote-06"
+    },
+    "spr_col_sal_grosso": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_sal_grosso.png",
+      "w": 295,
+      "h": 280,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "collection",
+      "source": "art/source/lote-06/col_equipamentos.png",
+      "batch": "lote-06"
+    },
     "spr_food_asinha_frango_burned": {
       "file": "Assets/Art/Sprites/Food/spr_food_asinha_frango_burned.png",
       "w": 444,
@@ -2269,6 +2425,48 @@
       },
       "batch": "lote-04"
     },
+    "spr_grill_parrilla_chef_cisma_evo3": {
+      "file": "Assets/Art/Sprites/Grills/spr_grill_parrilla_chef_cisma_evo3.png",
+      "w": 873,
+      "h": 712,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "grill",
+      "source": "art/source/lote-06/grill_parrilla_chef_cisma_evo3.png",
+      "hole": {
+        "bbox": [
+          123,
+          147,
+          628,
+          314
+        ],
+        "quad": [
+          [
+            168,
+            147
+          ],
+          [
+            705,
+            147
+          ],
+          [
+            750,
+            460
+          ],
+          [
+            123,
+            460
+          ]
+        ],
+        "tiltDeg": 0,
+        "areaFrac": 0.2846,
+        "widthFrac": 0.7194,
+        "aspectRatio": 1.841
+      },
+      "batch": "lote-06-probe"
+    },
     "spr_grill_ze_da_esquina_evo1": {
       "file": "Assets/Art/Sprites/Grills/spr_grill_ze_da_esquina_evo1.png",
       "w": 1024,
@@ -2323,6 +2521,42 @@
       "source": "art/source/lote-01/prop_bancada.png",
       "batch": "lote-01"
     },
+    "t_fx_coin": {
+      "file": "Assets/Art/FX/t_fx_coin.png",
+      "w": 189,
+      "h": 188,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "fx",
+      "source": "art/source/lote-06/fx_celebration.png",
+      "batch": "lote-06"
+    },
+    "t_fx_coin_stack": {
+      "file": "Assets/Art/FX/t_fx_coin_stack.png",
+      "w": 191,
+      "h": 190,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "fx",
+      "source": "art/source/lote-06/fx_celebration.png",
+      "batch": "lote-06"
+    },
+    "t_fx_confetti": {
+      "file": "Assets/Art/FX/t_fx_confetti.png",
+      "w": 243,
+      "h": 241,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "fx",
+      "source": "art/source/lote-06/fx_celebration.png",
+      "batch": "lote-06"
+    },
     "t_fx_embers_high": {
       "file": "Assets/Art/FX/t_fx_embers_high.png",
       "w": 1314,
@@ -2358,6 +2592,90 @@
       "category": "fx",
       "source": "art/source/lote-01/fx_brasas.png",
       "batch": "lote-01"
+    },
+    "t_fx_ring": {
+      "file": "Assets/Art/FX/t_fx_ring.png",
+      "w": 233,
+      "h": 231,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "fx",
+      "source": "art/source/lote-06/fx_celebration.png",
+      "batch": "lote-06"
+    },
+    "t_fx_smoke_dense": {
+      "file": "Assets/Art/FX/t_fx_smoke_dense.png",
+      "w": 256,
+      "h": 250,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "fx",
+      "source": "art/source/lote-06/fx_smoke_sparks.png",
+      "batch": "lote-06"
+    },
+    "t_fx_smoke_medium": {
+      "file": "Assets/Art/FX/t_fx_smoke_medium.png",
+      "w": 196,
+      "h": 194,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "fx",
+      "source": "art/source/lote-06/fx_smoke_sparks.png",
+      "batch": "lote-06"
+    },
+    "t_fx_smoke_soft": {
+      "file": "Assets/Art/FX/t_fx_smoke_soft.png",
+      "w": 193,
+      "h": 188,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "fx",
+      "source": "art/source/lote-06/fx_smoke_sparks.png",
+      "batch": "lote-06"
+    },
+    "t_fx_spark": {
+      "file": "Assets/Art/FX/t_fx_spark.png",
+      "w": 158,
+      "h": 188,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "fx",
+      "source": "art/source/lote-06/fx_smoke_sparks.png",
+      "batch": "lote-06"
+    },
+    "t_fx_spark_burst": {
+      "file": "Assets/Art/FX/t_fx_spark_burst.png",
+      "w": 166,
+      "h": 123,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "fx",
+      "source": "art/source/lote-06/fx_smoke_sparks.png",
+      "batch": "lote-06"
+    },
+    "t_fx_starburst": {
+      "file": "Assets/Art/FX/t_fx_starburst.png",
+      "w": 241,
+      "h": 240,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "fx",
+      "source": "art/source/lote-06/fx_celebration.png",
+      "batch": "lote-06"
     }
   },
   "foods": {
