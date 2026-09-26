@@ -161,6 +161,7 @@ Cada passo, ao ser aberto, ganha sub-passos próprios neste documento (mesmo for
 👉 **Fase 1, passo 1.4** (`check-art-registry`) + fechar a Fase 0: passo 0.1
 (decisão pendente do lote 03) e passo 0.3 (snapshot do `18-STATUS.md`). O lote 07 foi
 aprovado e seus assets estão no runtime; suas telas de metajogo continuam por implementar.
+Prompt de retomada para a próxima sessão: `docs/24-PROMPT_PROXIMA_SESSAO.md`.
 
 **Registro de progresso:**
 
