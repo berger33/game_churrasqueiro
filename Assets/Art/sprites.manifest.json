@@ -1095,75 +1095,75 @@
     },
     "spr_food_maminha_burned": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_burned.png",
-      "w": 396,
-      "h": 290,
+      "w": 472,
+      "h": 238,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-04/food_maminha.png",
-      "batch": "lote-04"
+      "source": "art/source/lote-05/food_maminha.png",
+      "batch": "lote-05"
     },
     "spr_food_maminha_medium": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_medium.png",
-      "w": 396,
-      "h": 290,
+      "w": 472,
+      "h": 238,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-04/food_maminha.png",
-      "batch": "lote-04"
+      "source": "art/source/lote-05/food_maminha.png",
+      "batch": "lote-05"
     },
     "spr_food_maminha_rare": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_rare.png",
-      "w": 396,
-      "h": 290,
+      "w": 472,
+      "h": 238,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-04/food_maminha.png",
-      "batch": "lote-04"
+      "source": "art/source/lote-05/food_maminha.png",
+      "batch": "lote-05"
     },
     "spr_food_maminha_raw": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_raw.png",
-      "w": 396,
-      "h": 290,
+      "w": 472,
+      "h": 238,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-04/food_maminha.png",
-      "batch": "lote-04"
+      "source": "art/source/lote-05/food_maminha.png",
+      "batch": "lote-05"
     },
     "spr_food_maminha_served": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_served.png",
-      "w": 377,
-      "h": 271,
+      "w": 418,
+      "h": 418,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-04/food_maminha.png",
-      "batch": "lote-04"
+      "source": "art/source/lote-05/food_maminha.png",
+      "batch": "lote-05"
     },
     "spr_food_maminha_well": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_well.png",
-      "w": 396,
-      "h": 290,
+      "w": 472,
+      "h": 238,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-04/food_maminha.png",
-      "batch": "lote-04"
+      "source": "art/source/lote-05/food_maminha.png",
+      "batch": "lote-05"
     },
     "spr_food_pao_de_alho_burned": {
       "file": "Assets/Art/Sprites/Food/spr_food_pao_de_alho_burned.png",

@@ -1,0 +1,84 @@
+{
+  "_comment": "Lote 05 (1/2) — reforço da grade da maminha (o build-runtime só exporta comida inteira, ver docs/22 §6.5/§7.1). As DUAS GRELHAS DE AÇO FORAM ABANDONADAS AQUI: três rotas de prompt (guia chapado + 'pinte em volta', câmera de frente + referência fornalha, 'é o leito do jogo' + referência lata) mediram 6 %/9 %, fresta de 642×25 e boca de 32×31 px — todas piores que o lote 04 (15 %, topo a 4,3°/6°), cujas artes foram restauradas do commit f26f0c4 e continuam rejeitadas, esperando decisão do dono. Prompts e medições: art/prompts/lote-05.md.",
+  "batch": "lote-05",
+  "date": "2026-09-26",
+  "sourceDir": "art/source/lote-05",
+  "assets": [
+    {
+      "source": "food_maminha.png",
+      "mode": "grid",
+      "cols": 2,
+      "rows": 3,
+      "category": "food",
+      "subject": "maminha",
+      "label": "Maminha (reforço: a célula 6)",
+      "cells": [
+        "raw",
+        "rare",
+        "medium",
+        "well",
+        "burned",
+        "served"
+      ],
+      "states": [
+        "raw",
+        "rare",
+        "medium",
+        "well",
+        "burned"
+      ],
+      "out": "Assets/Art/Sprites/Food"
+    }
+  ],
+  "compare": [
+    "spr_grill_lata_valente_evo1"
+  ],
+  "preview": {
+    "background": "bg_restaurant_espetinho_rua",
+    "grill": "spr_grill_ze_da_esquina_evo1",
+    "onGrill": [
+      [
+        "spr_food_maminha_medium",
+        0.26,
+        0.45,
+        72
+      ],
+      [
+        "spr_food_contra_file_rare",
+        0.55,
+        0.47,
+        72
+      ],
+      [
+        "spr_food_linguica_toscana_medium",
+        0.82,
+        0.5,
+        60
+      ]
+    ],
+    "benchItems": [
+      [
+        "spr_food_maminha_raw",
+        62
+      ],
+      [
+        "spr_food_contra_file_raw",
+        62
+      ],
+      [
+        "spr_food_pao_de_alho_raw",
+        62
+      ]
+    ],
+    "orders": [
+      [
+        "spr_char_customer_vizinho",
+        [
+          "spr_food_maminha_served",
+          "spr_food_pao_de_alho_served"
+        ],
+        0.8
+      ]
+    ]
+  }
+}

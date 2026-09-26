@@ -48,8 +48,17 @@ The redo is lote 04: the same 10 images, the same sprite names, two corrections.
   (`⚠ incomplete food set: maminha (5/6 approved, falta spr_food_maminha_served)`) instead of
   swallowing an approval silently — and it is why the redo repaints the whole 6-cell sheet, not
   just cell 6 (docs/22 §7.1).
-- ⚠ **Open**: the three redos (their prompts are already written in `art/prompts/lote-04.md`);
-  `check-art-registry` and the Unity import postprocessor are still not written.
+- **Reprocess run (lote 05, 1/2)**: the maminha sheet came out right — a triangular wedge, five
+  states sharing one outline, and cell 6 is now the round board with fan slices (docs/22 §6.6).
+  The two steel grills went through **three more prompt routes and lost all three** (measured
+  6 %/9 %, a 642×25 slit, a 32×31 "mouth", −12.4° tilt); the lote-04 versions were restored from
+  `f26f0c4` as the best available and stay `rejected` for the owner's call (docs/22 §6.7).
+- **A process hole, found and closed**: repainting a food sheet kept five `approved` rows
+  approved while their pixels changed — the freeze guarded the decision, not the art.
+  `process-sprites` now refuses to repaint an `approved`/`superseded` row unless the operator
+  reopens it as `pending` (or passes `--allow-repaint`); verified in all three directions.
+- ⚠ **Open**: whether 15 % is acceptable for the steel grills or they get authored as a different
+  object; `check-art-registry` and the Unity import postprocessor are still not written.
 
 ## AI 2D art pass — lotes 01–03, integrated in the prototype (docs/22-ARTE_2D_PLANO.md)
 

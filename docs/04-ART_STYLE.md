@@ -201,7 +201,10 @@ Anything `third-party` must have a license field that permits commercial use.
    its redo leads the next batch. An approved asset later replaced by a better one becomes
    `superseded`.
 3. Only `approved` rows may ship. Re-running the processor never resets a reviewed row
-   (status, source and notes are frozen) — **except** `rejected`: item 2 sends a refused asset's
+   (status, source and notes are frozen), and — since the freeze alone let a reprocessed sheet
+   swap the **pixels** under an `approved` row — the processor now refuses to repaint an
+   `approved`/`superseded` row at all: reopen it as `pending` first, or pass `--allow-repaint`
+   when the intent is only to re-encode the same files — **except** `rejected`: item 2 sends a refused asset's
    redo to the next batch, and a redo that could never be approved would not be a redo, so the
    next batch re-adopts that row (new file, new batch, `status=pending`, and the notes say which
    batch it reprocesses). Approved art that is deliberately replaced by a better one goes to

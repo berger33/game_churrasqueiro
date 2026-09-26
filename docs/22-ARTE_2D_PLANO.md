@@ -231,7 +231,7 @@ proíbem roupa e props magenta; a camisa salmão da mãe (lote 01) passou porque
 | **02** | espetinho de frango, coração, coxa, asinha, fraldinha, legumes, vinagrete · clientes B (+ turista com camisa floral) · lata evo 2 e evo 3 | **aprovado e integrado** |
 | **03** | 9 ícones de interface · 9 ícones de upgrade · chapa, inox e fornalha (evo 1) · fundos espetinho de rua, trailer, churrascaria de bairro · contra-filé, maminha | **REJEITADO inteiro pelo dono (2026-09-25)** — reprocessado como lote 04 |
 | **04** | **o reprocessamento do 03**: as mesmas 10 imagens com o guia de layout nas grelhas (§6.4) e a maminha triangular | **entregue, aguardando aprovação** · 3 itens voltam para reforço (§6.5) |
-| **05** | *(era o lote 04)* costela, cupim · ícones de upgrade 2/3 e 3/3 · funcionários (5) · fundos churrascaria premium e festival · **reforço**: chapa e inox com a boca maior, célula "servido" da maminha | proposto |
+| **05** | *(era o lote 04)* costela, cupim · ícones de upgrade 2/3 e 3/3 · funcionários (5) · fundos churrascaria premium e festival · **reforço**: chapa e inox com a boca maior, célula "servido" da maminha | **(1/2) entregue**: maminha refeita e **aguardando aprovação** (§6.6). As grelhas de aço voltaram para o lote 04 (§6.7) |
 | **06** | *(era o lote 05)* evoluções 2 e 3 de chapa, inox e fornalha (6) · fundo rede nacional · ícones de cosméticos (5) · categorias da coleção (10) · coleção: molhos e equipamentos (1/2) | planejado |
 | **07** | *(era o lote 06)* coleção 2/2 (churrasqueiras especiais, medalha) · banners de eventos (11, em 3 folhas) · arte da loja (7 produtos, 2 folhas) · Brasa Pass · VFX (fumaça, faíscas, PERFEITO, moedas/confete) | planejado |
 | **08** | *(era o lote 07)* mapa da rota · medalhas de conquista · key art da tela-título · loja das stores (3 conceitos de ícone, feature graphic) · sobras e refações | planejado |
@@ -350,9 +350,8 @@ Medido pelo detector do `process-sprites`, com a lata aprovada (89 % da largura 
 **O que o guia consertou e o que não consertou.** A classe do erro acabou: nenhuma das três
 saiu como janela na frente, e a inclinação do topo caiu de ±9° para 0–6°. O que sobrou é
 tamanho da boca nas duas grelhas de aço — as duas com 15 % do sprite, abaixo dos 21 % da lata.
-O reforço (lote 05) repete as duas imagens com o prompt em que a boca é descrita como a
-própria referência ("same left edge, same right edge, same top edge, same bottom edge"), porque
-o pedido de "pintar em volta" foi lido como "pintar uma churrasqueira que caiba no desenho".
+O reforço (lote 05) tentou três rotas de prompt para as duas grelhas de aço; nenhuma superou
+estes 15 % (§6.7).
 
 **Decisão do dono sobre o lote 04 (2026-09-25): 33 aprovados, 3 recusados.** Entram no runtime os
 18 ícones, os 3 fundos, os 6 quadros do contra-filé, os 5 estados da maminha e a fornalha; ficam
@@ -466,3 +465,34 @@ ele não existe neste ambiente. **Ponto de decisão: lote 03.**
    aponta para um arquivo que existe, e o runtime só contém `approved` (o CI que `docs/04` §11
    já promete).
 5. Unity: `AssetPostprocessor` lendo `sprites.manifest.json` (§7.2).
+
+### 6.6 Lote 05 (1/2) — a maminha refeita, e a regra que faltava na ferramenta
+
+A grade de 6 células saiu como pedida: cunha triangular larga à esquerda e afilada à direita
+(nada a ver com o retângulo do contra-filé), os 5 estados com o mesmo contorno, e a célula 6
+**é** a tábua redonda com as fatias em leque e o centro rosa. Está em `lote-05/pending`; os 5
+estados que o dono já tinha aprovado voltaram para `pending` de propósito, porque a grade é
+revisada como conjunto (docs/22 §6.5).
+
+Isso expôs um buraco no processo, e ele está fechado: ao repintar a grade, as 5 linhas
+`approved` conservaram o status enquanto **os pixels mudavam** — o congelamento protegia a
+decisão, não a arte. `tools/art/process-sprites.mjs` agora se recusa a repintar linha
+`approved`/`superseded` e manda registrá-la como `pending` antes (ou `--allow-repaint`, quando a
+ideia é só re-codificar os mesmos arquivos). Medido nos três caminhos: o `lote-04.json` inteiro
+→ recusa e exit 1 listando as 28 linhas; um lote com tudo `pending` → processa; `--allow-repaint`
+→ processa.
+
+### 6.7 As grelhas de aço: três rotas de prompt, todas medidas
+
+| rota | prompt | chapa | inox |
+|---|---|---|---|
+| guia chapado (lote 04) | "pinte em volta da boca" | 15 %, +4,3° | 15 %, +6° |
+| guia + boca-é-a-referência | "same left edge… bottom edge" | 6 %, −29,9° | 9 %, −27,3° |
+| câmera de frente + ref fornalha | "quase de frente, ~20°" | fresta 642×25 px | **sem furo** |
+| re-skin da lata aprovada | "é o leito do jogo, copia o tambor" | 6,3 %, −12,4° | boca 32×31 px |
+
+Leitura honesta: "churrasqueira de aço" para o modelo é um objeto realista — boca de fogo
+pequena e grelha por cima. As duas artes que funcionam neste projeto são objetos que **não têm**
+analogia realista (o tambor cortado e o buraco de alvenaria). As do lote 04, restauradas, são as
+melhores candidatas: boca de 15 % do sprite e topo a 4,3°/6°, mais horizontal que o da lata
+aprovada (−8,6°). Decisão do dono: aceitar os 15 %, ou encomendar as duas como outro objeto.
