@@ -91,11 +91,17 @@ for (const [name, e] of Object.entries(manifest.sprites).sort(([a], [b]) => a.lo
   else if ((m = name.match(/^t_fx_(.+)$/))) index.fx[m[1]] = name;
   else if (name.startsWith('ic_')) index.icons[name] = name;
 }
-// foods: an ingredient ships only when every frame it needs ships
+// foods: an ingredient ships only when every frame it needs ships — half the states painted and
+// half drawn procedurally reads as a bug, so the whole ingredient falls back instead. The cost is
+// that refusing ONE frame holds approved frames out of the game, so say it out loud (docs/22 §7.1).
+const skipped = [];
 for (const [subject, f] of Object.entries(manifest.foods)) {
   const frames = [...Object.values(f.states), f.served].filter(Boolean);
-  if (frames.every((n) => index.sprites[n])) index.foods[subject] = { kind: f.kind ?? 'grill', states: f.states, served: f.served };
+  const missing = frames.filter((n) => !index.sprites[n]);
+  if (!missing.length) index.foods[subject] = { kind: f.kind ?? 'grill', states: f.states, served: f.served };
+  else if (frames.length - missing.length) skipped.push(`${subject} (${frames.length - missing.length}/${frames.length} approved, falta ${missing.join(', ')})`);
 }
+if (skipped.length) console.log(`[runtime] ⚠ incomplete food set${skipped.length > 1 ? 's' : ''}, procedural in game: ${skipped.join('; ')}`);
 await writeFile(join(OUT, 'index.json'), JSON.stringify(index, null, 1) + '\n');
 const count = Object.keys(index.sprites).length;
 console.log(`[runtime] ${count} sprites (${(bytes / 1e6).toFixed(2)} MB webp) → ${OUT.replace(ROOT + '/', '')}${includePending ? '  ⚠ includes PENDING art — do not commit' : ''}`);

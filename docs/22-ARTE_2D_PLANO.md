@@ -354,6 +354,14 @@ O reforço (lote 05) repete as duas imagens com o prompt em que a boca é descri
 própria referência ("same left edge, same right edge, same top edge, same bottom edge"), porque
 o pedido de "pintar em volta" foi lido como "pintar uma churrasqueira que caiba no desenho".
 
+**Decisão do dono sobre o lote 04 (2026-09-25): 33 aprovados, 3 recusados.** Entram no runtime os
+18 ícones, os 3 fundos, os 6 quadros do contra-filé, os 5 estados da maminha e a fornalha; ficam
+fora `spr_grill_ze_da_esquina_evo1`, `spr_grill_parrilla_chef_cisma_evo1` e
+`spr_food_maminha_served`. Consequência não óbvia, descoberta no build: como comida entra inteira
+ou não entra, a **maminha volta ao procedural no jogo** apesar dos 5 estados aprovados — é o
+quadro recusado que segura o ingrediente. Por isso o reforço refaz a grade de 6 células, e não
+só a célula 6.
+
 
 ## 7. Integração no jogo
 
@@ -363,7 +371,7 @@ Só começa depois da aprovação do lote. Nenhum código do jogo muda enquanto 
 
 | Peça | Como |
 |---|---|
-| Build | `node tools/art/build-runtime.mjs` gera `prototype/assets/art/*.webp` + `index.json` **só com as linhas `approved`** do registro (lotes 01–02: 92 sprites, 1,41 MB). Tamanhos ≈ 3× o que a tela desenha. `--include-pending` serve para olhar um lote antes de aprovar e nunca é versionado |
+| Build | `node tools/art/build-runtime.mjs` gera `prototype/assets/art/*.webp` + `index.json` **só com as linhas `approved`** do registro (lotes 01–02: 92 sprites; com o lote 04: 125, 2,01 MB). Tamanhos ≈ 3× o que a tela desenha. `--include-pending` serve para olhar um lote antes de aprovar e nunca é versionado. **Comida entra inteira ou não entra:** se um dos 6 quadros não está no runtime, o ingrediente todo cai no procedural (metade pintada + metade desenhada por código parece bug). O build agora avisa quantos quadros faltaram — recusar um quadro de comida, portanto, segura os outros cinco aprovados fora do jogo |
 | Carregamento | `prototype/src/sprites.ts` carrega no navegador (e no `check-shots`) e não bloqueia nada: até decodificar, e em qualquer falha, o jogo desenha o procedural |
 | Comida | crossfade entre dois quadros vizinhos pelo ponto contínuo. As âncoras saem dos limiares de `ingredients.json` (meio de cada estágio): o quadro na tela concorda com o rótulo CRU/SELADO/… das regras. Bancada = quadro cru; pedido = servido; mão do FTUE = cru |
 | Churrasqueira | fundo → brasas por zona dentro da boca (crossfade entre as faixas fraco/médio/forte pelo calor da zona, que cai quando o carvão acaba) → grelha paralela à borda → moldura pintada → comida. Vale também para a tela-título e para a miniatura do card da Home |

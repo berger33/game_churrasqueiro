@@ -38,11 +38,18 @@ The redo is lote 04: the same 10 images, the same sprite names, two corrections.
   `lote-04/pending`, each note saying which batch it reprocesses. That needed a rule change
   (docs/04 §11 item 3): a `rejected` row is no longer frozen, or a refused asset could never be
   approved by its own redo.
-- **Runtime unchanged and correct**: only `approved` rows ship, so the prototype still runs the
-  92 approved sprites of lotes 01–02. Approving lote 04 is two commands
-  (`set-status lote-04 approved` + `build-runtime`).
-- ⚠ **Open**: the three redos above; `check-art-registry` and the Unity import postprocessor
-  are still not written.
+- **The owner approved 33 of the 36** (`set-status lote-04 approved`, then the 3 exceptions back
+  to `rejected`) and the runtime was rebuilt: **125 sprites, 2.01 MB** — the 18 UI/upgrade icons,
+  3 restaurant backgrounds, the contra-filé's 6 frames and the fornalha's painted opening are in
+  the game; the two steel grills and `spr_food_maminha_served` are not.
+- That exposed a rule worth knowing: `build-runtime` ships a food **whole or not at all**, so
+  refusing one frame of the maminha holds its five approved frames out and the ingredient falls
+  back to procedural art in game. The build now says so
+  (`⚠ incomplete food set: maminha (5/6 approved, falta spr_food_maminha_served)`) instead of
+  swallowing an approval silently — and it is why the redo repaints the whole 6-cell sheet, not
+  just cell 6 (docs/22 §7.1).
+- ⚠ **Open**: the three redos (their prompts are already written in `art/prompts/lote-04.md`);
+  `check-art-registry` and the Unity import postprocessor are still not written.
 
 ## AI 2D art pass — lotes 01–03, integrated in the prototype (docs/22-ARTE_2D_PLANO.md)
 
