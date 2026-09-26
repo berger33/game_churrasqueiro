@@ -8,9 +8,10 @@
 //   4. ftue     tools/golden/tutorial-vectors.json replayed through
 //               Tutorial.cs + Analytics.cs
 //
-// Run by `npm run check-csharp` (CI gate, docs/12-BUILD.md §5). Vectors whose
-// C# counterpart does not exist yet (EconomyRules.cs, TurnSimulation.cs) are
-// listed as not ported, never silently skipped. Exit 0 = full agreement.
+// Run by `npm run check-csharp` (CI gate, docs/12-BUILD.md §5). A vector whose
+// C# counterpart does not exist yet is listed as not ported, never silently
+// skipped; what still waits is EconomyRules.ApplyTurnResult and the save schema
+// (docs/23 §6.1). Exit 0 = full agreement.
 
 using System;
 using System.Collections.Generic;
@@ -201,7 +202,7 @@ public static class Program
             else economy.NotPorted(id, "unknown economy vector");
         }
         var turns = report.Section("golden.turns");
-        foreach (var v in doc["turns"]!.AsArray()) turns.NotPorted(Str(v!["id"]), "TurnSimulation.cs");
+        foreach (var v in doc["turns"]!.AsArray()) TurnVector(data, v!, turns);
         // O alicerce dos vetores de turno, conferido antes deles: se o `Rng` divergir em um bit,
         // "coins 628 ≠ 631" é sintoma, não diagnóstico — aqui a falha nomeia o sorteio.
         var rngSec = report.Section("golden.rng");
@@ -453,6 +454,83 @@ public static class Program
         }
         s.Result(Str(v["id"]), fails);
     }
+
+    // ── 3d. golden.turns (TurnSimulation.cs + SkillPolicy.cs) ───────────────
+
+    /// <summary>
+    /// Replays a whole turn — spawner, coals, patience, combo, payout — and compares the outcome.
+    /// The sections above check each layer alone; this is the only one that checks they compose.
+    /// Every one of these bugs survives all of them and dies here: a draw taken in the wrong order
+    /// by the spawner, a patience scalar applied to the wrong term, an early <c>return</c> in the
+    /// bot that leaves a plate on the fire. The bot is part of the vector, so the C# <em>model of a
+    /// player</em> is under test too, not just the model of a grill.
+    /// </summary>
+    private static void TurnVector(GameData data, JsonNode v, Section s)
+    {
+        var input = v["input"]!;
+        var ovNode = input["overrides"] as JsonObject;
+        // Missing key = null = "the reference fell back to the table", so the fallbacks below stay
+        // in TurnSimulation where they belong instead of being invented here as a zero.
+        var cfg = new TurnConfig
+        {
+            RestaurantIndex = Int(input["restaurantIndex"]),
+            LevelId = Str(input["levelId"]),
+            Seed = Num(input["seed"]),
+            Overrides = new TurnOverrides
+            {
+                TurnLengthSec = Opt(ovNode, "turnLengthSec"),
+                SpawnIntervalSec = Opt(ovNode, "spawnIntervalSec"),
+                PatienceScalar = Opt(ovNode, "patienceScalar"),
+                DifficultyScalar = Opt(ovNode, "difficultyScalar"),
+                MaxOrdersOnScreen = Opt(ovNode, "maxOrdersOnScreen") is double m ? (int)m : (int?)null
+            }
+        };
+
+        double step = Num(input["stepSec"]);
+        double skill = Num(input["skill"]);
+        // The harness seeds the bot separately from the turn on purpose: the dice that decide
+        // customers must not shift when the player model changes (turn.ts documents the same split).
+        var policy = new SkillPolicy(new Rng(Num(input["seed"]) + Int(input["levelIndex"]) * 104729), skill);
+        var sim = new TurnSimulation(data, cfg);
+
+        int guard = 0;
+        while (!sim.Finished && guard++ < 40000) sim.Tick(step, policy);
+
+        var e = v["expect"]!;
+        var res = sim.Result();
+        var fails = new List<string>();
+        if (!sim.Finished) fails.Add($"guard hit after {guard} ticks (the reference finished at {Num(e["finalTimeSec"])}s)");
+        Near(fails, "coins", res.Coins, Num(e["coins"]));
+        Near(fails, "xp", res.Xp, Num(e["xp"]));
+        Eq(fails, "stars", res.Stars, Int(e["stars"]));
+        Eq(fails, "failed", res.Failed, Bool(e["failed"]));
+        Near(fails, "finalTimeSec", sim.Time, Num(e["finalTimeSec"]));
+
+        var want = e["counters"]!.AsObject();
+        foreach (var kv in want)
+        {
+            if (kv.Key == "flawless")
+            {
+                Eq(fails, "counters.flawless", res.Counters.Flawless, Bool(kv.Value));
+                continue;
+            }
+            double? got = res.Counters.Counter(kv.Key);
+            if (got == null) { fails.Add($"counters.{kv.Key}: the C# counters have no such field"); continue; }
+            Near(fails, $"counters.{kv.Key}", got.Value, kv.Value!.GetValue<double>());
+        }
+        // The reference omits `charcoalSpend` when it is zero, so a paid-for refill shows up as an
+        // extra key here rather than as a missing one — same bug, opposite direction.
+        if (res.Counters.CharcoalSpend != null && !want.ContainsKey("charcoalSpend"))
+            fails.Add($"counters.charcoalSpend: C# spent {res.Counters.CharcoalSpend}, the vector says the fire was free");
+
+        s.Result(Str(v["id"]), fails);
+    }
+
+    /// <summary>A JSON number that may be absent; absence means "use the table's own fallback".</summary>
+    private static double? Opt(JsonObject? o, string key) =>
+        o is not null && o[key] is JsonNode n && n.GetValueKind() != JsonValueKind.Null
+            ? n.GetValue<double>()
+            : (double?)null;
 
     // ── 4. ftue (Tutorial.cs, Analytics.cs) ─────────────────────────────────
 
