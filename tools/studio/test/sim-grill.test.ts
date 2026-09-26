@@ -7,6 +7,7 @@
 import { describe, expect, it } from 'vitest';
 import { simulateProgression } from '../run-sim.ts';
 import { STARTER_CHURRASQUEIRA_ID } from '../../sim-core/src/economy.ts';
+import { loadAndValidate } from '../load-data.ts';
 
 describe('progression sim plays the owned grill', () => {
   it('starts on the starter and spends on the grill path', () => {
@@ -25,7 +26,8 @@ describe('progression sim plays the owned grill', () => {
   it('never unlocks a later grill before an earlier one', () => {
     const report = simulateProgression({ maxTurns: 16, stepSec: 1 / 12 });
     const unlocked = Object.keys(report.turnsToUnlockGrill);
-    const order = ['ze_da_esquina', 'parrilla_chef_cisma', 'fornalha_dragao_manso'];
+    const { db } = loadAndValidate();
+    const order = (db.churrasqueiras?.churrasqueiras ?? []).map((c) => c.id);
     let prev = -1;
     for (const id of unlocked) {
       const i = order.indexOf(id);

@@ -49,11 +49,22 @@ describe('data tables', () => {
   });
 
   it('have no hardcoded localization strings in gameplay tables', () => {
-    const tables = ['ingredients.json', 'customers.json', 'restaurants.json', 'upgrades.json', 'achievements.json', 'missions.json', 'events.json'];
+    // Mesma regra e mesma exceção do validate-data: chave de l10n e campo de exibição não levam
+    // literal; `_comment` / `_*Note` são nota de mantenedor e não passam pela peneira.
+    const tables = ['ingredients.json', 'customers.json', 'restaurants.json', 'upgrades.json', 'achievements.json', 'missions.json', 'events.json', 'churrasqueiras.json', 'grill.json', 'economy.json'];
     const forbidden = /[à-üÀ-Ü]/; // any accented char means a literal pt-BR string leaked in
+    const stripNotes = (v: unknown): unknown => {
+      if (Array.isArray(v)) return v.map(stripNotes);
+      if (v && typeof v === 'object') {
+        const out: Record<string, unknown> = {};
+        for (const [k, val] of Object.entries(v)) if (!k.startsWith('_')) out[k] = stripNotes(val);
+        return out;
+      }
+      return v;
+    };
     for (const t of tables) {
-      const raw = JSON.stringify(readJson(t));
-      expect(forbidden.test(raw), `${t} contains accented literal text — use *Key fields`).toBe(false);
+      const raw = JSON.stringify(stripNotes(readJson(t)));
+      expect(forbidden.test(raw), `${t} contains accented literal text in a display field — use *Key fields`).toBe(false);
     }
   });
 

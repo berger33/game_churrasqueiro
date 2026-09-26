@@ -1,11 +1,28 @@
 # 22 — Plano de Arte 2D Profissional (gerada por IA, em lotes de 10)
 
-**Data:** 2026-09-25 · branch `arena/01a0d72a-game-churrasqueiro`
+**Data:** 2026-09-25 · branch `arena/01a0daed-game-churrasqueiro` (o `main` já com o PR #6)
 **Status:**
 
 - Lotes 01 e 02 **aprovados** e **integrados no protótipo** (§7.1).
-- Lote 03 gerado e processado, **aguardando aprovação**; nenhuma imagem do lote 04 é gerada antes do "ok".
-- A auditoria completa do que falta está em §2.
+- **Lote 03 rejeitado inteiro pelo dono** (2026-09-25): "nada entra no runtime; refazer o lote".
+  As 36 linhas saem de `approved`-para-ser e viram `rejected` no registro.
+- **Lote 04 = o reprocessamento do lote 03**, as mesmas 10 imagens com duas correções (§6.4):
+  guia de layout nos três churrasqueiras e a maminha como cunha triangular. Aprovado 33/36 (§6.5).
+- **Lote 10 assinado (2026-09-26)**: a grelha a gás na sétima rodada (`r7`) passou nas três réguas com
+  a câmera que o dono pede e ele mandou assiná-la. O atlas foi re-embarcado: **127 → 128 sprites**, e a
+  fornalha do degrau 7 deixou de cair no leito procedural. §6.10.4 é a geometria que este lote ensinou.
+- **Lote 11 na segunda entrega, aguardando aprovação** (§6.12–§6.13): as duas evoluções 3 que a régua do
+  lote 06 reprovou (chapa com faixa de 19 px, inox com 35 px, as duas com o vão em nível) e a folha inteira
+  da maminha, presa desde o lote 05 pela regra "comida entra inteira". A primeira entrega passou em tudo e
+  foi devolvida pelo olho: o MÓVEL estava na diagonal, porque o guia girava a foto inteira. O `guide` agora
+  cisalha só o vão (`--mouth-tilt`) e casa o sentido da inclinação com a família assinada.
+- **A regra que o lote 06 ensinou na prática:** `set-status.mjs <lote> approved` roda a régua da grelha
+  antes de assinar e recusa o **lote inteiro** se uma linha reprovar. Um lote com 4 artes sadias e 2
+  tortas não é aprovado "em bloco com exceções" — são as 2 repintadas (este lote) ou os 4 aprovados por
+  nome. Foi por isso que o lote 06 ficou parado.
+- A auditoria completa do que falta está em §2. A numeração dos lotes seguiu a escada de 10 identidades
+  (docs/23) a partir do lote 07; a tabela de §6 registra a origem do conteúdo, e o histórico real de cada
+  rodada está em §6.8–§6.13.
 
 > **Por quê.** A mecânica agrada, mas o visual do protótipo (tudo desenhado por código em
 > `prototype/src/foods.ts`, `theme.ts` e `main.ts`) ainda parece amador. Este plano troca cada
@@ -73,19 +90,19 @@ O texto exato está em `art/prompts/lote-NN.md`. A partir do lote 02, cada promp
 Contado a partir de **todas** as tabelas de `shared/data` (e não de estimativa). Legenda:
 
 - ✅ aprovado (e, no caso do protótipo, integrado);
-- 🟡 no lote 03, aguardando aprovação;
+- 🟡 em lote entregue, aguardando aprovação;
 - 🔁 refazer;
 - ⬜ falta.
 
 | Família | Fonte nos dados | Precisa | Situação |
 |---|---|---|---|
-| Comidas (5 estados + servido) | `ingredients.json` (16) | 16 folhas | ✅ 12 · 🟡 2 (contra-filé, maminha) · ⬜ 2 (costela, cupim) |
-| Churrasqueiras × evolução | `churrasqueiras.json` (4 × 3) | 12 | ✅ 3 (lata evo 1–3) · 🔁 3 (chapa, inox, fornalha evo 1) · ⬜ 6 (evo 2–3 dessas) |
-| Fundos dos restaurantes | `restaurants.json` (7) | 7 | ✅ 1 (quintal) · 🟡 3 (espetinho de rua, trailer, bairro) · ⬜ 3 (premium, festival, rede nacional) |
-| Clientes | `customers.json` (11 tipos) | 11+ | ✅ 11 tipos, 14 retratos (variantes a/b) |
+| Comidas (5 estados + servido) | `ingredients.json` (16) | 16 folhas | ✅ 13 (12 de 6 quadros + vinagrete, de preparo) · 🟡 1 (maminha, lote 11) · ⬜ 2 (costela nv 34, cupim nv 44) |
+| Churrasqueiras × evolução | `churrasqueiras.json` (10 × 3) | 30 degraus | ✅ 12 (as 10 evo 1 + lata evo 2–3) · 🟡 6 (evo 2–3 de chapa, inox e fornalha: 4 no lote 06, 2 repintadas no 11) · ⬜ 12 (evo 2–3 das outras seis identidades) · +1 conceito sem id no dado (`fogueira_no_chao`, o "degrau zero") |
+| Fundos dos restaurantes | `restaurants.json` (10) | 10 | ✅ 4 (quintal, espetinho de rua, trailer, churrascaria de bairro) · ⬜ 6 (premium, festival, rede nacional, cais, quiosque da orla, cozinha do campeão) |
+| Clientes | `customers.json` (11 tipos) | 11+ | ✅ 11 tipos, 14 retratos (variantes a/b) · 1 superseded (o turista sem camisa do lote 01) |
 | Funcionários | `employees.json` (5 cargos) | 5 | ⬜ 5 |
-| Ícones de interface | moedas (`economy.json`: `ic_coin`, `ic_ember`) + HUD, diária, resultado | 9 | 🟡 9 |
-| Ícones de upgrade | `upgrades.json` (`tracks[].icon`, 27) | 27 | 🟡 9 · ⬜ 18 |
+| Ícones de interface | moedas (`economy.json`: `ic_coin`, `ic_ember`) + HUD, diária, resultado | 9 | ✅ 9 |
+| Ícones de upgrade | `upgrades.json` (`tracks[].icon`, 27) | 27 | ✅ 9 · ⬜ 18 |
 | Ícones de cosméticos | `upgrades.json` (`cosmeticTracks`, 5) | 5 | ⬜ 5 |
 | Coleção: itens | `collection.json` (37 entradas) | 37 | 16 usam os sprites de comida (✅ 12 · 🟡 2 · ⬜ 2) · ⬜ 21 próprios (4 molhos, 9 equipamentos, 7 churrasqueiras especiais, 1 medalha) |
 | Coleção: categorias | `collection.json` (10) | 10 | ⬜ 10 |
@@ -98,11 +115,17 @@ Contado a partir de **todas** as tabelas de `shared/data` (e não de estimativa)
 | Props | cenas de `restaurants.json` | 1 + ~4 | ✅ bancada · ⬜ tábua, pratos, pegador |
 | Loja das stores | `docs/15-ASO.md` | 5 | ⬜ 3 conceitos de ícone, feature graphic, key art |
 
-**Totais:**
+**Totais** (contados do registro, não de memória — `npm run check-art-registry` confere os três
+contadores toda rodada de CI):
 
-- 20 imagens aprovadas (lotes 01–02) viraram 92 sprites;
-- o lote 03 tem 10 imagens (36 sprites), das quais 3 vão para refação;
-- para cobrir tudo faltam cerca de **40 imagens**, em 4 lotes.
+- **128 sprites aprovados e embarcados** no protótipo (lotes 01–02, o aprovado do 04, os ícones/fundos
+  dos lotes 07–10): comidas 13 · clientes 11 tipos · grelhas 12 degraus com arte própria · fundos 4 ·
+  ícones 18;
+- **13 linhas `pending`** esperando assinatura: os 6 quadros da maminha e as 7 grelhas do fim da escada
+  (4 do lote 06 + 2 repintadas no 11 + o conceito `fogueira_no_chao`, que ainda não tem id no dado);
+- para cobrir tudo o que falta neste plano (2 comidas, 18 degraus de grelha, 6 fundos, 23 ícones,
+  funcionários, coleção, eventos, loja, pass, mapa, medalhas, VFX e a arte das stores) seguem cerca de
+  **30 imagens**, em 3 lotes.
 
 O logotipo continua tipográfico (Baloo 2 com efeitos): texto gerado por IA erra letras.
 
@@ -223,11 +246,12 @@ proíbem roupa e props magenta; a camisa salmão da mãe (lote 01) passou porque
 |---|---|---|
 | **01** | picanha, linguiça toscana, pão de alho, queijo coalho, espetinho misto · churrasqueira lata (evo 1) · fundo quintal · brasas (3 calores) · bancada · clientes A | **aprovado e integrado** |
 | **02** | espetinho de frango, coração, coxa, asinha, fraldinha, legumes, vinagrete · clientes B (+ turista com camisa floral) · lata evo 2 e evo 3 | **aprovado e integrado** |
-| **03** | 9 ícones de interface · 9 ícones de upgrade · chapa, inox e fornalha (evo 1) · fundos espetinho de rua, trailer, churrascaria de bairro · contra-filé, maminha | **entregue, aguardando aprovação** (3 churrasqueiras para refazer) |
-| **04** | refação de chapa, inox e fornalha (evo 1) **com guia de layout** · costela, cupim · ícones de upgrade 2/3 e 3/3 · funcionários (5) · fundos churrascaria premium e festival | proposto |
-| **05** | evoluções 2 e 3 de chapa, inox e fornalha (6) · fundo rede nacional · ícones de cosméticos (5) · categorias da coleção (10) · coleção: molhos e equipamentos (1/2) | planejado |
-| **06** | coleção 2/2 (churrasqueiras especiais, medalha) · banners de eventos (11, em 3 folhas) · arte da loja (7 produtos, 2 folhas) · Brasa Pass · VFX (fumaça, faíscas, PERFEITO, moedas/confete) | planejado |
-| **07** | mapa da rota · medalhas de conquista · key art da tela-título · loja das stores (3 conceitos de ícone, feature graphic) · sobras e refações | planejado |
+| **03** | 9 ícones de interface · 9 ícones de upgrade · chapa, inox e fornalha (evo 1) · fundos espetinho de rua, trailer, churrascaria de bairro · contra-filé, maminha | **REJEITADO inteiro pelo dono (2026-09-25)** — reprocessado como lote 04 |
+| **04** | **o reprocessamento do 03**: as mesmas 10 imagens com o guia de layout nas grelhas (§6.4) e a maminha triangular | **entregue, aguardando aprovação** · 3 itens voltam para reforço (§6.5) |
+| **05** | *(era o lote 04)* costela, cupim · ícones de upgrade 2/3 e 3/3 · funcionários (5) · fundos churrascaria premium e festival · **reforço**: chapa e inox com a boca maior, célula "servido" da maminha | **(1/2) entregue**: maminha refeita e **aguardando aprovação** (§6.6). As grelhas de aço voltaram para o lote 04 (§6.7) |
+| **06** | *(era o lote 05)* evoluções 2 e 3 de chapa, inox e fornalha (6) · fundo rede nacional · ícones de cosméticos (5) · categorias da coleção (10) · coleção: molhos e equipamentos (1/2) | planejado |
+| **07** | *(era o lote 06)* coleção 2/2 (churrasqueiras especiais, medalha) · banners de eventos (11, em 3 folhas) · arte da loja (7 produtos, 2 folhas) · Brasa Pass · VFX (fumaça, faíscas, PERFEITO, moedas/confete) | planejado |
+| **08** | *(era o lote 07)* mapa da rota · medalhas de conquista · key art da tela-título · loja das stores (3 conceitos de ícone, feature graphic) · sobras e refações | planejado |
 
 ### 6.1 Resultado do lote 01
 
@@ -296,14 +320,68 @@ nomeia pela posição e eles viram variantes.
 | 9 | contra-filé | 6 | ✅ |
 | 10 | maminha | 6 | ⚠️ pouco triangular: parecida com o contra-filé |
 
-### 6.4 Técnica nova para o lote 04: guia de layout
+### 6.4 Técnica nova: o guia de layout (implementado, modo `guide` do `make-ref.mjs`)
 
-Descrever a câmera com palavras falhou duas vezes nas churrasqueiras: a lata saiu oblíqua e
-as três novas saíram como janelas. No lote 04, a referência passada ao modelo será um **guia de
-layout** desenhado por script: silhueta simples da churrasqueira com a boca magenta na
-proporção e na posição exatas (~1,4:1, ≥ 75 % da largura, borda de cima horizontal), sobre
-magenta. O modelo pinta por cima da composição dada, em vez de interpretar "vista de cima".
-Os guias entram em `tools/art/make-ref.mjs` como um modo novo.
+Descrever a câmera com palavras falhou duas vezes nas churrasqueiras: a lata saiu oblíqua e as
+três do lote 03 saíram como janelas frontais. O guia inverte o ônus: um script desenha a
+silhueta e **a boca magenta já no lugar**, e o modelo pinta dentro da composição dada.
+
+```
+node tools/art/make-ref.mjs guide <out.png> <W> <H> <cart|box|masonry>
+```
+
+**Uma correção de rota:** o texto anterior pedia boca "~1,4:1, ≥ 75 % da largura". Isso não cabe
+num quadro 16:9 ao lado de um painel frontal visível — 1,4:1 numa boca de 80 % da largura pede
+uma altura maior que o próprio quadro, e é exatamente essa contradição que empurrou o modelo
+para "janela pequena na frente". A regra virou **medida**, não adjetivo: a boca é o quadrilátero
+onde o jogo mapeia as vagas e as faixas de calor, então o guia a põe com **≥ 87 % da largura do
+objeto, topo perfeitamente horizontal e ~40 % da área do bbox** (a lata aprovada: 89 % e 21 %).
+Os três tipos diferem no corpo — `cart` (carrinho com rodas), `box` (caixa de aço com
+prateleira), `masonry` (alvenaria com bancada de pedra).
+
+O guia é conferido com o **mesmo detector** que mede o sprite pintado, sem escrever nada:
+
+```
+node tools/art/process-sprites.mjs art/source/lote-04/check-guides.json --dry-run
+```
+
+É a regra do projeto aplicada à arte: quem mede o alvo é o mesmo código que mede o resultado.
+Antes disso, "a boca está pequena" era opinião; agora é um número na folha de revisão.
+
+### 6.5 Resultado do lote 04 — o reprocessamento do 03
+
+Medido pelo detector do `process-sprites`, com a lata aprovada (89 % da largura do objeto,
+21 % do sprite, −8,6°) como régua:
+
+| # | Imagem | Sprites | Boca | Avaliação |
+|---|---|---|---|---|
+| 1 | `ui_icons_core` | 9 | — | ✅ moeda, brasa, estrela, relógio, chama, check, baú, booster, cadeado; lêem a 32 px e em cinza |
+| 2 | `ui_icons_upgrades_a` | 9 | — | ✅ nomes = ids de `upgrades.json`; `ic_heat` é o card do passo 6 do FTUE |
+| 3 | `grill_ze_da_esquina_evo1` | 1 + furo | 64 % · 15 % · 4,3° | ⚠️ a boca voltou a ser a **superfície de topo** (era janela frontal de 6 % no lote 03) e o topo está quase horizontal, mas o modelo encolheu a boca do guia (92 % → 64 %). Reforço no lote 05 |
+| 4 | `grill_parrilla_chef_cisma_evo1` | 1 + furo | 66 % · 15 % · 6° | ⚠️ igual; o inox, o termômetro, a prateleira e as pernas estão bons |
+| 5 | `grill_fornalha_dragao_manso_evo1` | 1 + furo | 74 % · **25 %** · **0°** | ✅ boca maior e mais horizontal que a da lata aprovada; tijolo, bancada e chaminé coerentes |
+| 6–8 | fundos espetinho de rua / trailer / churrascaria de bairro | 3 | — | ✅ 9:16, sem texto, terço central livre; o letreiro do trailer é uma chama + linguiça, sem letras |
+| 9 | contra-filé | 6 | — | ✅ retângulo espesso com a faixa fina de gordura |
+| 10 | maminha | 6 | — | ✅ a cunha triangular resolve a confusão com o contra-filé na bancada · ⚠️ a célula 6 ("servido") saiu como mais um bife queimado: `spr_food_maminha_served` **não deve ser aprovado**; refazer a célula no lote 05 |
+
+**O que o guia consertou e o que não consertou.** A classe do erro acabou: nenhuma das três
+saiu como janela na frente, e a inclinação do topo caiu de ±9° para 0–6°. O que sobrou é
+tamanho da boca nas duas grelhas de aço — as duas com 15 % do sprite, abaixo dos 21 % da lata.
+O reforço (lote 05) tentou três rotas de prompt para as duas grelhas de aço; nenhuma superou
+estes 15 % (§6.7).
+
+**Decisão do dono sobre o lote 04 (2026-09-25): 33 aprovados, 3 recusados.** Entram no runtime os
+18 ícones, os 3 fundos, os 6 quadros do contra-filé, os 5 estados da maminha e a fornalha; ficam
+fora `spr_grill_ze_da_esquina_evo1`, `spr_grill_parrilla_chef_cisma_evo1` e
+`spr_food_maminha_served`. Consequência não óbvia, descoberta no build: como comida entra inteira
+ou não entra, a **maminha volta ao procedural no jogo** apesar dos 5 estados aprovados — é o
+quadro recusado que segura o ingrediente. Por isso o reforço refaz a grade de 6 células, e não
+só a célula 6.
+
+
+### 6.10 A escada virou dez grelhas (docs/23) — e o lote está segurado
+
+O plano de arte passa a ser **30 sprites de grelha** (10 churrasqueiras × 3 níveis) e 10 fundos de tela, não 12 e 7. Nada é gerado nem aprovado enquanto a escada mudar: `art/lote-05*` e `art/lote-06` ficam `pending`, e o runtime continua nos 125 sprites aprovados — `build-runtime.mjs` sem `--dry-run` reconstrói o atlas em serviço. A régua não muda e é por isso que a escada nova é barata: o leito é derivado de `Z×S` (`grill.json.art` + `tools/art/grill-geometry.mjs`), então degrau novo não pede código novo; o que falta é corpo novo em `STYLE_BODIES` para os três estilos (`espeto`, `tambor`, `campeao`) e as três variantes de gradiente no fallback procedural do protótipo (estas já feitas). Teto da escada em arte: 4 fileiras × 5 vagas — a boca fecha em `4×60 = 240 px ≤ 248` e o leito em 408 px; com 5 fileiras o conform engoliria a célula mínima de 60 px. Consequência conhecida e postada: em `4×5` a célula do leito pintado tem 58,8 px contra o prato de 86 px (docs/23 §5).
 
 ## 7. Integração no jogo
 
@@ -313,7 +391,7 @@ Só começa depois da aprovação do lote. Nenhum código do jogo muda enquanto 
 
 | Peça | Como |
 |---|---|
-| Build | `node tools/art/build-runtime.mjs` gera `prototype/assets/art/*.webp` + `index.json` **só com as linhas `approved`** do registro (lotes 01–02: 92 sprites, 1,41 MB). Tamanhos ≈ 3× o que a tela desenha. `--include-pending` serve para olhar um lote antes de aprovar e nunca é versionado |
+| Build | `node tools/art/build-runtime.mjs` gera `prototype/assets/art/*.webp` + `index.json` **só com as linhas `approved`** do registro (lotes 01–02: 92 sprites; com o lote 04: 125, 2,01 MB). Tamanhos ≈ 3× o que a tela desenha. `--include-pending` serve para olhar um lote antes de aprovar e nunca é versionado. **Comida entra inteira ou não entra:** se um dos 6 quadros não está no runtime, o ingrediente todo cai no procedural (metade pintada + metade desenhada por código parece bug). O build agora avisa quantos quadros faltaram — recusar um quadro de comida, portanto, segura os outros cinco aprovados fora do jogo |
 | Carregamento | `prototype/src/sprites.ts` carrega no navegador (e no `check-shots`) e não bloqueia nada: até decodificar, e em qualquer falha, o jogo desenha o procedural |
 | Comida | crossfade entre dois quadros vizinhos pelo ponto contínuo. As âncoras saem dos limiares de `ingredients.json` (meio de cada estágio): o quadro na tela concorda com o rótulo CRU/SELADO/… das regras. Bancada = quadro cru; pedido = servido; mão do FTUE = cru |
 | Churrasqueira | fundo → brasas por zona dentro da boca (crossfade entre as faixas fraco/médio/forte pelo calor da zona, que cai quando o carvão acaba) → grelha paralela à borda → moldura pintada → comida. Vale também para a tela-título e para a miniatura do card da Home |
@@ -321,7 +399,7 @@ Só começa depois da aprovação do lote. Nenhum código do jogo muda enquanto 
 | Clientes | retrato circular por tipo; variantes a/b escolhidas pelo `uid`, então cada cliente mantém o rosto |
 | Cena | fundo pintado do restaurante do turno (e do quintal na tela-título), com degradê para o HUD ficar legível; as luzes procedurais saem quando a pintura já tem as suas |
 | Bancada | bancada pintada com a borda de trás cruzando a tela e as vagas como tapetes translúcidos |
-| Ícones | `coinIcon`, `flameIcon`, `starIcon`, `clockIcon` e `checkIcon` usam os ícones pintados, e os cards de upgrade usam o `icon` de cada trilha. Entram sozinhos quando o lote 03 for aprovado e o build refeito |
+| Ícones | `coinIcon`, `flameIcon`, `starIcon`, `clockIcon` e `checkIcon` usam os ícones pintados, e os cards de upgrade usam o `icon` de cada trilha. Entram sozinhos quando o lote 04 for aprovado e o build refeito |
 | Harnesses | `check-art` e `check-render` rodam sem `Image` e testam o procedural. `check-shots` tem um shim de `Image`, espera todos os sprites decodificarem e gera as capturas com a arte; é delas que saem as screenshots reais da loja |
 
 **Aprovar um lote = dois comandos:** `node tools/art/set-status.mjs lote-NN approved` e
@@ -395,12 +473,403 @@ ele não existe neste ambiente. **Ponto de decisão: lote 03.**
 ## 11. Próximos passos
 
 1. ~~Aprovação dos lotes 01 e 02~~: **aprovados** e integrados no protótipo.
-2. **Aprovação do lote 03.** Recomendação:
-   - aprovar ícones, fundos e as duas carnes;
-   - refazer chapa, inox e fornalha no lote 04 com guia de layout;
-   - decidir se a maminha fica.
+2. ~~**Aprovação do lote 03**~~ → o dono **rejeitou o lote inteiro** (2026-09-25) e mandou
+   reprocessar. Feito: é o lote 04 (§6.5), com o guia de layout do §6.4 valendo nas três grelhas.
+   - **Aprovação do lote 04** é a decisão pendente: `node tools/art/set-status.mjs lote-04
+     approved` + `node tools/art/build-runtime.mjs`;
+   - três itens vão para o reforço do lote 05 com o resto do conteúdo planejado: chapa e inox
+     com a boca maior, e a célula "servido" da maminha;
+   - **lote 05** = o que estava no lote 04 (costela, cupim, ícones 2/3 e 3/3, funcionários,
+     fundos premium e festival) + esses três reforços (§6).
 3. Lote 04 (§6), com os prompts gravados em `art/prompts/lote-04.md` antes da geração.
-4. Gate `check-art-registry`: todo arquivo em `Assets/Art` tem linha no registro, toda linha
-   aponta para um arquivo que existe, e o runtime só contém `approved` (o CI que `docs/04` §11
-   já promete).
+4. ~~Gate `check-art-registry`~~ — **built** (`npm run check-art-registry`, gate 16, na CI). Cobra
+   quatro coisas: linha `approved` tem master em disco; cada sprite do atlas tem linha no registro e
+   nenhum `rejected` embarca; todo nome pedido em `art/lote-*.json` tem linha; todo lote tem prompt
+   gravado em `art/prompts/`. E uma quinta que o histórico pedia: divergência entre registro e build
+   só passa se estiver **declarada** em `art/frozen-atlas.json` com motivo — os 6 casos hoje listados
+   são exatamente os masters que o lote 05 repintou (maminha ×5, fornalha e1) enquanto o atlas seguia
+   servindo os bytes aprovados antes do conform. Silêncio entre camadas é o que deixou arte recusada
+   quase entrando.
+4b. **Onde cada coisa mora** (conferido arquivo por arquivo, não de memória): `Assets/Art/` = 137
+   arquivos versionados (masters + `ASSET_REGISTRY.csv` + `sprites.manifest.json`); `art/` = 25
+   (specs de lote, prompts, folhas de contato, agora também `frozen-atlas.json`); `prototype/assets/art/`
+   = 126, commitado de propósito para o clone limpo já renderizar a arte aprovada. Fora do git ficam
+   `art/source/` (bruto do modelo, descartável) e `art/guias/` (saem de `make-ref.mjs guide` em um
+   comando). Um reset de sandbox rebateu o `HEAD` para a base da sessão e `git ls-files` respondeu `0`
+   em tudo — antes de "recommitar 36 MB", conferir `git log --oneline -1 -- <caminho>`.
 5. Unity: `AssetPostprocessor` lendo `sprites.manifest.json` (§7.2).
+
+### 6.6 Lote 05 (1/2) — a maminha refeita, e a regra que faltava na ferramenta
+
+A grade de 6 células saiu como pedida: cunha triangular larga à esquerda e afilada à direita
+(nada a ver com o retângulo do contra-filé), os 5 estados com o mesmo contorno, e a célula 6
+**é** a tábua redonda com as fatias em leque e o centro rosa. Está em `lote-05/pending`; os 5
+estados que o dono já tinha aprovado voltaram para `pending` de propósito, porque a grade é
+revisada como conjunto (docs/22 §6.5).
+
+Isso expôs um buraco no processo, e ele está fechado: ao repintar a grade, as 5 linhas
+`approved` conservaram o status enquanto **os pixels mudavam** — o congelamento protegia a
+decisão, não a arte. `tools/art/process-sprites.mjs` agora se recusa a repintar linha
+`approved`/`superseded` e manda registrá-la como `pending` antes (ou `--allow-repaint`, quando a
+ideia é só re-codificar os mesmos arquivos). Medido nos três caminhos: o `lote-04.json` inteiro
+→ recusa e exit 1 listando as 28 linhas; um lote com tudo `pending` → processa; `--allow-repaint`
+→ processa.
+
+### 6.7 As grelhas de aço: três rotas de prompt, todas medidas
+
+| rota | prompt | chapa | inox |
+|---|---|---|---|
+| guia chapado (lote 04) | "pinte em volta da boca" | 15 %, +4,3° | 15 %, +6° |
+| guia + boca-é-a-referência | "same left edge… bottom edge" | 6 %, −29,9° | 9 %, −27,3° |
+| câmera de frente + ref fornalha | "quase de frente, ~20°" | fresta 642×25 px | **sem furo** |
+| re-skin da lata aprovada | "é o leito do jogo, copia o tambor" | 6,3 %, −12,4° | boca 32×31 px |
+
+Leitura honesta: "churrasqueira de aço" para o modelo é um objeto realista — boca de fogo
+pequena e grelha por cima. As duas artes que funcionam neste projeto são objetos que **não têm**
+analogia realista (o tambor cortado e o buraco de alvenaria). As do lote 04, restauradas, são as
+melhores candidatas: boca de 15 % do sprite e topo a 4,3°/6°, mais horizontal que o da lata
+aprovada (−8,6°). Decisão do dono: aceitar os 15 %, ou encomendar as duas como outro objeto.
+
+### 6.8 O padrão de perspectiva e leito — quando a régua virou conta
+
+> **Dois tipos de leito, um número só (2026-09-26).** A célula pintada é
+> `0,72 × leito / slotsPerZone`: 119 px com 2 espetos, 86 com 3, 73 com 4, 59 com 5, 49 com 6. O prato
+> mede 86 px. Então `grill.json.art.paintedCellsMaxSlots = 3` separa as duas linguagens — até 3 espetos a
+> grelha pinta divisórias e cada célula tem de comportar o prato (o portão cobra isso pelo nome, em
+> `bedKind: cells`); de 4 para cima ela pinta brasa contínua, sem divisória, porque uma linha no meio da
+> pintura seria a promessa de um espaço que o motor não tem (`slotX` reparte a largura da tela pelo número
+> de vagas, e é ele quem decide o tamanho do prato). Um lote novo de grelha larga, por isso, pede *leito
+> aberto* no prompt — não "menos capricho": a boca continua nivelada, a faixa por fileira continua ≥ 60 px
+> e o conform de ±70 % continua valendo.
+
+O dono pediu três coisas: que as grelhas façam sentido com a progressão, que o espaço na tela seja
+de acordo com cada uma, e que exista **uma** perspectiva padrão. As duas primeiras não são
+estéticas: o motor (`toGrillScreen`) joga a comida dentro da boca pintada. Então o padrão virou
+dado — `shared/data/grill.json` → `art` — e a medição virou portão (`check-grill-geometry.mjs`,
+gate 15 no `npm run gates` e no `ci.yml`).
+
+O que a régua mediu, com a arte que estava aprovada:
+
+| grelha | Z×S | pede | tinha | veredicto |
+|---|---|---|---|---|
+| Lata Amassada e1/e2/e3 | 1×2, 1×3, 1×3 | vaga ≥ 86–119 px, faixa ≥ 60 px | 119×106, 95×128, 95×131 | **ok** — uma zona só não precisa de altura |
+| Tijolo Refratário (fornalha) e1 | 3×3 | 86×60 ×3 faixas | 95×**40** | **FALHA** — a aprovada no lote 04 não comporta os 9 pratos |
+| Chapa da Calçada e1 | 2×2 | 119×60 ×2 | 119×**49** | FALHA (arte recusada do lote 04) |
+| Inox Brilhando e1 | 3×2 | 119×60 ×3 | 119×**37** | FALHA (arte recusada do lote 04) |
+
+Ou seja: a fornalha que passou na folha de contato era *linda e inútil* — 3 fileiras de brasa de
+40 px para comida de 54 px, os pratos se sobreporiam entre as fileiras. A régua não tinha opinião
+sobre o desenho; tinha sobre 14 px.
+
+**Guia derivado do dado.** `make-ref.mjs guide <out> <W> --grill <id> --evo <n>` monta a silhueta a
+partir de `visual.style` e **calcula o quadro a partir da boca** (boca = 80 % da largura; altura do
+quadro = boca/0,42), então uma lata 1×2 sai 1408×976 e uma fornalha 3×3 sai 1408×1360. O detector
+do `process-sprites` roda nos próprios guias (`--dry-run`) e devolve a boca pedida — se o guia não
+passa no detector, o guia está errado, não o modelo.
+
+**Razão numérica não cola em difusão.** Três rondas de prompt pedindo ~2:1 para a fornalha
+entregaram 1,31:1, 1,85:1, 2,24:1, 2,77:1 e 2,88:1 — o modelo não mede pixels, e em duas delas a
+boca veio *quadrada* (reprovada por `tooTall`: boca de 302 px na tela contra os 248 px do leito
+procedural que ela substitui). Rascunhei um quarto prompt; em vez de gastar a décima geração, o
+problema foi resolvido onde ele é de verdade geométrico:
+
+- **`conform-mouth.mjs`** escala o sprite na vertical até a boca fechar as faixas (`f` tal que
+  `Z·minCellH ≤ boca_tela ≤ proceduralBedHeight`), escala o `hole` junto (`bbox`, `quad`, e
+  `tiltDeg` = `atan(f·tan θ)`) e grava `hole.conformed = {factorY, reason, before, after}` no
+  manifest e no `ASSET_REGISTRY.csv`. Recusa além de ±70 % (aí é regenerar, não espremer).
+- o mesmo `conformFactor` roda **na entrada** do `process-sprites` para qualquer arte que declare
+  `grill`+`evo` no manifesto (`--no-conform` desliga), então o lote novo já sai conformado;
+- a promessa e a medição usam o **mesmo** `bedW`: a versão antiga recalculava o leito com uma folga
+  própria na medição (395 px) e sem ela na promessa (408/359) — o portão estava 3 % otimista. Isso
+  apareceu como a fornalha "ok" que voltou a reprovar quando a conta foi unificada, que é exatamente
+  o tipo de erro que se quer ter aos gritos e não em produção.
+
+Resultado com a matemática honesta: a fornalha aprovada precisava de **×1,64** (boca 3,27:1 → 2:1,
+faixa 40 → 60 px, topo 0°) e passa; o inox novo de ×1,22; a chapa nova **não precisou de nada**
+(2,77:1 contra 2,75:1 pedidos) — pintura certa existe, ela só não era verificável.
+
+**Consequências na progressão e nos dados.** O leito agora é por evolução, lido de
+`db.grill.art` pelo motor (`grillBedW`), então a lata do FTUE continua em 330 px e a fornalha 3×3
+sobe a 359 px — grelha maior, mesa maior, mesmo tamanho de comida. E a *descrição* da inox mentiu:
+`grill.chef_cisma.evo2.desc` dizia "3 fileiras, 7 espetos" para uma grade 3×2 = 6, evo3 dizia 8
+para 3×3 = 9. Corrigido no pt-BR e travado por regra nova no `validate-data`: se o texto promete um
+grid, ele é conferido contra `zoneCount`/`slotsPerZone`.
+
+**Em aberto (decisão do dono):** (a) aprovar a fornalha conformada ×1,64 — geometria certa, corpo
+esticado, e o toco da chaminé fica mais solto que na versão achatada — ou encomendar repintura em
+2:1; (b) as 6 evoluções que nunca tiveram arte (zé e2/e3, inox e2/e3, fornalha e2/e3) — os guias
+das nove já são gerados e medem certo; (c) o letreiro "GRELHA DO ZÉ DA ESQUINA" que o modelo
+pintou na lateral da chapa (o prompt proibia texto; lido em 86 px vira massa — charme ou defeito é
+escolha dele).
+
+### 6.9 Lote 06 — a escada inteira pintada no padrão, e a câmera que estava errada em mim
+
+Seis evoluções que nunca tiveram arte (zé e2/e3, inox e2/e3, fornalha e2/e3), cada uma com guia
+derivado do dado. Primeira passada: 3 ok, 3 fora — e as três fora eram **paralelogramos**: boca com
+topo a −40°, −16° e −20°. A causa estava no meu prompt, que pedia `isometric 2:1 feel` e, três linhas
+depois, "topo e base horizontais". Numa projeção isométrica a face de cima de uma caixa É um
+paralelogramo. O modelo obedeceu às duas frases e a régua pegou.
+
+Correção: bloco `[CAMERA]` na primeira linha do prompt — "vista de frente, levemente de cima
+(15–20°), a boca é um retângulo alinhado aos eixos da imagem, topo e base paralelos ao topo da
+imagem; não é isométrico nem aéreo". Resultado das regenerações:
+
+| arte | boca | topo | conform | veredicto |
+|---|---|---|---|---|
+| chapa e2 'Toldo Novo' | 2,17:1 | dentro | nenhum | **ok** |
+| inox e2 'Altura Regulável' | 1,83:1 | −6,8° | ×1,353 | **ok** |
+| fornalha e2 'Dragão Acordado' | 2:1 | 0° | ×1,161 | **ok** |
+| fornalha e3 'Inferno Bom' | 2,26:1 | 0° | ×1,084 | **ok** |
+| chapa e3 'Com Fritadeira' | 9,23:1 | 0° | precisaria ×3,08 | **redo** |
+| inox e3 'Termômetro que Não Mente' | 3,46:1 | 0° | precisaria ×1,73 | **redo** |
+
+Duas lições que ficam:
+
+- **o conform tem teto, e o teto é a régua.** ×3,08 num carrinho o transformaria em um totem; o
+  portão devolve `regenere, não esprema` e o lote para ali. As duas reprovas de agora são a boca
+  *rasa* (19 px e 35 px de faixa contra 60 px pedidos), não torta — a câmera foi consertada, o
+  comprimento da boca não. Uma geração por turno resolve; a instrução que falta é "a boca é a parte
+  MAIS ALTA do objeto", não apenas "larga".
+- **medir a arte reprovada é o que diz se a régua é justa.** Sem o `--all` do gate, as três
+  paralelogramas teriam virado "estilo do modelo" e alguém teria relaxado o limite de 12° para
+  passar arte ruim. O limite continua 12°: a lata aprovada mede −8,6° e a inox nova, −6,8°.
+
+Rodapé de infraestrutura, pago pelo próprio lote: `build-runtime.mjs --dry-run` agora existe. Antes
+dele, `build-runtime` **apagava e re-escrevia** o atlas de runtime antes de qualquer coisa — rodá-lo
+"para ver o aviso" de um lote pendente re-escrevia o jogo com o que estivesse `approved` (e 6 grelhas
+estavam `pending`). Hoje o dry-run mede, avisa e não toca em `prototype/assets/art`.
+
+#### 6.9.1 A montagem com os u/v do motor, e o que ela mostrou no topo da escada
+
+A prévia do lote 06 não espalha os pratos "bonitinho": ela usa os mesmos `u = 0.14 + 0.72·(i+0.5)/S`
+e `v = (j+0.5)/Z` que `toGrillScreen` usa. Com isso, a fornalha e3 (3×4 = 12 vagas no teto de
+`maxBedWidthOnScreen` = 408 px) dá célula de **73 px** para comida desenhada a **86 px** — os pratos
+encostam nos vizinhos, e encostam *no jogo também*, não é defeito da montagem.
+
+Isso é o padrão fazendo exatamente o que foi especificado: a promessa é "nunca pior que o leito
+procedural" (célula 73 px ≥ 56 px que o procedural dá para S=4), não "sempre 86 px de sobra". A 12
+vagas, no teto de largura, faltam 13 px. Três saídas, e todas são escolha do dono, não do pipeline:
+
+1. subir `maxBedWidthOnScreen` (408 → ~450 dá 80 px de célula; 420 é a largura do quadro, então é
+   literalmente encostar nas bordas — o `clamp` existe para a grelha não comer a tela do dedo);
+2. deixar `foodDisplayWidth` cair para a largura da célula quando a grelha está no teto (comida
+   3 % menor no último degrau = invisível, e o toque continua 48 dp porque é o *slot*, não o prato);
+3. aceitar o encosto no topo da escada — "a grelha está cheia" é uma informação, e hoje o jogador já
+   vê isso pelo brilho de borda.
+
+A folha (`art/review/lote-06*.jpg`) mostra a opção 3 como estado atual; a linha de comparação no topo
+da folha existe para ele ver as quatro grelhas em serviço na mesma escala antes de decidir.
+
+### 6.11 Lote 07 — as dez identidades do dono, e a boca que era larga demais *para o sprite*
+
+O dono reescreveu a escada visual em dez conceitos (fogueira no chão → tambor cortado → tijolo a seco
+→ quintal de alvenaria → espeto motorizado → defumador com tampa → gás → parrilla argentina → inox
+profissional → robótica) e colou a foto de uma arte minha para cravar a câmera: **frontal, 15–20° de
+cima, boca = vão magenta largo como o corpo, brasa na frente do corpo, abaixo da boca**. A regra de
+trabalho que ele deu no mesmo fôlego: **dez imagens geradas, validação dele antes do lote seguinte**, e
+"recriar primeiro todas as imagens pendentes para o funcionamento mecânico e visual correto; os outros
+erros vêm depois".
+
+O lote saiu com as dez pintadas, processadas e medidas (`art/review/lote-07*.jpg`). Oito das nove
+grelhas com slot no dado passaram na régua de leito; uma (a grelha a gás, `spr_grill_fornalha_dragao_manso_evo1`)
+veio com boca de 5,6:1 e faixa de 21 px — o conform pediria ×2,81, o teto é ±70 %, então é
+regeneração, e o limite de dez imagens por turno segurou a regravação para o lote 08.
+
+Achei, medindo para escrever o veredito, um defeito que **a régua não via**: boca larga *em pixels de
+vaga* pode ser boca estreita *em relação ao sprite*. O motor escala de dois jeitos —
+
+- loja (`grillArtView(hero: true)`): `s = min(bedW / spriteW, (W − 24) / spriteW)` — quem vai ao leito é
+  a **largura inteira do recorte**, então boca que ocupa 40 % do sprite vira leito de 40 % no cartão;
+- jogo (`hero: false`): `s = min(bedW / mouthW, (W − 12) / spriteW)` — quando a boca não é larga o
+  bastante, o **teto de tela** ganha da régua do leito, o leito encolhe e a comida, que é desenhada em
+  tamanho fixo (86 px), encosta na vizinha.
+
+A lata aprovada mede 0,80–0,89 de boca/sprite. Do lote 07, `espeto_do_neno` 0,42 ·
+`fornalha_da_orla` 0,42 · `tambor_vertical` 0,40 — porque os meus prompts pediram bandejas,
+porta-facas, funil de carvão, chaminé e mastro de sensor **para os lados**, e o recorte cresce para os
+lados enquanto a boca fica parada. O `make-ref` desenha o guia com a boca em 0,8 da moldura e o corpo
+em 0,89; é essa silhueta que a arte tem que obedecer, e o `[NO SIDE FURNITURE]` passa a ser bloco
+obrigatório: móvel lateral só *dentro* da largura do corpo, e o que não couber vai para baixo da boca.
+
+A régua agora mede e informa (`MOUTH_WIDTH_HINT = 0,72`, coluna `b/larg`), mas **não reprova**:
+12 grelhas já aprovadas medem menos que isso (a `parrilla_chef_cisma` e2 está em 0,31), e um portão que
+declara defeito uma arte que o dono já assinou é o portão mentindo — a mesma coisa que me fez parar de
+contar `pending` como falha no §6.9. Ela é a régua da próxima geração, e o lote 08 pinta com ela.
+
+Enquanto isso, o `spr_grill_fogueira_no_chao_evo1` existe no registro como `pending` **sem slot no
+dado**: é a imagem do "nível zero" que o dono pediu, antes de existir a churrasqueira correspondente em
+`churrasqueiras.json`. O portão de geometria foi ensinado a reportar isso como conceito em vez de
+quebrar com "id não está em churrasqueiras.json".
+
+### 6.10.1 O congelamento declarado deixou de ser palavra empenhada (lote 08)
+
+`art/frozen-atlas.json` servia para dizer "este sprite está `pending`, mas o atlas em serviço continua
+entregando os bytes antigos aprovados enquanto o dono decide". Em 2026-09-26, ao rodar `build-runtime`
+de verdade depois de uma aprovação dele, o `check-art-registry` mostrou que seis das linhas declaradas
+não tinham bytes aprovados em commit nenhum: o que o atlas entregava era arte `pending` contada como
+aprovada (125 sprites embarcados, 119 linhas `approved`). A lista foi esvaziada, a história ficou escrita
+no próprio arquivo (versão 2), e o `build-runtime` agora **recusa** construir se houver entrada declarada
+sem o PNG correspondente em `art/frozen-atlas/` — congelar é entregar bytes, não descrever uma intenção.
+Consequência visível e correta: grelha sem aprovação no atlas cai para o leito procedural, e isso é
+informação para a decisão dele, não defeito a esconder.
+
+### 6.10.2 `cheio`: a boca medida contra o próprio quadrilátero, não contra a caixa dele
+
+Nasce de um quase-engano. Comparar a área magenta com a **bbox** do vão dá 0,57 para a `lata_valente`
+aprovada — que é inclinada −8,6° e por isso nunca preenche a caixa. A régua iria reprovar cinco artes
+assinadas pelo dono por causa da câmera, que é exatamente a classe de defeito que este arquivo já
+registrou duas vezes. `mouthArea()` fecha o quadrilátero detectado (shoelace) e `cheio = área magenta ÷
+área do quadrilátero`, com piso `MOUTH_FILL_HINT = 0,85`: continua pegando boca em "L" (balcão, tampa ou
+apoio pintado para dentro do vão, que come o espaço do prato) e para de punir perspectiva. Nas dezoito
+grelhas medidas hoje o índice é 1,00–1,04 em todas.
+
+### 6.10.3 A boca em nível é um defeito de câmera, e eu a havia pedido por escrito
+
+O dono reprovou três grelhas do lote 08 com uma frase só: *"esses três não tem nenhuma inclinação na imagem,
+pode refazer"*. A medição devolveu 0°, 0° e −0,3° — exatamente as três bocas em nível do lote — enquanto as
+duas que ele aprovou medem +1,7° e −2,6° e as carimbadas como "a câmera certa" ficam entre −8,6° e −6,1°.
+Achei no meu próprio prompt do lote 07/08 a frase que causou isso: *"the top and bottom edges are horizontal
+lines parallel to the top of the image"*, escrita para matar a deriva isométrica dos lotes 03/05. O bloco
+funcionou e entregou uma planta baixa.
+
+Correção no padrão, em três peças:
+
+- `MOUTH_TILT_MIN_HINT = 4` em `grill-geometry.mjs` (`flatMouth`), com aviso no `check-grill-geometry` — piso,
+  não teto: o teto continua `grill.json.art.maxTiltDeg = 12`, e hoje 11 grelhas medidas estariam abaixo do
+  piso, duas delas aprovadas antes da régua existir. Piso de aviso é o que a assinatura dele permite.
+- `make-ref.mjs guide … --roll <graus>`: o guia de composição é desenhado **rolado** — corpo, boca e base
+  juntos — e o quadro cresce do tanto que o giro pede, para nenhum canto ser cortado e a boca continuar com os
+  pixels que o padrão exige. O modelo obedece o rolo do guia com exagero (pedido 7°, medidos 9°–18°), então o
+  rolo de partida é pequeno e a inclinação vem dita como foto: *"como a foto de um celular, sem endireitar o
+  objeto"*.
+- O prompt de grelha não pede mais "olhe para dentro da caixa": nas cinco rodadas da grelha a gás, cada vez que
+  essa frase apareceu a boca ficou funda e a câmera foi a 15–18°; sumindo ela, as duas réguas passaram juntas
+  (1,73:1 · −7,0° · recorte 0,77). Uma frase de perspectiva custava duas réguas.
+
+Fica registrada a lacuna que a folha mostrou e a régua não vê: `cheio` compara o magenta ao quadrilátero
+**ajustado**, e o ajuste acompanha entalhe — uma chapa soldada dentro do canto da boca não altera o índice
+(deu 1,02 na r1 da praça, com a chapa lá). Detectar isso exige ajustar o vão a um retângulo e comparar, o que
+mexe nas 18 medições já assinadas; é mudança de padrão, com decisão dele na frente.
+
+### 6.10.4 Caixa × cilindro: onde mora a inclinação, e por que o vão de caixa é parede frontal
+
+O dono reprovou a grelha a gás seis vezes seguidas com a mesma queixa ("sem inclinação") enquanto aprovava o
+bidão e o defumador do mesmo lote. A diferença não é atenção do modelo, é geometria: **num cilindro visto de
+frente, a curva da tampa e do fundo entrega a câmera**; **numa caixa de frente, não sobra nada além do rolo do
+quadro** — e o rolo do quadro é exatamente o que o `tiltDeg` do vão mede. Duas consequências, ambas medidas:
+
+- Elevação alta com o vão lido como *cama horizontal* esmaga a boca (A: 3,84:1, faixa 31 px; B: 4,59:1) — a
+  projeção fecha o plano horizontal na mesma taxa em que abre a profundidade. Para grelhas de caixa o vão é a
+  janela recortada na **parede frontal**, e aí a altura do vão não depende do ângulo da câmera (r6/r7: 2:1 com
+  60 px por fileira).
+- Guinada (yaw) do corpo **não** move a inclinação do vão: girando em torno do eixo vertical, as arestas
+  horizontais da frente continuam horizontais. Por isso a r6, a mais tridimensional das quatro, media −3,6° e
+  ficou abaixo do piso. O rolo precisa ser pedido à parte, com número e com chão: "8°, o chão das rodas sobe
+  para a direita". Com isso a r7 fechou −7,2° · recorte 0,74 · boca 2:1 · `cheio` 1,00 — verde em tudo, e é a
+  que vai para a assinatura dele.
+
+### 6.12 Lote 11 — as duas evo 3 que a régua reprovou, e a maminha inteira (2026-09-26)
+
+O dono assinou a grelha a gás (lote 10) e pediu duas coisas: **embarcá-la** e **repintar as duas
+evoluções 3 que a régua do leito não deixa aprovar**, junto com a maminha. As três estavam em situações
+diferentes e viraram um lote só porque o motivo é o mesmo: arte que existe, medida e reprovada por
+aritmética, não por gosto.
+
+| # | Imagem | Sprites | Medido contra o padrão `grill.art` |
+|---|---|---|---|
+| 1 | `spr_grill_ze_da_esquina_evo3` | 1 + furo | boca 2,28:1 · **vaga 86×79 px** (pedia 86×60) · vão a −6,7° · `cheio` 1,01 · **sem conform** — o lote 06 dava 19 px de faixa |
+| 2 | `spr_grill_parrilla_chef_cisma_evo3` | 1 + furo | boca 1,65:1 · **vaga 86×73 px** · vão a −6,4° · `cheio` 1,01 · **sem conform** — o lote 06 dava 35 px |
+| 3 | `food_maminha` | 6 | cunha triangular com capa de gordura só na aresta longa, 5 estados no mesmo contorno, **célula 6 = tábua com 5 fatias em leque** (o defeito que a prendia desde o lote 04) |
+
+**O que mudou no método, não só no lote.** Três coisas saem daqui e viram regra de prompt para as
+grelhas (já escritas em `art/prompts/lote-11.md`):
+
+1. **O vão de uma grelha de caixa é a janela da parede frontal, e isso precisa ser dito junto com o
+   tanto de elevação que ela aguenta.** A r1 da chapa veio funda e rasa ao mesmo tempo (1,63:1 com areia
+   no chão) porque "olhe para dentro da caixa" e "boca com altura" são ordens inimigas — a lição da
+   sexta rodada da gás, aplicada na primeira rodada desta.
+2. **Nada entra no vão por desenho, não por régua.** Os espetos e a corrente do inox estavam *dentro* da
+   boca na r1, e o `cheio` não viu: o quadrilátero ajustado acompanha o entalhe (a lacuna já escrita em
+   §6.10.3). A frase que resolveu foi "the rods and the crank live ABOVE and BESIDE the opening, never
+   inside it". É instrução de prompt, não checagem — e enquanto a checagem não existe, a frase fica.
+3. **A razão pedida não vale o rolo, e o rolo não vale a razão.** A r4 da chapa entregou 2,93:1 contra
+   2,99:1 do guia — a boca mais fiel da série — com o vão a −4,1°, no piso exato do que o dono lê como
+   "sem inclinação na imagem". A r5 cravou 2,98:1 mas com o vão pintado em 3,89:1, e o pipeline teria
+   esticado a arte inteira em ×1,304 para conformar. A adotada é a r3: boca 2,28:1 (mais alta que o
+   guia, o que **sobra** leito em vez de faltar), vão a −6,7° — dentro da faixa −8,6°…−6,1° das assinadas
+   — e zero cirurgia de pixel. As duas com a razão exata ficam em `art/source/lote-11/`, e trocar é um
+   comando por item.
+
+**A régua que ainda só avisa, e por quê.** As duas grelhas medem `b/larg` 0,69 e 0,58, abaixo do piso novo
+de 0,72. Não reprova, e não dá para reprovar o que se pede aqui: baixar a moldura abaixo dos pilares de
+tijolo e das quatro pernas é apagar a identidade da grelha. As próprias evo 1 que o dono assinou dessas
+duas identidades medem 0,48 e 0,61 — as novas estão **acima das irmãs**. Fica como escolha dele, medida,
+e não como decisão minha embutida num "ok".
+
+**Estado no fim do turno:** 128 sprites aprovados embarcados (o atlas ganhou a gás, 127 → 128), as 8
+linhas novas em `pending`, `build-runtime --dry-run` avisando que continuam no leito procedural
+`ze_da_esquina: evo2, evo3 · parrilla_chef_cisma: evo2, evo3 · fornalha_dragao_manso: evo2, evo3`.
+Nada deste lote entra no jogo sem `set-status lote-11 approved` — e aprovado, ele embarca 8 sprites de uma
+vez, porque a maminha entra inteira.
+
+**As duas evo 3 desta seção foram devolvidas pelo dono na leitura** — régua verde, objeto torto. A correção
+do método está em §6.13, e são as duas artes `l5`/`l3` que estão em `art/lote-11.json` hoje.
+
+### 6.13 O lote 11 devolvido na leitura: a churrasqueira estava na diagonal (2026-09-26)
+
+> *"as 2 que você fez agora estão estranhas, com o lado direito mais alto que o esquerdo, me refiro a
+> churrasqueira em si e não a grade; em tese, a área da grade seria essa mesma, mas a churrasqueira está na
+> diagonal."*
+
+As duas evo 3 do §6.12 mediam bem: boca 2,28:1 e 1,65:1, `cheio` 1,01, zero conform, rolo do vão dentro da
+banda pedida. Ele não leu a régua, leu o objeto, e o objeto estava tombado. A causa era minha e estava escrita
+em dois lugares, um em cada ferramenta:
+
+1. `tools/art/make-ref.mjs guide … --roll 7` — o remédio que o §6.10.3 pediu ("a boca em nível é lida como
+   planta baixa") girava a **silhueta inteira**: boca, corpo, pernas, toldo.
+2. O bloco `[CAMERA]` de `art/prompts/lote-11.md`: *"This is a photograph … the WHOLE FRAME is rotated
+   counter-clockwise by about 8 degrees — nothing in it is level: the floor under the wheels runs uphill to
+   the right"*.
+
+O modelo obedeceu às duas, a régua só media o vão, e a folha foi assinada por mim com o móvel torto. Uma foto
+tombada de um móvel é exatamente o defeito que ele descreveu.
+
+**O que a ferramenta faz agora.** `guide` ganhou `--mouth-tilt <graus>`: o corpo é desenhado de nível e só o
+vão é cisalhado em paralelogramo, com a altura **perpendicular** que o dado promete preservada — a bbox
+cresce de `tan θ × 80 %` da largura e o quadro cresce junto, para nenhum canto do vão ser cortado na hora de
+medir. `--roll` continua aceito, marcado como legado na ajuda e no log. A linha de trabalho das grelhas passa
+a ser:
+
+    node tools/art/make-ref.mjs guide art/source/lote-NN/guides/g_<id>_e<n>_level.png 1408 --grill <id> --evo <n> --mouth-tilt 7
+    node tools/art/process-sprites.mjs art/lote-NN.json --dry-run     # o guia tem de passar no MESMO detector
+
+**O sentido da inclinação é da FAMÍLIA, e a ferramenta passou a saber disso.** Medido no manifesto,
+`ze_da_esquina` assina o vão DESCENDO para a direita (+1,7° no evo 1, +10,2° no evo 2) e
+`parrilla_chef_cisma` SUBINDO (−6,1° / −6,8°). Uma evo nova com o sinal trocado faz a grelha "virar" na tela
+no instante em que o jogador evolui — é a mesma classe de defeito, só que lida na escada, não na peça.
+`drawGuide` agora lê as evo anteriores da MESMA grelha no manifesto e inverte o `--mouth-tilt` que contradiz
+a família, imprimindo o motivo na linha `[guide]`. Não virou checagem de `gates`: sinal é gosto, e o juiz do
+gosto é ele; a ferramenta só não tem mais como entregar o guia torto.
+
+**A régua de tombamento do corpo NÃO existe, e é preciso registrar por quê.** Tentei medi-la (mínimos
+quadrados na última linha opaca por coluna, 15–85 % da largura, base e topo) antes de escrever qualquer
+gate, e o número não sustenta reprovação: nas grelhas que o dono ASSINOU, |base| média 7,8° com máximo de
+16,2° (`lata_valente_evo2` a −16,2°, `parrilla_do_cais_evo1` a +14,3°, o topo da `grelha_de_praca_evo1` a
++16,6°), porque fundo redondo de tambor, curva de barrica e aba de toldo mandam mais na máscara do que a
+linha de chão. Um gate assim reprovaria arte assinada e aprovaria arte rejeitada. O que a medida fez de útil
+foi provar o padrão da foto tombada no lote devolvido — **base e topo caindo para o mesmo lado** (zé −7,3° /
+−4,4°, cisma −10,6° / 0,0°) — e isso vai na folha de revisão como evidência, não no `gates`.
+
+**As duas repinturas, medidas contra o guia novo.**
+
+| # | Sprite | boca | faixa/vaga | vão | corpo (base / topo) |
+|---|---|---|---|---|---|
+| 1 | `spr_grill_ze_da_esquina_evo3` | 2,89:1 (pedia 2,99) | 62 px ✓ | +3,8° (família +1,7/+10,2) | −0,2° / +0,4° |
+| 2 | `spr_grill_parrilla_chef_cisma_evo3` | 1,72:1 (pedia 1,99) | 70 px ✓ | −6,0° (família −6,1/−6,8) | 0,0° no topo; pernas +9,3° como na evo 1 assinada (+12,5°) |
+
+Cinco rodadas no guia novo para a chapa, três para o inox, todas medidas e tabeladas em
+`art/prompts/lote-11.md`. O que decidiu a adotada da chapa não foi a boca nem o corpo — todos de nível desde a
+`l1` — foi a fritadeira fora do vão e o `b/larg` 0,72. A maminha não mudou de arte: o bruto estava em
+`art/source/` (gitignored) e o workspace foi resetado no meio do lote, então o que está assinável é o master
+já processado; refazer um bruto é um comando por item porque os comandos de guia e de referência vivem
+versionados no arquivo de prompt — foi isso, e não o disco, que salvou esta repintura.

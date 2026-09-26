@@ -1,5 +1,5 @@
 import type { PlayerState } from './economy.ts';
-import { newPlayerState, STARTER_CHURRASQUEIRA_ID } from './economy.ts';
+import { DEFAULT_CHARCOAL_TYPE, newPlayerState, STARTER_CHURRASQUEIRA_ID } from './economy.ts';
 import type { TutorialState } from './tutorial.ts';
 
 /**
@@ -16,8 +16,11 @@ import type { TutorialState } from './tutorial.ts';
 /**
  * v1 → v2: the equipped churrasqueira (`player.churrasqueiraId` / `churrasqueiraLevels`).
  * v2 → v3: the FTUE (`progress.tutorial` / `progress.ftueDone`, docs/05-UX_FLOW.md §4).
+ * v3 → v4: the charcoal type (`player.charcoalType`, docs/23-PROGRESSAO_10_BRASAS.md).
+ *   Ausente vira `comum`, que reproduz o jogo anterior bit a bit, então save antigo
+ *   não muda de ritmo ao abrir no cliente novo.
  */
-export const SAVE_SCHEMA_VERSION = 3;
+export const SAVE_SCHEMA_VERSION = 4;
 
 export interface DailyState {
   streak: number;
@@ -189,6 +192,8 @@ export function migrate(save: SaveGame, fromVersion: number): SaveGame {
   if (!out.settings) out.settings = defaultSettings();
   if (!out.progress) out.progress = defaultProgress();
   // v2: equipped grill. Pre-v2 saves had no churrasqueira fields; grant the starter.
+  // v4: tipo de carvão. Save antigo nunca pediu um — entra o padrão, não um palpite.
+  if (!out.player.charcoalType) out.player.charcoalType = DEFAULT_CHARCOAL_TYPE;
   if (!out.player.churrasqueiraId) out.player.churrasqueiraId = STARTER_CHURRASQUEIRA_ID;
   if (!out.player.churrasqueiraLevels) {
     out.player.churrasqueiraLevels = { [out.player.churrasqueiraId]: 1 };

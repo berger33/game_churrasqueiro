@@ -22,12 +22,7 @@
         "type": "object",
         "properties": {
           "descKey": {
-            "enum": [
-              "grill.chef_cisma.desc",
-              "grill.dragao_manso.desc",
-              "grill.lata_valente.desc",
-              "grill.ze_esquina.desc"
-            ]
+            "type": "string"
           },
           "evolutions": {
             "type": "array",
@@ -55,7 +50,7 @@
                 "nameKey": {
                   "type": "string"
                 },
-                "shortName": {
+                "shortNameKey": {
                   "type": "string"
                 },
                 "slotsPerZone": {
@@ -72,7 +67,7 @@
                 "heatBase",
                 "level",
                 "nameKey",
-                "shortName",
+                "shortNameKey",
                 "slotsPerZone",
                 "zoneCount"
               ]
@@ -81,46 +76,25 @@
           "fileiras": {
             "type": "integer"
           },
-          "humorTag": {
-            "enum": [
-              "A Comercial Raiz",
-              "A de Chef",
-              "A do Quintal",
-              "O Dragao Manso"
-            ]
-          },
           "id": {
-            "enum": [
-              "fornalha_dragao_manso",
-              "lata_valente",
-              "parrilla_chef_cisma",
-              "ze_da_esquina"
-            ]
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
           },
           "index": {
             "type": "integer"
           },
           "nameKey": {
-            "enum": [
-              "grill.chef_cisma.name",
-              "grill.dragao_manso.name",
-              "grill.lata_valente.name",
-              "grill.ze_esquina.name"
-            ]
+            "type": "string"
           },
           "subtitleKey": {
-            "enum": [
-              "grill.chef_cisma.subtitle",
-              "grill.dragao_manso.subtitle",
-              "grill.lata_valente.subtitle",
-              "grill.ze_esquina.subtitle"
-            ]
+            "type": "string"
           },
           "tier": {
             "enum": [
               "chef",
               "comercial",
               "fornalha",
+              "premium",
               "quintal"
             ]
           },
@@ -144,20 +118,10 @@
                 "pattern": "^#[0-9A-Fa-f]{6}$"
               },
               "material": {
-                "enum": [
-                  "chapa_gordurada",
-                  "inox_espelhado",
-                  "lata_amassada",
-                  "tijolo_refratario"
-                ]
+                "type": "string"
               },
               "style": {
-                "enum": [
-                  "chapa",
-                  "fornalha",
-                  "inox",
-                  "lata"
-                ]
+                "type": "string"
               }
             },
             "required": [
@@ -173,7 +137,6 @@
           "descKey",
           "evolutions",
           "fileiras",
-          "humorTag",
           "id",
           "index",
           "nameKey",

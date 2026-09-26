@@ -1,0 +1,238 @@
+{
+  "_comment": "Lote 07 — as dez identidades de churrasqueira que o dono escreveu na ordem do nível zero ao tier futurista, na câmera que ele aprovou pela foto (frontal, 15–20° de cima, boca = vão magenta largo como o corpo e brasa na frente do corpo, abaixo da boca). Geometria por item vem do dado via `make-ref.mjs guide --grill <id> --evo 1`; prompts e medições em art/prompts/lote-07.md. O nível zero entra como nome NOVO (spr_grill_fogueira_no_chao_evo1) porque ainda não existe slot no dado: é conceito à espera do passo mecânico (renomear ids + `visual.style` + textos de loja + fileiras 4→3 no topo). Nenhuma linha aprovada foi baixada nem sobrescrita neste lote. Nada entra no runtime sem o dono aprovar.",
+  "batch": "lote-07",
+  "date": "2026-09-26",
+  "sourceDir": "art/source/lote-07",
+  "assets": [
+    {
+      "source": "spr_grill_fogueira_no_chao_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "category": "grill",
+      "name": "spr_grill_fogueira_no_chao_evo1",
+      "label": "Fogueira de chão com pedras — conceito do nível zero (novo slot) · 1408×768 · boca 1126×205 = 5,50:1 · 1×2 (2)",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok"
+      }
+    },
+    {
+      "source": "spr_grill_grelha_de_praca_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "category": "grill",
+      "name": "spr_grill_grelha_de_praca_evo1",
+      "label": "Tambor/lata cortada ao meio — 1º upgrade pago (nível 3) · 1408×976 · boca 1126×410 = 2,75:1 · 2×2 (4)",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok"
+      },
+      "grill": "grelha_de_praca",
+      "evo": 1
+    },
+    {
+      "source": "spr_grill_ze_da_esquina_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "category": "grill",
+      "name": "spr_grill_ze_da_esquina_evo1",
+      "label": "Tijolo simples sem reboco (nível 4) · 1408×976 · boca 1126×410 = 2,75:1 · 2×2 (4)",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok"
+      },
+      "grill": "ze_da_esquina",
+      "evo": 1
+    },
+    {
+      "source": "spr_grill_espeto_do_neno_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "category": "grill",
+      "name": "spr_grill_espeto_do_neno_evo1",
+      "label": "Quintal comum de alvenaria: chaminé e bancada (nível 6) · 1408×912 · boca 1126×377 = 2,99:1 · 2×3 (6)",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok"
+      },
+      "grill": "espeto_do_neno",
+      "evo": 1
+    },
+    {
+      "source": "spr_grill_parrilla_chef_cisma_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "category": "grill",
+      "name": "spr_grill_parrilla_chef_cisma_evo1",
+      "label": "Espeto giratório motorizado (nível 8) · 1408×1472 · boca 1126×614 = 1,83:1 · 3×2 (6)",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok"
+      },
+      "grill": "parrilla_chef_cisma",
+      "evo": 1
+    },
+    {
+      "source": "spr_grill_tambor_vertical_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "category": "grill",
+      "name": "spr_grill_tambor_vertical_evo1",
+      "label": "Com tampa / defumação — offset smoker (nível 11) · 1408×1360 · boca 1126×565 = 1,99:1 · 3×3 (9)",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok"
+      },
+      "grill": "tambor_vertical",
+      "evo": 1
+    },
+    {
+      "source": "spr_grill_fornalha_dragao_manso_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "category": "grill",
+      "name": "spr_grill_fornalha_dragao_manso_evo1",
+      "label": "A gás com queimadores (nível 14) · 1408×1360 · boca 1126×565 = 1,99:1 · 3×3 (9)",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok"
+      },
+      "grill": "fornalha_dragao_manso",
+      "evo": 1
+    },
+    {
+      "source": "spr_grill_parrilla_do_cais_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "category": "grill",
+      "name": "spr_grill_parrilla_do_cais_evo1",
+      "label": "Parrilla argentina com regulagem de altura (nível 26) · 1408×1808 · boca 1126×753 = 1,50:1 · 4×3 (12)",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok"
+      },
+      "grill": "parrilla_do_cais",
+      "evo": 1
+    },
+    {
+      "source": "spr_grill_fornalha_da_orla_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "category": "grill",
+      "name": "spr_grill_fornalha_da_orla_evo1",
+      "label": "Inox profissional multi-nível (nível 36) · 1408×1584 · boca 1126×663 = 1,70:1 · 4×4 (16)",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok"
+      },
+      "grill": "fornalha_da_orla",
+      "evo": 1
+    },
+    {
+      "source": "spr_grill_cozinha_do_campeao_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "category": "grill",
+      "name": "spr_grill_cozinha_do_campeao_evo1",
+      "label": "Robótica automatizada — tier final (nível 46) · 1408×1584 · boca 1126×663 = 1,70:1 · 4×5 (20)",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok"
+      },
+      "grill": "cozinha_do_campeao",
+      "evo": 1
+    }
+  ],
+  "compare": [
+    "spr_grill_lata_valente_evo1",
+    "spr_grill_lata_valente_evo2",
+    "spr_grill_ze_da_esquina_evo2",
+    "spr_grill_parrilla_chef_cisma_evo2",
+    "spr_grill_fornalha_dragao_manso_evo2"
+  ],
+  "preview": {
+    "background": "bg_restaurant_espetinho_rua",
+    "grill": "spr_grill_tambor_vertical_evo1",
+    "_note": "prévia montada no leito real do motor: 9 vagas (3×3) com comida de 86 px nos u/v do padrão (`grill.json.art.foodU` 0,14–0,86 na largura, (i+0,5)/Z na altura). O smoker é o item de maior boca do lote entre as que mudam de identidade — se a comida couber aqui, coube em todas.",
+    "onGrill": [
+      [
+        "spr_food_picanha_medium",
+        0.26,
+        0.166667,
+        86
+      ],
+      [
+        "spr_food_contra_file_rare",
+        0.5,
+        0.166667,
+        86
+      ],
+      [
+        "spr_food_linguica_toscana_medium",
+        0.74,
+        0.166667,
+        86
+      ],
+      [
+        "spr_food_maminha_well",
+        0.26,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_fraldinha_medium",
+        0.5,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_asinha_frango_medium",
+        0.74,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_coracao_frango_medium",
+        0.26,
+        0.833333,
+        86
+      ],
+      [
+        "spr_food_queijo_coalho_medium",
+        0.5,
+        0.833333,
+        86
+      ],
+      [
+        "spr_food_legumes_grelhados_medium",
+        0.74,
+        0.833333,
+        86
+      ]
+    ],
+    "benchItems": [
+      [
+        "spr_food_picanha_raw",
+        62
+      ],
+      [
+        "spr_food_contra_file_raw",
+        62
+      ],
+      [
+        "spr_food_maminha_raw",
+        62
+      ]
+    ],
+    "orders": [
+      [
+        "spr_char_customer_tio_do_churrasco",
+        [
+          "spr_food_picanha_served",
+          "spr_food_fraldinha_served"
+        ],
+        0.72
+      ]
+    ]
+  }
+}

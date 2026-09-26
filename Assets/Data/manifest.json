@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-25T06:33:40.166Z",
+  "generatedAt": "2026-09-26T05:22:38.239Z",
   "source": "shared/data",
   "files": {
     "achievements.json": {
@@ -7,16 +7,16 @@
       "bytes": 14882
     },
     "ads.json": {
-      "sha256": "be25ef6ad1f41cbbfd35aaefad74f073bf9c2d0db71f60c689c9b92c591d7741",
+      "sha256": "742c9de16b605f0539df140c25bd5c7a78074fa0da0e44b17d7765e925107e6b",
       "bytes": 3138
     },
     "analytics.json": {
-      "sha256": "aa92dcf22bd7d5b4790f3a7065851ef3adaffa37b82ef4ba7287e9410dcdf009",
-      "bytes": 9511
+      "sha256": "6da0c0139fe5b17148db1b7c9bbc793f1c01442b125309ebad155b82c1744f54",
+      "bytes": 12859
     },
     "churrasqueiras.json": {
-      "sha256": "206d2b8b7050de85b2275a75415d5ea813d7ac6f02bde232fdf0934cc3af3ed8",
-      "bytes": 6427
+      "sha256": "c7178a77dcf56019742f43a794d3da44cbcc10d5cb1c5a8b7d8507169468e9b4",
+      "bytes": 17120
     },
     "collection.json": {
       "sha256": "a1d97536f01cd9e5376c9323704f0a282df77190733cfb4aebd968d805f16cb0",
@@ -27,8 +27,8 @@
       "bytes": 5918
     },
     "economy.json": {
-      "sha256": "c20dda5f72e99c175fcda0d9bea4f043cbc8b8f361c6fbd1c056fbd12c0b1375",
-      "bytes": 7308
+      "sha256": "416649e82a0ea5d3b9e3c7cea5b7762be0863546405d494ed0a4b21ccadcb348",
+      "bytes": 9327
     },
     "employees.json": {
       "sha256": "f26f360cd0bef72a53538346ecc2fa386d9ecc930963cf150584b2b015323488",
@@ -39,12 +39,12 @@
       "bytes": 4012
     },
     "grill.json": {
-      "sha256": "742ec70161a2ee643fc4b4ba4daf4a5c4a406f392a27c527df2bfc186c7f8271",
-      "bytes": 1989
+      "sha256": "40f812a33a4a1403e8fade446b9593f8e2ff83804be2fa002c0e1a39eb223a87",
+      "bytes": 6165
     },
     "iap.json": {
-      "sha256": "e3d2be582a9000d71b237b18467b07fca69f5a33c86651a462359b77273288c7",
-      "bytes": 3635
+      "sha256": "194098f866e3f12c0d7c958d5229be69ac203100471bcfd193d0e469c1fc4a85",
+      "bytes": 3641
     },
     "ingredients.json": {
       "sha256": "111ca11cb04ee9abfc0b3c8e8e7fd15636f265bce0cd7e80c9f31faa183f399c",
@@ -75,8 +75,8 @@
       "bytes": 1985
     },
     "restaurants.json": {
-      "sha256": "180b4fff6b7af62e14bf9950f1fea7122903a5edf4f7215ec570dc6412a79544",
-      "bytes": 8482
+      "sha256": "096fe239c4abf5f0af101ad80b561e8273b0971aa9c71b699cba099d21188d34",
+      "bytes": 12569
     },
     "route.json": {
       "sha256": "b2907a7efd6ee9f7f9ad9e55c71629517b174a53a8967bebea2f84e009318222",

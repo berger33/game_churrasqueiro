@@ -28,7 +28,9 @@ function collectKeys(node: unknown, out: Set<string>): void {
 
 describe('resolver', () => {
   it('resolves a known key', () => {
-    expect(t.t('currency.coins')).toBe('Moedas');
+    // `currency.coins` diz "Gorjetas" desde docs/24 — a chave continua `coins` (é o nome do dado em
+    // 251 lugares), só o que o jogador lê mudou. O teste resolve as duas coisas de propósito.
+    expect(t.t('currency.coins')).toBe('Gorjetas');
     expect(t.t('food.picanha.name')).toBe('Picanha');
   });
 

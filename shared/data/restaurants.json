@@ -1,7 +1,7 @@
 {
   "$schema": "schema/restaurants.schema.json",
   "_comment": "Establishment progression. Each tier must introduce new mechanics/content, not just bigger numbers (spec §15).",
-  "version": 6,
+  "version": 7,
   "restaurants": [
     {
       "index": 0,
@@ -348,7 +348,161 @@
         ],
         "lighting": "cinematic_warm"
       }
+    },
+    {
+      "index": 7,
+      "id": "cais_das_brases",
+      "nameKey": "restaurant.cais.name",
+      "taglineKey": "restaurant.cais.tagline",
+      "unlockCostCoins": 6500000,
+      "requiredLevel": 64,
+      "grill": {
+        "slotsPerZone": 3,
+        "zoneCount": 4,
+        "heatStability": 1.16,
+        "charcoalDurationBonus": 0.7
+      },
+      "service": {
+        "maxOrdersOnScreen": 7,
+        "prepSlots": 5,
+        "employeeSlots": 6,
+        "tables": 10
+      },
+      "introduces": [
+        "charcoal_briquete",
+        "tide_rush",
+        "long_burn"
+      ],
+      "customerPool": [
+        "comum",
+        "apressado",
+        "economico",
+        "vizinho",
+        "generoso",
+        "familia",
+        "tio_do_churrasco",
+        "influencer",
+        "turista",
+        "rival",
+        "vip"
+      ],
+      "turnLengthSec": 185,
+      "ambient": "harbor",
+      "art": {
+        "scene": "Cais",
+        "props": [
+          "pier",
+          "barco",
+          "caixotes",
+          "lampioes"
+        ],
+        "lighting": "dusk_warm"
+      },
+      "_comment": "Cais do píer: chapa de bancada com manivela, brasa longa. Primeira tela onde o briquete de coco paga o que custa. Nível 7 da progressão."
+    },
+    {
+      "index": 8,
+      "id": "quiosque_da_orla",
+      "nameKey": "restaurant.orla.name",
+      "taglineKey": "restaurant.orla.tagline",
+      "unlockCostCoins": 14000000,
+      "requiredLevel": 70,
+      "grill": {
+        "slotsPerZone": 4,
+        "zoneCount": 4,
+        "heatStability": 1.18,
+        "charcoalDurationBonus": 0.8
+      },
+      "service": {
+        "maxOrdersOnScreen": 7,
+        "prepSlots": 6,
+        "employeeSlots": 6,
+        "tables": 12
+      },
+      "introduces": [
+        "beach_rush",
+        "premium_cuts",
+        "dual_mouth"
+      ],
+      "customerPool": [
+        "comum",
+        "apressado",
+        "economico",
+        "vizinho",
+        "generoso",
+        "familia",
+        "tio_do_churrasco",
+        "influencer",
+        "turista",
+        "rival",
+        "vip"
+      ],
+      "turnLengthSec": 190,
+      "ambient": "boardwalk",
+      "art": {
+        "scene": "Orla",
+        "props": [
+          "quiosque",
+          "areia",
+          "guarda-sol",
+          "duas bocas"
+        ],
+        "lighting": "late_afternoon"
+      },
+      "_comment": "Quiosque da orla: tijolo visto, duas bocas, 4 fileiras de 4. Veranista paga mais e cobra melhor. Nível 8 da progressão."
+    },
+    {
+      "index": 9,
+      "id": "cozinha_do_campeao",
+      "nameKey": "restaurant.campeao.name",
+      "taglineKey": "restaurant.campeao.tagline",
+      "unlockCostCoins": 32000000,
+      "requiredLevel": 76,
+      "grill": {
+        "slotsPerZone": 4,
+        "zoneCount": 5,
+        "heatStability": 1.2,
+        "charcoalDurationBonus": 0.9
+      },
+      "service": {
+        "maxOrdersOnScreen": 8,
+        "prepSlots": 6,
+        "employeeSlots": 7,
+        "tables": 14
+      },
+      "introduces": [
+        "chef_island",
+        "judged_service",
+        "certified_brasa"
+      ],
+      "customerPool": [
+        "comum",
+        "apressado",
+        "economico",
+        "vizinho",
+        "generoso",
+        "familia",
+        "tio_do_churrasco",
+        "influencer",
+        "turista",
+        "rival",
+        "vip"
+      ],
+      "turnLengthSec": 195,
+      "ambient": "arena_kitchen",
+      "art": {
+        "scene": "Campeao",
+        "props": [
+          "ilha_de_chef",
+          "bancada_inox",
+          "plateia",
+          "trofeu"
+        ],
+        "lighting": "show_stage"
+      },
+      "_comment": "Cozinha do Campeão: ilha de chef com 5 fileiras de 4 (20 vagas já na compra). Julgamento na porta: peso de premium alto. Nível 9; fecha a escada de 10 telas."
     }
   ],
-  "_pacingNote": "Unlock costs tuned by tools/studio/run-sim.ts against a 1500-turn campaign at skill 0.55. Measured pacing after the prep-item serve fix (v5 -> v6): espetinho_rua 47, trailer 109, bairro 185->230 (cost 12k->15k), premium 377->460 (55k->67k), festival 842->1000 (150k->178k), rede 1228->1590 (3.25M->4.2M). Costs were raised because fixing two real bugs (vinagrete was unservable, and prep items respawned every tick) removed a ~10% customer leak that had been artificially slowing progression."
+  "_pacingNote": "Índices de 0 a 9 são a ordem de progressão e nunca são renumerados: o save grava `restaurantIndex`, então inserir tela no meio corrompe partidas e desloca as bandas medidas. As três telas novas (7, 8, 9) vêm do redesenho da escada com 10 churrasqueiras (docs/23) e atacam o vão de renda medido entre `festival` (178 mil em L46) e `rede_nacional` (4,2 milhões em L60): depois da rede ainda havia 767 turnos sem nada novo para comprar. Preços e níveis continuam a razão da cauda existente (6,5 M / 14 M / 32 M em L64 / 70 / 76, com o teto de nível em `xp.maxLevel` = 80) e são recalibrados pela simulação longa, não por opinião.",
+  "_demandNote": "As telas novas (7, 8, 9) já nascem com `demandWeights`; a fila de demanda por tier continua pendente de implementação."
 }

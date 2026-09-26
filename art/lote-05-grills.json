@@ -1,0 +1,41 @@
+{
+  "_comment": "Sub-manifesto do lote 05: só as grelhas, para repintar/conformar arte sem re-keyear a maminha (o master pintado dela não sobrevive ao wipe de art/source/; os sprites já estão em Assets/Art). Cada linha declara grill+evo, que é o que liga o conform de boca (tools/art/grill-geometry.mjs) na entrada do process-sprites. `--dry-run` mede sem escrever.",
+  "batch": "lote-05",
+  "date": "2026-09-26",
+  "sourceDir": "art/source/lote-05",
+  "assets": [
+    {
+      "source": "spr_grill_fornalha_dragao_manso_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "fornalha_dragao_manso",
+      "evo": 1,
+      "category": "grill",
+      "name": "spr_grill_fornalha_dragao_manso_evo1",
+      "label": "Fornalha e1 'Tijolo Refratário' 3×3",
+      "out": "Assets/Art/Sprites/Grills"
+    },
+    {
+      "source": "spr_grill_ze_da_esquina_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "ze_da_esquina",
+      "evo": 1,
+      "category": "grill",
+      "name": "spr_grill_ze_da_esquina_evo1",
+      "label": "Chapa e1 'Dois Corações' 2×2",
+      "out": "Assets/Art/Sprites/Grills"
+    },
+    {
+      "source": "spr_grill_parrilla_chef_cisma_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "parrilla_chef_cisma",
+      "evo": 1,
+      "category": "grill",
+      "name": "spr_grill_parrilla_chef_cisma_evo1",
+      "label": "Inox e1 'Inox Brilhando' 3×2",
+      "out": "Assets/Art/Sprites/Grills"
+    }
+  ]
+}

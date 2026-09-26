@@ -1,5 +1,5 @@
 import { clamp, sampleCurve } from './data.ts';
-import type { EconomyTable, GameDatabase, Ingredient, RestaurantDef } from './types.ts';
+import type { CharcoalType, EconomyTable, GameDatabase, Ingredient, RestaurantDef } from './types.ts';
 
 // ── Derived stats (from restaurant tier + upgrade levels) ────────────────────
 
@@ -8,6 +8,10 @@ export interface DerivedStats {
   zoneCount: number;
   heatStability: number;
   charcoalDurationSec: number;
+  /** Multiplicador do tipo de carvão escolhido (1 = sem tipo / `comum`). */
+  charcoalDurationMult?: number;
+  /** Mesma ideia para a temperatura: escala a curva de eficiência da carga. */
+  charcoalHeatMult?: number;
   highZoneBonus: number;
   heatRampRate: number;
   prepSlots: number;
@@ -39,6 +43,8 @@ export function deriveStats(db: GameDatabase, restaurant: RestaurantDef, levels:
     zoneCount: restaurant.grill.zoneCount,
     heatStability: restaurant.grill.heatStability + get('grill_stability'),
     charcoalDurationSec: db.grill.charcoal.baseDurationSec * (1 + restaurant.grill.charcoalDurationBonus + get('charcoal_duration')),
+    charcoalDurationMult: 1,
+    charcoalHeatMult: 1,
     highZoneBonus: get('grill_heat'),
     heatRampRate: 1 + get('grill_speed'),
     prepSlots: restaurant.service.prepSlots + Math.floor(get('board')),
@@ -65,6 +71,44 @@ export function deriveStats(db: GameDatabase, restaurant: RestaurantDef, levels:
  * (`grill_size`, `charcoal_duration`) still stack — otherwise buying those
  * tracks would be a dead sink the moment a churrasqueira is equipped.
  */
+/**
+ * Resolve o tipo de carvão do jogador. `null` (ou `comum`) é deliberadamente o
+ * jogo antigo: nenhum multiplicador, recarga pelo preço da tabela. É assim que o
+ * save v2 e os vetores dourados continuam válidos depois de entrarem os três tipos.
+ */
+export function charcoalTypeFor(db: GameDatabase, id?: string | null): CharcoalType | null {
+  const types = db.grill.charcoal.types;
+  if (!types || !id) return null;
+  return types.find(t => t.id === id) ?? null;
+}
+
+/**
+ * Carimba o tipo de carvão nos stats derivados. Feito separadamente de
+ * `deriveStats`/`applyChurrasqueiraToStats` porque esses dois recalculam a
+ * duração a partir do valor um do outro — multiplicar antes contaminaria a
+ * retro-derivação do bônus (`extraCharcoal`) e depois do hardware é o único
+ * ponto onde o tipo não briga com a grelha.
+ */
+export function applyCharcoalTypeToStats(
+  stats: DerivedStats,
+  db: GameDatabase,
+  charcoalTypeId?: string | null
+): DerivedStats {
+  const t = charcoalTypeFor(db, charcoalTypeId);
+  if (!t) return stats;
+  return {
+    ...stats,
+    charcoalDurationMult: (stats.charcoalDurationMult ?? 1) * t.durationMult,
+    charcoalHeatMult: (stats.charcoalHeatMult ?? 1) * t.heatMult
+  };
+}
+
+/** Preço da recarga do tipo atual; o `refillCostCoins` da tabela é o fallback. */
+export function charcoalRefillCost(db: GameDatabase, charcoalTypeId?: string | null): number {
+  const t = charcoalTypeFor(db, charcoalTypeId);
+  return t ? t.refillCostCoins : db.grill.charcoal.refillCostCoins;
+}
+
 export function applyChurrasqueiraToStats(
   stats: DerivedStats,
   db: GameDatabase,
@@ -205,8 +249,21 @@ export function churrasqueiraZoneHeat(
   if (n <= 1) return evo.heatBase;
   const table = db.grill.zones;
   if (table.length === 0) return evo.heatBase;
-  const tIndex = Math.round(zoneIndex * (table.length - 1) / (n - 1));
-  const profile = table[tIndex]?.heatMultiplier ?? 1;
+  // Perfil *interpolado* pela posição, não o item mais próximo da tabela. Com a
+  // tabela de 3 entradas (0,55 / 1,0 / 1,55) e uma grelha de 4 fileiras, o antigo
+  // `Math.round` mandava as duas fileiras do meio para o mesmo perfil 1,0 — a grelha
+  // mais larga saía com um degrau de calor a menos do que o jogador vê na tela. Para
+  // 1, 2 e 3 fileiras (a escada antiga) a interpolação reproduz o valor arredondado
+  // bit a bit, então nenhum vetor dourado se move.
+  const pos = zoneIndex / (n - 1);
+  const scaled = pos * (table.length - 1);
+  const lo = Math.min(table.length - 1, Math.floor(scaled));
+  const hi = Math.min(table.length - 1, lo + 1);
+  const frac = scaled - lo;
+  const profile = (table[lo]?.heatMultiplier ?? 1) * (1 - frac) + (table[hi]?.heatMultiplier ?? 1) * frac;
+  // Acima do teto, duas fileiras quentes ficam empatadas de propósito: grelha larga
+  // no topo da escada compra espaço na brasa certa, não fogo maior (o teto existe
+  // para a grelha premium não virar incineradora).
   return Math.min(CHURRASQUEIRA_HEAT_CAP, profile * evo.heatBase);
 }
 
@@ -322,9 +379,13 @@ export function tickGrill(g: GrillRuntime, db: GameDatabase, dt: number, onBurn?
       g.charcoalT = 0;
     }
   } else {
-    g.charcoalT = clamp(g.charcoalT + dt / g.stats.charcoalDurationSec, 0, 1);
+    // O tipo de carvão é o multiplicador de duração; `?? 1` mantém idêntico o
+    // caminho de quem nunca escolheu tipo (save v2, vetores dourados, testes).
+    const durSec = g.stats.charcoalDurationSec * (g.stats.charcoalDurationMult ?? 1);
+    g.charcoalT = clamp(g.charcoalT + dt / durSec, 0, 1);
   }
-  g.charcoalEfficiency = sampleCurve(db.grill.charcoal.efficiencyCurve, g.charcoalT);
+  g.charcoalEfficiency =
+    sampleCurve(db.grill.charcoal.efficiencyCurve, g.charcoalT) * (g.stats.charcoalHeatMult ?? 1);
 
   const carry = db.ingredients.shared.carryoverRate;
   const burnAt = db.ingredients.shared.burnedThreshold;

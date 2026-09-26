@@ -95,3 +95,8 @@ prototype/shots/
 # AI art: raw model outputs (1.4–2.6 MB each). The processed masters in Assets/Art are the
 # source of truth; the raw files only matter for re-processing (docs/22-ARTE_2D_PLANO.md §8).
 art/source/
+# Per-step drawing guides (`make-ref.mjs guide`). Regenerable from shared/data in one command, and
+# they are inputs to a generation, not shipped art — unlike prototype/assets/art, which is committed
+# on purpose so a fresh clone renders the approved art without running build-runtime.
+art/guias/
+prototype/shots/

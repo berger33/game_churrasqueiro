@@ -251,8 +251,31 @@ async function contactSheet() {
 
   // grills and props (single objects), with earlier sprites for comparison
   const singles = batch.assets.filter((a) => a.mode === 'single');
-  const compare = (batch.compare ?? []).map((name) => ({ compareName: name }));
-  const row = [...compare, ...singles];
+  // Comparison sprites go in a row of their own, above the batch's: sharing one row squeezed them to
+  // ~110 px each, their names cannot wrap (no spaces to break on) and the labels printed over each
+  // other — which is exactly the row the owner reads to answer "does the ladder grow?". Four across,
+  // short labels, the measured mouth under each.
+  const compare = batch.compare ?? [];
+  if (compare.length) {
+    section('Como está hoje no jogo (comparação)', 'as grelhas já aprovadas, na mesma folha e na mesma escala de recorte');
+    const gap = 20, boxH = 300;
+    const bw = (W - 2 * M - gap * (compare.length - 1)) / compare.length;
+    let maxY = y;
+    for (let i = 0; i < compare.length; i++) {
+      const name = compare[i];
+      const s = await sprite(name);
+      const x = M + i * (bw + gap);
+      checker(ctx, x, y, bw, boxH);
+      const p = fit(ctx, s.img, x, y, bw, boxH, 12);
+      if (s.hole) holeOutline(ctx, s.hole, p);
+      const shortName = name.replace(/^spr_(grill|prop|food)_/, '').replace(/_evo(\d+)$/, (m, d) => ` · evo${d}`);
+      let ty = wrap(ctx, shortName, x, y + boxH + 26, bw - 8, 22, 26, P.muted, UIB, 2);
+      if (s.hole) text(ctx, `${s.hole.tiltDeg ?? '?'}° · ${Math.round(s.hole.areaFrac * 100)}% · ${s.batch.replace('lote-', 'lote ')}`, x, ty + 2, 20, P.cyan, UIB);
+      maxY = Math.max(maxY, ty + 34);
+    }
+    y = maxY + 20;
+  }
+  const row = [...singles];
   if (row.length) {
     section('Churrasqueiras e props', 'a boca magenta da churrasqueira vira um furo transparente (contorno ciano = quadrilátero detectado); brasas e grelha são desenhadas por baixo');
     const gap = 20, boxH = 540;
@@ -261,26 +284,20 @@ async function contactSheet() {
     for (let i = 0; i < row.length; i++) {
       const item = row[i];
       const x = M + i * (bw + gap);
-      const name = item.compareName ?? item.name;
+      const name = item.name;
       const s = await sprite(name);
       checker(ctx, x, y, bw, boxH);
       const p = fit(ctx, s.img, x, y, bw, boxH, 16);
       if (s.hole) holeOutline(ctx, s.hole, p);
       let ty = y + boxH + 36;
-      if (item.compareName) {
-        text(ctx, `${name.replace(/^spr_(grill|prop)_/, '')} — ${s.batch.replace('lote-', 'lote ')} (comparação)`, x, ty, 24, P.muted, UIB);
-        ty += 30;
-      } else {
-        ty = wrap(ctx, `#${imgNo(item)} ${item.label ?? name}`, x, ty, bw - 10, 25, 29, P.cream, UIB, 2);
-        ty = verdictChip(ctx, item.review, x, ty + 8);
-        if (item.review?.note) ty = wrap(ctx, item.review.note, x, ty, bw - 10, 21, 25, P.sand, UIB);
-      }
-      if (s.hole) text(ctx, `boca: inclinação ${s.hole.tiltDeg ?? '?'}°, ${Math.round(s.hole.areaFrac * 100)} % do sprite`, x, ty + 4, 21, P.cyan, UIB);
+      ty = wrap(ctx, `#${imgNo(item)} ${item.label ?? name}`, x, ty, bw - 10, 25, 29, P.cream, UIB, 2);
+      ty = verdictChip(ctx, item.review, x, ty + 8);
+      if (item.review?.note) ty = wrap(ctx, item.review.note, x, ty, bw - 10, 21, 25, P.sand, UIB);
+      if (s.hole) ty = wrap(ctx, `boca: inclinação ${s.hole.tiltDeg ?? '?'}°, ${Math.round(s.hole.areaFrac * 100)} % do sprite`, x, ty + 4, bw - 10, 21, 25, P.cyan, UIB, 2) - 4;
       maxY = Math.max(maxY, ty + 30);
     }
     y = maxY + 30;
   }
-
   // embers (strips) and backdrops (opaque)
   const strips = batch.assets.filter((a) => a.mode === 'strips');
   const opaque = batch.assets.filter((a) => a.mode === 'opaque');

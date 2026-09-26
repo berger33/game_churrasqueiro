@@ -24,6 +24,7 @@
  * source=ai-assisted, status=pending; approval flips it to ai-assisted-reviewed/approved.
  */
 import { createCanvas, loadImage } from '@napi-rs/canvas';
+import { loadStandard, capacity, requiredMouth, measuredMouth, conformFactor, scaleHole, CONFORM_LIMIT } from './grill-geometry.mjs';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join, dirname, relative } from 'node:path';
@@ -32,6 +33,21 @@ const ROOT = join(import.meta.dirname, '..', '..');
 const MANIFEST = join(ROOT, 'Assets', 'Art', 'sprites.manifest.json');
 const REGISTRY = join(ROOT, 'Assets', 'Art', 'ASSET_REGISTRY.csv');
 const REGISTRY_COLUMNS = ['name', 'category', 'source', 'license', 'version', 'author', 'date', 'status', 'batch', 'file', 'notes'];
+// --dry-run measures a batch without writing anything: no masters, no manifest rows, no
+// registry rows. It exists to check a layout guide before a model paints into it
+// (docs/22-ARTE_2D_PLANO.md §6.4) — the same hole detector that failed lote 03's grills.
+const DRY_RUN = process.argv.includes('--dry-run');
+const ALLOW_REPAINT = process.argv.includes('--allow-repaint');
+// --conform (on by default for an asset that declares `grill`+`evo`): the model is told the ratio
+// of the cooking opening, and across three rounds it delivered 1.31:1, 1.85:1, 2.24:1, 2.77:1 and
+// 2.88:1 for targets of ~2:1. Diffusion does not measure pixels, so the *mouth* is finished in the
+// pipeline instead of being begged for in the prompt: the trimmed sprite is scaled vertically by the
+// factor that puts the opening's on-screen height inside the standard, and the hole geometry written
+// to the manifest is scaled with it, so the game still finds the mouth where the art now has it.
+// It only ever moves the mouth inside its own grill — food is drawn by the engine at its own size.
+// Refuses to lie about it: the factor is recorded in the manifest and printed, and anything beyond
+// ±70 % is rejected as "regenerate this" rather than stretched into a blob.
+const NO_CONFORM = process.argv.includes('--no-conform');
 
 // ── image helpers ────────────────────────────────────────────────────────────
 
@@ -279,6 +295,18 @@ function alignStates(sprites, maxTiltDeg) {
   });
 }
 
+// ── conforming the painted opening to the standard (docs/22 §6.8) ───────────
+
+function scaleY(sprite, f) {
+  const h2 = Math.max(1, Math.round(sprite.h * f));
+  const c = toCanvas(sprite.w, sprite.h, sprite.data);
+  const out = createCanvas(sprite.w, h2);
+  const x = out.getContext('2d');
+  x.imageSmoothingEnabled = false; // pixel art: nearest neighbour, never a blur
+  x.drawImage(c, 0, 0, sprite.w, sprite.h, 0, 0, sprite.w, h2);
+  return { w: sprite.w, h: h2, data: x.getImageData(0, 0, sprite.w, h2).data };
+}
+
 // ── holes (the grill's cooking opening) ──────────────────────────────────────
 
 function enclosedHole(sprite) {
@@ -450,8 +478,15 @@ async function updateRegistry(entries) {
   }
   for (const e of entries) {
     const prev = byName.get(e.name);
-    // A reviewed row is frozen: re-processing never resets its decision or its notes.
-    if (prev && prev.status && prev.status !== 'pending') { e.status = prev.status; e.source = prev.source; e.notes = prev.notes; }
+    // A reviewed row is frozen: re-processing never resets a decision that still stands.
+    // `rejected` is the exception — docs/04 §11 says a refused asset's redo leads the next
+    // batch, and a redo that could never be approved would not be a redo. The new batch
+    // re-adopts the row (new file, new batch, status pending) and says so in the notes.
+    if (prev && prev.status && prev.status !== 'pending' && prev.status !== 'rejected') {
+      e.status = prev.status; e.source = prev.source; e.notes = prev.notes;
+    } else if (prev && prev.status === 'rejected') {
+      e.notes = [prev.notes, `reprocessa a linha rejeitada de ${prev.batch}`].filter(Boolean).join(' — ');
+    }
     if (!prev) order.push(e.name);
     byName.set(e.name, { ...prev, ...e });
   }
@@ -461,9 +496,42 @@ async function updateRegistry(entries) {
 }
 
 // ── main ─────────────────────────────────────────────────────────────────────
+// ── the guard: repainting reviewed pixels needs an explicit decision ────────
+// updateRegistry freezes a reviewed row's *decision*, but the master file underneath it is
+// still overwritten by the processor — so a redo of one frame of a food silently shipped the
+// other frames as if the owner had approved them (found while reprocessing the maminha sheet
+// for lote 05: 5 `approved` rows kept their status while their pixels changed). Naming what a
+// batch will write lets the tool refuse instead.
+
+function plannedNames(spec) {
+  if (spec.mode === 'grid') return spec.cells.map((c) => `${spec.prefix ?? 'spr_food_'}${spec.subject}_${c}`);
+  if (spec.mode === 'icons' || spec.mode === 'strips' || spec.mode === 'components') {
+    return spec.names.map((n) => (typeof n === 'string' ? n : n.name));
+  }
+  return [spec.name];
+}
+
+async function refuseReviewedRepaint(batch) {
+  if (ALLOW_REPAINT || !existsSync(REGISTRY)) return;
+  const [head, ...rows] = parseCsv(await readFile(REGISTRY, 'utf8'));
+  const record = (r) => Object.fromEntries(head.map((k, i) => [k, r[i] ?? '']));
+  const decided = new Set(batch.assets.flatMap((a) => plannedNames(a)));
+  const hit = rows.map(record)
+    .filter((r) => decided.has(r.name) && (r.status === 'approved' || r.status === 'superseded'))
+    .map((r) => `${r.name} (${r.status}, ${r.batch})`);
+  if (hit.length) {
+    console.error(`[art] refusing to repaint ${hit.length} reviewed sprite(s): ${hit.join(', ')}`);
+    console.error('[art] an approved row keeps its decision while its pixels change — that puts unreviewed art in the game.');
+    console.error('[art] do it on purpose: `node tools/art/set-status.mjs <batch> pending <name…>` first,');
+    console.error('[art] or pass --allow-repaint if you really only mean to re-encode the same files.');
+    process.exit(1);
+  }
+}
+
 
 async function writeSprite(dir, name, sprite) {
   const file = join(ROOT, dir, `${name}.png`);
+  if (DRY_RUN) return relative(ROOT, file);
   await mkdir(dirname(file), { recursive: true });
   await writeFile(file, toCanvas(sprite.w, sprite.h, sprite.data).toBuffer('image/png'));
   return relative(ROOT, file);
@@ -473,15 +541,16 @@ async function main() {
   const specPath = process.argv[2];
   if (!specPath) { console.error('usage: node tools/art/process-sprites.mjs art/<lote>.json'); process.exit(2); }
   const batch = JSON.parse(await readFile(join(ROOT, specPath), 'utf8'));
+  await refuseReviewedRepaint(batch);
   const manifest = existsSync(MANIFEST) ? JSON.parse(await readFile(MANIFEST, 'utf8')) : { _comment: '', sprites: {}, foods: {} };
   manifest._comment = 'Generated by tools/art/process-sprites.mjs from art/<lote>.json — do not edit by hand. pivot is normalised (0..1); food states of one ingredient share canvas size and pivot.';
   const registry = [];
-  const row = (name, category, file, notes = '') => registry.push({
+  const row = (name, category, file, notes = '') => { if (DRY_RUN) return; registry.push({
     name, category, source: 'ai-assisted', license: 'proprietary', version: '1.0',
     author: 'AI image model (Arena agent) + studio review', date: batch.date, status: 'pending',
     batch: batch.batch, file, notes,
-  });
-  const put = (name, entry) => { manifest.sprites[name] = { ...entry, batch: batch.batch }; };
+  }); };
+  const put = (name, entry) => { if (!DRY_RUN) manifest.sprites[name] = { ...entry, batch: batch.batch }; };
 
   let skipped = 0;
   for (const spec of batch.assets) {
@@ -563,16 +632,35 @@ async function main() {
       }
       console.log(`[art]   ${spec.source}: ${tag}`);
     } else if (spec.mode === 'single') {
-      const { sprite, hole } = processSingle(img, lab, comps, spec);
+      let { sprite, hole } = processSingle(img, lab, comps, spec);
+      let conformed = null;
+      if (hole && spec.grill && spec.evo && !NO_CONFORM) {
+        const std = await loadStandard();
+        const cap = capacity(std, spec.grill, +spec.evo);
+        const conf = conformFactor(std.art, hole ? { ...sprite, hole } : sprite, cap);
+        if (conf?.error) { console.error(`[art] ${spec.name}: ${conf.error}`); process.exitCode = 1; }
+        else if (conf) {
+          const before = conf.got;
+          sprite = scaleY(sprite, conf.f);
+          hole = scaleHole(hole, conf.f);
+          const after = measuredMouth(std.art, { ...sprite, hole }, cap);
+          conformed = { factorY: +conf.f.toFixed(3), reason: conf.why, mouthHScreen: [before.mouthHScreen, after.mouthHScreen], aspect: [before.aspect, after.aspect] };
+          hole = { ...hole, conformed };
+          const need = requiredMouth(std.art, cap);
+          console.log(`[art] ${spec.name}: boca conformada ×${conf.f.toFixed(3)} (${conf.why}) → ${after.mouthHScreen} px de altura na tela, ${after.aspect}:1 (pedido ${need.aspect}:1)${after.ok ? '' : ` AINDA FORA: ${after.why}`}`);
+          if (!after.ok) { console.error(`[art] ${spec.name}: conformar não salvou a arte — reprova no padrão grill.art`); process.exitCode = 1; }
+        }
+      }
       const file = await writeSprite(spec.out, spec.name, sprite);
-      put(spec.name, { file, w: sprite.w, h: sprite.h, pivot: [0.5, 0.5], category: spec.category, source: srcRel, ...(hole ? { hole } : {}) });
-      row(spec.name, spec.category, file, spec.notes ?? '');
+      put(spec.name, { file, w: sprite.w, h: sprite.h, pivot: [0.5, 0.5], category: spec.category, source: srcRel, ...(spec.grill ? { grill: spec.grill, evo: +spec.evo } : {}), ...(hole ? { hole } : {}) });
+      row(spec.name, spec.category, file, spec.notes ?? (conformed ? `boca conformada ×${conformed.factorY} pelo padrão grill.art` : ''));
       console.log(`[art] ${spec.name.padEnd(38)} ${sprite.w}×${sprite.h}${hole ? `  hole bbox ${hole.bbox.join(',')}` : ''}`);
       console.log(`[art]   ${spec.source}: ${tag}`);
     } else {
       throw new Error(`unknown mode ${spec.mode}`);
     }
   }
+  if (DRY_RUN) { console.log(`[art] dry run: nothing written (Assets/Art untouched)`); return; }
   await mkdir(dirname(MANIFEST), { recursive: true });
   const sorted = { _comment: manifest._comment, sprites: Object.fromEntries(Object.entries(manifest.sprites).sort(([a], [b]) => a.localeCompare(b))), foods: manifest.foods };
   await writeFile(MANIFEST, JSON.stringify(sorted, null, 2) + '\n');

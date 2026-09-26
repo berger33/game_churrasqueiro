@@ -113,6 +113,22 @@ namespace Churrasco.Core
         public int AutoPrepLevel;
         public double IdleRateMult;
         public int RawStockPerTurn;
+
+        /// <summary>
+        /// Charcoal-type multipliers (docs/23 §4). They MUST initialise to 1, not 0: a
+        /// <c>double</c> defaulting to 0 would multiply the burn duration to zero and every
+        /// golden vector would replay a turn where the fire went out instantly. The TypeScript
+        /// reference gets away with <c>?? 1</c> because its fields are optional; here the
+        /// initialiser is the only thing standing between a forgotten call and a silent 0.
+        /// </summary>
+        public double CharcoalDurationMult = 1;
+        public double CharcoalHeatMult = 1;
+
+        /// <summary>
+        /// Field-for-field copy. <see cref="ApplyChurrasqueiraToStats"/> returns a new value the
+        /// way the TypeScript spread does, and every field here is a primitive — nothing to alias.
+        /// </summary>
+        public DerivedStats Clone() => (DerivedStats)MemberwiseClone();
     }
 
     public enum ServeQuality { Perfect, Good, Overcooked, Raw, Burned }
@@ -380,6 +396,163 @@ namespace Churrasco.Core
             return last.Value;
         }
 
+        // ── Charcoal type (docs/23 §4) ──────────────────────────────────────
+
+        public const double ChurrasqueiraHeatCap = 1.7;
+
+        /// <summary>
+        /// Resolve the player's charcoal type. <c>null</c> (or "comum") is deliberately the old
+        /// game: no multiplier, refill at the table price. That is how v2 saves and the golden
+        /// vectors stay valid after the three types landed.
+        /// </summary>
+        public static GrillCharcoalTypes? CharcoalTypeFor(GameData data, string? charcoalTypeId)
+        {
+            var types = data.Grill.Charcoal.Types;
+            if (types == null || string.IsNullOrEmpty(charcoalTypeId)) return null;
+            for (int i = 0; i < types.Count; i++)
+                if (types[i].Id == charcoalTypeId) return types[i];
+            return null;
+        }
+
+        /// <summary>
+        /// Stamp the charcoal type onto derived stats. Deliberately separate from
+        /// <see cref="DeriveStats"/> and <see cref="ApplyChurrasqueiraToStats"/>: both of those
+        /// recompute duration from each other, and multiplying earlier would poison the
+        /// back-derivation of the grill's own bonus (<c>extraCharcoal</c>). After the hardware is
+        /// the only point where the type does not fight the grill.
+        /// </summary>
+        public static DerivedStats ApplyCharcoalTypeToStats(DerivedStats stats, GameData data, string? charcoalTypeId)
+        {
+            var t = CharcoalTypeFor(data, charcoalTypeId);
+            if (t == null) return stats;
+            var s = stats.Clone();
+            s.CharcoalDurationMult = stats.CharcoalDurationMult * t.DurationMult;
+            s.CharcoalHeatMult = stats.CharcoalHeatMult * t.HeatMult;
+            return s;
+        }
+
+        /// <summary>Refill price of the equipped type; the table's <c>refillCostCoins> is the fallback.</summary>
+        public static double CharcoalRefillCost(GameData data, string? charcoalTypeId)
+        {
+            var t = CharcoalTypeFor(data, charcoalTypeId);
+            return t != null ? t.RefillCostCoins : data.Grill.Charcoal.RefillCostCoins;
+        }
+
+        // ── Churrasqueira hardware (docs/23 §2) ─────────────────────────────
+
+        /// <summary>
+        /// Port of <c>applyChurrasqueiraToStats</c>: the grill's evolution replaces the restaurant's
+        /// bed geometry, while additive upgrades (<c>grill_size</c>, <c>charcoal_duration</c>) still
+        /// stack on top — otherwise those tracks become a dead sink the moment a churrasqueira is
+        /// equipped.
+        /// </summary>
+        public static DerivedStats ApplyChurrasqueiraToStats(
+            DerivedStats stats, GameData data, string churrasqueiraId, int evoLevel,
+            RestaurantsRestaurants? restaurant = null)
+        {
+            var ch = data.ChurrasqueiraById(churrasqueiraId);
+            if (ch == null || ch.Evolutions == null || ch.Evolutions.Count == 0) return stats;
+            var evo = FindEvolution(ch, evoLevel);
+            if (evo == null) return stats;
+            int extraSlots = restaurant != null
+                ? Math.Max(0, stats.SlotsPerZone - restaurant.Grill.SlotsPerZone)
+                : 0;
+            double baseCharcoal = data.Grill.Charcoal.BaseDurationSec;
+            double extraCharcoal = restaurant != null && baseCharcoal > 0
+                ? stats.CharcoalDurationSec / baseCharcoal - 1 - restaurant.Grill.CharcoalDurationBonus
+                : 0;
+            var s = stats.Clone();
+            s.SlotsPerZone = evo.SlotsPerZone + extraSlots;
+            s.ZoneCount = evo.ZoneCount;
+            s.CharcoalDurationSec = baseCharcoal * (1 + evo.CharcoalBonus + extraCharcoal);
+            // The evolution's `heatBase` deliberately does NOT land on the stats: heat reaches the
+            // bed through PatchGrillForChurrasqueira, which writes it per zone. Setting it here would
+            // give the grill two sources of truth for the same number.
+            return s;
+        }
+
+        private static ChurrasqueirasChurrasqueirasEvolutions? FindEvolution(
+            ChurrasqueirasChurrasqueiras ch, int level)
+        {
+            var evos = ch.Evolutions!;
+            for (int i = 0; i < evos.Count; i++)
+                if (evos[i].Level == level) return evos[i];
+            return evos.Count > 0 ? evos[0] : null;
+        }
+
+        /// <summary>
+        /// Port of <c>churrasqueiraZoneHeat</c>. The profile is *interpolated* by position, not the
+        /// nearest table entry: with the 3-entry table (0,55 / 1,0 / 1,55) and a 4-row grill, the
+        /// old <c>Math.round</c> sent both middle rows to the same 1,0 profile — the widest grill got
+        /// one heat step fewer than the player sees on screen. For 1, 2 and 3 rows this reproduces
+        /// the rounded value bit for bit, so no golden vector moves.
+        /// </summary>
+        public static double ChurrasqueiraZoneHeat(int zoneCount, double heatBase, int zoneIndex, GameData data)
+        {
+            if (zoneCount <= 1) return heatBase;
+            var table = data.Grill.Zones;
+            if (table == null || table.Count == 0) return heatBase;
+            double pos = zoneIndex / (double)(zoneCount - 1);
+            double scaled = pos * (table.Count - 1);
+            int lo = Math.Min(table.Count - 1, (int)Math.Floor(scaled));
+            int hi = Math.Min(table.Count - 1, lo + 1);
+            double frac = scaled - lo;
+            double profile = TableHeat(table, lo) * (1 - frac) + TableHeat(table, hi) * frac;
+            // Above the cap, the hot rows tie on purpose: a wide grill at the top of the ladder
+            // buys room on the right coals, not a bigger fire (the cap exists so the premium grill
+            // never becomes an incinerator).
+            return Math.Min(ChurrasqueiraHeatCap, profile * heatBase);
+        }
+
+        private static double TableHeat(List<GrillZones> table, int i) =>
+            i >= 0 && i < table.Count ? table[i].HeatMultiplier : 1;
+
+        /// <summary>Port of <c>patchGrillForChurrasqueira</c>: rebuild the runtime zones for one evolution.</summary>
+        public static void PatchGrillForChurrasqueira(
+            GrillRuntime grill, GameData data, string churrasqueiraId, int evoLevel)
+        {
+            var ch = data.ChurrasqueiraById(churrasqueiraId);
+            if (ch == null) return;
+            var evo = FindEvolution(ch, evoLevel);
+            if (evo == null) return;
+            var newZones = new List<GrillZoneRuntime>();
+            for (int i = 0; i < evo.ZoneCount; i++)
+            {
+                var zone = new GrillZoneRuntime
+                {
+                    Index = i,
+                    Heat = ChurrasqueiraZoneHeat(evo.ZoneCount, evo.HeatBase, i, data)
+                };
+                if (i < grill.Zones.Count) zone.Items.AddRange(grill.Zones[i].Items);
+                newZones.Add(zone);
+            }
+            grill.Zones = newZones;
+            grill.Stats.ZoneCount = evo.ZoneCount;
+            // slotsPerZone is already set by ApplyChurrasqueiraToStats (evo base + grill_size).
+        }
+
+        /// <summary>
+        /// Port of <c>runtimeZoneIndex</c>. The table always describes three zones, but the runtime
+        /// grill does not have to (lata_valente has one), so a table index can point at a zone that
+        /// does not exist — that is what crashed the skill policy on every starter grill. The id is
+        /// mapped by *relative* position; when the counts match this is the identity, so the default
+        /// grill behaves exactly as before.
+        /// </summary>
+        public static int RuntimeZoneIndex(GrillRuntime g, GameData data, string zoneId)
+        {
+            if (zoneId == "none") return -1;
+            var table = data.Grill.Zones;
+            int t = -1;
+            if (table != null)
+                for (int i = 0; i < table.Count; i++)
+                    if (table[i].Id == zoneId) { t = i; break; }
+            int n = g.Zones.Count;
+            if (t < 0 || n == 0 || table == null) return -1;
+            if (n == table.Count) return t;
+            if (n == 1 || table.Count == 1) return 0;
+            return (int)MathUtil.RoundHalfUp((t / (double)(table.Count - 1)) * (n - 1));
+        }
+
         // ── The authoritative cooking step ──────────────────────────────────
 
         /// <summary>
@@ -399,9 +572,13 @@ namespace Churrasco.Core
             }
             else
             {
-                g.CharcoalT = MathUtil.Clamp01(g.CharcoalT + dt / g.Stats.CharcoalDurationSec);
+                // The charcoal type is the duration multiplier; the `?? 1` of the reference is the
+                // field initialiser here, so an unchosen type (v2 save, golden vectors) is bit-identical.
+                double durSec = g.Stats.CharcoalDurationSec * g.Stats.CharcoalDurationMult;
+                g.CharcoalT = MathUtil.Clamp01(g.CharcoalT + dt / durSec);
             }
-            g.CharcoalEfficiency = SampleCurve(data.Grill.Charcoal.EfficiencyCurve, g.CharcoalT);
+            g.CharcoalEfficiency = SampleCurve(data.Grill.Charcoal.EfficiencyCurve, g.CharcoalT)
+                * g.Stats.CharcoalHeatMult;
 
             double carry = data.Ingredients.Shared.CarryoverRate;
             double burnAt = data.Ingredients.Shared.BurnedThreshold;

@@ -21,6 +21,9 @@
     "_comment": {
       "type": "string"
     },
+    "_ladderNote": {
+      "type": "string"
+    },
     "currencies": {
       "type": "object",
       "properties": {
@@ -148,6 +151,9 @@
     "idle": {
       "type": "object",
       "properties": {
+        "_comment": {
+          "type": "string"
+        },
         "adDoubleAvailable": {
           "type": "boolean"
         },
@@ -174,6 +180,7 @@
         }
       },
       "required": [
+        "_comment",
         "adDoubleAvailable",
         "coinsPerMinuteByRestaurant",
         "maxOfflineHours",
@@ -312,13 +319,49 @@
         "churrasqueiraUnlockPacingTurns": {
           "type": "object",
           "properties": {
+            "cozinha_do_campeao": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "espeto_do_neno": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "fornalha_da_orla": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
             "fornalha_dragao_manso": {
               "type": "array",
               "items": {
                 "type": "integer"
               }
             },
+            "grelha_de_praca": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
             "parrilla_chef_cisma": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "parrilla_do_cais": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "tambor_vertical": {
               "type": "array",
               "items": {
                 "type": "integer"
@@ -332,8 +375,14 @@
             }
           },
           "required": [
+            "cozinha_do_campeao",
+            "espeto_do_neno",
+            "fornalha_da_orla",
             "fornalha_dragao_manso",
+            "grelha_de_praca",
             "parrilla_chef_cisma",
+            "parrilla_do_cais",
+            "tambor_vertical",
             "ze_da_esquina"
           ]
         },

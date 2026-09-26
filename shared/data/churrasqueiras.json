@@ -1,7 +1,7 @@
 {
   "$schema": "schema/churrasqueiras.schema.json",
-  "_comment": "Churrasqueira progression — 1 fileira → 2 → 3 → Fornalha. Cada uma evolui em 3 níveis. Nomes com humor sutil BR, sem obscenidade. 1 fileira só no início reduz carga cognitiva (FTUE só 1 zona).",
-  "version": 1,
+  "_comment": "Churrasqueira progression — 10 grelhas × 3 níveis, do quintal ao pódio. LEIS DA ESCADA (a lei 1 é medida por tools/art/check-grill-geometry.mjs; as leis 2 a 4 viram regras do validate-data): (1) capacidade (zoneCount × slotsPerZone) nunca diminui degrau a degrau, e cada grelha começa onde a anterior termina — o upgrade nunca tira vaga do jogador e a arte pintada da grelha anterior continua válida na nova; (2) heatBase nunca recua: comprar grelha nova nunca esfria a brasa; (3) charcoalBonus só pode recuar quando a capacidade sobe (corpo pequeno segura menos brasa — a grelha dobrável queima mais rápido que a fornalha, e quem compra está comprando vaga, não duração); (4) nenhum degrau pode ser igual ou pior em tudo: se o preço sobe, ao menos um eixo melhora. Onde a capacidade repete (4,4,4 · 6,6,6 · 9,9,9 · 12,12,12 · 16,16,16 · 20,20,20) o degrau troca de eixo — brasa mais longa e formato da grade (linhas × vagas), não número maior; é isso que faz dez telas de loja serem dez escolhas. heatBase tem teto 1,70 (o da simulação: acima disso o ponto ideal desaparece). Nomes com humor sutil BR, sem obscenidade. 1 fileira só no início reduz carga cognitiva (FTUE tem 1 zona). Teto de escada: no máximo 4 fileiras e 5 vagas por fileira, porque o padrão de arte (grill.json.art) fecha a boca em 4×60=240 px e o leito em 408 px — 5 fileiras obrigaria a engolir a célula de 60 px.",
+  "version": 4,
   "churrasqueiras": [
     {
       "id": "lata_valente",
@@ -10,14 +10,13 @@
       "subtitleKey": "grill.lata_valente.subtitle",
       "descKey": "grill.lata_valente.desc",
       "tier": "quintal",
-      "humorTag": "A do Quintal",
       "unlockLevel": 1,
       "unlockCostCoins": 0,
       "fileiras": 1,
       "visual": {
         "style": "lata",
-        "material": "lata_amassada",
-        "color": "#6B3A26",
+        "material": "lata_200_amassada",
+        "color": "#8C3A24",
         "chimney": false,
         "brick": false
       },
@@ -26,45 +25,97 @@
           "level": 1,
           "nameKey": "grill.lata_valente.evo1.name",
           "descKey": "grill.lata_valente.evo1.desc",
-          "shortName": "Lata Amassada",
           "slotsPerZone": 2,
           "zoneCount": 1,
           "heatBase": 0.65,
-          "charcoalBonus": 0,
-          "costCoins": 0
+          "charcoalBonus": 0.0,
+          "costCoins": 0,
+          "shortNameKey": "grill.lata_valente.evo1.short"
         },
         {
           "level": 2,
           "nameKey": "grill.lata_valente.evo2.name",
           "descKey": "grill.lata_valente.evo2.desc",
-          "shortName": "Tijolinho de Apoio",
           "slotsPerZone": 3,
           "zoneCount": 1,
           "heatBase": 0.82,
           "charcoalBonus": 0.08,
-          "costCoins": 320
+          "costCoins": 320,
+          "shortNameKey": "grill.lata_valente.evo2.short"
         },
         {
           "level": 3,
           "nameKey": "grill.lata_valente.evo3.name",
           "descKey": "grill.lata_valente.evo3.desc",
-          "shortName": "Aprovada pela Vo",
           "slotsPerZone": 3,
           "zoneCount": 1,
           "heatBase": 0.95,
           "charcoalBonus": 0.15,
-          "costCoins": 680
+          "costCoins": 680,
+          "shortNameKey": "grill.lata_valente.evo3.short"
+        }
+      ]
+    },
+    {
+      "id": "grelha_de_praca",
+      "index": 1,
+      "nameKey": "grill.grelha_praca.name",
+      "subtitleKey": "grill.grelha_praca.subtitle",
+      "descKey": "grill.grelha_praca.desc",
+      "tier": "quintal",
+      "unlockLevel": 3,
+      "unlockCostCoins": 420,
+      "fileiras": 2,
+      "visual": {
+        "style": "chapa",
+        "material": "chapa_esmaltada",
+        "color": "#4A4038",
+        "chimney": false,
+        "brick": false
+      },
+      "evolutions": [
+        {
+          "level": 1,
+          "nameKey": "grill.grelha_praca.evo1.name",
+          "descKey": "grill.grelha_praca.evo1.desc",
+          "slotsPerZone": 2,
+          "zoneCount": 2,
+          "heatBase": 0.95,
+          "charcoalBonus": 0.1,
+          "costCoins": 0,
+          "shortNameKey": "grill.grelha_praca.evo1.short"
+        },
+        {
+          "level": 2,
+          "nameKey": "grill.grelha_praca.evo2.name",
+          "descKey": "grill.grelha_praca.evo2.desc",
+          "slotsPerZone": 2,
+          "zoneCount": 2,
+          "heatBase": 0.96,
+          "charcoalBonus": 0.11,
+          "costCoins": 540,
+          "shortNameKey": "grill.grelha_praca.evo2.short"
+        },
+        {
+          "level": 3,
+          "nameKey": "grill.grelha_praca.evo3.name",
+          "descKey": "grill.grelha_praca.evo3.desc",
+          "slotsPerZone": 2,
+          "zoneCount": 2,
+          "heatBase": 0.97,
+          "charcoalBonus": 0.12,
+          "costCoins": 980,
+          "shortNameKey": "grill.grelha_praca.evo3.short"
         }
       ]
     },
     {
       "id": "ze_da_esquina",
-      "index": 1,
+      "index": 2,
       "nameKey": "grill.ze_esquina.name",
       "subtitleKey": "grill.ze_esquina.subtitle",
       "descKey": "grill.ze_esquina.desc",
       "tier": "comercial",
-      "humorTag": "A Comercial Raiz",
       "unlockLevel": 4,
       "unlockCostCoins": 900,
       "fileiras": 2,
@@ -80,106 +131,210 @@
           "level": 1,
           "nameKey": "grill.ze_esquina.evo1.name",
           "descKey": "grill.ze_esquina.evo1.desc",
-          "shortName": "Chapa da Calcada",
           "slotsPerZone": 2,
           "zoneCount": 2,
-          "heatBase": 0.95,
-          "charcoalBonus": 0.12,
-          "costCoins": 0
+          "heatBase": 0.97,
+          "charcoalBonus": 0.13,
+          "costCoins": 0,
+          "shortNameKey": "grill.ze_esquina.evo1.short"
         },
         {
           "level": 2,
           "nameKey": "grill.ze_esquina.evo2.name",
           "descKey": "grill.ze_esquina.evo2.desc",
-          "shortName": "Toldo Novo",
           "slotsPerZone": 2,
           "zoneCount": 2,
           "heatBase": 1.05,
-          "charcoalBonus": 0.18,
-          "costCoins": 1100
+          "charcoalBonus": 0.19,
+          "costCoins": 1100,
+          "shortNameKey": "grill.ze_esquina.evo2.short"
         },
         {
           "level": 3,
           "nameKey": "grill.ze_esquina.evo3.name",
           "descKey": "grill.ze_esquina.evo3.desc",
-          "shortName": "Com Fritadeira",
           "slotsPerZone": 3,
           "zoneCount": 2,
           "heatBase": 1.15,
-          "charcoalBonus": 0.22,
-          "costCoins": 2100
+          "charcoalBonus": 0.23,
+          "costCoins": 2100,
+          "shortNameKey": "grill.ze_esquina.evo3.short"
+        }
+      ]
+    },
+    {
+      "id": "espeto_do_neno",
+      "index": 3,
+      "nameKey": "grill.espeto_neno.name",
+      "subtitleKey": "grill.espeto_neno.subtitle",
+      "descKey": "grill.espeto_neno.desc",
+      "tier": "comercial",
+      "unlockLevel": 6,
+      "unlockCostCoins": 1600,
+      "fileiras": 2,
+      "visual": {
+        "style": "espeto",
+        "material": "aco_pintado",
+        "color": "#5C3A2E",
+        "chimney": false,
+        "brick": false
+      },
+      "evolutions": [
+        {
+          "level": 1,
+          "nameKey": "grill.espeto_neno.evo1.name",
+          "descKey": "grill.espeto_neno.evo1.desc",
+          "slotsPerZone": 3,
+          "zoneCount": 2,
+          "heatBase": 1.15,
+          "charcoalBonus": 0.24,
+          "costCoins": 0,
+          "shortNameKey": "grill.espeto_neno.evo1.short"
+        },
+        {
+          "level": 2,
+          "nameKey": "grill.espeto_neno.evo2.name",
+          "descKey": "grill.espeto_neno.evo2.desc",
+          "slotsPerZone": 3,
+          "zoneCount": 2,
+          "heatBase": 1.16,
+          "charcoalBonus": 0.25,
+          "costCoins": 2000,
+          "shortNameKey": "grill.espeto_neno.evo2.short"
+        },
+        {
+          "level": 3,
+          "nameKey": "grill.espeto_neno.evo3.name",
+          "descKey": "grill.espeto_neno.evo3.desc",
+          "slotsPerZone": 3,
+          "zoneCount": 2,
+          "heatBase": 1.17,
+          "charcoalBonus": 0.26,
+          "costCoins": 3600,
+          "shortNameKey": "grill.espeto_neno.evo3.short"
         }
       ]
     },
     {
       "id": "parrilla_chef_cisma",
-      "index": 2,
+      "index": 4,
       "nameKey": "grill.chef_cisma.name",
       "subtitleKey": "grill.chef_cisma.subtitle",
       "descKey": "grill.chef_cisma.desc",
       "tier": "chef",
-      "humorTag": "A de Chef",
       "unlockLevel": 8,
       "unlockCostCoins": 3200,
       "fileiras": 3,
       "visual": {
         "style": "inox",
-        "material": "inox_espelhado",
-        "color": "#8A9AA8",
+        "material": "inox_escovado",
+        "color": "#B9BEC2",
         "chimney": true,
-        "brick": true
+        "brick": false
       },
       "evolutions": [
         {
           "level": 1,
           "nameKey": "grill.chef_cisma.evo1.name",
           "descKey": "grill.chef_cisma.evo1.desc",
-          "shortName": "Inox Brilhando",
           "slotsPerZone": 2,
           "zoneCount": 3,
-          "heatBase": 1.15,
-          "charcoalBonus": 0.18,
-          "costCoins": 0
+          "heatBase": 1.17,
+          "charcoalBonus": 0.27,
+          "costCoins": 0,
+          "shortNameKey": "grill.chef_cisma.evo1.short"
         },
         {
           "level": 2,
           "nameKey": "grill.chef_cisma.evo2.name",
           "descKey": "grill.chef_cisma.evo2.desc",
-          "shortName": "Altura Regulavel",
           "slotsPerZone": 2,
           "zoneCount": 3,
           "heatBase": 1.28,
-          "charcoalBonus": 0.24,
-          "costCoins": 3800
+          "charcoalBonus": 0.29,
+          "costCoins": 3800,
+          "shortNameKey": "grill.chef_cisma.evo2.short"
         },
         {
           "level": 3,
           "nameKey": "grill.chef_cisma.evo3.name",
           "descKey": "grill.chef_cisma.evo3.desc",
-          "shortName": "Termometro que Nao Mente",
           "slotsPerZone": 3,
           "zoneCount": 3,
           "heatBase": 1.38,
-          "charcoalBonus": 0.3,
-          "costCoins": 6200
+          "charcoalBonus": 0.31,
+          "costCoins": 6200,
+          "shortNameKey": "grill.chef_cisma.evo3.short"
+        }
+      ]
+    },
+    {
+      "id": "tambor_vertical",
+      "index": 5,
+      "nameKey": "grill.tambor_vertical.name",
+      "subtitleKey": "grill.tambor_vertical.subtitle",
+      "descKey": "grill.tambor_vertical.desc",
+      "tier": "chef",
+      "unlockLevel": 11,
+      "unlockCostCoins": 5200,
+      "fileiras": 3,
+      "visual": {
+        "style": "tambor",
+        "material": "chapa_pintada_preto",
+        "color": "#2E2A28",
+        "chimney": true,
+        "brick": false
+      },
+      "evolutions": [
+        {
+          "level": 1,
+          "nameKey": "grill.tambor_vertical.evo1.name",
+          "descKey": "grill.tambor_vertical.evo1.desc",
+          "slotsPerZone": 3,
+          "zoneCount": 3,
+          "heatBase": 1.39,
+          "charcoalBonus": 0.32,
+          "costCoins": 0,
+          "shortNameKey": "grill.tambor_vertical.evo1.short"
+        },
+        {
+          "level": 2,
+          "nameKey": "grill.tambor_vertical.evo2.name",
+          "descKey": "grill.tambor_vertical.evo2.desc",
+          "slotsPerZone": 3,
+          "zoneCount": 3,
+          "heatBase": 1.4,
+          "charcoalBonus": 0.33,
+          "costCoins": 6400,
+          "shortNameKey": "grill.tambor_vertical.evo2.short"
+        },
+        {
+          "level": 3,
+          "nameKey": "grill.tambor_vertical.evo3.name",
+          "descKey": "grill.tambor_vertical.evo3.desc",
+          "slotsPerZone": 3,
+          "zoneCount": 3,
+          "heatBase": 1.41,
+          "charcoalBonus": 0.34,
+          "costCoins": 11400,
+          "shortNameKey": "grill.tambor_vertical.evo3.short"
         }
       ]
     },
     {
       "id": "fornalha_dragao_manso",
-      "index": 3,
+      "index": 6,
       "nameKey": "grill.dragao_manso.name",
       "subtitleKey": "grill.dragao_manso.subtitle",
       "descKey": "grill.dragao_manso.desc",
       "tier": "fornalha",
-      "humorTag": "O Dragao Manso",
       "unlockLevel": 14,
       "unlockCostCoins": 8500,
       "fileiras": 3,
       "visual": {
         "style": "fornalha",
         "material": "tijolo_refratario",
-        "color": "#4A0E05",
+        "color": "#A4553A",
         "chimney": true,
         "brick": true
       },
@@ -188,34 +343,193 @@
           "level": 1,
           "nameKey": "grill.dragao_manso.evo1.name",
           "descKey": "grill.dragao_manso.evo1.desc",
-          "shortName": "Tijolo Refratario",
           "slotsPerZone": 3,
           "zoneCount": 3,
           "heatBase": 1.42,
-          "charcoalBonus": 0.3,
-          "costCoins": 0
+          "charcoalBonus": 0.35,
+          "costCoins": 0,
+          "shortNameKey": "grill.dragao_manso.evo1.short"
         },
         {
           "level": 2,
           "nameKey": "grill.dragao_manso.evo2.name",
           "descKey": "grill.dragao_manso.evo2.desc",
-          "shortName": "Dragao Acordado",
           "slotsPerZone": 3,
           "zoneCount": 3,
           "heatBase": 1.52,
-          "charcoalBonus": 0.36,
-          "costCoins": 9800
+          "charcoalBonus": 0.39,
+          "costCoins": 9800,
+          "shortNameKey": "grill.dragao_manso.evo2.short"
         },
         {
           "level": 3,
           "nameKey": "grill.dragao_manso.evo3.name",
           "descKey": "grill.dragao_manso.evo3.desc",
-          "shortName": "Inferno Bom",
           "slotsPerZone": 4,
           "zoneCount": 3,
           "heatBase": 1.62,
-          "charcoalBonus": 0.42,
-          "costCoins": 14500
+          "charcoalBonus": 0.43,
+          "costCoins": 14500,
+          "shortNameKey": "grill.dragao_manso.evo3.short"
+        }
+      ]
+    },
+    {
+      "id": "parrilla_do_cais",
+      "index": 7,
+      "nameKey": "grill.parrilla_cais.name",
+      "subtitleKey": "grill.parrilla_cais.subtitle",
+      "descKey": "grill.parrilla_cais.desc",
+      "tier": "fornalha",
+      "unlockLevel": 26,
+      "unlockCostCoins": 48000,
+      "fileiras": 4,
+      "visual": {
+        "style": "inox",
+        "material": "inox_polido",
+        "color": "#C6CBD0",
+        "chimney": true,
+        "brick": false
+      },
+      "evolutions": [
+        {
+          "level": 1,
+          "nameKey": "grill.parrilla_cais.evo1.name",
+          "descKey": "grill.parrilla_cais.evo1.desc",
+          "slotsPerZone": 3,
+          "zoneCount": 4,
+          "heatBase": 1.63,
+          "charcoalBonus": 0.44,
+          "costCoins": 0,
+          "shortNameKey": "grill.parrilla_cais.evo1.short"
+        },
+        {
+          "level": 2,
+          "nameKey": "grill.parrilla_cais.evo2.name",
+          "descKey": "grill.parrilla_cais.evo2.desc",
+          "slotsPerZone": 3,
+          "zoneCount": 4,
+          "heatBase": 1.64,
+          "charcoalBonus": 0.46,
+          "costCoins": 60000,
+          "shortNameKey": "grill.parrilla_cais.evo2.short"
+        },
+        {
+          "level": 3,
+          "nameKey": "grill.parrilla_cais.evo3.name",
+          "descKey": "grill.parrilla_cais.evo3.desc",
+          "slotsPerZone": 4,
+          "zoneCount": 4,
+          "heatBase": 1.65,
+          "charcoalBonus": 0.48,
+          "costCoins": 110000,
+          "shortNameKey": "grill.parrilla_cais.evo3.short"
+        }
+      ]
+    },
+    {
+      "id": "fornalha_da_orla",
+      "index": 8,
+      "nameKey": "grill.fornalha_orla.name",
+      "subtitleKey": "grill.fornalha_orla.subtitle",
+      "descKey": "grill.fornalha_orla.desc",
+      "tier": "premium",
+      "unlockLevel": 36,
+      "unlockCostCoins": 84000,
+      "fileiras": 4,
+      "visual": {
+        "style": "fornalha",
+        "material": "tijolo_queimado",
+        "color": "#8E4A32",
+        "chimney": true,
+        "brick": true
+      },
+      "evolutions": [
+        {
+          "level": 1,
+          "nameKey": "grill.fornalha_orla.evo1.name",
+          "descKey": "grill.fornalha_orla.evo1.desc",
+          "slotsPerZone": 4,
+          "zoneCount": 4,
+          "heatBase": 1.66,
+          "charcoalBonus": 0.5,
+          "costCoins": 0,
+          "shortNameKey": "grill.fornalha_orla.evo1.short"
+        },
+        {
+          "level": 2,
+          "nameKey": "grill.fornalha_orla.evo2.name",
+          "descKey": "grill.fornalha_orla.evo2.desc",
+          "slotsPerZone": 4,
+          "zoneCount": 4,
+          "heatBase": 1.68,
+          "charcoalBonus": 0.52,
+          "costCoins": 105000,
+          "shortNameKey": "grill.fornalha_orla.evo2.short"
+        },
+        {
+          "level": 3,
+          "nameKey": "grill.fornalha_orla.evo3.name",
+          "descKey": "grill.fornalha_orla.evo3.desc",
+          "slotsPerZone": 5,
+          "zoneCount": 4,
+          "heatBase": 1.69,
+          "charcoalBonus": 0.54,
+          "costCoins": 200000,
+          "shortNameKey": "grill.fornalha_orla.evo3.short"
+        }
+      ]
+    },
+    {
+      "id": "cozinha_do_campeao",
+      "index": 9,
+      "nameKey": "grill.cozinha_campeao.name",
+      "subtitleKey": "grill.cozinha_campeao.subtitle",
+      "descKey": "grill.cozinha_campeao.desc",
+      "tier": "premium",
+      "unlockLevel": 46,
+      "unlockCostCoins": 150000,
+      "fileiras": 4,
+      "visual": {
+        "style": "campeao",
+        "material": "inox_cromo",
+        "color": "#D2D8DD",
+        "chimney": true,
+        "brick": false
+      },
+      "evolutions": [
+        {
+          "level": 1,
+          "nameKey": "grill.cozinha_campeao.evo1.name",
+          "descKey": "grill.cozinha_campeao.evo1.desc",
+          "slotsPerZone": 5,
+          "zoneCount": 4,
+          "heatBase": 1.7,
+          "charcoalBonus": 0.56,
+          "costCoins": 0,
+          "shortNameKey": "grill.cozinha_campeao.evo1.short"
+        },
+        {
+          "level": 2,
+          "nameKey": "grill.cozinha_campeao.evo2.name",
+          "descKey": "grill.cozinha_campeao.evo2.desc",
+          "slotsPerZone": 5,
+          "zoneCount": 4,
+          "heatBase": 1.7,
+          "charcoalBonus": 0.6,
+          "costCoins": 190000,
+          "shortNameKey": "grill.cozinha_campeao.evo2.short"
+        },
+        {
+          "level": 3,
+          "nameKey": "grill.cozinha_campeao.evo3.name",
+          "descKey": "grill.cozinha_campeao.evo3.desc",
+          "slotsPerZone": 5,
+          "zoneCount": 4,
+          "heatBase": 1.7,
+          "charcoalBonus": 0.66,
+          "costCoins": 360000,
+          "shortNameKey": "grill.cozinha_campeao.evo3.short"
         }
       ]
     }

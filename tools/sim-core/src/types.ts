@@ -89,6 +89,12 @@ export interface GrillTable {
     refillTimeSec: number;
     refillCostCoins: number;
     lowWarningThreshold: number;
+    /**
+     * Os três tipos de carvão (docs/23). Ausente ou sem correspondência para o
+     * tipo escolhido vale 1,00x/1,00x e o `refillCostCoins` da tabela: o jogo
+     * exatamente como era antes da escada nova.
+     */
+    types?: CharcoalType[];
   };
   slots: { baseSlotsPerZone: number; slotWidthNorm: number; slotHeightNorm: number };
   interaction: {
@@ -170,6 +176,23 @@ export interface RestaurantDef {
   art: { scene: string; props: string[]; lighting: string };
 }
 
+/**
+ * Um tipo de carvão: troca tempo de brasa por temperatura e cobra na recarga.
+ * `durationMult` alonga `charcoalDurationSec`, `heatMult` escala a curva de
+ * eficiência, `refillCostCoins` é dreno dentro do turno (com fallback grátis
+ * quando a bolsa do turno não alcança — escolher carvão nunca trava o loop).
+ */
+export interface CharcoalType {
+  id: string;
+  nameKey: string;
+  descKey: string;
+  tier: number;
+  durationMult: number;
+  heatMult: number;
+  refillCostCoins: number;
+  unlockLevel: number;
+}
+
 export interface RestaurantTable {
   version: number;
   restaurants: RestaurantDef[];
@@ -237,7 +260,8 @@ export interface ChurrasqueiraEvolution {
   level: number;
   nameKey: string;
   descKey: string;
-  shortName: string;
+  /** Chave de l10n com o rótulo curto do cartão (o texto mora em shared/l10n). */
+  shortNameKey: string;
   slotsPerZone: number;
   zoneCount: number;
   heatBase: number;
@@ -253,7 +277,6 @@ export interface ChurrasqueiraDef {
   subtitleKey: string;
   descKey: string;
   tier: string;
-  humorTag: string;
   unlockLevel: number;
   unlockCostCoins: number;
   fileiras: number;

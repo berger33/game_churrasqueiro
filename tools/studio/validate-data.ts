@@ -15,6 +15,14 @@ import { generateLevels } from './gen-levels.ts';
 
 type Problem = { file: string; message: string };
 
+function readJsonAbs<T = Record<string, unknown>>(p: string): T {
+  return JSON.parse(readFileSync(p, 'utf8')) as T;
+}
+
+
+
+const ROOT = join(DATA_DIR, '..', '..');
+
 const problems: Problem[] = [];
 const fail = (file: string, message: string): void => {
   problems.push({ file, message });
@@ -345,9 +353,190 @@ function levelsForTutorial(): { id: string; restaurantIndex: number; rewards: { 
 
 // ── 6. No literal localisation strings in gameplay tables ───────────────────
 const accented = /[à-üÀ-Ü]/;
-for (const f of ['ingredients.json', 'customers.json', 'restaurants.json', 'upgrades.json', 'achievements.json', 'missions.json', 'events.json', 'collection.json']) {
-  const raw = readFileSync(join(DATA_DIR, f), 'utf8');
-  if (accented.test(raw)) fail(f, 'contains accented literal text — use *Key fields and the localisation tables');
+// Nota de desenvolvedor nao e texto de jogo: `_comment` e `_*Note` sao lidos por quem mantem o
+// repositorio, e exigir que eles sejam escritos sem acento so produzia portugues torto. A regra
+// continua valendo para o campo de exibicao — literal acentuado em chave de UI segue proibido.
+for (const f of ['ingredients.json', 'customers.json', 'restaurants.json', 'upgrades.json', 'achievements.json', 'missions.json', 'events.json', 'collection.json', 'churrasqueiras.json', 'grill.json', 'economy.json']) {
+  const doc = readJson(f) as Record<string, unknown>;
+  const stripNotes = (v: unknown): unknown => {
+    if (Array.isArray(v)) return v.map(stripNotes);
+    if (v && typeof v === 'object') {
+      const out: Record<string, unknown> = {};
+      for (const [k, val] of Object.entries(v)) if (!k.startsWith('_')) out[k] = stripNotes(val);
+      return out;
+    }
+    return v;
+  };
+  if (accented.test(JSON.stringify(stripNotes(doc)))) {
+    fail(f, 'contains accented literal text in a display field — use *Key fields and the localisation tables');
+  }
+}
+
+// ── A loja promete na tela o mesmo grid que o motor monta ───────────────────
+// `churrasqueiras.json` carries the grid (zoneCount × slotsPerZone) and the l10n text sells it
+// back to the player as "2 fileiras, 4 espetos". Those two drifted (inox evo2 said 7 for a 6-slot
+// grill, evo3 said 8 for a 9-slot one) — and a description the art is drawn to measure becomes a
+// contract nobody checks. The text is data, so it is validated as data.
+const grillDescRe = /^(\d+) fileiras?[^\d]*?(\d+) espetos?/i;
+const l10nPtBr = readJsonAbs(join(ROOT, 'shared', 'l10n', 'pt-BR.json'));
+for (const ch of (readJson('churrasqueiras.json') as {
+  churrasqueiras: { id: string; fileiras?: number; visual?: { style?: string }; evolutions: Record<string, never>[] }[]
+}).churrasqueiras) {
+  const zones = ch.evolutions.map((e) => Number(e.zoneCount));
+  if (ch.fileiras !== undefined && Math.max(...zones) > ch.fileiras) {
+    fail('churrasqueiras.json', `${ch.id}: an evolution has ${Math.max(...zones)} zones but the grill declares "fileiras": ${ch.fileiras}`);
+  }
+  for (const e of ch.evolutions) {
+    const key = (e as { descKey?: string }).descKey;
+    if (!key) continue;
+    const text = l10nPtBr[key];
+    if (typeof text !== 'string') { fail('churrasqueiras.json', `${ch.id} evo${e.level}: descKey "${key}" is not in shared/l10n/pt-BR.json`); continue; }
+    const m = grillDescRe.exec(text);
+    if (!m) continue; // only sentences that promise a grid are held to it
+    const [fileiras, espetos] = [Number(m[1]), Number(m[2])];
+    const cap = Number(e.zoneCount) * Number(e.slotsPerZone);
+    if (fileiras !== Number(e.zoneCount)) fail('churrasqueiras.json', `${ch.id} evo${e.level}: "${text}" promises ${fileiras} fileiras, the grid is ${e.zoneCount}`);
+    if (espetos !== cap) fail('churrasqueiras.json', `${ch.id} evo${e.level}: "${text}" promises ${espetos} vagas, the grid is ${cap} (${e.zoneCount}×${e.slotsPerZone})`);
+  }
+}
+
+// ── A escada de churrasqueiras: leis de progressão ───────────────────────────
+// Dez grelhas × três níveis só funcionam se nenhum degrau for armadilha e se a arte pintada para uma
+// grelha continuar válida na próxima. As leis estão escritas em `churrasqueiras.json._comment`; aqui
+// elas viram asserção, porque escada sem porta é só um buraco com degraus.
+{
+  const table = readJson('churrasqueiras.json') as {
+    version?: number;
+    churrasqueiras: {
+      id: string; index: number; tier: string; unlockLevel: number; unlockCostCoins: number;
+      visual?: { style?: string };
+      evolutions: {
+        level: number; zoneCount: number; slotsPerZone: number; heatBase: number;
+        charcoalBonus?: number; costCoins: number; nameKey?: string; descKey?: string; shortNameKey?: string;
+      }[];
+    }[];
+  };
+  const ch = table.churrasqueiras;
+  const cap = (e: { zoneCount: number; slotsPerZone: number }) => e.zoneCount * e.slotsPerZone;
+  if (ch.length < 10) fail('churrasqueiras.json', `a escada pede 10 churrasqueiras, há ${ch.length}`);
+  for (let i = 0; i < ch.length; i++) {
+    const c = ch[i]!;
+    if (c.index !== i) fail('churrasqueiras.json', `${c.id}: index ${c.index} fora da ordem (esperado ${i})`);
+    if (c.evolutions.length !== 3) fail('churrasqueiras.json', `${c.id}: ${c.evolutions.length} evoluções, esperado 3`);
+    if (i > 0) {
+      if (c.unlockLevel < ch[i - 1]!.unlockLevel) fail('churrasqueiras.json', `${c.id}: unlockLevel ${c.unlockLevel} antes da anterior`);
+      if (c.unlockCostCoins < ch[i - 1]!.unlockCostCoins) fail('churrasqueiras.json', `${c.id}: unlock mais barato que a grelha anterior`);
+    }
+    let prev: (typeof c.evolutions)[number] | undefined;
+    for (const e of c.evolutions) {
+      if (prev) {
+        if (cap(e) < cap(prev)) fail('churrasqueiras.json', `${c.id} evo${e.level}: capacidade ${cap(e)} < ${cap(prev)} do degrau anterior`);
+        if (e.heatBase < prev.heatBase - 1e-9) fail('churrasqueiras.json', `${c.id} evo${e.level}: heatBase recua`);
+        if ((e.charcoalBonus ?? 0) < (prev.charcoalBonus ?? 0) - 1e-9 && cap(e) === cap(prev)) {
+          fail('churrasqueiras.json', `${c.id} evo${e.level}: brasa mais curta sem ganhar vaga (charcoalBonus ${e.charcoalBonus} < ${prev.charcoalBonus})`);
+        }
+        if (e.costCoins < prev.costCoins) fail('churrasqueiras.json', `${c.id}: evo${e.level} custa menos que a evolução anterior`);
+      }
+      if (e.heatBase > 1.7 + 1e-9) fail('churrasqueiras.json', `${c.id} evo${e.level}: heatBase ${e.heatBase} acima do teto 1,70 da simulação`);
+      prev = e;
+    }
+  }
+  // ordem global dos 30 degraus (a arte é derivada do grid, então vale para a escada inteira)
+  const rungs = ch.flatMap((c) => c.evolutions.map((e) => ({ id: `${c.id} evo${e.level}`, cap: cap(e), heat: e.heatBase, burn: e.charcoalBonus ?? 0 })));
+  for (let i = 1; i < rungs.length; i++) {
+    const a = rungs[i - 1]!, b = rungs[i]!;
+    if (b.cap < a.cap) fail('churrasqueiras.json', `capacidade cai entre ${a.id} (${a.cap}) e ${b.id} (${b.cap})`);
+    if (b.heat < a.heat - 1e-9) fail('churrasqueiras.json', `heatBase cai entre ${a.id} e ${b.id}`);
+    if (b.burn < a.burn - 1e-9 && b.cap === a.cap) fail('churrasqueiras.json', `${b.id}: brasa mais curta e mesma capacidade que ${a.id} — degrau sem razão de existir`);
+    if (b.cap <= a.cap && b.heat <= a.heat + 1e-9 && b.burn <= a.burn + 1e-9) {
+      fail('churrasqueiras.json', `${b.id} não melhora nada sobre ${a.id}: degrau igual ou pior com preço maior`);
+    }
+  }
+  // o texto da loja e da garagem promete o grid real — inclusive nos estilos novos
+  const STYLES = ['lata', 'chapa', 'inox', 'fornalha', 'espeto', 'tambor', 'campeao'];
+  for (const c of ch) {
+    const style = c.visual?.style;
+    if (style && !STYLES.includes(style)) {
+      fail('churrasqueiras.json', `${c.id}: visual.style "${style}" não tem corpo em tools/art/make-ref.mjs (STYLE_BODIES) nem fallback no protótipo`);
+    }
+    for (const key of [`grill.${c.id.replace(/_([a-z])/g, (_m, l) => l.toUpperCase())}`, ''] as never[]) void key;
+  }
+  // todo nome/descrição de grelha e evolução precisa existir no pt-BR — a escada nova não pode chegar sem legenda
+  for (const c of ch) {
+    for (const key of [c.id]) void key;
+    const need = [
+      (c as unknown as { nameKey?: string; subtitleKey?: string; descKey?: string }),
+      ...c.evolutions.map((e) => e as unknown as { nameKey?: string; descKey?: string })
+    ];
+    for (const o of need) {
+      for (const key of [o.nameKey, o.descKey, (o as { subtitleKey?: string }).subtitleKey, (o as { shortNameKey?: string }).shortNameKey]) {
+        if (typeof key === 'string' && typeof l10nPtBr[key] !== 'string') {
+          fail('churrasqueiras.json', `${c.id}: chave de texto "${key}" ausente em shared/l10n/pt-BR.json`);
+        }
+      }
+    }
+  }
+}
+
+// ── Os três tipos de carvão ───────────────────────────────────────────────────
+// O tipo padrão precisa reproduzir o jogo antigo (senão os vetores dourados andam por causa de
+// tabela nova), e o preço de recarga é dreno de moedas: entra nas bandas de `coinSpendRatio`.
+{
+  const grill = readJson('grill.json') as {
+    charcoal: {
+      refillCostCoins: number; baseDurationSec: number;
+      types?: { id: string; tier: number; durationMult: number; heatMult: number; refillCostCoins: number; unlockLevel: number; nameKey: string; descKey: string }[];
+    };
+  };
+  const types = grill.charcoal.types ?? [];
+  if (types.length !== 3) fail('grill.json', `carvão: ${types.length} tipos, esperado 3 (comum / vegetal / briquete)`);
+  for (const id of ['comum', 'vegetal', 'briquete']) {
+    if (!types.some((t) => t.id === id)) fail('grill.json', `carvão: falta o tipo "${id}"`);
+  }
+  let prevT: (typeof types)[number] | undefined;
+  for (const t of types) {
+    if (t.durationMult < 0.8 || t.durationMult > 1.6) fail('grill.json', `carvão ${t.id}: durationMult ${t.durationMult} fora de 0,8–1,6`);
+    if (t.heatMult < 0.9 || t.heatMult > 1.15) fail('grill.json', `carvão ${t.id}: heatMult ${t.heatMult} fora de 0,90–1,15`);
+    if (t.refillCostCoins < 0) fail('grill.json', `carvão ${t.id}: recarga com preço negativo`);
+    for (const key of [t.nameKey, t.descKey]) {
+      if (typeof l10nPtBr[key] !== 'string') fail('grill.json', `carvão ${t.id}: chave "${key}" ausente no pt-BR`);
+    }
+    if (prevT) {
+      if (t.unlockLevel <= prevT.unlockLevel) fail('grill.json', `carvão ${t.id}: unlockLevel ${t.unlockLevel} não avança`);
+      if (t.refillCostCoins <= prevT.refillCostCoins) fail('grill.json', `carvão ${t.id}: preço ${t.refillCostCoins} não supera ${prevT.refillCostCoins} — o upgrade tem de doer um pouco`);
+      // Cada tipo melhora pelo menos um eixo sobre o anterior (e uma troca, nao um upgrade puro:
+      // vegetal queima mais e mais brando, briquete queima mais quente e mais curto) e o eixo cedido
+      // nao pode desabar — ai a diferenca vira taxa, nao escolha.
+      if (t.durationMult <= prevT.durationMult + 1e-9 && t.heatMult <= prevT.heatMult + 1e-9) {
+        fail('grill.json', `carvao ${t.id}: nem duracao nem temperatura melhoram as do tipo anterior`);
+      }
+      if (t.durationMult < prevT.durationMult * 0.85 || t.heatMult < prevT.heatMult * 0.85) {
+        fail('grill.json', `carvao ${t.id}: um eixo cai mais de 15% abaixo do tipo anterior — troca dura demais`);
+      }
+    }
+    prevT = t;
+  }
+  const base = types.find((t) => t.tier === 0) ?? types[0];
+  if (base) {
+    if (Math.abs(base.durationMult - 1) > 1e-9 || Math.abs(base.heatMult - 1) > 1e-9) {
+      fail('grill.json', `carvão ${base.id}: o tipo base tem de ser 1,00x/1,00x — é ele que mantém a curva medida de hoje`);
+    }
+    if (base.refillCostCoins !== grill.charcoal.refillCostCoins) {
+      fail('grill.json', `carvão ${base.id}: refillCostCoins ${base.refillCostCoins} difere do padrão da tabela ${grill.charcoal.refillCostCoins}`);
+    }
+  }
+  // custo de recarga tem de caber na renda do nível em que destrava (senão é taxa, não escolha)
+  const econ = readJson('economy.json') as { targets?: Record<string, unknown> };
+  void econ;
+  for (const t of types) {
+    if (t.tier === 0) continue;
+    const income = [1, 2.5, 5, 9, 15, 24, 38, 55, 80, 115];
+    const band = Math.min(income.length - 1, Math.floor(t.unlockLevel / 8));
+    const coinsPerMin = income[band]!;
+    if (t.refillCostCoins > coinsPerMin * 60 * 0.35) {
+      fail('grill.json', `carvão ${t.id}: ${t.refillCostCoins} moedas por recarga pesam demais para ~${coinsPerMin}/min no nível ${t.unlockLevel} (teto 35% de um turno)`);
+    }
+  }
 }
 
 // ── Report ──────────────────────────────────────────────────────────────────

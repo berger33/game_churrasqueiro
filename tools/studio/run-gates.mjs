@@ -30,6 +30,8 @@ const GATES = [
   ['sim', 'short-horizon economy guardrails'],
   ['check-vectors', 'golden vectors still match the rules'],
   ['check-art', '16 ingredients × 8 doneness levels all paint'],
+  ['check-grill-geometry', 'cada grelha pintada comporta a grade que churrasqueiras.json promete (boca × leito × comida)'],
+  ['check-art-registry', 'registro de arte, atlas em serviço e lotes contam a mesma história (só aprovado embarca; congelamento declarado)'],
   ['check-render', 'real prototype bundle: the FTUE played by following the hand, skip/abandon, a full turn'],
   ['check-shots', 'real PNGs of the first run (FTUE steps 1-6) and the relaunch path — sim catch-up, not 10 800 draws'],
   ['check-csharp', 'the C# core compiles as Unity would (netstandard2.1, C# 9) and replays the golden + FTUE vectors', 'dotnet']

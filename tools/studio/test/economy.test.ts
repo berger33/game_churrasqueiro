@@ -136,63 +136,73 @@ describe('churrasqueira sink', () => {
   });
 
   it('must max the current grill before the next one is offered', () => {
+    const CH = db.churrasqueiras!.churrasqueiras;
+    const second = CH[1]!.id;
     const p = newPlayerState();
-    p.coins = 99_999;
+    p.coins = 1_000_000;
     p.level = 80;
     expect(nextChurrasqueiraStep(db, p)?.kind).toBe('evolve');
-    expect(unlockChurrasqueira(db, p, 'ze_da_esquina')).toBeNull();
+    expect(unlockChurrasqueira(db, p, second)).toBeNull();
     expect(evolveChurrasqueira(db, p)).not.toBeNull(); // 1 → 2
     expect(evolveChurrasqueira(db, p)).not.toBeNull(); // 2 → 3
     const step = nextChurrasqueiraStep(db, p);
-    expect(step).toEqual({ kind: 'unlock', id: 'ze_da_esquina', costCoins: expect.any(Number) });
+    expect(step).toEqual({ kind: 'unlock', id: second, costCoins: expect.any(Number) });
   });
 
   it('unlocks the next grill in order, equips it at evo 1, and cannot skip', () => {
+    const CH = db.churrasqueiras!.churrasqueiras;
+    const second = CH[1]!.id, far = CH[CH.length - 1]!.id;
     const p = newPlayerState();
-    p.coins = 99_999;
+    p.coins = 1_000_000;
     p.level = 80;
     evolveChurrasqueira(db, p);
     evolveChurrasqueira(db, p);
-    expect(unlockChurrasqueira(db, p, 'parrilla_chef_cisma')).toBeNull();
-    const entry = unlockChurrasqueira(db, p, 'ze_da_esquina');
+    // pular degrau não é opção: a escada é sequencial (a arte da grelha seguinte é
+    // desenhada a partir de onde a anterior termina).
+    expect(unlockChurrasqueira(db, p, far)).toBeNull();
+    const entry = unlockChurrasqueira(db, p, second);
     expect(entry).not.toBeNull();
-    expect(entry!.source).toBe('churrasqueira_unlock:ze_da_esquina');
-    expect(p.churrasqueiraId).toBe('ze_da_esquina');
-    expect(p.churrasqueiraLevels['ze_da_esquina']).toBe(1);
-    expect(equippedEvolution(db, p)!.zoneCount).toBe(2);
+    expect(entry!.source).toBe(`churrasqueira_unlock:${second}`);
+    expect(p.churrasqueiraId).toBe(second);
+    expect(p.churrasqueiraLevels[second]).toBe(1);
+    expect(equippedEvolution(db, p)!.zoneCount).toBe(CH[1]!.evolutions[0]!.zoneCount);
   });
 
   it('gates unlocks on player level', () => {
+    const CH = db.churrasqueiras!.churrasqueiras;
+    const second = CH[1]!;
     const p = newPlayerState();
-    p.coins = 99_999;
+    p.coins = 1_000_000;
     p.level = 1;
     evolveChurrasqueira(db, p);
     evolveChurrasqueira(db, p);
     expect(nextChurrasqueiraStep(db, p)).toBeNull();
     expect(buyNextChurrasqueira(db, p)).toBeNull();
-    p.level = 4;
+    p.level = second.unlockLevel;
     const entry = buyNextChurrasqueira(db, p);
-    expect(entry?.source).toBe('churrasqueira_unlock:ze_da_esquina');
+    expect(entry?.source).toBe(`churrasqueira_unlock:${second.id}`);
   });
 
-  it('walks the whole 1F→2F→3F→Fornalha path', () => {
+  it('walks the whole ten-grill ladder, three levels each', () => {
+    const CH = db.churrasqueiras!.churrasqueiras;
     const p = newPlayerState();
-    p.coins = 99_999;
+    p.coins = 10_000_000;
     p.level = 80;
     const ids: string[] = [];
     let guard = 0;
-    while (guard++ < 20) {
+    while (guard++ < 40) {
       const step = nextChurrasqueiraStep(db, p);
       if (!step) break;
       if (step.kind === 'unlock') ids.push(step.id);
       expect(buyNextChurrasqueira(db, p)).not.toBeNull();
     }
-    expect(ids).toEqual(['ze_da_esquina', 'parrilla_chef_cisma', 'fornalha_dragao_manso']);
-    expect(p.churrasqueiraId).toBe('fornalha_dragao_manso');
-    expect(p.churrasqueiraLevels['fornalha_dragao_manso']).toBe(3);
+    expect(ids).toEqual(CH.slice(1).map((c) => c.id));
+    const last = CH[CH.length - 1]!;
+    expect(p.churrasqueiraId).toBe(last.id);
+    expect(p.churrasqueiraLevels[last.id]).toBe(3);
     expect(nextChurrasqueiraStep(db, p)).toBeNull();
-    expect(p.counters['churrasqueiraEvolutions']).toBe(8); // 2 per grill × 4
-    expect(p.counters['churrasqueirasUnlocked']).toBe(3);
+    expect(p.counters['churrasqueiraEvolutions']).toBe(2 * CH.length); // 2 evoluções por grelha × 10
+    expect(p.counters['churrasqueirasUnlocked']).toBe(CH.length - 1);
   });
 });
 
@@ -230,6 +240,43 @@ describe('offline / idle earnings', () => {
     // Ramp starts at 50 % of nominal.
     expect(oneMin.coins).toBeLessThanOrEqual(Math.round(perMin));
     expect(oneMin.coins).toBeGreaterThanOrEqual(Math.round(perMin * 0.45));
+  });
+
+  it('nunca paga por dormir mais do que se joga: 1,75 dia de renda ativa por noite', () => {
+    // A renda ativa por andar vem das próprias bandas medidas (`targets.dailyCoinIncomeAtLevel`,
+    // docs/06) — não de um número inventado aqui. O platô depois do L30 é decisão de design
+    // (`_incomePlateauNote`), então a curva offline tem de parar de crescer junto: quando ela
+    // continuou dobrando com a escada de 10 telas, uma noite no `cozinha_do_campeao` pagou
+    // 17,08 dias de jogo (29,37 com o `gerente` no topo), e a jogada ótima passou a ser fechar o app.
+    const bands = db.economy.targets['dailyCoinIncomeAtLevel'] as unknown as Record<string, [number, number]>;
+    const activeAt: Record<number, number> = {
+      1: bands['5']![1], 2: bands['5']![1], 3: bands['15']![1],
+      4: bands['30']![0], 5: bands['50']![0], 6: bands['50']![0],
+      7: bands['50']![0], 8: bands['50']![0], 9: bands['50']![0]
+    };
+    const gerenteMax = db.upgradeById.get('gerente')?.maxLevel ?? 0;
+    for (const [idx, active] of Object.entries(activeAt)) {
+      const p = newPlayerState();
+      p.restaurantIndex = Number(idx);
+      p.upgradeLevels = { gerente: gerenteMax };
+      const night = computeOfflineEarnings(db, p, db.economy.idle.maxOfflineHours * 3600, 0);
+      expect(night.coins / active, `índice ${idx} paga ${(night.coins / active).toFixed(2)} dias por noite`).toBeLessThanOrEqual(1.75);
+    }
+  });
+
+  it('as duas curvas têm um valor por restaurante e nenhum andar do topo recebe 0 XP', () => {
+    // `?? 0` na leitura da curva de XP era o jeito silencioso de ter moeda offline e nada de XP
+    // nas três telas novas da escada. Uma tabela menor que o restaurante não é "sem dado", é um
+    // andar que regride — e o `0` engolido não deixa rastro em lugar nenhum.
+    const idle = db.economy.idle;
+    const n = db.restaurantByIndex.size;
+    expect(idle.coinsPerMinuteByRestaurant.length).toBe(n);
+    expect(idle.xpPerMinuteByRestaurant.length).toBe(n);
+    for (let i = 1; i < n; i++) {
+      expect(idle.coinsPerMinuteByRestaurant[i]!, `moeda/min em ${i}`).toBeGreaterThan(idle.coinsPerMinuteByRestaurant[i - 1]!);
+      expect(idle.xpPerMinuteByRestaurant[i]!, `xp/min em ${i}`).toBeGreaterThan(idle.xpPerMinuteByRestaurant[i - 1]!);
+      if (idle.coinsPerMinuteByRestaurant[i]! > 0) expect(idle.xpPerMinuteByRestaurant[i]!, `xp em ${i}`).toBeGreaterThan(0);
+    }
   });
 
   it('handles zero and negative elapsed time', () => {

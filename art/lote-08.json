@@ -1,0 +1,158 @@
+{
+  "_comment": "Lote 08 — as quatro regravações que o dono mandou refazer do lote 07 (itens 3, 4, 6 e 7). Regra nova que entra aqui como piso: [NO SIDE FURNITURE] — boca em 80–89 % da largura do recorte final (MOUTH_WIDTH_HINT = 0,72 no check-grill-geometry), porque a loja escala a LARGURA DO RECORTE ao leito e o jogo limita a escala pela tela. Guias do dado + âncora de proporção = a lata aprovada. Prompts e medições em art/prompts/lote-08.md. As linhas vinham como `rejected` no lote 07 e são re-adotadas aqui com nota, como pede docs/04 §11. Nada entra no runtime sem o dono aprovar.",
+  "batch": "lote-08",
+  "date": "2026-09-26",
+  "sourceDir": "art/source/lote-08",
+  "assets": [
+    {
+      "source": "spr_grill_ze_da_esquina_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "ze_da_esquina",
+      "evo": 1,
+      "category": "grill",
+      "name": "spr_grill_ze_da_esquina_evo1",
+      "label": "Tijolo simples sem reboco (2×2, boca 2,75:1) — regravação com o recorte abraçando o corpo",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok",
+        "note": ""
+      }
+    },
+    {
+      "source": "spr_grill_espeto_do_neno_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "espeto_do_neno",
+      "evo": 1,
+      "category": "grill",
+      "name": "spr_grill_espeto_do_neno_evo1",
+      "label": "Quintal comum de alvenaria (2×3, boca 2,99:1) — bancada para dentro da largura do corpo",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok",
+        "note": ""
+      }
+    },
+    {
+      "source": "spr_grill_tambor_vertical_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "tambor_vertical",
+      "evo": 1,
+      "category": "grill",
+      "name": "spr_grill_tambor_vertical_evo1",
+      "label": "Defumador com tampa entreaberta (3×3, boca 1,99:1) — tampa baixa no lugar do painel escuro",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok",
+        "note": ""
+      }
+    },
+    {
+      "source": "spr_grill_fornalha_dragao_manso_evo1.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "fornalha_dragao_manso",
+      "evo": 1,
+      "category": "grill",
+      "name": "spr_grill_fornalha_dragao_manso_evo1",
+      "label": "A gás com queimadores (3×3, boca 1,99:1) — boca alta reescrita no topo do prompt",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok",
+        "note": ""
+      }
+    }
+  ],
+  "compare": [
+    "spr_grill_lata_valente_evo1",
+    "spr_grill_grelha_de_praca_evo1",
+    "spr_grill_cozinha_do_campeao_evo1"
+  ],
+  "preview": {
+    "background": "bg_restaurant_churrascaria_bairro",
+    "grill": "spr_grill_fornalha_dragao_manso_evo1",
+    "_note": "prévia no leito real do motor, 3×3 = 9 pratos de 86 px: é a grelha que reprovara por boca rasa (faixa de 21 px), então se a comida couber aqui a regravação resolveu o defeito mecânico, não só o de recorte.",
+    "onGrill": [
+      [
+        "spr_food_picanha_medium",
+        0.26,
+        0.166667,
+        86
+      ],
+      [
+        "spr_food_contra_file_rare",
+        0.5,
+        0.166667,
+        86
+      ],
+      [
+        "spr_food_linguica_toscana_medium",
+        0.74,
+        0.166667,
+        86
+      ],
+      [
+        "spr_food_maminha_well",
+        0.26,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_fraldinha_medium",
+        0.5,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_asinha_frango_medium",
+        0.74,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_coracao_frango_medium",
+        0.26,
+        0.833333,
+        86
+      ],
+      [
+        "spr_food_queijo_coalho_medium",
+        0.5,
+        0.833333,
+        86
+      ],
+      [
+        "spr_food_legumes_grelhados_medium",
+        0.74,
+        0.833333,
+        86
+      ]
+    ],
+    "benchItems": [
+      [
+        "spr_food_picanha_raw",
+        62
+      ],
+      [
+        "spr_food_contra_file_raw",
+        62
+      ],
+      [
+        "spr_food_maminha_raw",
+        62
+      ]
+    ],
+    "orders": [
+      [
+        "spr_char_customer_influencer",
+        [
+          "spr_food_picanha_served",
+          "spr_food_linguica_toscana_served"
+        ],
+        0.55
+      ]
+    ]
+  }
+}

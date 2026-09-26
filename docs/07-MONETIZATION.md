@@ -1,5 +1,9 @@
 # 07 — Monetization
 
+> **Em aberto, medido:** `docs/24-COMANDAS_SOPRADOR_E_BRASA.md` estuda a comanda (boost de fila), as
+> ferramentas por fileira e a pia da moeda premium. Nada lá foi aplicado; as regras abaixo continuam
+> valendo para o que está implementado.
+
 ## 1. Philosophy (§34, §98)
 
 A free player must be able to **play, progress and enjoy** the whole game. Money buys time and

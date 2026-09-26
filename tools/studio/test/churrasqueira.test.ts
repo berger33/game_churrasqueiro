@@ -20,7 +20,7 @@ import { generateLevels } from '../gen-levels.ts';
 import { TurnSimulation, type TurnCounters } from '../../sim-core/src/turn.ts';
 import { SkillPolicy } from '../../sim-core/src/policy.ts';
 import { Rng } from '../../sim-core/src/rng.ts';
-import { churrasqueiraZoneHeat, effectiveHeat, runtimeZoneIndex } from '../../sim-core/src/cooking.ts';
+import { CHURRASQUEIRA_HEAT_CAP, churrasqueiraZoneHeat, effectiveHeat, runtimeZoneIndex } from '../../sim-core/src/cooking.ts';
 
 const { db } = loadAndValidate();
 const LEVELS = generateLevels([[0, 12]]).levels;
@@ -73,11 +73,29 @@ function playTurns(churrasqueiraId: string | undefined, churrasqueiraLevel: numb
 }
 
 describe('churrasqueira data', () => {
-  it('ships the four grills of the progression, each with evolutions 1..3', () => {
+  it('ships ten grills of the progression, each with evolutions 1..3', () => {
     expect(CHURRASQUEIRAS.map((c) => c.id)).toEqual([
-      'lata_valente', 'ze_da_esquina', 'parrilla_chef_cisma', 'fornalha_dragao_manso'
+      'lata_valente', 'grelha_de_praca', 'ze_da_esquina', 'espeto_do_neno', 'parrilla_chef_cisma',
+      'tambor_vertical', 'fornalha_dragao_manso', 'parrilla_do_cais', 'fornalha_da_orla', 'cozinha_do_campeao'
     ]);
     for (const ch of CHURRASQUEIRAS) expect(ch.evolutions.map((e) => e.level)).toEqual([1, 2, 3]);
+  });
+
+  it('keeps the ladder honest: capacity never drops, no rung is a pure loss', () => {
+    const cap = (e: { zoneCount: number; slotsPerZone: number }) => e.zoneCount * e.slotsPerZone;
+    const rungs = CHURRASQUEIRAS.flatMap((c) => c.evolutions.map((e) => ({
+      cap: cap(e), heat: e.heatBase, burn: e.charcoalBonus ?? 0
+    })));
+    expect(rungs).toHaveLength(30);
+    for (let i = 1; i < rungs.length; i++) {
+      const a = rungs[i - 1]!, b = rungs[i]!;
+      expect(b.cap).toBeGreaterThanOrEqual(a.cap);
+      expect(b.heat).toBeGreaterThanOrEqual(a.heat);
+      if (b.cap === a.cap) expect(b.burn).toBeGreaterThanOrEqual(a.burn);
+      expect(b.cap > a.cap || b.heat > a.heat || b.burn > a.burn).toBe(true);
+    }
+    // 4 fileiras é o teto do padrão de arte (boca = Z*60 <= 248 px).
+    for (const r of rungs) expect(r.cap).toBeLessThanOrEqual(4 * 5);
   });
 });
 
@@ -117,9 +135,14 @@ describe('churrasqueira overrides reach the turn', () => {
         expect(sim.stats.slotsPerZone).toBe(evo.slotsPerZone);
         expect(sim.stats.charcoalDurationSec).toBeCloseTo(db.grill.charcoal.baseDurationSec * (1 + (evo.charcoalBonus ?? 0)), 9);
         expect(sim.grill.zones[0]!.heat).toBeCloseTo(churrasqueiraZoneHeat(evo, 0, db), 9);
-        // Zones heat up monotonically from the cool end to the hot end…
+        // Zones heat up monotonically from the cool end to the hot end. Estrito até o
+        // teto: numa grelha de 4 fileiras com heatBase alto, as duas zonas do fogo forte
+        // encostam no CAP juntas — é a recompensa ser espaço, não temperatura.
         for (let i = 1; i < sim.grill.zones.length; i++) {
-          expect(sim.grill.zones[i]!.heat).toBeGreaterThan(sim.grill.zones[i - 1]!.heat);
+          const cur = sim.grill.zones[i]!.heat;
+          const prev = sim.grill.zones[i - 1]!.heat;
+          expect(cur).toBeGreaterThanOrEqual(prev);
+          if (cur < CHURRASQUEIRA_HEAT_CAP - 1e-9) expect(cur).toBeGreaterThan(prev);
         }
         // …and the cooking model actually reads the patched heat.
         const top = sim.grill.zones.length - 1;
