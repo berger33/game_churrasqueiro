@@ -210,3 +210,33 @@ spr_grill_ze_da_esquina_evo2,grill,ai-assisted-reviewed,proprietary,1.0,AI image
 spr_grill_ze_da_esquina_evo3,grill,ai-assisted-reviewed,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,approved,lote-06,Assets/Art/Sprites/Grills/spr_grill_ze_da_esquina_evo3.png,BOCA ABAIXO DO CONTRATO (aspecto 2.343; contrato 1.2–1.9) — implementado com autorização do dono em 2026-09-26; candidato a troca futura.
 spr_grill_fornalha_dragao_manso_evo2,grill,ai-assisted-reviewed,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,approved,lote-06,Assets/Art/Sprites/Grills/spr_grill_fornalha_dragao_manso_evo2.png,BOCA ABAIXO DO CONTRATO (aspecto 2.339; contrato 1.2–1.9) — implementado com autorização do dono em 2026-09-26; candidato a troca futura.
 spr_grill_fornalha_dragao_manso_evo3,grill,ai-assisted-reviewed,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,approved,lote-06,Assets/Art/Sprites/Grills/spr_grill_fornalha_dragao_manso_evo3.png,BOCA ABAIXO DO CONTRATO (largura 59.7%; contrato 70%) — implementado com autorização do dono em 2026-09-26; candidato a troca futura.
+spr_col_g_alvenaria,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/Sprites/Collection/spr_col_g_alvenaria.png,
+spr_col_g_tambor,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/Sprites/Collection/spr_col_g_tambor.png,
+spr_col_g_inox,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/Sprites/Collection/spr_col_g_inox.png,
+spr_col_g_premium,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/Sprites/Collection/spr_col_g_premium.png,
+spr_col_g_fogo_chao,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/Sprites/Collection/spr_col_g_fogo_chao.png,touches cell edge
+spr_col_g_neon,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/Sprites/Collection/spr_col_g_neon.png,touches cell edge
+spr_col_coroa_da_brasa,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/Sprites/Collection/spr_col_coroa_da_brasa.png,touches cell edge
+spr_col_medalha_picanha,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/Sprites/Collection/spr_col_medalha_picanha.png,
+spr_event_segunda_linguica,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Events/spr_event_segunda_linguica.png,
+spr_event_terca_picanha,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Events/spr_event_terca_picanha.png,
+spr_event_quarta_espetinho,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Events/spr_event_quarta_espetinho.png,
+spr_event_fds_brasa,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Events/spr_event_fds_brasa.png,touches cell edge
+spr_event_carnaval,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Events/spr_event_carnaval.png,
+spr_event_festa_junina,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Events/spr_event_festa_junina.png,
+spr_event_ferias,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Events/spr_event_ferias.png,
+spr_event_inverno,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Events/spr_event_inverno.png,
+spr_event_primavera,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Events/spr_event_primavera.png,
+spr_event_natal,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Events/spr_event_natal.png,
+spr_event_anonovo,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Events/spr_event_anonovo.png,
+spr_iap_embers_large,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Shop/spr_iap_embers_large.png,
+spr_iap_pass_season,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Shop/spr_iap_pass_season.png,
+spr_iap_pass_bundle,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Shop/spr_iap_pass_bundle.png,
+spr_pass_temporada,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Pass/spr_pass_temporada.png,
+bg_route_brasil,background,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/Backgrounds/bg_route_brasil.png,
+spr_achievement_tier1,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Achievements/spr_achievement_tier1.png,
+spr_achievement_tier2,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Achievements/spr_achievement_tier2.png,
+spr_achievement_tier3,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Achievements/spr_achievement_tier3.png,
+spr_achievement_tier4,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Achievements/spr_achievement_tier4.png,touches cell edge
+spr_achievement_tier5,ui,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/UI/Achievements/spr_achievement_tier5.png,
+bg_title_key_art,background,ai-assisted,proprietary,1.0,AI image model (Arena agent) + studio review,2026-09-26,pending,lote-07,Assets/Art/Backgrounds/bg_title_key_art.png,

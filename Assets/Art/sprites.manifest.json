@@ -85,6 +85,30 @@
       "source": "art/source/lote-03/bg_trailer.png",
       "batch": "lote-03"
     },
+    "bg_route_brasil": {
+      "file": "Assets/Art/Backgrounds/bg_route_brasil.png",
+      "w": 768,
+      "h": 1376,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "background",
+      "source": "art/source/lote-07/mapa_rota.png",
+      "batch": "lote-07"
+    },
+    "bg_title_key_art": {
+      "file": "Assets/Art/Backgrounds/bg_title_key_art.png",
+      "w": 768,
+      "h": 1376,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "background",
+      "source": "art/source/lote-07/key_art_titulo.png",
+      "batch": "lote-07"
+    },
     "ic_auto_refill": {
       "file": "Assets/Art/UI/Icons/ic_auto_refill.png",
       "w": 230,
@@ -697,6 +721,66 @@
       "source": "art/source/lote-05/ui_icons_upgrades_b.png",
       "batch": "lote-05"
     },
+    "spr_achievement_tier1": {
+      "file": "Assets/Art/UI/Achievements/spr_achievement_tier1.png",
+      "w": 252,
+      "h": 312,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/medalhas_conquista_selected.png",
+      "batch": "lote-07"
+    },
+    "spr_achievement_tier2": {
+      "file": "Assets/Art/UI/Achievements/spr_achievement_tier2.png",
+      "w": 254,
+      "h": 313,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/medalhas_conquista_selected.png",
+      "batch": "lote-07"
+    },
+    "spr_achievement_tier3": {
+      "file": "Assets/Art/UI/Achievements/spr_achievement_tier3.png",
+      "w": 280,
+      "h": 315,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/medalhas_conquista_selected.png",
+      "batch": "lote-07"
+    },
+    "spr_achievement_tier4": {
+      "file": "Assets/Art/UI/Achievements/spr_achievement_tier4.png",
+      "w": 286,
+      "h": 316,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/medalhas_conquista_selected.png",
+      "batch": "lote-07"
+    },
+    "spr_achievement_tier5": {
+      "file": "Assets/Art/UI/Achievements/spr_achievement_tier5.png",
+      "w": 255,
+      "h": 384,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/medalhas_conquista_selected.png",
+      "batch": "lote-07"
+    },
     "spr_char_customer_apressado_a": {
       "file": "Assets/Art/Sprites/Characters/spr_char_customer_apressado_a.png",
       "w": 315,
@@ -961,6 +1045,18 @@
       "source": "art/source/lote-06/col_equipamentos.png",
       "batch": "lote-06"
     },
+    "spr_col_coroa_da_brasa": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_coroa_da_brasa.png",
+      "w": 313,
+      "h": 307,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/col_churrasqueiras.png",
+      "batch": "lote-07"
+    },
     "spr_col_espeto_longo": {
       "file": "Assets/Art/Sprites/Collection/spr_col_espeto_longo.png",
       "w": 312,
@@ -997,6 +1093,78 @@
       "source": "art/source/lote-06/col_molhos.png",
       "batch": "lote-06"
     },
+    "spr_col_g_alvenaria": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_g_alvenaria.png",
+      "w": 228,
+      "h": 387,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/col_churrasqueiras.png",
+      "batch": "lote-07"
+    },
+    "spr_col_g_fogo_chao": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_g_fogo_chao.png",
+      "w": 338,
+      "h": 293,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/col_churrasqueiras.png",
+      "batch": "lote-07"
+    },
+    "spr_col_g_inox": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_g_inox.png",
+      "w": 310,
+      "h": 234,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/col_churrasqueiras.png",
+      "batch": "lote-07"
+    },
+    "spr_col_g_neon": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_g_neon.png",
+      "w": 306,
+      "h": 258,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/col_churrasqueiras.png",
+      "batch": "lote-07"
+    },
+    "spr_col_g_premium": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_g_premium.png",
+      "w": 270,
+      "h": 344,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/col_churrasqueiras.png",
+      "batch": "lote-07"
+    },
+    "spr_col_g_tambor": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_g_tambor.png",
+      "w": 327,
+      "h": 239,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/col_churrasqueiras.png",
+      "batch": "lote-07"
+    },
     "spr_col_grelha_argola": {
       "file": "Assets/Art/Sprites/Collection/spr_col_grelha_argola.png",
       "w": 295,
@@ -1032,6 +1200,18 @@
       "category": "collection",
       "source": "art/source/lote-06/col_equipamentos.png",
       "batch": "lote-06"
+    },
+    "spr_col_medalha_picanha": {
+      "file": "Assets/Art/Sprites/Collection/spr_col_medalha_picanha.png",
+      "w": 184,
+      "h": 316,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/col_churrasqueiras.png",
+      "batch": "lote-07"
     },
     "spr_col_molho_alho": {
       "file": "Assets/Art/Sprites/Collection/spr_col_molho_alho.png",
@@ -1092,6 +1272,138 @@
       "category": "collection",
       "source": "art/source/lote-06/col_equipamentos.png",
       "batch": "lote-06"
+    },
+    "spr_event_anonovo": {
+      "file": "Assets/Art/UI/Events/spr_event_anonovo.png",
+      "w": 830,
+      "h": 359,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/eventos_sazonais_b.png",
+      "batch": "lote-07"
+    },
+    "spr_event_carnaval": {
+      "file": "Assets/Art/UI/Events/spr_event_carnaval.png",
+      "w": 778,
+      "h": 294,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/eventos_sazonais_a.png",
+      "batch": "lote-07"
+    },
+    "spr_event_fds_brasa": {
+      "file": "Assets/Art/UI/Events/spr_event_fds_brasa.png",
+      "w": 823,
+      "h": 278,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/eventos_semanais.png",
+      "batch": "lote-07"
+    },
+    "spr_event_ferias": {
+      "file": "Assets/Art/UI/Events/spr_event_ferias.png",
+      "w": 778,
+      "h": 295,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/eventos_sazonais_a.png",
+      "batch": "lote-07"
+    },
+    "spr_event_festa_junina": {
+      "file": "Assets/Art/UI/Events/spr_event_festa_junina.png",
+      "w": 778,
+      "h": 295,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/eventos_sazonais_a.png",
+      "batch": "lote-07"
+    },
+    "spr_event_inverno": {
+      "file": "Assets/Art/UI/Events/spr_event_inverno.png",
+      "w": 778,
+      "h": 295,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/eventos_sazonais_a.png",
+      "batch": "lote-07"
+    },
+    "spr_event_natal": {
+      "file": "Assets/Art/UI/Events/spr_event_natal.png",
+      "w": 830,
+      "h": 359,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/eventos_sazonais_b.png",
+      "batch": "lote-07"
+    },
+    "spr_event_primavera": {
+      "file": "Assets/Art/UI/Events/spr_event_primavera.png",
+      "w": 835,
+      "h": 359,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/eventos_sazonais_b.png",
+      "batch": "lote-07"
+    },
+    "spr_event_quarta_espetinho": {
+      "file": "Assets/Art/UI/Events/spr_event_quarta_espetinho.png",
+      "w": 823,
+      "h": 277,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/eventos_semanais.png",
+      "batch": "lote-07"
+    },
+    "spr_event_segunda_linguica": {
+      "file": "Assets/Art/UI/Events/spr_event_segunda_linguica.png",
+      "w": 823,
+      "h": 277,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/eventos_semanais.png",
+      "batch": "lote-07"
+    },
+    "spr_event_terca_picanha": {
+      "file": "Assets/Art/UI/Events/spr_event_terca_picanha.png",
+      "w": 823,
+      "h": 276,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/eventos_semanais.png",
+      "batch": "lote-07"
     },
     "spr_food_asinha_frango_burned": {
       "file": "Assets/Art/Sprites/Food/spr_food_asinha_frango_burned.png",
@@ -2718,6 +3030,54 @@
         "aspectRatio": 2.343
       },
       "batch": "lote-06"
+    },
+    "spr_iap_embers_large": {
+      "file": "Assets/Art/UI/Shop/spr_iap_embers_large.png",
+      "w": 375,
+      "h": 381,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/iap_b_selected.png",
+      "batch": "lote-07"
+    },
+    "spr_iap_pass_bundle": {
+      "file": "Assets/Art/UI/Shop/spr_iap_pass_bundle.png",
+      "w": 390,
+      "h": 346,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/iap_b_selected.png",
+      "batch": "lote-07"
+    },
+    "spr_iap_pass_season": {
+      "file": "Assets/Art/UI/Shop/spr_iap_pass_season.png",
+      "w": 310,
+      "h": 356,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/iap_b_selected.png",
+      "batch": "lote-07"
+    },
+    "spr_pass_temporada": {
+      "file": "Assets/Art/UI/Pass/spr_pass_temporada.png",
+      "w": 1364,
+      "h": 642,
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "category": "ui",
+      "source": "art/source/lote-07/brasa_pass.png",
+      "batch": "lote-07"
     },
     "spr_prop_bancada": {
       "file": "Assets/Art/Sprites/Props/spr_prop_bancada.png",

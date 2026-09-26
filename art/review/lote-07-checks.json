@@ -1,0 +1,226 @@
+{
+  "batch": "lote-07",
+  "date": "2026-09-26",
+  "complete": false,
+  "generatedImages": 9,
+  "plannedImages": 10,
+  "processedSprites": 30,
+  "expectedSprites": 34,
+  "missingSource": "iap_a.png",
+  "missingReason": "Generation returned no image (MAX_TOKENS); retry blocked by 10-call turn cap.",
+  "existingManifestEntriesUnchanged": true,
+  "runtimeUnchanged": true,
+  "registryOldRowsBytePreserved": true,
+  "checks": [
+    {
+      "name": "bg_route_brasil",
+      "width": 768,
+      "height": 1376,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 0
+    },
+    {
+      "name": "bg_title_key_art",
+      "width": 768,
+      "height": 1376,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 0
+    },
+    {
+      "name": "spr_achievement_tier1",
+      "width": 252,
+      "height": 312,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 29144
+    },
+    {
+      "name": "spr_achievement_tier2",
+      "width": 254,
+      "height": 313,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 29356
+    },
+    {
+      "name": "spr_achievement_tier3",
+      "width": 280,
+      "height": 315,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 34411
+    },
+    {
+      "name": "spr_achievement_tier4",
+      "width": 286,
+      "height": 316,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 32958
+    },
+    {
+      "name": "spr_achievement_tier5",
+      "width": 255,
+      "height": 384,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 40786
+    },
+    {
+      "name": "spr_col_coroa_da_brasa",
+      "width": 313,
+      "height": 307,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 49056
+    },
+    {
+      "name": "spr_col_g_alvenaria",
+      "width": 228,
+      "height": 387,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 33546
+    },
+    {
+      "name": "spr_col_g_fogo_chao",
+      "width": 338,
+      "height": 293,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 48745
+    },
+    {
+      "name": "spr_col_g_inox",
+      "width": 310,
+      "height": 234,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 35129
+    },
+    {
+      "name": "spr_col_g_neon",
+      "width": 306,
+      "height": 258,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 33063
+    },
+    {
+      "name": "spr_col_g_premium",
+      "width": 270,
+      "height": 344,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 32189
+    },
+    {
+      "name": "spr_col_g_tambor",
+      "width": 327,
+      "height": 239,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 35053
+    },
+    {
+      "name": "spr_col_medalha_picanha",
+      "width": 184,
+      "height": 316,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 23269
+    },
+    {
+      "name": "spr_event_anonovo",
+      "width": 830,
+      "height": 359,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 25039
+    },
+    {
+      "name": "spr_event_carnaval",
+      "width": 778,
+      "height": 294,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 22322
+    },
+    {
+      "name": "spr_event_fds_brasa",
+      "width": 823,
+      "height": 278,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 24803
+    },
+    {
+      "name": "spr_event_ferias",
+      "width": 778,
+      "height": 295,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 22564
+    },
+    {
+      "name": "spr_event_festa_junina",
+      "width": 778,
+      "height": 295,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 23112
+    },
+    {
+      "name": "spr_event_inverno",
+      "width": 778,
+      "height": 295,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 23103
+    },
+    {
+      "name": "spr_event_natal",
+      "width": 830,
+      "height": 359,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 25752
+    },
+    {
+      "name": "spr_event_primavera",
+      "width": 835,
+      "height": 359,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 27439
+    },
+    {
+      "name": "spr_event_quarta_espetinho",
+      "width": 823,
+      "height": 277,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 23309
+    },
+    {
+      "name": "spr_event_segunda_linguica",
+      "width": 823,
+      "height": 277,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 23389
+    },
+    {
+      "name": "spr_event_terca_picanha",
+      "width": 823,
+      "height": 276,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 22975
+    },
+    {
+      "name": "spr_iap_embers_large",
+      "width": 375,
+      "height": 381,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 58130
+    },
+    {
+      "name": "spr_iap_pass_bundle",
+      "width": 390,
+      "height": 346,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 62166
+    },
+    {
+      "name": "spr_iap_pass_season",
+      "width": 310,
+      "height": 356,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 50534
+    },
+    {
+      "name": "spr_pass_temporada",
+      "width": 1364,
+      "height": 642,
+      "residualMagentaPixels": 0,
+      "transparentPixels": 42974
+    }
+  ]
+}
