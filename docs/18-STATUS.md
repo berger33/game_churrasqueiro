@@ -613,7 +613,9 @@ specification. The prototype proves art *direction*, not the art *budget*.
    them through the same constructor order the reference uses. What still waits:
    `EconomyRules.ApplyTurnResult`, `SaveSystem.cs` v4 (`progress.charcoalType`) and the
    `TutorialTurn` glue the turn port unblocked.
-3. **Three monetization ideas were measured, not debated** — comandas (queue ×2 pays +26 % at L1 and
+3. **Three monetization ideas were measured, not debated** (`docs/24`), and `docs/25` took the decisions
+   and landed the retention fixes that need no new runtime (offline curve cap + the missing top-screen
+   offline XP, a clean D0, the offer one purchase later, "Gorjetas" on screen) — comandas (queue ×2 pays +26 % at L1 and
    +66…+91 % mid-ladder, while doubling *items* on top of that is what pushes lost customers to 18-24 %
    and stars to 1.4-1.6), the blower and the water bottle (a heat boost measures as a *loss* — −2 to
    −10 % coins, +2 to +8 pp burned — because at heat 1,70 the perfect window is 0,3 s wide and one second
@@ -624,7 +626,13 @@ specification. The prototype proves art *direction*, not the art *budget*.
    its numbers and the four decisions are `docs/24`; the instrument is
    `tools/studio/probe-monetization.ts`. Deciding the comanda *before* writing `ApplyTurnResult` is the
    cheap order: that function is where booster state and the embers sink would land.
-4. Write `EconomyRules.ApplyTurnResult` + `SaveSystem.cs` v4, and `TutorialTurn`'s glue.
+4. Write `EconomyRules.ApplyTurnResult` + `SaveSystem.cs` v4, and `TutorialTurn`'s glue — now with the
+   monetization decisions already taken (`docs/25` §4), so this commit also carries `boosters.json` and the
+   comanda (`fila_2x`, 4 orders, 2/day, first one granted at the end of the FTUE, 6 embers per extra),
+   the `double_turn` 6 → 3/day + mutual exclusion, and the embers column in the simulator's faucet/sink
+   report (today it sums `coins` only, which is why the embers sink had to be counted by hand).
+4b. Per-row tools (blower / bottle) as runtime modifiers on `zone.heat` — after item 4, with their own golden
+   vectors: they touch the `tick` whose 162 checks just agreed, so they arrive with both sides moving.
 5. Write the Unity scene layer and run the feel pass.
 6. ~~Confirm the 767-turn mid-game gap with telemetry before V1.0.~~ — the ladder was rebuilt to
    answer it without waiting for telemetry (docs/23): ten grills now buy at turns 3 / 7 / 19 / 50 / 61 /

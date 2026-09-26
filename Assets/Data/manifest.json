@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-26T04:16:37.790Z",
+  "generatedAt": "2026-09-26T05:22:38.239Z",
   "source": "shared/data",
   "files": {
     "achievements.json": {
@@ -7,7 +7,7 @@
       "bytes": 14882
     },
     "ads.json": {
-      "sha256": "be25ef6ad1f41cbbfd35aaefad74f073bf9c2d0db71f60c689c9b92c591d7741",
+      "sha256": "742c9de16b605f0539df140c25bd5c7a78074fa0da0e44b17d7765e925107e6b",
       "bytes": 3138
     },
     "analytics.json": {
@@ -27,8 +27,8 @@
       "bytes": 5918
     },
     "economy.json": {
-      "sha256": "828c3e2e28bb7e1e61775dcec02f6f63cd47896810e0a1ccc96c4dd9c9788ff2",
-      "bytes": 8665
+      "sha256": "416649e82a0ea5d3b9e3c7cea5b7762be0863546405d494ed0a4b21ccadcb348",
+      "bytes": 9327
     },
     "employees.json": {
       "sha256": "f26f360cd0bef72a53538346ecc2fa386d9ecc930963cf150584b2b015323488",
@@ -43,8 +43,8 @@
       "bytes": 6165
     },
     "iap.json": {
-      "sha256": "e3d2be582a9000d71b237b18467b07fca69f5a33c86651a462359b77273288c7",
-      "bytes": 3635
+      "sha256": "194098f866e3f12c0d7c958d5229be69ac203100471bcfd193d0e469c1fc4a85",
+      "bytes": 3641
     },
     "ingredients.json": {
       "sha256": "111ca11cb04ee9abfc0b3c8e8e7fd15636f265bce0cd7e80c9f31faa183f399c",

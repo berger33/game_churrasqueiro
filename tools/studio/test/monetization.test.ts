@@ -185,6 +185,15 @@ describe('interstitial policy (spec §36)', () => {
     expect(p.decide({ ...base, sessionIndex: cfg.skipFirstSessions }).show).toBe(true);
   });
 
+  it('deixa o primeiro dia inteiro sem intersticial', () => {
+    // Medido no simulador: 105,4 s por turno e o alvo de 3-5 turnos por sessão, com 12 turnos/dia
+    // (docs/06) — o D0 são 3 a 4 sessões. `sessionIndex` é 0-based, então suprimir 3 sessões cobre o
+    // primeiro dia. Pedir atenção na sessão em que o jogo acabou de ensinar o loop é o erro de
+    // retention mais caro do catálogo: custa uma impressão por dia e cobra do usuário novo.
+    expect(cfg.skipFirstSessions).toBeGreaterThanOrEqual(3);
+    expect(cfg.skipFirstTurns).toBeGreaterThanOrEqual(6);
+  });
+
   it('is suppressed after an IAP', () => {
     const p = new InterstitialPolicy(cfg);
     expect(p.decide({ ...base, secondsSinceIap: 60 }).show).toBe(false);
@@ -235,7 +244,9 @@ describe('IAP catalogue', () => {
     expect(ids).toContain('brasa.starterpack.v1');
     expect(ids).toContain('brasa.noads.v1');
     expect(ids).toContain('brasa.pass.season.v1');
-    expect(ids.filter((i) => i.startsWith('brasa.coins.')).length).toBeGreaterThanOrEqual(3);
+    // Três pacotes de moeda premium. O prefixo era `brasa.coins.` enquanto o conteúdo já entregava
+    // `embers`; o id é o que vira chave no Play Console, então a renomeação aconteceu aqui (docs/24).
+    expect(ids.filter((i) => i.startsWith('brasa.embers.')).length).toBeGreaterThanOrEqual(3);
   });
 
   it('has unique product ids and non-empty contents', () => {
@@ -261,6 +272,26 @@ describe('IAP catalogue', () => {
 
   it('does not show the starter pack on the first screen (spec §39)', () => {
     expect(iap.ethics['starterPackShownAfterTurns']).toBeGreaterThan(0);
+    expect(iap.ethics['starterPackShownAfterFirstUpgrade']).toBe(true);
+  });
+
+  it('entrega a moeda que o próprio id nomeia', () => {
+    // `brasa.coins.small.v1` entregando `embers` foi o estado do catálogo até aqui: invisível no
+    // jogo (a UI lê `nameKey`), mas é exatamente o tipo de divergência que vira cicatriz quando o id
+    // passa a ser chave no Play Console. Renomear é grátis antes da loja; depois, não.
+    for (const p of iap.products) {
+      const named = /^brasa\.(embers|coins)\./.exec(p.id)?.[1];
+      if (!named) continue;
+      const cur = (p.contents as { currency?: string }[]).find((c) => c.currency)?.currency;
+      expect(cur, p.id).toBe(named);
+    }
+  });
+
+  it('não oferece o pacote inicial no turno em que o jogador acabou de gastar tudo', () => {
+    // A primeira grelha é comprada no turno 3 e a segunda no 7 (medido em `churrasqueiraUnlockPacing
+    // / docs/23`). Uma oferta no turno 4 cai no bolso vazio do gasto recente; no 7 ela cai entre a
+    // segunda compra e o próximo desejo (turno 19) — a janela em que o jogador já sabe o que quer.
+    expect(iap.ethics['starterPackShownAfterTurns']).toBeGreaterThanOrEqual(7);
     expect(iap.ethics['starterPackShownAfterFirstUpgrade']).toBe(true);
   });
 

@@ -57,32 +57,13 @@
     "_curvesNote": "levelUpCoins(level) = round(base * level^exponent). A geometric curve here was measured to pay 10.3M coins at level 47 (see docs/06-ECONOMY.md \"exponential blow-up\"); polynomial keeps level rewards in the same order of magnitude as turn income."
   },
   "idle": {
-    "coinsPerMinuteByRestaurant": [
-      0,
-      6,
-      16,
-      42,
-      96,
-      210,
-      430,
-      860,
-      1720,
-      3440
-    ],
-    "xpPerMinuteByRestaurant": [
-      0,
-      0.4,
-      1.0,
-      2.4,
-      5.0,
-      9.0,
-      16.0
-    ],
+    "coinsPerMinuteByRestaurant": [0, 6, 16, 42, 96, 170, 180, 186, 192, 198],
+    "xpPerMinuteByRestaurant": [0, 0.4, 1.0, 2.4, 5.0, 9.0, 16.0, 17.0, 18.0, 19.0],
     "maxOfflineHours": 8,
     "rampInMinutes": 20,
     "adDoubleAvailable": true,
     "minCollectIntervalMin": 30,
-    "_comment": "Moeda offline por minuto por índice de restaurante (0 no quintal: sem idle antes do primeiro upgrades de fila). Os sete primeiros são os medidos na curva antiga (0, 6, 16, 42, 96, 210, 430; razão cai de ~2,7 para ~2,0); as três telas novas da escada de 10 (cais, orla, campeão) continuam a mesma razão convergente 860 / 1720 / 3440 em vez de dobrar o número na cara do jogador."
+    "_comment": "Moeda offline por minuto por índice de restaurante (0 no quintal: sem idle antes do primeiro upgrade de fila). Regra que a curva obedece desde a escada de 10 telas: uma noite de 8 h com o `gerente` no máximo rende no máximo 1,75 dia da renda ativa daquele andar — conferido em tools/studio/test/economy.test.ts. Os índices 0-4 são a curva antiga medida (0/6/16/42/96) e já cabiam na regra. O índice 5 estava em 1,79 e os índices 6-9 seguiam dobrando (430/860/1 720/3 440) porque a extensão da escada herdou a razão antiga da tabela de 7 valores — e a renda ativa é horizontal por design depois do L30 (ver `_incomePlateauNote`), então dobrar o offline não dá progressão ao jogador, dá número maior na tela. Medido antes do corte: uma noite no `cozinha_do_campeao` pagava 17,08 dias de renda ativa (29,37 com o gerente no topo), ou seja, o jogo ótimo era dormir; agora 1,69. O XP tinha o buraco ao contrário: a tabela parava no índice 6 e cais/orla/campeão recebiam moeda e zero XP por noite, porque o `?? 0` da leitura engolia a linha que não existia em silêncio — as três telas novas valem 17/18/19 xp por minuto."
   },
   "dailyReward": {
     "cycleDays": 7,

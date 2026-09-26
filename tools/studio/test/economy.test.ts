@@ -242,6 +242,43 @@ describe('offline / idle earnings', () => {
     expect(oneMin.coins).toBeGreaterThanOrEqual(Math.round(perMin * 0.45));
   });
 
+  it('nunca paga por dormir mais do que se joga: 1,75 dia de renda ativa por noite', () => {
+    // A renda ativa por andar vem das próprias bandas medidas (`targets.dailyCoinIncomeAtLevel`,
+    // docs/06) — não de um número inventado aqui. O platô depois do L30 é decisão de design
+    // (`_incomePlateauNote`), então a curva offline tem de parar de crescer junto: quando ela
+    // continuou dobrando com a escada de 10 telas, uma noite no `cozinha_do_campeao` pagou
+    // 17,08 dias de jogo (29,37 com o `gerente` no topo), e a jogada ótima passou a ser fechar o app.
+    const bands = db.economy.targets['dailyCoinIncomeAtLevel'] as unknown as Record<string, [number, number]>;
+    const activeAt: Record<number, number> = {
+      1: bands['5']![1], 2: bands['5']![1], 3: bands['15']![1],
+      4: bands['30']![0], 5: bands['50']![0], 6: bands['50']![0],
+      7: bands['50']![0], 8: bands['50']![0], 9: bands['50']![0]
+    };
+    const gerenteMax = db.upgradeById.get('gerente')?.maxLevel ?? 0;
+    for (const [idx, active] of Object.entries(activeAt)) {
+      const p = newPlayerState();
+      p.restaurantIndex = Number(idx);
+      p.upgradeLevels = { gerente: gerenteMax };
+      const night = computeOfflineEarnings(db, p, db.economy.idle.maxOfflineHours * 3600, 0);
+      expect(night.coins / active, `índice ${idx} paga ${(night.coins / active).toFixed(2)} dias por noite`).toBeLessThanOrEqual(1.75);
+    }
+  });
+
+  it('as duas curvas têm um valor por restaurante e nenhum andar do topo recebe 0 XP', () => {
+    // `?? 0` na leitura da curva de XP era o jeito silencioso de ter moeda offline e nada de XP
+    // nas três telas novas da escada. Uma tabela menor que o restaurante não é "sem dado", é um
+    // andar que regride — e o `0` engolido não deixa rastro em lugar nenhum.
+    const idle = db.economy.idle;
+    const n = db.restaurantByIndex.size;
+    expect(idle.coinsPerMinuteByRestaurant.length).toBe(n);
+    expect(idle.xpPerMinuteByRestaurant.length).toBe(n);
+    for (let i = 1; i < n; i++) {
+      expect(idle.coinsPerMinuteByRestaurant[i]!, `moeda/min em ${i}`).toBeGreaterThan(idle.coinsPerMinuteByRestaurant[i - 1]!);
+      expect(idle.xpPerMinuteByRestaurant[i]!, `xp/min em ${i}`).toBeGreaterThan(idle.xpPerMinuteByRestaurant[i - 1]!);
+      if (idle.coinsPerMinuteByRestaurant[i]! > 0) expect(idle.xpPerMinuteByRestaurant[i]!, `xp em ${i}`).toBeGreaterThan(0);
+    }
+  });
+
   it('handles zero and negative elapsed time', () => {
     const p = newPlayerState();
     p.restaurantIndex = 3;

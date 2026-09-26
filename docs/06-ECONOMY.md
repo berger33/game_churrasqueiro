@@ -27,6 +27,15 @@ Exactly two, as mandated.
 
 Rule: **Brasas never buy raw power.** They buy time, appearance and convenience.
 
+Rule (idle): **a noite paga menos que o dia.** Eight hours offline — with the `gerente` track maxed —
+may pay at most **1,75× a day of measured active income at that floor** (`targets.dailyCoinIncomeAtLevel`
+is the anchor, and `tools/studio/test/economy.test.ts` reads it from there rather than hard-coding a
+number). The curve had been extended for the 10-screen ladder by *doubling* per screen while active
+income was deliberately flattened after L30, which reached 17-29 days of income per night at the top
+screen: the optimal play became not playing. Full measurement and the XP half of the same bug
+(the offline XP table stopped at index 6, so the three newest screens earned coins and zero progress via
+`?? 0`): `docs/25-RETENCAO_D0_D30.md` §3.1.
+
 ## 2. Payout identity
 
 ```

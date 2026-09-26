@@ -15,7 +15,7 @@ conversa.
 | | estado hoje |
 |---|---|
 | Moeda premium | **não existe diamante nenhum.** `economy.json.currencies.embers` (`premium: true`), na UI **Brasas** (`ui.hud.embers`, `currency.embers`), vendida em `iap.json` a 4,08 → 3,33 centavos por unidade (`docs/07` §) |
-| Pia da moeda premium | **nenhuma.** Torneiras há quatro (level-up, conquistas, diária, passe) + IAP; `buyUpgrade` aceita `currency: "embers"`, mas **toda** track hoje é `coins`, e as evoluções de grelha não têm campo `costEmbers` — a soma de custo em brasas nas 30 evoluções é **0** |
+| Pia da moeda premium | **uma, e pequena.** `cosmeticTracks` cobra o catálogo inteiro a **2 710 Brasas** (5 tracks × 4 níveis) e o reroll de missão diária cobra 5 (1 grátis/dia). `buyUpgrade` aceita `currency: "embers"`, mas nenhuma track de progressão é precificada assim, e as evoluções de grelha nem têm campo `costEmbers` — a soma em brasas das 30 evoluções é **0**. Torneiras: conquistas 1 072 no lifetime, ~5/dia de missões + diária, mais IAP. Correção registrada em `docs/25` §4: uma turnada anterior deste estudo escreveu "nenhuma pia" — a pia existe, o que falta é tamanho e recorrência (o pacote de 1 200 não tem o que comprar em 8 meses) |
 | Boosters | `tip_2x` e `xp_2x` são **concedidos** (pacote inicial ×3, dia 5 da diária, tiers 8 e 28 do passe) e **não fazem nada**: não há `boosters.json`, nem timer, nem leitura no `applyTurnResult`; o protótipo só desenha o ícone na faixa da diária |
 | Anúncios | `ads.json.rewardedPlacements` tem 8, incluindo `double_turn` (resultado do turno, 6/dia) e `unburn_plate` (2 min de cooldown, 3/dia); intersticial só entre turno e lobby, com supressão durante o jogo |
 | Moeda mole | `coins`, rotulada **"Moedas"** na UI — mas a regra de payout *é* de gorjeta: `orderBaseTip`, `perfectTipBonus`, `speedBonus`, `tipMult`, `customerTipMult` (`docs/06` §8), e a missão diária já diz "Receba 2.000 em gorjetas" |
@@ -176,6 +176,15 @@ Recomendação em três golpes, do mais barato ao mais estrutural:
   a banda é o jeito certo de perder a escada.
 
 ## 6. As decisões (com o que cada uma custa)
+
+> **Decidido e aplicado em `docs/25` §4** (o dono delegou a decisão): comanda entra como booster de
+> 4 pedidos, 2/dia, fila dobrada sem dobrar o prato, primeira grátis no fim do FTUE, 6 Brasas por
+> comanda extra; `double_turn` cai a 3/dia e fica excludente *no mesmo commit* da comanda; soprador e
+> garrafa entram como troca (carvão→calor com força caindo; tempo→controle) e nunca como poder pago,
+> com vetores próprios porque tocam o `tick` que o C# espelha; e as Brasas ganham pia recorrente em vez
+> de nome novo. O que foi aplicado nesta turnada é só o que não precisa de runtime: curva offline,
+> rótulo "Gorjetas", ids `brasa.embers.*`, `skipFirstSessions` 3 e pacote inicial no turno 7.
+
 
 1. **Comanda**: fila 2× por 4 pedidos, 2/dia, `double_turn` excluído no mesmo resultado — *recomendado*;
    ou o "5 min" literal (+17 % de renda/dia, ★ intacto, L1 quase não sente); ou fila + pedido em dobro
