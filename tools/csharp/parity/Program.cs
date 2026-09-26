@@ -202,6 +202,10 @@ public static class Program
         }
         var turns = report.Section("golden.turns");
         foreach (var v in doc["turns"]!.AsArray()) turns.NotPorted(Str(v!["id"]), "TurnSimulation.cs");
+        // O alicerce dos vetores de turno, conferido antes deles: se o `Rng` divergir em um bit,
+        // "coins 628 ≠ 631" é sintoma, não diagnóstico — aqui a falha nomeia o sorteio.
+        var rngSec = report.Section("golden.rng");
+        foreach (var v in (doc["rng"]?.AsArray() ?? new JsonArray())) RngStream(v, rngSec);
     }
 
     private static void Cook(GameData data, DerivedStats stats, JsonNode v, Section s)
@@ -310,6 +314,46 @@ public static class Program
                 Near(fails, $"zone {z} t={ts[k]}", CookingRules.EffectiveHeat(g, z, data), want[k]);
             }
         }
+        s.Result(Str(v["id"]), fails);
+    }
+
+    // ── 3c. golden.rng (Rng.cs) ─────────────────────────────────────────────
+
+    private static void RngStream(JsonNode v, Section s)
+    {
+        var r = new Rng(Num(v["input"]!["seed"]));
+        var e = v["expect"]!;
+        var fails = new List<string>();
+
+        var draws = Nums(e["draws"]);
+        for (int i = 0; i < draws.Length; i++) Near(fails, $"draw {i}", r.Next(), draws[i]);
+
+        var ints = Ints(e["ints"]);
+        for (int i = 0; i < ints.Length; i++) Near(fails, $"int {i}", r.Int(0, 6), ints[i]);
+
+        var ranges = Nums(e["ranges"]);
+        for (int i = 0; i < ranges.Length; i++) Near(fails, $"range {i}", r.Range(-2.5, 3.5), ranges[i]);
+
+        var chances = e["chances"]!.AsArray();
+        for (int i = 0; i < chances.Count; i++) Eq(fails, $"chance {i}", r.Chance(0.37), Bool(chances[i]));
+
+        var weights = new double[] { 0, 3, 1.5, 0, 7 };
+        var picks = e["weights"]!.AsArray();
+        for (int i = 0; i < picks.Count; i++) Near(fails, $"weighted {i}", r.PickWeighted(weights), Int(picks[i]));
+
+        var empty = e["emptyWeights"]!.AsArray();
+        Near(fails, "weighted empty list", r.PickWeighted(new double[0]), Int(empty[0]));
+        Near(fails, "weighted all zero", r.PickWeighted(new double[] { 0, 0, 0 }), Int(empty[1]));
+
+        var letters = new[] { "a", "b", "c", "d" };
+        var picked = e["picks"]!.AsArray();
+        for (int i = 0; i < picked.Count; i++) Eq(fails, $"pick {i}", r.Pick(letters), Str(picked[i]));
+
+        var shuffled = Ints(e["shuffled"]);
+        var got = r.Shuffled(new[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+        for (int i = 0; i < shuffled.Length; i++) Near(fails, $"shuffled[{i}]", got[i], shuffled[i]);
+
+        Near(fails, "draw after", r.Next(), Num(e["after"]));
         s.Result(Str(v["id"]), fails);
     }
 
