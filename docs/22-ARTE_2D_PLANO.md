@@ -733,3 +733,20 @@ Fica registrada a lacuna que a folha mostrou e a régua não vê: `cheio` compar
 **ajustado**, e o ajuste acompanha entalhe — uma chapa soldada dentro do canto da boca não altera o índice
 (deu 1,02 na r1 da praça, com a chapa lá). Detectar isso exige ajustar o vão a um retângulo e comparar, o que
 mexe nas 18 medições já assinadas; é mudança de padrão, com decisão dele na frente.
+
+### 6.10.4 Caixa × cilindro: onde mora a inclinação, e por que o vão de caixa é parede frontal
+
+O dono reprovou a grelha a gás seis vezes seguidas com a mesma queixa ("sem inclinação") enquanto aprovava o
+bidão e o defumador do mesmo lote. A diferença não é atenção do modelo, é geometria: **num cilindro visto de
+frente, a curva da tampa e do fundo entrega a câmera**; **numa caixa de frente, não sobra nada além do rolo do
+quadro** — e o rolo do quadro é exatamente o que o `tiltDeg` do vão mede. Duas consequências, ambas medidas:
+
+- Elevação alta com o vão lido como *cama horizontal* esmaga a boca (A: 3,84:1, faixa 31 px; B: 4,59:1) — a
+  projeção fecha o plano horizontal na mesma taxa em que abre a profundidade. Para grelhas de caixa o vão é a
+  janela recortada na **parede frontal**, e aí a altura do vão não depende do ângulo da câmera (r6/r7: 2:1 com
+  60 px por fileira).
+- Guinada (yaw) do corpo **não** move a inclinação do vão: girando em torno do eixo vertical, as arestas
+  horizontais da frente continuam horizontais. Por isso a r6, a mais tridimensional das quatro, media −3,6° e
+  ficou abaixo do piso. O rolo precisa ser pedido à parte, com número e com chão: "8°, o chão das rodas sobe
+  para a direita". Com isso a r7 fechou −7,2° · recorte 0,74 · boca 2:1 · `cheio` 1,00 — verde em tudo, e é a
+  que vai para a assinatura dele.
