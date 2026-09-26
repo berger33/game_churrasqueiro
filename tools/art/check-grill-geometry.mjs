@@ -14,7 +14,7 @@
  */
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { loadStandard, report, MOUTH_WIDTH_HINT, MOUTH_FILL_HINT } from './grill-geometry.mjs';
+import { loadStandard, report, MOUTH_WIDTH_HINT, MOUTH_FILL_HINT, MOUTH_TILT_MIN_HINT } from './grill-geometry.mjs';
 
 const ROOT = join(import.meta.dirname, '..', '..');
 const checkAll = process.argv.includes('--all');
@@ -44,7 +44,7 @@ const fmt = (n) => String(n).padStart(4);
 console.log(`\n── churrasqueiras: boca pintada × grade prometida ─────────────────────────`);
 console.log(`   padrão: comida ${art.foodFootprint.width}×${art.foodFootprint.height} px · leito ${art.bedWidthOnScreen}–${art.maxBedWidthOnScreen} px · topo ≤ ${art.maxTiltDeg}°`);
 console.log(`   grelha              Z×S  vagas   exige (vaga)     pintado (vaga)     boca    incl. b/larg cheio status`);
-let bad = 0, warn = 0, narrow = 0, invaded = 0;
+let bad = 0, warn = 0, narrow = 0, invaded = 0, flat = 0;
 for (const r of rows.sort((a, b) => a.cap.id.localeCompare(b.cap.id) || a.cap.evo - b.cap.evo)) {
   const st = statusOf.get(r.name) ?? 'unknown';
   // Only approved art ships, so only approved art can break the build. `--all` widens what is
@@ -60,12 +60,13 @@ for (const r of rows.sort((a, b) => a.cap.id.localeCompare(b.cap.id) || a.cap.ev
     ` ${String(r.got.aspect).padStart(5)}:1 ${String(r.got.tiltDeg).padStart(5)}° ${String(r.got.widthFrac).padStart(5)} ${String(r.got.fill).padStart(5)} ` +
     `${r.got.bedKind === 'cells' ? '⌗células' : '—aberto '}` + `  ${flag.padEnd(6)} ${r.name}`);
   if (!r.got.ok) console.log(`   ${''.padEnd(20)}→ ${r.got.why}`);
-  else if (r.got.mouthInvaded) {
-    invaded++;
-    console.log(`   ${''.padEnd(20)}⚕ só ${Math.round(r.got.fill * 100)} % do quadrilátero do vão é magenta de verdade: tem coisa pintada para dentro da boca (balcão, tampa, apoio, grade). A régua de vagas lê o vão inteiro — é esse pedaço pintado que come o espaço do prato.`);
-  } else if (r.got.mouthTooNarrow) {
-    narrow++;
-    console.log(`   ${''.padEnd(20)}⚕ boca em ${Math.round(r.got.widthFrac * 100)} % da largura do sprite (< ${Math.round(MOUTH_WIDTH_HINT * 100)} %): o teto de tela ganha da régua do leito e a comida encosta. Não reprova — as artes aprovadas antes desta regra também medem menos. É a régua da PRÓXIMA geração.`);
+  const avisos = [];
+  if (r.got.mouthInvaded) avisos.push(['invadida', `só ${Math.round(r.got.fill * 100)} % do quadrilátero do vão é magenta de verdade: tem coisa pintada para dentro da boca (balcão, tampa, apoio, grade). A régua de vagas lê o vão inteiro — é esse pedaço pintado que come o espaço do prato.`]);
+  if (r.got.mouthTooNarrow) avisos.push(['estreita', `boca em ${Math.round(r.got.widthFrac * 100)} % da largura do sprite (< ${Math.round(MOUTH_WIDTH_HINT * 100)} %): o teto de tela ganha da régua do leito e a comida encosta. Não reprova — as artes aprovadas antes desta regra também medem menos. É a régua da PRÓXIMA geração.`]);
+  if (r.got.flatMouth) avisos.push(['nivelada', `boca em ${r.got.tiltDeg}° — vista de frente sem câmera: topo, boca e base saem perfeitamente nivelados, e é isso que o dono lê como "sem inclinação na imagem". As grelhas carimbadas por ele medem −8,6° a −6,1°; \`make-ref.mjs guide --roll 7\` já entrega o desenho de partida com essa inclinação.`]);
+  for (const [kind, msg] of avisos) {
+    if (kind === 'invadida') invaded++; else if (kind === 'estreita') narrow++; else flat++;
+    console.log(`   ${''.padEnd(20)}⚕ ${msg}`);
   }
 }
 
@@ -79,6 +80,7 @@ for (const step of ladder) {
   prev = step;
 }
 const caps = ladder.map((s) => s.cap);
+if (flat) console.log(`   ⚕ ${flat} grelha(s) com a boca em nível (|inclinação| < ${MOUTH_TILT_MIN_HINT}°) — planta baixa, não foto. Piso da próxima geração; as aprovadas de 0° continuam assinadas pelo dono.`);
 if (invaded) console.log(`   ⚕ ${invaded} grelha(s) com o vão invadido por detalhe pintado (< ${Math.round(MOUTH_FILL_HINT * 100)} % de cheio).`);
 if (narrow) console.log(`   ⚕ ${narrow} grelha(s) com boca estreita demais para a largura do sprite (< ${Math.round(MOUTH_WIDTH_HINT * 100)} %) — régua nova, ainda só aviso: é o piso da próxima geração.`);
 console.log(`\n   escada de vagas: ${caps.join(' → ')}  (monótona: ${ladderBad ? 'NÃO' : 'sim'})`);

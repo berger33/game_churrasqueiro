@@ -100,6 +100,7 @@ export function measuredMouth(art, sprite, cap) {
     aspect: +(mw / mh).toFixed(2),
     widthFrac: +(mw / sprite.w).toFixed(2),
     mouthTooNarrow: mw / sprite.w < MOUTH_WIDTH_HINT,
+    flatMouth: Math.abs(sprite.hole.tiltDeg ?? 0) < MOUTH_TILT_MIN_HINT,
     fill: (() => {
       const magenta = (sprite.hole.areaFrac ?? 0) * sprite.w * sprite.h;
       const quad = mouthArea(sprite);
@@ -123,10 +124,13 @@ export function measuredMouth(art, sprite, cap) {
       // nela. Leito aberto: a promessa é só a faixa por fileira, e a escala da comida é do motor.
       && (need.bedKind !== 'cells' || cellW >= food.width - 0.5),
     why: [
-      cellW < need.minCellW ? `vaga de ${Math.round(cellW)} px < o mínimo ${need.minCellW} px (fallback dá ${need.procCellW})` : '',
+      // As mesmas meias medidas de tolerância do `ok`, e não a comparação crua: o relatório de `cheio`
+      // nasceu de uma régua que media uma coisa e acusava outra, e aqui o `why` dizia "faixa de 60 px <
+      // 60 px" para uma arte que passava nessa régua — reprovação fantasma na frente de quem decide.
+      cellW < need.minCellW - 0.5 ? `vaga de ${Math.round(cellW)} px < o mínimo ${need.minCellW} px (fallback dá ${need.procCellW})` : '',
       need.bedKind === 'cells' && cellW < food.width - 0.5
         ? `leito de células com ${cap.slotsPerZone} vagas de ${Math.round(cellW)} px < prato de ${food.width} px — ou pinta leito aberto, ou o grid desce para ≤ ${art.paintedCellsMaxSlots}` : '',
-      cellH < need.minCellH ? `faixa de ${Math.round(cellH)} px < ${need.minCellH} px (comida de ${food.height} px)` : '',
+      cellH < need.minCellH - 0.5 ? `faixa de ${Math.round(cellH)} px < ${need.minCellH} px (comida de ${food.height} px)` : '',
       // A boca quadrada passa na régua de comida e mesmo assim estraga a tela: ao escalar a boca
       // para `bedW`, a grelha pintada fica mais alta que o leito procedural que ela substitui.
       // É por isso que a razão da boca — não só a área — é parte do padrão.
@@ -189,6 +193,17 @@ export const MOUTH_WIDTH_HINT = 0.72;
  * é um retângulo cheio (1,00), e uma arte honesta perde pouco para o traço torto do modelo.
  */
 export const MOUTH_FILL_HINT = 0.85;
+
+/**
+ * Boca perfeitamente horizontal = desenho visto de lado, sem câmera. Foi o que o dono apontou no lote
+ * 08 ("esses três não têm nenhuma inclinação na imagem") e a causa é minha: o bloco `[CAMERA]` que
+ * escrevi para matar a isometria dizia literalmente *"the top and bottom edges are horizontal lines
+ * parallel to the top of the image"* — eu pedi a planta baixa e reclamei da planta baixa. As artes que
+ * ele carimbou como "o ângulo certo" medem −8,6° a −6,1°; as que ele recusou, −0,3° a 0°. Piso de
+ * AVISO em 4° (as aprovadas de 0° continuam valendo — a assinatura dele está nelas — mas nenhuma grelha
+ * nova sai daqui com a boca em nível).
+ */
+export const MOUTH_TILT_MIN_HINT = 4;
 
 /** Área do quadrilátero do vão (shoelace). Compara com a *boca*, não com a caixa dela: uma boca com o
  * topo a −8,6° — a lata aprovada — ocupa 57 % da própria bbox e 100 % do vão, e um portão que confunde

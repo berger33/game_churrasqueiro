@@ -705,3 +705,31 @@ registrou duas vezes. `mouthArea()` fecha o quadrilátero detectado (shoelace) e
 área do quadrilátero`, com piso `MOUTH_FILL_HINT = 0,85`: continua pegando boca em "L" (balcão, tampa ou
 apoio pintado para dentro do vão, que come o espaço do prato) e para de punir perspectiva. Nas dezoito
 grelhas medidas hoje o índice é 1,00–1,04 em todas.
+
+### 6.10.3 A boca em nível é um defeito de câmera, e eu a havia pedido por escrito
+
+O dono reprovou três grelhas do lote 08 com uma frase só: *"esses três não tem nenhuma inclinação na imagem,
+pode refazer"*. A medição devolveu 0°, 0° e −0,3° — exatamente as três bocas em nível do lote — enquanto as
+duas que ele aprovou medem +1,7° e −2,6° e as carimbadas como "a câmera certa" ficam entre −8,6° e −6,1°.
+Achei no meu próprio prompt do lote 07/08 a frase que causou isso: *"the top and bottom edges are horizontal
+lines parallel to the top of the image"*, escrita para matar a deriva isométrica dos lotes 03/05. O bloco
+funcionou e entregou uma planta baixa.
+
+Correção no padrão, em três peças:
+
+- `MOUTH_TILT_MIN_HINT = 4` em `grill-geometry.mjs` (`flatMouth`), com aviso no `check-grill-geometry` — piso,
+  não teto: o teto continua `grill.json.art.maxTiltDeg = 12`, e hoje 11 grelhas medidas estariam abaixo do
+  piso, duas delas aprovadas antes da régua existir. Piso de aviso é o que a assinatura dele permite.
+- `make-ref.mjs guide … --roll <graus>`: o guia de composição é desenhado **rolado** — corpo, boca e base
+  juntos — e o quadro cresce do tanto que o giro pede, para nenhum canto ser cortado e a boca continuar com os
+  pixels que o padrão exige. O modelo obedece o rolo do guia com exagero (pedido 7°, medidos 9°–18°), então o
+  rolo de partida é pequeno e a inclinação vem dita como foto: *"como a foto de um celular, sem endireitar o
+  objeto"*.
+- O prompt de grelha não pede mais "olhe para dentro da caixa": nas cinco rodadas da grelha a gás, cada vez que
+  essa frase apareceu a boca ficou funda e a câmera foi a 15–18°; sumindo ela, as duas réguas passaram juntas
+  (1,73:1 · −7,0° · recorte 0,77). Uma frase de perspectiva custava duas réguas.
+
+Fica registrada a lacuna que a folha mostrou e a régua não vê: `cheio` compara o magenta ao quadrilátero
+**ajustado**, e o ajuste acompanha entalhe — uma chapa soldada dentro do canto da boca não altera o índice
+(deu 1,02 na r1 da praça, com a chapa lá). Detectar isso exige ajustar o vão a um retângulo e comparar, o que
+mexe nas 18 medições já assinadas; é mudança de padrão, com decisão dele na frente.

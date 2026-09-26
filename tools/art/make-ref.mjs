@@ -8,6 +8,7 @@
  *   node tools/art/make-ref.mjs grid   <out.png> <W> <H> <cols> <rows> <sprite>...
  *   node tools/art/make-ref.mjs single <out.png> <W> <H> <sprite>
  *   node tools/art/make-ref.mjs guide  <out.png> <W> <H> <cart|box|masonry>
+   node tools/art/make-ref.mjs guide  <out.png> [W] --grill <id> --evo <n> [--roll <graus>]
  *
  * <sprite> is a manifest name (spr_food_picanha_raw). Each sprite is centred in its cell and
  * scaled down only if it does not fit in 88 % of the cell.
@@ -68,7 +69,7 @@ const STYLE_BODIES = {
 
 async function drawGuide(out, kindOrOpts) {
   const standard = await loadStandard(ROOT);
-  const { grillId, evo, W = 1408 } = kindOrOpts;
+  const { grillId, evo, W = 1408, roll = 0 } = kindOrOpts;
   const ch = standard.churrasqueiras.find((c) => c.id === grillId);
   if (!ch) throw new Error(`churrasqueira ${grillId} não está em churrasqueiras.json`);
   const style = ch.visual?.style ?? 'inox';
@@ -91,9 +92,23 @@ async function drawGuide(out, kindOrOpts) {
   const mouth = [0.5 - mwFrac / 2, mTop, 0.5 + mwFrac / 2, mTop + mH];
   const body = [0.5 - mwFrac / 2 - 0.045, mTop - 0.05, 0.5 + mwFrac / 2 + 0.045, mouth[3] + 0.17];
   const base = { from: body[3], to: Math.min(0.97, body[3] + 0.24) };
-  const c = createCanvas(W, H);
+  // `--roll <graus>` inclina o desenho inteiro, boca e corpo juntos. Ninguém pediu isso por capricho:
+  // o dono reprovou três grelhas do lote 08 porque "não têm nenhuma inclinação na imagem", e o motivo
+  // estava no meu próprio prompt, que pedia bordas horizontais para matar a isometria. O guia com rolo
+  // ensina a câmera (as aprovadas medem −8,6° a −6,1°) sem abrir mão da boca retangular que o detector
+  // precisa achar. O quadro cresce de padX/padY para absorver os cantos girados — a boca continua com os
+  // pixels que o padrão exige, e o magenta extra é aparo, não corpo.
+  const rad = (roll * Math.PI) / 180;
+  const padX = roll ? Math.ceil(Math.abs(Math.sin(rad)) * H / 2) + 4 : 0;
+  const padY = roll ? Math.ceil(Math.abs(Math.sin(rad)) * W / 2) + 4 : 0;
+  const c = createCanvas(W + padX * 2, H + padY * 2);
   const ctx = c.getContext('2d');
-  ctx.fillStyle = '#FF00FF'; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#FF00FF'; ctx.fillRect(0, 0, W + padX * 2, H + padY * 2);
+  if (roll) {
+    ctx.translate(padX + W / 2, padY + H / 2);
+    ctx.rotate(-rad);
+    ctx.translate(-W / 2, -H / 2);
+  }
   const rect = ([x0, y0, x1, y1], fill, r = 0) => {
     const [x, y, w, h] = [x0 * W, y0 * H, (x1 - x0) * W, (y1 - y0) * H];
     ctx.fillStyle = fill;
@@ -136,7 +151,7 @@ async function drawGuide(out, kindOrOpts) {
     ctx.arc(body[2] * W + W * 0.012, ((bandTop + bandBot) / 2) * H, H * 0.022, 0, Math.PI * 2); ctx.fill();
   }
   const mwp = (mouth[2] - mouth[0]) * W, mhp = (mouth[3] - mouth[1]) * H;
-  console.log(`[guide] ${grillId} e${evo} (${style}) ${W}×${H}: boca ${Math.round(mwp)}×${Math.round(mhp)} px `
+  console.log(`[guide] ${grillId} e${evo} (${style}) ${W}×${H}${roll ? ` com a câmera rolada ${roll}°` : ''}: boca ${Math.round(mwp)}×${Math.round(mhp)} px `
     + `= ${(mwp / mhp).toFixed(2)}:1 · ${cap.zoneCount}×${cap.slotsPerZone} vagas · leito ${need.bedW} px na tela `
     + `· vaga ${need.cellW}×${need.cellH} → ${out}`);
   return c;
@@ -146,7 +161,7 @@ await mkdir(dirname(join(ROOT, out)), { recursive: true });
 if (mode === 'guide') {
   const grillId = flags.grill, evo = +(flags.evo ?? 1);
   if (!grillId) { console.error('usage: make-ref.mjs guide <out.png> [W] --grill <id> --evo <n>'); process.exit(2); }
-  await writeFile(join(ROOT, out), (await drawGuide(out, { grillId, evo, W: +W || 1408 })).toBuffer('image/png'));
+  await writeFile(join(ROOT, out), (await drawGuide(out, { grillId, evo, W: +W || 1408, roll: +(flags.roll ?? 0) })).toBuffer('image/png'));
   process.exit(0);
 }
 const manifest = existsSync(join(ROOT, 'Assets', 'Art', 'sprites.manifest.json'))

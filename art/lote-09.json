@@ -1,0 +1,143 @@
+{
+  "_comment": "Lote 09 — as três grelhas que o dono reprovou por CÂMERA, não por desenho: \"queimadores a gás, grelha de prata e defumador com tampa, esses três não tem nenhuma inclinação na imagem, pode refazer, os outros estão aprovados\" (2026-09-26). A régua que nasce aqui é `MOUTH_TILT_MIN_HINT = 4°` no grill-geometry e o guia `make-ref --roll`; o defeito estava no prompt do lote 07/08, que pedia bordas horizontais de propósito. Rondas adotadas: praça r1, defumador r2, a gás r5 (r1 obedeceu o rolo com exagero, r3 e r4 trocaram uma régua pela outra — tabela em art/prompts/lote-09.md). Nada entra no runtime sem o dono aprovar.",
+  "batch": "lote-09",
+  "date": "2026-09-26",
+  "sourceDir": "art/source/lote-09",
+  "assets": [
+    {
+      "source": "spr_grill_grelha_de_praca_evo1_r2.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "grelha_de_praca",
+      "evo": 1,
+      "category": "grill",
+      "name": "spr_grill_grelha_de_praca_evo1",
+      "label": "Bidão cortado da praça (2×2, 2,76:1, boca a −10,4°, recorte 0,84) — boca limpa, chapa soldada para fora do vão, eixo subindo para a direita",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok",
+        "note": "Ronda 2. A r1 passou na câmera e reprovou no vão (0,51) porque a chapa de apoio foi soldada DENTRO da boca e os blocos esticaram o recorte; com `[NOTHING INSIDE]` + o recorte abraçando o corpo a boca foi de 0,51 → 0,84 e a razão ficou em 2,76 contra 2,75 do guia (a régua que mede, não a que adivinha). O que a régua NÃO viu e eu vi na folha: o quadrilátero detectado acompanha o entalhe, então `cheio` não denuncia canto comido — está escrito em art/prompts/lote-09.md. Resta uma decisão dele, que não é de desenho: `lata_valente` (degrau 1) e `grelha_de_praca` (degrau 2) são as duas \"bidão cortado\" da lista que ele ditou, e a loja mostra os dois em sequência; o dado do degrau 2 diz outra coisa — \"Grelha de Praça — A Dobrável Honesta\", chapa esmaltada, cabe no porta-malas."
+      }
+    },
+    {
+      "source": "spr_grill_tambor_vertical_evo1_r2.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "tambor_vertical",
+      "evo": 1,
+      "category": "grill",
+      "name": "spr_grill_tambor_vertical_evo1",
+      "label": "Defumador com tampa entreaberta (3×3, 1,96:1, boca a −10,3°) — tambão inclinado, eixo subindo para a direita, tampa baixa no lugar do painel escuro",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok",
+        "note": "O melhor do lote: boca na razão pedida (1,96 contra 1,99 do guia), faixa de 61 px por fileira, cheio 1,02, recorte em 0,68 — e a inclinação que ele pediu sem a grelha parecer caindo. A tampa virou tampa: meia lua curta atrás da boca, com o parafuso borboleta na chaminé. Aprovável."
+      }
+    },
+    {
+      "source": "spr_grill_fornalha_dragao_manso_evo1_r5.png",
+      "mode": "single",
+      "hole": true,
+      "grill": "fornalha_dragao_manso",
+      "evo": 1,
+      "category": "grill",
+      "name": "spr_grill_fornalha_dragao_manso_evo1",
+      "label": "A gás com queimadores (3×3, 1,73:1, boca a −7,0°, recorte 0,77) — capô fechado com termômetro, painel de três botões, chama na malha da base",
+      "out": "Assets/Art/Sprites/Grills",
+      "review": {
+        "verdict": "ok",
+        "note": "Primeira vez em CINCO rodadas que esta identidade passa em todas as réguas de uma vez: boca funda (69 px por fileira), recorte acima do piso (0,77) e câmera rolada −7,0°. O preço pago foi o capô fechado — com a tampa aberta o modelo jogava a boca para 3,5:1 ou rolava 18°. As asinhas das bandejas dobradas ainda aparecem nas laterais; é o que segura o recorte em 0,77 em vez de 0,85."
+      }
+    }
+  ],
+  "compare": [
+    "spr_grill_lata_valente_evo1",
+    "spr_grill_parrilla_chef_cisma_evo1",
+    "spr_grill_fornalha_da_orla_evo1"
+  ],
+  "preview": {
+    "background": "bg_restaurant_churrascaria_bairro",
+    "grill": "spr_grill_fornalha_dragao_manso_evo1",
+    "_note": "prévia no leito real do motor, 3×3 = 9 pratos de 86 px na grelha a gás: é o item que reprovou três vezes por boca rasa (faixa de 21, 34 e 34 px) — se a comida couber aqui com a câmera inclinada, a regravação fechou o defeito mecânico e o de câmera juntos.",
+    "onGrill": [
+      [
+        "spr_food_picanha_medium",
+        0.26,
+        0.166667,
+        86
+      ],
+      [
+        "spr_food_contra_file_rare",
+        0.5,
+        0.166667,
+        86
+      ],
+      [
+        "spr_food_linguica_toscana_medium",
+        0.74,
+        0.166667,
+        86
+      ],
+      [
+        "spr_food_maminha_well",
+        0.26,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_fraldinha_medium",
+        0.5,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_asinha_frango_medium",
+        0.74,
+        0.5,
+        86
+      ],
+      [
+        "spr_food_coracao_frango_medium",
+        0.26,
+        0.833333,
+        86
+      ],
+      [
+        "spr_food_queijo_coalho_medium",
+        0.5,
+        0.833333,
+        86
+      ],
+      [
+        "spr_food_legumes_grelhados_medium",
+        0.74,
+        0.833333,
+        86
+      ]
+    ],
+    "benchItems": [
+      [
+        "spr_food_picanha_raw",
+        62
+      ],
+      [
+        "spr_food_contra_file_raw",
+        62
+      ],
+      [
+        "spr_food_maminha_raw",
+        62
+      ]
+    ],
+    "orders": [
+      [
+        "spr_char_customer_influencer",
+        [
+          "spr_food_picanha_served",
+          "spr_food_linguica_toscana_served"
+        ],
+        0.55
+      ]
+    ]
+  }
+}
