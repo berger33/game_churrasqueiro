@@ -13,7 +13,22 @@ Both exit non-zero when a guardrail in `shared/data/economy.json → targets` is
 
 ---
 
-## A-06.4 — fechamento econômico autorizado (vigente)
+## F4 — Revalidação Econômica Global pós A-01–A-09 (vigente)
+
+- **1500 turnos ativos: 18/18 metas PASS, exit 0**, confirmado nas seeds `20260917`, `20260918` e `20260919`.
+- **Renda total gerada:** 14.679.360 moedas (84,4% turnos, 14,1% recompensas de fase, 1,2% level up, 0,1% VIP, 0,1% first clear).
+- **Gasto total:** 10.873.220 moedas (restaurantes 41,1%, 27 trilhas de upgrade 58,5%, churrasqueiras 0,5%).
+- **Saldo final não gasto:** 3.806.140 moedas.
+- **Spend ratio:** 74,07% (alvo 70% a 99% — classificado como saudável / *healthy*).
+- **27 trilhas de upgrade maximizadas:** capacidade exata de 6.358.620 moedas consumida integralmente até o turno 1500.
+- **Pacing de estabelecimentos:** Espetinho (t42), Trailer (t96), Bairro (t168), Premium (t277), Festival (t422), Rede Nacional (t1130).
+- **Pacing de churrasqueiras:** Zé da Esquina (t11), Parrilla Chef Cisma (t43), Fornalha Dragão Manso (t87).
+- **Inflação controlada:** crescimento de custo de upgrades (×29,28) supera o crescimento de renda L5→L70 (×13,46).
+- **Campanha sem injeção:** zero rewarded ads e zero injeção de moedas offline na progressão ativa (`offline.batch === null`).
+- **Cenário de ausências:** medido em 24 fixtures separadas ([evidence/f04/absence-schedule.json](evidence/f04/absence-schedule.json)).
+- **Relatório e evidências:** [evidence/f04/README.md](evidence/f04/README.md).
+
+## A-06.4 — fechamento econômico autorizado (histórico)
 
 - O dono exigiu resolver as3 falhas antes de A-06.5 e escolheu explicitamente
   **`late_income`**: rebalancear renda tardia, preservando preços, histórico, FTUE,

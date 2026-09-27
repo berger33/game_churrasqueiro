@@ -31,6 +31,8 @@ namespace Churrasco.Core
         public UpgradesTable Upgrades = null!;
         public EconomyTable Economy = null!;
         public LevelsTable Levels = null!;
+        public ChurrasqueirasTable Churrasqueiras = null!;
+        public EmployeesTable Employees = null!;
 
         private readonly Dictionary<string, IngredientsItems> _ingredientById =
             new Dictionary<string, IngredientsItems>(StringComparer.Ordinal);
@@ -40,6 +42,8 @@ namespace Churrasco.Core
             new Dictionary<int, RestaurantsRestaurants>();
         private readonly Dictionary<string, UpgradesTracks> _upgradeById =
             new Dictionary<string, UpgradesTracks>(StringComparer.Ordinal);
+        private readonly Dictionary<string, ChurrasqueirasChurrasqueiras> _churrasqueiraById =
+            new Dictionary<string, ChurrasqueirasChurrasqueiras>(StringComparer.Ordinal);
 
         public IngredientsItems? IngredientById(string id) =>
             _ingredientById.TryGetValue(id, out var v) ? v : null;
@@ -53,10 +57,14 @@ namespace Churrasco.Core
         public UpgradesTracks? UpgradeById(string id) =>
             _upgradeById.TryGetValue(id, out var v) ? v : null;
 
+        public ChurrasqueirasChurrasqueiras? ChurrasqueiraById(string id) =>
+            _churrasqueiraById.TryGetValue(id, out var v) ? v : null;
+
         public IEnumerable<IngredientsItems> AllIngredients => _ingredientById.Values;
         public IEnumerable<CustomersCustomers> AllCustomers => _customerById.Values;
         public IEnumerable<RestaurantsRestaurants> AllRestaurants => _restaurantByIndex.Values;
         public IEnumerable<UpgradesTracks> AllUpgrades => _upgradeById.Values;
+        public IEnumerable<ChurrasqueirasChurrasqueiras> AllChurrasqueiras => _churrasqueiraById.Values;
 
         /// <summary>
         /// Builds the index and returns every structural problem found. An empty
@@ -165,11 +173,21 @@ namespace Churrasco.Core
             if (Economy?.Reward == null) problems.Add("economy.json: missing reward block");
             if (Economy?.Xp?.Formula == null) problems.Add("economy.json: missing xp.formula");
 
+            if (Churrasqueiras?.Churrasqueiras != null)
+            {
+                _churrasqueiraById.Clear();
+                foreach (var ch in Churrasqueiras.Churrasqueiras)
+                {
+                    if (ch.Id == null) { problems.Add("churrasqueira: missing id"); continue; }
+                    _churrasqueiraById[ch.Id] = ch;
+                }
+            }
+
             return problems;
         }
 
         /// <summary>
-        /// Deserialises the ten modelled tables and builds the index.
+        /// Deserialises the modelled tables and builds the index.
         /// `readJson` is injected so the caller owns file IO (Addressables in the
         /// client, File.ReadAllText in the editor tools, a string in tests).
         /// </summary>
@@ -183,7 +201,9 @@ namespace Churrasco.Core
                 Restaurants = Deserialise<RestaurantsTable>(readJson, "restaurants.json"),
                 Upgrades = Deserialise<UpgradesTable>(readJson, "upgrades.json"),
                 Economy = Deserialise<EconomyTable>(readJson, "economy.json"),
-                Levels = Deserialise<LevelsTable>(readJson, "levels.json")
+                Levels = Deserialise<LevelsTable>(readJson, "levels.json"),
+                Churrasqueiras = Deserialise<ChurrasqueirasTable>(readJson, "churrasqueiras.json"),
+                Employees = Deserialise<EmployeesTable>(readJson, "employees.json")
             };
             problems = data.Build();
             return data;

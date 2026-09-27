@@ -194,15 +194,15 @@ daily cap; current web call is an explicit test simulation. See the A-05 contrac
 
 ### Establishments (§15)
 
-| # | Establishment | Unlock cost | Level | Introduces |
-|---|---|---|---|---|
-| 0 | Quintal | free | 1 | core grilling, flip, orders, patience |
-| 1 | Espetinho de Rua | 3 500 | 8 | skewers, combo, garçom, VIP |
-| 2 | Trailer | 12 000 | 16 | auxiliar, multi-order rush, influencer |
-| 3 | Churrascaria de Bairro | 70 000 | 24 | **idle**, churrasqueiro, costela, caixa |
-| 4 | Churrascaria Premium | 150 000 | 34 | gerente, cupim, 4th zone, personalização |
-| 5 | Festival | 500 000 | 46 | multi-turn events, rush waves, regional cuts |
-| 6 | Rede Nacional | 2 800 000 | 60 | empire management, async leaderboards |
+| # | Establishment | Unlock cost | Introduces |
+|---|---|---|---|
+| 0 | Quintal | free (0) | core grilling, flip, orders, patience |
+| 1 | Espetinho de Rua | free (0) | skewers, combo, garçom, VIP |
+| 2 | Trailer | 3 500 | auxiliar, multi-order rush, influencer |
+| 3 | Churrascaria de Bairro | 15 000 | **idle/offline**, churrasqueiro, costela, caixa, império logística |
+| 4 | Churrascaria Premium | 67 000 | gerente, cupim, 4th zone (Fornalha), personalização |
+| 5 | Festival | 178 000 | multi-turn events, rush waves, regional cuts |
+| 6 | Rede Nacional | 4 200 000 | empire management, async leaderboards |
 
 Every tier introduces **mechanics**, not just bigger numbers.
 

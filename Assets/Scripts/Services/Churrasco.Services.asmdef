@@ -1,0 +1,16 @@
+{
+    "name": "Churrasco.Services",
+    "rootNamespace": "Churrasco.Services",
+    "references": [
+        "Churrasco.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

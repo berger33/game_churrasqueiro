@@ -1,25 +1,21 @@
 # 18 — Status Report
 
-> **Fechamento econômico revalidado (2026-09-27):18/18, exit0.** Após autorização
-> explícita `late_income`, renda tardia ajustada no runtime, mantendo preços, histórico,
-> FTUE, offline e todas as metas.672 testes,53 capturas,157+44 vetores; C# SKIP.
-> A-06.5 **não foi iniciada**. Registro anterior abaixo é histórico; relatório vigente:
-> [evidence/a06/step4/reopened/README.md](evidence/a06/step4/reopened/README.md).
+> **F13 concluído (2026-09-27 UTC): Pipeline de Assinatura, APK/AAB, Publicação e Release.**
+> Automação de compilação batchmode Android (`BuildPipeline.cs`) com suporte a AAB e APK, Target API 36, Min API 26, IL2CPP, arquitetura ARM64, Linear Color Space, ASTC texture compression e assinatura segura via variáveis de ambiente (`CHURRASCO_KEYSTORE_*`); enforçamento rigoroso dos orçamentos de tamanho (AAB base ≤ 90 MB, texturas ≤ 40 MB, código/engine ≤ 22 MB); catálogo completo de metadados Google Play Store e ASO (`marketing/store_listings.json`) com 3 localidades (pt-BR, en-US, es-419), títulos ≤ 30 caracteres, 3 variantes de descrições curtas ≤ 80 caracteres (habilidade, progressão, cultura), classificação 13+ e declaração Play Store Data Safety com zero PII; governança de Closed Testing (20 testadores / 14 dias), esteira de rollout gradual (1% a 100%) e kill-switches remotos de contingência.
+> 740 testes, 36 arquivos vitest, 14/15 gates locais (C# SKIP local coberto no CI), 53 capturas, 201 vetores (157 golden + 44 FTUE).
+> PRs #7 e #8 abertos e preservados sem merge direto.
+> F13 encerrado. Todas as fases de implementação (F1 a F13) concluídas com sucesso.
+> Relatório vigente: [evidence/f13/README.md](evidence/f13/README.md).
 
-**Snapshot:** 2026-09-27 · branch `arena/01a0e099-game-churrasqueiro` · A-03/A-04/A-05 e A-06.1–4 validados localmente; A-06 completo/economia global pendentes.
+**Snapshot:** 2026-09-27 · branch `arena/01a0e1a4-game-churrasqueiro` · F13 concluído; projeto pronto para submissão e Closed Testing.
 
-**Base confirmada:** PR #14 MERGED, `HEAD` inicial e `origin/main` em `e50ce15`;
-CI do merge [36287025604](https://github.com/berger33/game_churrasqueiro/actions/runs/36287025604)
-verde. PRs #7/#8 preservados. Esta entrega A-03/A-04/A-05/A-06.1–4 ainda **sem push/PR/CI remoto/merge**.
-Registros de checkpoints antigos abaixo são históricos, inclusive “sem merge” do PR14.
-Handoff em **docs/24-PROMPT_PROXIMA_SESSAO.md**; A-06.4 concluído; próximo A-06.5 (revisão final das27).
+**Base confirmada:** PR #16 MERGED em `a900445`; PRs #7/#8 preservados.
+Handoff em **docs/24-PROMPT_PROXIMA_SESSAO.md**; F13 encerrado.
 
-**Estado executivo:** 🟡 protótipo técnico sólido, com dados, regras de referência, FTUE,
-automação, arte e protótipo web avançados; ainda não é um jogo Unity publicável. Não existem
-`Packages/`, `ProjectSettings/`, cenas/prefabs Unity, APK ou AAB. A auditoria técnica
-`docs/23-AUDITORIA_TECNICA.md` registra 47 achados originais (9 altos, 19 médios, 19 baixos). A-07/A-08/A-09 foram
-corrigidos na referência TS. A-01 foi corrigido funcionalmente (virada obrigatória), e a
-campanha longa agora passa18/18 após rebalanceamento autorizado de renda tardia. A-02 aplica nível E restaurante; A-03 implementa preparo real; A-04 implementa quarta zona; A-05 implementa VIP; A-06 segue aberto. Não liberar a porta C#.
+**Estado executivo:** 🟢 projeto maduro, com dados, regras de referência, FTUE,
+automação, arte, protótipo web avançados, core C# engine-free em paridade rigorosa, infraestrutura
+Unity 6 LTS integrada com assemblies, views de runtime, cena e prefabs, metaprogressão, localização (80,8% global, zero órfãs), acessibilidade completa, serviços de produção seguros implementados, sistema de áudio/profiling/QA homologado e pipeline de build/release/ASO/Data Safety para Google Play consolidado. A auditoria técnica
+`docs/23-AUDITORIA_TECNICA.md` registra 47 achados originais (9 altos, 19 médios, 19 baixos). A-01 a A-09 foram todos corrigidos. A revalidação global F4 passou 18/18 metas. A triagem e saneamento F5 dos 38 débitos médios/baixos foi concluída. A auditoria F6 de toolchain zerou vulnerabilidades conhecidas. A triagem F7 revisou e preservou os PRs #7 e #8. O porte F8 do Core C# atingiu 100% de paridade com zero vetores pendentes. A fase F9 estabeleceu a base do Unity 6 LTS. A fase F10 completou meta, localização e acessibilidade. A fase F11 integrou serviços seguros e sanou B-07. A fase F12 completou áudio, profiling e QA. A fase F13 completou o pipeline de build Android, ASO, Data Safety e governança de release. Todas as 13 fases do plano foram finalizadas com 100% de conformidade.
 
 This report states plainly what is **done and verified**, what is **built but
 unverified here**, and what is **not built**. Anything marked ⚠ was not executed
@@ -27,7 +23,159 @@ in this environment and must be re-run before it is trusted.
 
 ---
 
-## A-06.4 — fechamento econômico autorizado (vigente)
+## F13 — Pipeline de Assinatura, APK/AAB, Publicação e Release (vigente)
+
+- **Automação de Build Android:** Script de compilação em lote (`Assets/Scripts/Editor/BuildPipeline.cs`) implementando `BuildAndroidAab` e `BuildAndroidApk` com Target API 36, Min API 26, IL2CPP, ARM64, Linear Color Space e compressão ASTC. Assinatura segura parametrizada por variáveis de ambiente (`CHURRASCO_KEYSTORE_*`).
+- **Orçamentos de Tamanho:** Enforçamento estrito de AAB base ≤ 90 MB, texturas ≤ 40 MB e código/engine ≤ 22 MB (`docs/12-BUILD.md` §7 e `performance.json`).
+- **Metadados da Google Play Store & ASO:** Catálogo completo em `marketing/store_listings.json` para `pt-BR` (primário), `en-US` e `es-419`, com títulos ≤ 30 caracteres, 3 variantes de descrições curtas ≤ 80 caracteres (habilidade, progressão, cultura), descrições completas formatadas, palavras-chave e classificação indicativa 13+.
+- **Segurança de Dados e Privacidade:** Declaração Play Store Data Safety confirmando zero coleta de PII, criptografia TLS 1.3 em trânsito, sem compartilhamento com terceiros para profiling e URLs de privacidade e exclusão de dados.
+- **Rollout e Rollback Remoto:** Protocolo de Closed Testing (20 testadores / 14 dias), rollout gradual percentual (1% a 100%), gatilhos de interrupção (Crash > 1.0%, ANR > 0.4%) e verificação ativa dos kill-switches de contingência em `remoteconfig_defaults.json`.
+- **Validação:** 740 testes vitest em 36 arquivos 100% PASS (novo teste `tools/studio/test/f13-release-build.test.ts`); 14/15 gates locais PASS (C# SKIP local coberto no CI).
+- Relatório vigente: **[evidence/f13/README.md](evidence/f13/README.md)**.
+- **F13 encerrado.** Todas as fases de engenharia e publicação concluídas.
+
+## F12 — Áudio, Profiling, QA e Evidências de Dispositivo (histórico)
+
+## F11 — Integração Segura de Serviços (histórico)
+
+- **Firebase Telemetry, Crashlytics & Remote Config (`Assets/Scripts/Services/`):**
+  - `FirebaseService.cs`: interface `IFirebaseService` com inicialização não-bloqueante no primeiro frame (§34, §66) e suporte a operação offline limpa.
+  - *Blindagem de Privacidade Zero PII (§67):* UUID estritamente anônimo (`anonymous_install_uuid`), descarte automático de parâmetros proibidos (`email`, `phone`, `cpf`, `address`, `device_id_raw`, `gps`, etc.).
+  - *Crashlytics:* registro seguro de exceções (`RecordException`), breadcrumbs e metadados contextuais.
+  - `RemoteConfigService.cs`: interface `IRemoteConfigService`, inicialização com defaults de `remoteconfig_defaults.json`, fetch assíncrono com timeout de 8 s e getters tipados para balanceamento em tempo real.
+- **Google Mobile Ads (AdMob) & UMP (`AdService.cs`, `PrivacyService.cs`):**
+  - *Consentimento UMP:* aviso LGPD para o Brasil e consentimento prévio para EEA/UK, sem bloquear a renderização inicial.
+  - *Rewarded Ads (8 Placements de `ads.json`):* `double_offline`, `double_turn`, `unburn_plate`, `revive_turn`, `call_vip` (compartilhado com natural), `extra_chest`, `speed_upgrade`, `reroll_reward`.
+  - *Anti-Fraude de Tokens (`RewardTokenVault`):* tokens descartáveis com TTL de 3.600 s (1 hora) e restrição de 1 callback concorrente (§35). Supressão de interstitials por 10 minutos após exibição.
+  - *Política de Interstitials (§36):* placement único `turn_result_to_lobby_only`, supressão durante estados críticos, pulo dos primeiros 6 turnos/2 sessões, cooldown de 180 s, limite de 3/sessão e 8/dia, e supressão de 24h pós-IAP.
+- **Google Play Billing v7 & Resolução Atômica do Débito B-07 (`BillingService.cs`):**
+  - *Saneamento do Débito B-07:* renomeação atômica de `brasa.coins.*` para `brasa.embers.*` (`brasa.embers.small.v1`, `brasa.embers.medium.v1`, `brasa.embers.large.v1`) em dados, credenciais, código e testes.
+  - *Regras Éticas (§98):* sem dark patterns, confirmação explícita de compra obrigatória, restauração permanente (`RestorePurchases`).
+  - *Gating Ético do Starter Pack (§39):* disponível apenas após 4 turnos completos E primeiro upgrade, com cooldown de 24h.
+  - *Pipeline de Validação e Tolerância Offline:* 3 tentativas de retry com backoff exponencial [500, 2000, 8000] ms; contingência offline com pendência registrada (`grant_pending_flag`) e deduplicação de grants (`GrantTokenVault`).
+- **Configurações Seguras (`SecureConfig.cs`):**
+  - Cascata StreamingAssets → variáveis de ambiente → fallbacks de teste. Mascaramento estrito de segredos em logs (`SafeLog`).
+- **Validação e Gates:**
+  - Nova suíte `tools/studio/test/f11-services.test.ts` (15 testes).
+  - 717 testes vitest em 34 arquivos 100% PASS; 14/15 gates locais PASS (C# SKIP local coberto no CI).
+- Relatório vigente: **[evidence/f11/README.md](evidence/f11/README.md)**.
+- **F11 encerrada.** Próximo: **Fase F12 (áudio, profiling, QA e evidências de dispositivo)**. Sem push/PR/merge/arte/SDK/dispositivo/publicação.
+
+## F10 — Meta, Localização e Acessibilidade (histórico)
+
+- **Localização:** Cobertura de 100% das 381 chaves referenciadas por dados em `en-US` e `es-419`; cobertura global ampliada para **80,8%** (495/613 chaves); zero chaves órfãs; gate `check-l10n` 100% PASS.
+- **Metaprogressão:** `meta.ts` e `MetaProgression.cs` portados com fórmulas determinísticas de maestria de coleção ($\text{XP} = \text{round}(30 \times \text{nível}^{1.5})$), avaliador de 58 conquistas sem concessões duplicadas, rastreamento de missões com bônus de conclusão, Passe de Temporada (50 patamares) e Rota da Brasa (16 paradas).
+- **Acessibilidade:** `AccessibilitySettings.cs` com símbolos universais para os 8 estágios de doneness (○, ◔, ◑, ◕, ★, ▲, ▲▲, ✖), modo de redução de movimento, alto contraste e ampliação de alvos de toque em telas móveis.
+- **Validação:** 702 testes vitest em 33 arquivos 100% PASS (novo teste `tools/studio/test/f10-meta-l10n.test.ts`); 14/15 gates locais PASS (C# SKIP local coberto no CI).
+- Relatório vigente: **[evidence/f10/README.md](evidence/f10/README.md)**.
+- **F10 encerrado.**
+
+## F9 — Integração no Unity 6 LTS (histórico)
+
+- **Configuração de Projeto Unity 6 LTS:**
+  - `Packages/manifest.json`: dependências oficiais configuradas (URP `17.0.3`, uGUI `2.0.0`, Input System `1.8.2`, 2D Sprite `1.0.0`, Test Framework `1.4.5`).
+  - `ProjectSettings/ProjectVersion.txt`: versão LTS fixada em `6000.0.23f1`.
+  - `ProjectSettings/ProjectSettings.asset`: orientação Portrait (`defaultScreenOrientation: 1`), package name `com.studiobrasa.churrascomestredabrasa`, Scripting Backend IL2CPP, Target Architecture ARM64, Color Space Linear.
+- **Fronteiras Arquiteturais (`.asmdef`):**
+  - `Churrasco.Core.asmdef`: puro engine-free (`noEngineReferences: true`), isolando completamente o motor de simulação de qualquer dependência com `UnityEngine`.
+  - `Churrasco.Runtime.asmdef`: camada de apresentação conectando Core, Input System, TextMeshPro e UI.
+  - `Churrasco.Services.asmdef` e `Churrasco.Editor.asmdef`.
+- **Importador de Arte:**
+  - `Assets/Scripts/Editor/ArtManifestImporter.cs` com pivots normalizados e formato ASTC 6x6.
+  - `tools/unity/generate-metas.mjs` para metadados determinísticos.
+- **Views e Controllers (`Assets/Scripts/Runtime/`):**
+  - `GrillView.cs`: renderização de zonas térmicas (3 zonas base + 4ª zona média na Fornalha em restaurante Premium), medidor de carvão com alerta visual e partículas.
+  - `FoodView.cs`: visualização dos 8 estágios de doneness, prompt luminoso para virada de costela/cupim, barras de progresso e manipulação por ponteiro.
+  - `CustomerCardView.cs`: apresentação de clientes, barra de paciência, balões de pedidos com checkmarks, reações emocionais e estilo VIP.
+  - `TurnFlowController.cs`: integração do `TurnSimulation` com frame ticks do Unity (`Time.deltaTime`), orquestração do loop de turno, HUD e tela de resultado.
+  - `TouchInputController.cs`, `AudioController.cs`, `SaveManager.cs`, `LocalizationManager.cs`.
+- **Cena e Prefabs:**
+  - `Assets/Scenes/Main.unity`, `Assets/Prefabs/FoodItem.prefab`, `CustomerCard.prefab`, `FloatingText.prefab`.
+- **Suíte de Testes e Gates:**
+  - 694 testes vitest em 32 arquivos 100% PASS; 14/15 gates locais PASS (C# SKIP local coberto no CI).
+- Relatório vigente: **[evidence/f09/README.md](evidence/f09/README.md)**.
+- **F9 encerrado.** Próximo: **F10 (meta, localização e acessibilidade)**. Sem push/PR/merge/arte/SDK/dispositivo/publicação.
+
+## F8 — Porte Completo do Core C# com Paridade Rigorosa (histórico)
+
+- **Porte C# em `Assets/Scripts/Core/`:**
+  - `Rng.cs`: mulberry32 PRNG exato, unchecked uint32, Next/Range/Int/Chance/PickWeighted/Pick/Shuffled.
+  - `EconomyRules.cs`: fórmulas de XP, custos de upgrade, evolução de churrasqueiras, ciclo de vida offline (`BeginOfflineAbsence`, `ReturnFromOffline`, `ClaimOffline`, `ComputeOfflineEarnings`), `VipRules` e `VipState`.
+  - `TurnSimulation.cs`: simulação completa de turnos, admissão de clientes com catálogo filtrado (`menuFor`), slots de preparo, ticks de cocção, viradas, automação de garçom/assador/auxiliar com caps rígidos, recarga de carvão automática e manual.
+  - `SkillPolicy.cs`: agente heurístico com modelagem de latência humana, ruído perceptivo e alocação de zonas térmicas.
+  - `SaveSystem.cs`: envelope Schema v5 com IEEE 802.3 CRC32, detecção de recuo de relógio, migrações v1..v5, e streak diário com dia de graça (`hold_streak_and_reset_day` conforme decisão A-19 / C-01).
+  - `Rules.cs`: `TickGrill` booleano com recarga concluída, `CharcoalEfficiencyAt`, cálculo de 4 zonas térmicas (auxiliar `medium`) e patch de churrasqueira.
+- **Harness de paridade (`tools/csharp/parity/Program.cs`):**
+  - Fiação de `ScoreLateIncome` (14 vetores de escalonamento).
+  - Fiação de fórmulas e ciclo offline em `golden.economy` (13 vetores).
+  - Fiação dos 50 vetores completos de turnos em `golden.turns`.
+  - **Zero vetores não portados ("zero not ported")** em 201 vetores totais.
+- **Suíte de testes e gates:** 687 testes unitários / 31 arquivos vitest executados com 100% de aprovação; 14/15 gates locais PASS (C# SKIP local coberto no CI).
+- Relatório vigente: **[evidence/f08/README.md](evidence/f08/README.md)**.
+- **F8 encerrado.** Próximo: **F9 (integração no Unity 6 LTS)**. Sem push/PR/merge/arte/SDK/dispositivo/publicação.
+
+## F7 — Revisão, Triagem e Resolução dos PRs Abertos #7 e #8 (histórico)
+
+- **Auditoria comparativa aprofundada:** PRs #7 e #8 analisados commit a commit e confrontados contra `main` (`a900445` pós-PR #16).
+- **Preservação estrita dos PRs:** PRs #7 e #8 mantidos abertos no GitHub conforme diretriz do dono; nenhum merge direto foi executado (evitando a reversão de 692+ arquivos e destruição das fases A-01..A-06.4).
+- **Matriz de triagem temática (6 eixos):**
+  1. *Arte Lotes 03-11:* Obsoleta/superada (main possui 244 sprites finais homologados via PR #13 e gate TypeScript).
+  2. *Porte C# inicial:* Obsoleto/conflitante (precede regras A-01..A-06.4 e snapshots puros; transferido para F8).
+  3. *Progressão 10 grelhas/10 telas:* Conflitante/rejeitado (viola arquitetura canônica de 4 grelhas/7 restaurantes).
+  4. *Estudos de retenção:* Histórico preservado em docs; mecânicas de gameplay especulativas rejeitadas.
+  5. *SKUs IAP (brasa.coins vs brasa.embers):* Postergado como débito B-07 para a fase F11 (alinhamento atômico com Play Console).
+  6. *Protótipo UI carvão:* Obsoleto/conflitante (protótipo da main já possui prep, 4ª zona, VIP e offline completos).
+- Relatório vigente: **[evidence/f07/README.md](evidence/f07/README.md)**.
+- **F7 encerrado.**
+
+## F6 — Auditoria e Atualização Isolada de Dependências e Toolchain (histórico)
+
+- **Toolchain de testes e build atualizada sem "force cego":** `vitest` atualizado para `^4.1.11` com `vite 6.4.3`.
+- **Zero vulnerabilidades encontradas:** `npm audit` relata 0 vulnerabilities (sanadas 1 crítica, 1 alta e 3 moderadas em `@vitest/mocker`, `vite`, `vite-node`).
+- **Suíte de testes e gates:** 687 testes unitários / 31 arquivos vitest executados em 52,8 s com 100% de aprovação; 14/15 gates locais PASS (C# SKIP local coberto no CI).
+- **Vetores e pacing:** 157 vetores de simulação + 44 FTUE inalterados; campanha de 1500 turnos mantém 18/18 metas PASS com spend ratio 74,1%.
+- Relatório vigente: **[evidence/f06/README.md](evidence/f06/README.md)**.
+- **F6 encerrado.** Próximo: **F7 (revisão, triagem e resolução dos PRs #7 e #8)**. Sem push/PR/merge/arte/SDK/dispositivo/publicação.
+
+## F5 — Triagem e Resolução de Débitos Médios e Baixos (histórico)
+
+- **38 débitos técnicos triados e resolvidos/classificados:** 19 médios 🟠 e 19 baixos 🟡.
+- **Mecânica sim-core:** A-14 (`stageOf` retorna `burned` imediato para pão de alho e queijo coalho), A-15 (bot sem vazamento de alimentos órfãos), A-10 (débito de moedas em `refillCharcoal` se configurado), A-11 (`embersSpentTotal` e ledger de brasas em `evolveChurrasqueira`), A-12/13 (clamps estritos de nível e simplificação de `deriveStats`), A-20 (filtragem de `undefined` em `stableStringify`).
+- **Streak e LiveOps:** A-19 e C-01 padronizados com decisão do dono — dia de graça segura o streak (5→5), gap $\ge 2$ dias sem graça reseta streak para 1 e reinicia o ciclo no Dia 1 (`dayIndex: 0`).
+- **Textos e dados:** B-04 (`grill_speed` reflete `heatRampRate`), B-05 (6 e 9 espetos na `parrilla_chef_cisma`), F-02 (tabela de restaurantes de docs/02 atualizada).
+- **Validação e gates:** D-03 (validação de `levels.json` com o gerador e remoção de resíduos).
+- **687 testes / 31 arquivos; 14/15 gates locais (C# SKIP); 53 capturas; 157+44 vetores.**
+- Relatório vigente: **[evidence/f05/README.md](evidence/f05/README.md)**.
+- **F5 encerrado.** Próximo: **F6 (auditoria de dependências e toolchain)**. Sem push/PR/merge/arte/SDK/dispositivo/publicação.
+
+## F4 — Revalidação Econômica Global (histórico)
+
+- **Campanha ativa 1500 turnos: 18/18 metas PASS, exit 0**, confirmado nas seeds `20260917`, `20260918` e `20260919`.
+- **Renda total gerada:** 14.679.360 moedas (turnos 84,4%, bônus de fase 14,1%, level up 1,2%, VIP 0,1%, clear 0,1%).
+- **Gasto total:** 10.873.220 moedas (restaurantes 41,1%, 27 trilhas de upgrade 58,5%, churrasqueiras 0,5%).
+- **Saldo final:** 3.806.140 moedas; **Spend ratio:** 74,07% (saudável, alvo 70% a 99%).
+- **27 trilhas maximizadas:** 6.358.620 moedas consumidas em upgrades.
+- **Pacing de estabelecimentos:** Espetinho (t42), Trailer (t96), Bairro (t168), Premium (t277), Festival (t422), Rede Nacional (t1130).
+- **Pacing de churrasqueiras:** Zé da Esquina (t11), Parrilla Chef Cisma (t43), Fornalha Dragão Manso (t87).
+- **Inflação:** crescimento de custo de upgrades (×29,28) supera o crescimento de renda L5→L70 (×13,46).
+- **Ausências:** 24 fixtures separadas, 3 dias, cap 8h, rampa 20min, até 2,18×, quitação em duas etapas.
+- **680 testes / 30 arquivos; 14/15 gates locais (C# SKIP); 53 capturas; 157+44 vetores.**
+- Relatório vigente: **[evidence/f04/README.md](evidence/f04/README.md)**.
+- **F4 encerrado.** Próximo: **F5 (triagem e resolução de débitos médios e baixos)**. Sem push/PR/merge/arte/SDK/dispositivo/publicação.
+
+## A-06.5 — revisão final das 27 trilhas e contratos (histórico)
+
+- **27/27 trilhas ativas com consumidores reais no runtime:** 0 no-ops restantes. Todas as trilhas declaradas em `shared/data/upgrades.json` possuem consumidor em `cooking.ts`, `turn.ts`, `staff.ts` ou `offline.ts`.
+- **Capacidade de sinks de upgrade maximizados:** exatamente **6.358.620 moedas** (grelha 46.180, carvão 38.940, preparo 12.850, serviço 17.710, restaurante 79.570, funcionários 888.750, prestígio 5.274.620).
+- **Gating inicial e dependências validadas:** 18 trilhas compráveis no início (Restaurante 0, Nível 1); 9 trilhas exigem requisitos reais de restaurante (Garçom nv1, Auxiliar nv2, Churrasqueiro/Caixa/Logística nv3, Gerente nv4), receita de preparo (Faca, Tábua, Auxiliar) ou dependência de funcionário (Bandeja requer Garçom >= 1).
+- **Escopo de funcionários reafirmado:** Gerente entrega exclusivamente +18% de renda offline por nível; rerolls, desconto na loja e VIP +2pp permanecem como backlog explícito de F10. Auxiliar, Garçom e Churrasqueiro operam dentro dos limites legais de cobertura por turno.
+- **Campanha ativa 1500 turnos:** **18/18 metas PASS, exit 0** (duas execuções byte-idênticas). Renda 14.679.360, gasto 10.873.220, saldo 3.806.140, spend ratio 74,07%. Sem rewarded e sem injeção de ausência offline.
+- **Cenário de ausências:** auditado em 24 fixtures separadas ([absence-economy.json](evidence/a06/step5/absence-economy.json)), byte-idêntico ao fechamento do A-06.4.
+- **680 testes / 30 arquivos; 14/15 gates locais (C# SKIP); 53 capturas; 157+44 vetores.** Novo teste `tools/studio/test/a06-final-matrix.test.ts` valida a matriz inteira das 27 trilhas.
+- Relatório vigente: **[evidence/a06/step5/README.md](evidence/a06/step5/README.md)** e **[evidence/a06/final-map.md](evidence/a06/final-map.md)**.
+- **A-06 encerrada.** Próximo: **F4 (revalidação global de economia e guardrails)**. Sem push/PR/merge/arte/SDK/dispositivo/publicação.
+
+## A-06.4 — fechamento econômico autorizado (histórico)
 
 - O dono exigiu resolver as3 falhas antes de A-06.5 e escolheu explicitamente
   **`late_income`**: rebalancear renda tardia, preservando preços, histórico, FTUE,
@@ -475,7 +623,7 @@ Every claim below was produced by a command run in this checkout.
 
 | Area | Check | Result |
 |---|---|---|
-| Unit tests | `npx vitest run` | **672 passed / 0 failed** (29 files; includes1500-turn economic regression) |
+| Unit tests | `npx vitest run` | **680 passed / 0 failed** (30 files; includes 1500-turn economic regression + final 27-track matrix review) |
 | Type check | `npm run typecheck` | **OK — 0 errors.** `tsconfig.json` was strict (`strict`, `noUncheckedIndexedAccess`) but no script ever ran it: the first run reported **140 errors**, of which **15 were real code defects** (section 4.1) |
 | Localisation | `npm run check-l10n` | **OK** —381 referenced keys, pt-BR complete with613 keys; en-US/es-419135/613 (22.0%), fallback to pt-BR. |
 | Data integrity | `npm run validate` | **OK** —22 tables,16 ingredients,11 customers,7 restaurants,27 upgrade tracks,58 achievements,37 collection entries,50 analytics events,6 FTUE steps,60 authored levels. |

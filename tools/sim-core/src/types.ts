@@ -5,7 +5,7 @@ import type { VipEventsTable, VipAdsTable, VipAchievementsTable } from './vip.ts
  * These types mirror the JSON tables in `shared/data/` 1:1 and are the contract
  * that the Unity C# runtime ports (`Assets/Scripts/Sim/Core/*.cs`) must honour.
  * Golden vectors produced by this implementation are checked in at
- * `tools/sim-core/golden/*.json` so the C# port can be verified for parity.
+ * `tools/golden/*.json` so the C# port can be verified for parity.
  */
 
 // ── Ingredients ─────────────────────────────────────────────────────────────

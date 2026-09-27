@@ -42,7 +42,7 @@ export function deriveStats(db: GameDatabase, restaurant: RestaurantDef, levels:
   };
 
   return {
-    slotsPerZone: restaurant.grill.slotsPerZone + Math.floor(get('grill_size') / 1),
+    slotsPerZone: restaurant.grill.slotsPerZone + Math.floor(get('grill_size')),
     zoneCount: restaurant.grill.zoneCount,
     heatStability: restaurant.grill.heatStability,
     stabilityRecoveryFraction: get('grill_stability'),
@@ -167,12 +167,13 @@ export function evenness(f: FoodRuntime): number {
 
 export function stageOf(db: GameDatabase, f: FoodRuntime): DonenessStageId {
   const d = overallDoneness(f);
+  if (f.burned || d >= db.ingredients.shared.burnedThreshold) return 'burned';
   if (f.ingredient.stageOverrides && f.ingredient.stageOverrides.length > 0) {
     for (const s of f.ingredient.stageOverrides) if (d < s.max) return s.id;
     return f.ingredient.stageOverrides[f.ingredient.stageOverrides.length - 1]!.id;
   }
   const t = db.ingredients.shared.stageThresholds;
-  if (f.burned || d >= t.WELL_MAX) return 'burned';
+  if (d >= t.WELL_MAX) return 'burned';
   if (d >= t.MEDIUM_MAX) return 'well';
   if (d >= t.RARE_MAX) return 'medium';
   if (d >= t.RAW_MAX) return 'rare';

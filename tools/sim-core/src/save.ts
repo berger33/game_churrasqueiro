@@ -250,18 +250,29 @@ export function resolveDailyClaim(save: SaveGame, nowUnixSec: number, cycleDays:
   }
   const gap = today - last;
   let streak = save.daily.streak;
-  if (last === 0) streak = 1;
-  else if (gap <= 1 + graceDays) streak += 1;
-  else streak = 1;
-  const dayIndex = ((save.daily.lastClaimDayIndex + (last === 0 ? 0 : 1)) % cycleDays + cycleDays) % cycleDays;
+  let dayIndex: number;
+  if (last === 0) {
+    streak = 1;
+    dayIndex = 0;
+  } else if (gap === 1) {
+    streak += 1;
+    dayIndex = (save.daily.lastClaimDayIndex + 1) % cycleDays;
+  } else if (gap <= 1 + graceDays) {
+    // Missing one day does not reset the streak, it just does not advance it (spec §28)
+    dayIndex = (save.daily.lastClaimDayIndex + 1) % cycleDays;
+  } else {
+    streak = 1;
+    dayIndex = 0;
+  }
   return { dayIndex, streak, canClaim: true };
 }
 
 /** Deterministic key ordering so the checksum is stable across engines. */
 export function stableStringify(value: unknown): string {
+  if (value === undefined) return 'null';
   if (value === null || typeof value !== 'object') return JSON.stringify(value);
-  if (Array.isArray(value)) return `[${value.map((v) => stableStringify(v)).join(',')}]`;
+  if (Array.isArray(value)) return `[${value.map((v) => v === undefined ? 'null' : stableStringify(v)).join(',')}]`;
   const obj = value as Record<string, unknown>;
-  const keys = Object.keys(obj).sort();
+  const keys = Object.keys(obj).filter((k) => obj[k] !== undefined).sort();
   return `{${keys.map((k) => `${JSON.stringify(k)}:${stableStringify(obj[k])}`).join(',')}}`;
 }

@@ -1,0 +1,3208 @@
+{
+  "method": "Controlled owned-level fixtures; no turn/order/VIP/rewarded simulation or progression claims. Separate from active campaign. Level80 isolates offline income from level rewards (tested and vectored separately).",
+  "startUTC": "2026-09-21T00:00:00.000Z",
+  "days": 3,
+  "schedule": [
+    {
+      "hideMinute": 30,
+      "returnMinute": 390
+    },
+    {
+      "hideMinute": 405,
+      "returnMinute": 415
+    },
+    {
+      "hideMinute": 480,
+      "returnMinute": 1200
+    }
+  ],
+  "settlement": "Manual remainder claimed immediately when eligible; second return waits until07:00 (cooldown), no automatic background callback. Online gaps grant zero income.",
+  "actualAbsenceMinutesPerDay": 1090,
+  "cappedMinutesPerDay": 850,
+  "rampWeightedMinutesPerDay": 847.5,
+  "rows": [
+    {
+      "restaurantIndex": 3,
+      "profile": "base",
+      "upgradeLevels": {},
+      "coins": 106785,
+      "xp": 6102,
+      "autoCoins": 0,
+      "manualCoins": 106785,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "manual",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 15120,
+          "offlineXp": 864,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 315,
+          "offlineXp": 18,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 20160,
+          "offlineXp": 1152,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "manual",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 15120,
+          "offlineXp": 864,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 315,
+          "offlineXp": 18,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 20160,
+          "offlineXp": 1152,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "manual",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 15120,
+          "offlineXp": 864,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 315,
+          "offlineXp": 18,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 20160,
+          "offlineXp": 1152,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 3,
+      "profile": "caixa1",
+      "upgradeLevels": {
+        "caixa": 1
+      },
+      "coins": 106785,
+      "xp": 6102,
+      "autoCoins": 30240,
+      "manualCoins": 76545,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "auto",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 5040,
+          "offlineXp": 288,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 1,
+          "part": "manual",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 10080,
+          "offlineXp": 576,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 315,
+          "offlineXp": 18,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "auto",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 5040,
+          "offlineXp": 288,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 15120,
+          "offlineXp": 864,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "auto",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 5040,
+          "offlineXp": 288,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "manual",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 10080,
+          "offlineXp": 576,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 315,
+          "offlineXp": 18,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "auto",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 5040,
+          "offlineXp": 288,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 15120,
+          "offlineXp": 864,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "auto",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 5040,
+          "offlineXp": 288,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "manual",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 10080,
+          "offlineXp": 576,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 315,
+          "offlineXp": 18,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "auto",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 5040,
+          "offlineXp": 288,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 15120,
+          "offlineXp": 864,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 3,
+      "profile": "caixa2",
+      "upgradeLevels": {
+        "caixa": 2
+      },
+      "coins": 106785,
+      "xp": 6102,
+      "autoCoins": 60480,
+      "manualCoins": 46305,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "auto",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 10080,
+          "offlineXp": 576,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 1,
+          "part": "manual",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 5040,
+          "offlineXp": 288,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 315,
+          "offlineXp": 18,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "auto",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 10080,
+          "offlineXp": 576,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 10080,
+          "offlineXp": 576,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "auto",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 10080,
+          "offlineXp": 576,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "manual",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 5040,
+          "offlineXp": 288,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 315,
+          "offlineXp": 18,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "auto",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 10080,
+          "offlineXp": 576,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 10080,
+          "offlineXp": 576,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "auto",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 10080,
+          "offlineXp": 576,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "manual",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 5040,
+          "offlineXp": 288,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 315,
+          "offlineXp": 18,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "auto",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 10080,
+          "offlineXp": 576,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 10080,
+          "offlineXp": 576,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 3,
+      "profile": "caixa3",
+      "upgradeLevels": {
+        "caixa": 3
+      },
+      "coins": 109989,
+      "xp": 6288,
+      "autoCoins": 93441,
+      "manualCoins": 16548,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "auto",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 15574,
+          "offlineXp": 890,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 324,
+          "offlineXp": 19,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "auto",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 15573,
+          "offlineXp": 889,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 5192,
+          "offlineXp": 298,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "auto",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 15574,
+          "offlineXp": 890,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 324,
+          "offlineXp": 19,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "auto",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 15573,
+          "offlineXp": 889,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 5192,
+          "offlineXp": 298,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "auto",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 15574,
+          "offlineXp": 890,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 324,
+          "offlineXp": 19,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "auto",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 15573,
+          "offlineXp": 889,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 5192,
+          "offlineXp": 298,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 3,
+      "profile": "caixa4",
+      "upgradeLevels": {
+        "caixa": 4
+      },
+      "coins": 113193,
+      "xp": 6468,
+      "autoCoins": 112191,
+      "manualCoins": 1002,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "auto",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 16027,
+          "offlineXp": 916,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 334,
+          "offlineXp": 19,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "auto",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 21370,
+          "offlineXp": 1221,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "auto",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 16027,
+          "offlineXp": 916,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 334,
+          "offlineXp": 19,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "auto",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 21370,
+          "offlineXp": 1221,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "auto",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 16027,
+          "offlineXp": 916,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 334,
+          "offlineXp": 19,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "auto",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 21370,
+          "offlineXp": 1221,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 3,
+      "profile": "gerente4",
+      "upgradeLevels": {
+        "gerente": 4
+      },
+      "coins": 183669,
+      "xp": 10494,
+      "autoCoins": 0,
+      "manualCoins": 183669,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "manual",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 26006,
+          "offlineXp": 1486,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 542,
+          "offlineXp": 31,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 34675,
+          "offlineXp": 1981,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "manual",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 26006,
+          "offlineXp": 1486,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 542,
+          "offlineXp": 31,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 34675,
+          "offlineXp": 1981,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "manual",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 26006,
+          "offlineXp": 1486,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 542,
+          "offlineXp": 31,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 34675,
+          "offlineXp": 1981,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 3,
+      "profile": "logistica20",
+      "upgradeLevels": {
+        "imperio_logistica": 20
+      },
+      "coins": 149499,
+      "xp": 8544,
+      "autoCoins": 0,
+      "manualCoins": 149499,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "manual",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 21168,
+          "offlineXp": 1210,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 441,
+          "offlineXp": 25,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 28224,
+          "offlineXp": 1613,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "manual",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 21168,
+          "offlineXp": 1210,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 441,
+          "offlineXp": 25,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 28224,
+          "offlineXp": 1613,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "manual",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 21168,
+          "offlineXp": 1210,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 441,
+          "offlineXp": 25,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 28224,
+          "offlineXp": 1613,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 3,
+      "profile": "maximum",
+      "upgradeLevels": {
+        "caixa": 4,
+        "gerente": 4,
+        "imperio_logistica": 20
+      },
+      "coins": 232794,
+      "xp": 13302,
+      "autoCoins": 230733,
+      "manualCoins": 2061,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "auto",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 32962,
+          "offlineXp": 1884,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 687,
+          "offlineXp": 39,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "auto",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 43949,
+          "offlineXp": 2511,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "auto",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 32962,
+          "offlineXp": 1884,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 687,
+          "offlineXp": 39,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "auto",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 43949,
+          "offlineXp": 2511,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "auto",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 32962,
+          "offlineXp": 1884,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 687,
+          "offlineXp": 39,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "auto",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 43949,
+          "offlineXp": 2511,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 4,
+      "profile": "base",
+      "upgradeLevels": {},
+      "coins": 244080,
+      "xp": 12714,
+      "autoCoins": 0,
+      "manualCoins": 244080,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "manual",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 34560,
+          "offlineXp": 1800,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 720,
+          "offlineXp": 38,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 46080,
+          "offlineXp": 2400,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "manual",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 34560,
+          "offlineXp": 1800,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 720,
+          "offlineXp": 38,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 46080,
+          "offlineXp": 2400,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "manual",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 34560,
+          "offlineXp": 1800,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 720,
+          "offlineXp": 38,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 46080,
+          "offlineXp": 2400,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 4,
+      "profile": "caixa1",
+      "upgradeLevels": {
+        "caixa": 1
+      },
+      "coins": 244080,
+      "xp": 12714,
+      "autoCoins": 69120,
+      "manualCoins": 174960,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "auto",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 11520,
+          "offlineXp": 600,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 1,
+          "part": "manual",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 23040,
+          "offlineXp": 1200,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 720,
+          "offlineXp": 38,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "auto",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 11520,
+          "offlineXp": 600,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 34560,
+          "offlineXp": 1800,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "auto",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 11520,
+          "offlineXp": 600,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "manual",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 23040,
+          "offlineXp": 1200,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 720,
+          "offlineXp": 38,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "auto",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 11520,
+          "offlineXp": 600,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 34560,
+          "offlineXp": 1800,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "auto",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 11520,
+          "offlineXp": 600,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "manual",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 23040,
+          "offlineXp": 1200,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 720,
+          "offlineXp": 38,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "auto",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 11520,
+          "offlineXp": 600,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 34560,
+          "offlineXp": 1800,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 4,
+      "profile": "caixa2",
+      "upgradeLevels": {
+        "caixa": 2
+      },
+      "coins": 244080,
+      "xp": 12714,
+      "autoCoins": 138240,
+      "manualCoins": 105840,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "auto",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 23040,
+          "offlineXp": 1200,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 1,
+          "part": "manual",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 11520,
+          "offlineXp": 600,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 720,
+          "offlineXp": 38,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "auto",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 23040,
+          "offlineXp": 1200,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 23040,
+          "offlineXp": 1200,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "auto",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 23040,
+          "offlineXp": 1200,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "manual",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 11520,
+          "offlineXp": 600,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 720,
+          "offlineXp": 38,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "auto",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 23040,
+          "offlineXp": 1200,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 23040,
+          "offlineXp": 1200,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "auto",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 23040,
+          "offlineXp": 1200,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "manual",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 11520,
+          "offlineXp": 600,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 720,
+          "offlineXp": 38,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "auto",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 23040,
+          "offlineXp": 1200,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 23040,
+          "offlineXp": 1200,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 4,
+      "profile": "caixa3",
+      "upgradeLevels": {
+        "caixa": 3
+      },
+      "coins": 251403,
+      "xp": 13095,
+      "autoCoins": 213579,
+      "manualCoins": 37824,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "auto",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 35597,
+          "offlineXp": 1854,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 742,
+          "offlineXp": 39,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "auto",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 35596,
+          "offlineXp": 1854,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 11866,
+          "offlineXp": 618,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "auto",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 35597,
+          "offlineXp": 1854,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 742,
+          "offlineXp": 39,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "auto",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 35596,
+          "offlineXp": 1854,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 11866,
+          "offlineXp": 618,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "auto",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 35597,
+          "offlineXp": 1854,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 742,
+          "offlineXp": 39,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "auto",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 35596,
+          "offlineXp": 1854,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 11866,
+          "offlineXp": 618,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 4,
+      "profile": "caixa4",
+      "upgradeLevels": {
+        "caixa": 4
+      },
+      "coins": 258726,
+      "xp": 13476,
+      "autoCoins": 256437,
+      "manualCoins": 2289,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "auto",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 36634,
+          "offlineXp": 1908,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 763,
+          "offlineXp": 40,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "auto",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 48845,
+          "offlineXp": 2544,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "auto",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 36634,
+          "offlineXp": 1908,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 763,
+          "offlineXp": 40,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "auto",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 48845,
+          "offlineXp": 2544,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "auto",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 36634,
+          "offlineXp": 1908,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 763,
+          "offlineXp": 40,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "auto",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 48845,
+          "offlineXp": 2544,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 4,
+      "profile": "gerente4",
+      "upgradeLevels": {
+        "gerente": 4
+      },
+      "coins": 419817,
+      "xp": 21867,
+      "autoCoins": 0,
+      "manualCoins": 419817,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "manual",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 59443,
+          "offlineXp": 3096,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 1238,
+          "offlineXp": 65,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 79258,
+          "offlineXp": 4128,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "manual",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 59443,
+          "offlineXp": 3096,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 1238,
+          "offlineXp": 65,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 79258,
+          "offlineXp": 4128,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "manual",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 59443,
+          "offlineXp": 3096,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 1238,
+          "offlineXp": 65,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 79258,
+          "offlineXp": 4128,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 4,
+      "profile": "logistica20",
+      "upgradeLevels": {
+        "imperio_logistica": 20
+      },
+      "coins": 341712,
+      "xp": 17799,
+      "autoCoins": 0,
+      "manualCoins": 341712,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "manual",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 48384,
+          "offlineXp": 2520,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 1008,
+          "offlineXp": 53,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 64512,
+          "offlineXp": 3360,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "manual",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 48384,
+          "offlineXp": 2520,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 1008,
+          "offlineXp": 53,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 64512,
+          "offlineXp": 3360,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "manual",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 48384,
+          "offlineXp": 2520,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 1008,
+          "offlineXp": 53,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 64512,
+          "offlineXp": 3360,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 4,
+      "profile": "maximum",
+      "upgradeLevels": {
+        "caixa": 4,
+        "gerente": 4,
+        "imperio_logistica": 20
+      },
+      "coins": 532095,
+      "xp": 27714,
+      "autoCoins": 527385,
+      "manualCoins": 4710,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "auto",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 75341,
+          "offlineXp": 3924,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 1570,
+          "offlineXp": 82,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "auto",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 100454,
+          "offlineXp": 5232,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "auto",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 75341,
+          "offlineXp": 3924,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 1570,
+          "offlineXp": 82,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "auto",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 100454,
+          "offlineXp": 5232,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "auto",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 75341,
+          "offlineXp": 3924,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 1570,
+          "offlineXp": 82,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "auto",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 100454,
+          "offlineXp": 5232,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 6,
+      "profile": "base",
+      "upgradeLevels": {},
+      "coins": 1093275,
+      "xp": 40680,
+      "autoCoins": 0,
+      "manualCoins": 1093275,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "manual",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 154800,
+          "offlineXp": 5760,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 3225,
+          "offlineXp": 120,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 206400,
+          "offlineXp": 7680,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "manual",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 154800,
+          "offlineXp": 5760,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 3225,
+          "offlineXp": 120,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 206400,
+          "offlineXp": 7680,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "manual",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 154800,
+          "offlineXp": 5760,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 3225,
+          "offlineXp": 120,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 206400,
+          "offlineXp": 7680,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 6,
+      "profile": "caixa1",
+      "upgradeLevels": {
+        "caixa": 1
+      },
+      "coins": 1093275,
+      "xp": 40680,
+      "autoCoins": 309600,
+      "manualCoins": 783675,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "auto",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 51600,
+          "offlineXp": 1920,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 1,
+          "part": "manual",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 103200,
+          "offlineXp": 3840,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 3225,
+          "offlineXp": 120,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "auto",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 51600,
+          "offlineXp": 1920,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 154800,
+          "offlineXp": 5760,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "auto",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 51600,
+          "offlineXp": 1920,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "manual",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 103200,
+          "offlineXp": 3840,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 3225,
+          "offlineXp": 120,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "auto",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 51600,
+          "offlineXp": 1920,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 154800,
+          "offlineXp": 5760,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "auto",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 51600,
+          "offlineXp": 1920,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "manual",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 103200,
+          "offlineXp": 3840,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 3225,
+          "offlineXp": 120,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "auto",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 51600,
+          "offlineXp": 1920,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 154800,
+          "offlineXp": 5760,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 6,
+      "profile": "caixa2",
+      "upgradeLevels": {
+        "caixa": 2
+      },
+      "coins": 1093275,
+      "xp": 40680,
+      "autoCoins": 619200,
+      "manualCoins": 474075,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "auto",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 103200,
+          "offlineXp": 3840,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 1,
+          "part": "manual",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 51600,
+          "offlineXp": 1920,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 3225,
+          "offlineXp": 120,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "auto",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 103200,
+          "offlineXp": 3840,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 103200,
+          "offlineXp": 3840,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "auto",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 103200,
+          "offlineXp": 3840,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "manual",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 51600,
+          "offlineXp": 1920,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 3225,
+          "offlineXp": 120,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "auto",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 103200,
+          "offlineXp": 3840,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 103200,
+          "offlineXp": 3840,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "auto",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 103200,
+          "offlineXp": 3840,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "manual",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 51600,
+          "offlineXp": 1920,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 3225,
+          "offlineXp": 120,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "auto",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 103200,
+          "offlineXp": 3840,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 103200,
+          "offlineXp": 3840,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 6,
+      "profile": "caixa3",
+      "upgradeLevels": {
+        "caixa": 3
+      },
+      "coins": 1126074,
+      "xp": 41901,
+      "autoCoins": 956664,
+      "manualCoins": 169410,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "auto",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 159444,
+          "offlineXp": 5933,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 3322,
+          "offlineXp": 124,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "auto",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 159444,
+          "offlineXp": 5932,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 53148,
+          "offlineXp": 1978,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "auto",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 159444,
+          "offlineXp": 5933,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 3322,
+          "offlineXp": 124,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "auto",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 159444,
+          "offlineXp": 5932,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 53148,
+          "offlineXp": 1978,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "auto",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 159444,
+          "offlineXp": 5933,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 3322,
+          "offlineXp": 124,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "auto",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 159444,
+          "offlineXp": 5932,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 53148,
+          "offlineXp": 1978,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 6,
+      "profile": "caixa4",
+      "upgradeLevels": {
+        "caixa": 4
+      },
+      "coins": 1158873,
+      "xp": 43122,
+      "autoCoins": 1148616,
+      "manualCoins": 10257,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "auto",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 164088,
+          "offlineXp": 6106,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 3419,
+          "offlineXp": 127,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "auto",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 218784,
+          "offlineXp": 8141,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "auto",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 164088,
+          "offlineXp": 6106,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 3419,
+          "offlineXp": 127,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "auto",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 218784,
+          "offlineXp": 8141,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "auto",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 164088,
+          "offlineXp": 6106,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 3419,
+          "offlineXp": 127,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "auto",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 218784,
+          "offlineXp": 8141,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 6,
+      "profile": "gerente4",
+      "upgradeLevels": {
+        "gerente": 4
+      },
+      "coins": 1880433,
+      "xp": 69969,
+      "autoCoins": 0,
+      "manualCoins": 1880433,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "manual",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 266256,
+          "offlineXp": 9907,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 5547,
+          "offlineXp": 206,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 355008,
+          "offlineXp": 13210,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "manual",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 266256,
+          "offlineXp": 9907,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 5547,
+          "offlineXp": 206,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 355008,
+          "offlineXp": 13210,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "manual",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 266256,
+          "offlineXp": 9907,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 5547,
+          "offlineXp": 206,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 355008,
+          "offlineXp": 13210,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 6,
+      "profile": "logistica20",
+      "upgradeLevels": {
+        "imperio_logistica": 20
+      },
+      "coins": 1530585,
+      "xp": 56952,
+      "autoCoins": 0,
+      "manualCoins": 1530585,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "manual",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 216720,
+          "offlineXp": 8064,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 4515,
+          "offlineXp": 168,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "manual",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 288960,
+          "offlineXp": 10752,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "manual",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 216720,
+          "offlineXp": 8064,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 4515,
+          "offlineXp": 168,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "manual",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 288960,
+          "offlineXp": 10752,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "manual",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 216720,
+          "offlineXp": 8064,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 4515,
+          "offlineXp": 168,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "manual",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 288960,
+          "offlineXp": 10752,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    },
+    {
+      "restaurantIndex": 6,
+      "profile": "maximum",
+      "upgradeLevels": {
+        "caixa": 4,
+        "gerente": 4,
+        "imperio_logistica": 20
+      },
+      "coins": 2383341,
+      "xp": 88683,
+      "autoCoins": 2362248,
+      "manualCoins": 21093,
+      "receipts": [
+        {
+          "id": 1,
+          "part": "auto",
+          "at": 1789972200,
+          "minutes": 360,
+          "offlineCoins": 337464,
+          "offlineXp": 12557,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 2,
+          "part": "manual",
+          "at": 1789974000,
+          "minutes": 10,
+          "offlineCoins": 7031,
+          "offlineXp": 262,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 3,
+          "part": "auto",
+          "at": 1790020800,
+          "minutes": 480,
+          "offlineCoins": 449952,
+          "offlineXp": 16742,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 4,
+          "part": "auto",
+          "at": 1790058600,
+          "minutes": 360,
+          "offlineCoins": 337464,
+          "offlineXp": 12557,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 5,
+          "part": "manual",
+          "at": 1790060400,
+          "minutes": 10,
+          "offlineCoins": 7031,
+          "offlineXp": 262,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 6,
+          "part": "auto",
+          "at": 1790107200,
+          "minutes": 480,
+          "offlineCoins": 449952,
+          "offlineXp": 16742,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 7,
+          "part": "auto",
+          "at": 1790145000,
+          "minutes": 360,
+          "offlineCoins": 337464,
+          "offlineXp": 12557,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 8,
+          "part": "manual",
+          "at": 1790146800,
+          "minutes": 10,
+          "offlineCoins": 7031,
+          "offlineXp": 262,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        },
+        {
+          "id": 9,
+          "part": "auto",
+          "at": 1790193600,
+          "minutes": 480,
+          "offlineCoins": 449952,
+          "offlineXp": 16742,
+          "levelCoins": 0,
+          "levelEmbers": 0,
+          "levelsGained": 0
+        }
+      ]
+    }
+  ]
+}

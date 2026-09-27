@@ -246,14 +246,17 @@ describe('daily streak', () => {
     s.daily.lastClaimUnixDay = unixDay(NOW) - 2; // missed one day
     s.daily.streak = 5;
     const r = resolveDailyClaim(s, NOW, 7, 1);
-    expect(r.streak).toBe(6);
+    expect(r.streak).toBe(5);
   });
 
   it('resets after the grace period is exceeded', () => {
     const s = newSave('a', NOW);
     s.daily.lastClaimUnixDay = unixDay(NOW) - 5;
     s.daily.streak = 5;
-    expect(resolveDailyClaim(s, NOW, 7, 1).streak).toBe(1);
+    s.daily.lastClaimDayIndex = 4;
+    const r = resolveDailyClaim(s, NOW, 7, 1);
+    expect(r.streak).toBe(1);
+    expect(r.dayIndex).toBe(0);
   });
 
   it('wraps the 7-day cycle', () => {

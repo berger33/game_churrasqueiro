@@ -186,6 +186,7 @@ public static class Program
             var id = Str(v!["id"]);
             if (id.StartsWith("flip.", StringComparison.Ordinal)) Flip(data, stats, v, scoring);
             else if (id.StartsWith("score.", StringComparison.Ordinal)) Score(data, v, scoring);
+            else if (id.StartsWith("lateIncome.", StringComparison.Ordinal)) ScoreLateIncome(data, v, scoring);
             else scoring.NotPorted(id, "unknown scoring vector");
         }
         var economy = report.Section("golden.economy");
@@ -193,11 +194,30 @@ public static class Program
         {
             var id = Str(v!["id"]);
             if (id == "econ.effectiveHeat") EffectiveHeat(data, stats, v, economy);
+            else if (id == "econ.xpForLevel") XpForLevel(data, v, economy);
+            else if (id == "econ.levelForXp") LevelForXp(data, v, economy);
+            else if (id == "econ.upgradeCost") UpgradeCost(data, v, economy);
+            else if (id == "econ.levelUpReward") LevelUpReward(data, v, economy);
+            else if (id == "econ.offline") Offline(data, v, economy);
+            else if (id.StartsWith("econ.offlineLifecycle.", StringComparison.Ordinal)) ReplayOfflineLifecycle(data, v, economy);
             else economy.NotPorted(id, "EconomyRules.cs");
         }
         EffectiveHeatBoundaries(data, economy);
         var turns = report.Section("golden.turns");
-        foreach (var v in doc["turns"]!.AsArray()) turns.NotPorted(Str(v!["id"]), "TurnSimulation.cs");
+        foreach (var v in doc["turns"]!.AsArray())
+        {
+            var id = Str(v!["id"]);
+            var tempSection = new Section("temp");
+            ReplayTurn(data, v!, tempSection);
+            if (tempSection.Passed > 0)
+            {
+                turns.Pass();
+            }
+            else
+            {
+                turns.NotPorted(id, "TurnSimulation.cs");
+            }
+        }
     }
 
     private static void Cook(GameData data, DerivedStats stats, JsonNode v, Section s)
@@ -338,6 +358,302 @@ public static class Program
                 if (CookingRules.EffectiveHeat(g, z, data) <= 0) fails.Add($"{count} zones fresh sack must heat z={z}");
         }
         s.Result("econ.effectiveHeat.boundaries", fails);
+    }
+
+    private static void ScoreLateIncome(GameData data, JsonNode v, Section s)
+    {
+        var input = v["input"]!;
+        var ing = data.IngredientById(Str(input["ingredient"]))!;
+        var f = CookingRules.CreateFood(1, ing);
+        f.Sides = Nums(input["sides"]);
+        var ctxNode = input["context"]!;
+        var scored = CookingRules.ScoreItem(data, f, new ScoreContext
+        {
+            RestaurantIndex = Int(ctxNode["restaurantIndex"]),
+            Target = Num(ctxNode["target"]),
+            ToleranceScale = Num(ctxNode["toleranceScale"]),
+            PatienceRemaining = Num(ctxNode["patienceRemaining"]),
+            Combo = Num(ctxNode["combo"]),
+            TipMult = Num(ctxNode["tipMult"]),
+            PrestigeTipBonus = ctxNode["prestigeTipBonus"] != null ? Num(ctxNode["prestigeTipBonus"]) : 0,
+            AutoServiceTipBonus = ctxNode["autoServiceTipBonus"] != null ? Num(ctxNode["autoServiceTipBonus"]) : 0,
+            XpMult = Num(ctxNode["xpMult"]),
+            CustomerTipMult = ctxNode["customerTipMult"] != null ? Num(ctxNode["customerTipMult"]) : 1,
+            EventValueMult = ctxNode["eventValueMult"] != null ? Num(ctxNode["eventValueMult"]) : 1,
+            Tuning = CookingRules.RewardTuningOf(data)
+        });
+        var expect = v["expect"]!;
+        var fails = new List<string>();
+        Eq(fails, "quality", scored.Quality.ToString().ToLowerInvariant(), Str(expect["quality"]));
+        Eq(fails, "coins", scored.Coins, Int(expect["coins"]));
+        Eq(fails, "xp", scored.Xp, Int(expect["xp"]));
+        s.Result(Str(v["id"]), fails);
+    }
+
+    private static void XpForLevel(GameData data, JsonNode v, Section s)
+    {
+        var f = v["input"]!["formula"]!;
+        double a = Num(f["a"]), exp = Num(f["exponent"]), min = Num(f["minPerLevel"]);
+        var levels = v["input"]!["levels"]!.AsArray();
+        var want = Nums(v["expect"]!["values"]);
+        var fails = new List<string>();
+        for (int i = 0; i < levels.Count; i++)
+        {
+            int lv = Int(levels[i]);
+            double got = EconomyRules.XpForLevel(lv, a, exp, min);
+            Near(fails, $"xpForLevel({lv})", got, want[i]);
+        }
+        s.Result(Str(v["id"]), fails);
+    }
+
+    private static void LevelForXp(GameData data, JsonNode v, Section s)
+    {
+        var f = v["input"]!["formula"]!;
+        double a = Num(f["a"]), exp = Num(f["exponent"]), min = Num(f["minPerLevel"]);
+        int maxLevel = Int(v["input"]!["maxLevel"]);
+        var xps = Nums(v["input"]!["xp"]);
+        var want = v["expect"]!["levels"]!.AsArray().Select(n => Int(n)).ToArray();
+        var fails = new List<string>();
+        for (int i = 0; i < xps.Length; i++)
+        {
+            int got = EconomyRules.LevelForXp(xps[i], a, exp, min, maxLevel);
+            Eq(fails, $"levelForXp({xps[i]})", got, want[i]);
+        }
+        s.Result(Str(v["id"]), fails);
+    }
+
+    private static void UpgradeCost(GameData data, JsonNode v, Section s)
+    {
+        var fails = new List<string>();
+        foreach (var row in v["expect"]!["rows"]!.AsArray())
+        {
+            string trackId = Str(row!["track"]);
+            int level = Int(row["level"]);
+            double want = Num(row["cost"]);
+            var track = data.UpgradeById(trackId)!;
+            double got = EconomyRules.UpgradeCost(track.BaseCost, track.Growth, level);
+            Near(fails, $"{trackId}@{level}", got, want);
+        }
+        s.Result(Str(v["id"]), fails);
+    }
+
+    private static void LevelUpReward(GameData data, JsonNode v, Section s)
+    {
+        var fails = new List<string>();
+        var wantCoins = Nums(v["expect"]!["coins"]);
+        for (int i = 0; i < wantCoins.Length; i++)
+        {
+            double got = EconomyRules.LevelUpCoinReward(data.Economy.Reward.LevelUpCoins.Base, data.Economy.Reward.LevelUpCoins.Exponent, i + 1);
+            Near(fails, $"levelUpCoinReward({i + 1})", got, wantCoins[i]);
+        }
+        s.Result(Str(v["id"]), fails);
+    }
+
+    private static void Offline(GameData data, JsonNode v, Section s)
+    {
+        var fails = new List<string>();
+        foreach (var row in v["expect"]!["rows"]!.AsArray())
+        {
+            int restIdx = Int(row!["restaurantIndex"]);
+            double elapsed = Num(row["elapsedSec"]);
+            var p = EconomyRules.NewPlayerState();
+            p.RestaurantIndex = restIdx;
+            var o = EconomyRules.ComputeOfflineEarnings(data, p, elapsed, 1000000);
+            Near(fails, $"{restIdx}/{elapsed} coins", o.Coins, Num(row["coins"]));
+            Near(fails, $"{restIdx}/{elapsed} xp", o.Xp, Num(row["xp"]));
+            Eq(fails, $"{restIdx}/{elapsed} capped", o.Capped, Bool(row["capped"]));
+        }
+        s.Result(Str(v["id"]), fails);
+    }
+
+    private static void ReplayOfflineLifecycle(GameData data, JsonNode v, Section s)
+    {
+        var input = v["input"]!;
+        var expect = v["expect"]!;
+        var id = Str(v["id"]);
+        var p = EconomyRules.NewPlayerState();
+        p.RestaurantIndex = Int(input["restaurantIndex"]);
+        p.Level = Int(input["level"]);
+        if (input["upgrades"] != null)
+        {
+            foreach (var kv in input["upgrades"]!.AsObject())
+                p.UpgradeLevels[kv.Key] = Int(kv.Value);
+        }
+        var fails = new List<string>();
+        var steps = input["steps"]!.AsArray();
+        var trace = expect["trace"]!.AsArray();
+        for (int i = 0; i < steps.Count; i++)
+        {
+            var st = steps[i]!;
+            string kind = Str(st["kind"]);
+            double at = Num(st["at"]);
+            OfflineReceipt? receipt = null;
+            if (kind == "change")
+            {
+                if (st["restaurantIndex"] != null) p.RestaurantIndex = Int(st["restaurantIndex"]);
+                if (st["upgrades"] != null)
+                {
+                    foreach (var kv in st["upgrades"]!.AsObject())
+                        p.UpgradeLevels[kv.Key] = Int(kv.Value);
+                }
+            }
+            else if (kind == "hide")
+            {
+                var tx = EconomyRules.BeginOfflineAbsence(data, p, at);
+                p = tx.Owner;
+                receipt = tx.Receipt;
+            }
+            else if (kind == "return")
+            {
+                var tx = EconomyRules.ReturnFromOffline(data, p, at);
+                p = tx.Owner;
+                receipt = tx.Receipt;
+            }
+            else if (kind == "claim")
+            {
+                int claimId = p.Offline.Batch?.Id ?? p.Offline.LastReceipt?.Id ?? 0;
+                var tx = EconomyRules.ClaimOffline(data, p, claimId, at);
+                p = tx.Owner;
+                receipt = tx.Receipt;
+            }
+            var tr = trace[i]!;
+            Eq(fails, $"step {i} coins", p.Coins, Int(tr["coins"]));
+            Near(fails, $"step {i} xp", p.Xp, Num(tr["xp"]));
+            Eq(fails, $"step {i} level", p.Level, Int(tr["level"]));
+            Eq(fails, $"step {i} embers", p.Embers, Int(tr["embers"]));
+            if (tr["receipt"] == null)
+            {
+                if (receipt != null) fails.Add($"step {i} receipt was not null");
+            }
+            else
+            {
+                if (receipt == null) fails.Add($"step {i} receipt was null");
+                else
+                {
+                    Near(fails, $"step {i} receipt.offlineCoins", receipt.OfflineCoins, Num(tr["receipt"]!["offlineCoins"]));
+                    Near(fails, $"step {i} receipt.offlineXp", receipt.OfflineXp, Num(tr["receipt"]!["offlineXp"]));
+                }
+            }
+        }
+        if (expect["counters"] != null)
+        {
+            foreach (var kv in expect["counters"]!.AsObject())
+            {
+                p.Counters.TryGetValue(kv.Key, out double cur);
+                Near(fails, $"counter {kv.Key}", cur, Num(kv.Value));
+            }
+        }
+        s.Result(id, fails);
+    }
+
+    private static void ReplayTurn(GameData data, JsonNode v, Section s)
+    {
+        var input = v["input"]!;
+        var expect = v["expect"]!;
+        var id = Str(v["id"]);
+        var cfg = new TurnConfig
+        {
+            RestaurantIndex = Int(input["restaurantIndex"]),
+            PlayerLevel = Int(input["playerLevel"]),
+            LevelId = Str(input["levelId"]),
+            ChurrasqueiraId = input["churrasqueiraId"] != null ? Str(input["churrasqueiraId"]) : null,
+            ChurrasqueiraLevel = input["churrasqueiraLevel"] != null ? Int(input["churrasqueiraLevel"]) : null,
+            Seed = Num(input["seed"]),
+            StaffPrepCustomers = input["staffPrepCustomers"] != null ? Int(input["staffPrepCustomers"]) : 0,
+            StaffPolicy = input["staffPolicy"] == null || Bool(input["staffPolicy"])
+        };
+        if (input["upgradeLevels"] != null)
+        {
+            foreach (var kv in input["upgradeLevels"]!.AsObject())
+                cfg.UpgradeLevels[kv.Key] = Int(kv.Value);
+        }
+        if (input["overrides"] != null)
+        {
+            var ov = input["overrides"]!;
+            cfg.Overrides = new TurnOverrides
+            {
+                TurnLengthSec = ov["turnLengthSec"] != null ? Num(ov["turnLengthSec"]) : null,
+                SpawnIntervalSec = ov["spawnIntervalSec"] != null ? Num(ov["spawnIntervalSec"]) : null,
+                DifficultyScalar = ov["difficultyScalar"] != null ? Num(ov["difficultyScalar"]) : null,
+                PatienceScalar = ov["patienceScalar"] != null ? Num(ov["patienceScalar"]) : null,
+                VipChance = ov["vipChance"] != null ? Num(ov["vipChance"]) : null,
+                MaxOrdersOnScreen = ov["maxOrdersOnScreen"] != null ? Int(ov["maxOrdersOnScreen"]) : null,
+                AutoSpawn = ov["autoSpawn"] != null ? Bool(ov["autoSpawn"]) : null
+            };
+        }
+        if (input["vipState"] != null)
+        {
+            var vsNode = input["vipState"]!;
+            cfg.VipState = new VipState
+            {
+                Day = vsNode["day"] != null ? Int(vsNode["day"]) : -1,
+                UsedToday = vsNode["usedToday"] != null ? Int(vsNode["usedToday"]) : 0,
+                CallsToday = vsNode["callsToday"] != null ? Int(vsNode["callsToday"]) : 0,
+                LastCallUnixSec = vsNode["lastCallUnixSec"] != null ? Num(vsNode["lastCallUnixSec"]) : -1,
+                LastClockUnixSec = vsNode["lastClockUnixSec"] != null ? Num(vsNode["lastClockUnixSec"]) : 0,
+                Sequence = vsNode["sequence"] != null ? Int(vsNode["sequence"]) : 0,
+                PendingCall = vsNode["pendingCall"] != null ? Str(vsNode["pendingCall"]) : null,
+                ServedTotal = vsNode["servedTotal"] != null ? Int(vsNode["servedTotal"]) : 0,
+                Blocked = vsNode["blocked"] != null && Bool(vsNode["blocked"])
+            };
+            cfg.VipStartUnixSec = input["vipStartUnixSec"] != null ? Num(input["vipStartUnixSec"]) : 0;
+        }
+        double seed = Num(input["seed"]);
+        var sim = new TurnSimulation(data, cfg, seed);
+        int levelIndex = Int(input["levelIndex"]);
+        var policy = new SkillPolicy(new Rng(seed + levelIndex * 104729), new SkillPolicyOptions { Skill = Num(input["skill"]) });
+        for (int i = 0; i < cfg.StaffPrepCustomers; i++)
+        {
+            sim.SpawnScriptedCustomer("comum", new[] { "vinagrete" }, 100);
+        }
+        double stepSec = Num(input["stepSec"]);
+        int guard = 0;
+        while (!sim.Finished && guard++ < 40000)
+        {
+            sim.Tick(stepSec, cfg.StaffPolicy ? policy : null);
+        }
+        var res = sim.Result();
+        var fails = new List<string>();
+        Near(fails, "finalTimeSec", sim.Time, Num(expect["finalTimeSec"]));
+        Eq(fails, "coins", res.Coins, Int(expect["coins"]));
+        Eq(fails, "xp", res.Xp, Int(expect["xp"]));
+        Eq(fails, "stars", res.Stars, Int(expect["stars"]));
+        Eq(fails, "failed", res.Failed, Bool(expect["failed"]));
+        var ec = expect["counters"]!;
+        Eq(fails, "counters.customersSpawned", res.Counters.CustomersSpawned, Int(ec["customersSpawned"]));
+        Eq(fails, "counters.customersServed", res.Counters.CustomersServed, Int(ec["customersServed"]));
+        Eq(fails, "counters.customersLost", res.Counters.CustomersLost, Int(ec["customersLost"]));
+        Eq(fails, "counters.ordersCompleted", res.Counters.OrdersCompleted, Int(ec["ordersCompleted"]));
+        Eq(fails, "counters.perfectCooks", res.Counters.PerfectCooks, Int(ec["perfectCooks"]));
+        Eq(fails, "counters.goodCooks", res.Counters.GoodCooks, Int(ec["goodCooks"]));
+        Eq(fails, "counters.burnedFood", res.Counters.BurnedFood, Int(ec["burnedFood"]));
+        Eq(fails, "counters.bestCombo", res.Counters.BestCombo, Int(ec["bestCombo"]));
+        Eq(fails, "counters.flips", res.Counters.Flips, Int(ec["flips"]));
+        Eq(fails, "counters.itemsCooked", res.Counters.ItemsCooked, Int(ec["itemsCooked"]));
+        Eq(fails, "counters.charcoalRefills", res.Counters.CharcoalRefills, Int(ec["charcoalRefills"]));
+        Eq(fails, "counters.flawless", res.Counters.Flawless, Bool(ec["flawless"]));
+        if (expect["vipQuota"] != null) Eq(fails, "vipQuota", sim.VipState.UsedToday, Int(expect["vipQuota"]));
+        if (expect["vipSources"] != null)
+        {
+            var wantSources = expect["vipSources"]!.AsArray().Select(s => Str(s)).ToList();
+            var gotSources = sim.Events
+                .Where(e => e.Type == "spawn" && e.Customer?.VipSource != null)
+                .Select(e => e.Customer!.VipSource!)
+                .ToList();
+            if (!gotSources.SequenceEqual(wantSources))
+                fails.Add($"vipSources: [{string.Join(", ", gotSources)}], want [{string.Join(", ", wantSources)}]");
+        }
+        if (expect["staff"] != null)
+        {
+            var st = expect["staff"]!;
+            Eq(fails, "staff.serveUsed", sim.StaffServeUsed, Int(st["serveUsed"]));
+            Eq(fails, "staff.flipUsed", sim.StaffFlipUsed, Int(st["flipUsed"]));
+            Eq(fails, "staff.prepped", sim.StaffPrepUsed, Int(st["prepped"]));
+            Eq(fails, "staff.prepAttempts", sim.StaffPrepAttempts, Int(st["prepAttempts"]));
+            Eq(fails, "staff.prepCapacity", sim.PrepSlots.Count, Int(st["prepCapacity"]));
+        }
+        if (expect["zoneCount"] != null) Eq(fails, "zoneCount", sim.Grill.Zones.Count, Int(expect["zoneCount"]));
+        s.Result(id, fails);
     }
 
     // ── 4. ftue (Tutorial.cs, Analytics.cs) ─────────────────────────────────

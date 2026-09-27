@@ -114,8 +114,8 @@ implemented and verified versus what is still open. Short version:
   per-ingredient stock with explicit replenishment. A-06.3 adds bounded real staff actions,
   tip-only auto-service bonuses, burn warnings and tray trip speed. A-06.4 adds a real absence
   ledger, frozen snapshots, cashier partial collection and atomic wallet/claim persistence.
-  All27 tracks have integrated consumers; purchased levels are preserved. Exhausted-fuel C# parity is also pending. A-06.5 and global economic review remain separate from this local18/18 acceptance.
-  Current evidence: [A-06.4 economic closure](docs/evidence/a06/step4/reopened/README.md). Green gates do not prove those remaining design defects are fixed.
+  All 27 tracks have integrated consumers; purchased levels are preserved. Phase F8 is complete: full C# core engine-free port in `Assets/Scripts/Core/` with 100% parity across all 201 golden and FTUE vectors (zero not ported). Next is Phase F9 (Unity 6 LTS integration).
+  Current evidence: [F8 C# parity closure](docs/evidence/f08/README.md).
 - **Not yet a Unity game:** there are no `Packages/`, `ProjectSettings/`, scenes, prefabs,
   APK or AAB. Unity services are stubs and have not been compiled against real SDKs.
 - **Audio and store material exist**, but still need Unity integration, device validation,

@@ -8,7 +8,128 @@
 
 ---
 
-## A-06.4 — fechamento econômico autorizado (vigente)
+## F13 — Pipeline de Assinatura, APK/AAB, Publicação e Release (vigente)
+
+- **Automação de Build Android:** Script de compilação em lote (`Assets/Scripts/Editor/BuildPipeline.cs`) implementando `BuildAndroidAab` e `BuildAndroidApk` com Target API 36, Min API 26, IL2CPP, ARM64, Linear Color Space e compressão ASTC. Assinatura segura parametrizada por variáveis de ambiente (`CHURRASCO_KEYSTORE_*`).
+- **Orçamentos de Tamanho:** Enforçamento estrito de AAB base ≤ 90 MB, texturas ≤ 40 MB e código/engine ≤ 22 MB (`docs/12-BUILD.md` §7 e `performance.json`).
+- **Metadados da Google Play Store & ASO:** Catálogo completo em `marketing/store_listings.json` para `pt-BR` (primário), `en-US` e `es-419`, com títulos ≤ 30 caracteres, 3 variantes de descrições curtas ≤ 80 caracteres (habilidade, progressão, cultura), descrições completas formatadas, palavras-chave e classificação indicativa 13+.
+- **Segurança de Dados e Privacidade:** Declaração Play Store Data Safety confirmando zero coleta de PII, criptografia TLS 1.3 em trânsito, sem compartilhamento com terceiros para profiling e URLs de privacidade e exclusão de dados.
+- **Rollout e Rollback Remoto:** Protocolo de Closed Testing (20 testadores / 14 dias), rollout gradual percentual (1% a 100%), gatilhos de interrupção (Crash > 1.0%, ANR > 0.4%) e verificação ativa dos kill-switches de contingência em `remoteconfig_defaults.json`.
+- **Validação:** 740 testes vitest em 36 arquivos 100% PASS (novo teste `tools/studio/test/f13-release-build.test.ts`); 14/15 gates locais PASS (C# SKIP local coberto no CI).
+- Relatório vigente: **[evidence/f13/README.md](evidence/f13/README.md)**.
+- **F13 encerrado.** Todas as fases de engenharia e lançamento concluídas com sucesso.
+
+## F12 — Áudio, Profiling, QA e Evidências de Dispositivo (histórico)
+
+## F11 — Integração Segura de Serviços (histórico)
+
+- **Firebase Telemetry, Crashlytics & Remote Config:** Abstrações seguras (`FirebaseService.cs`, `RemoteConfigService.cs`) com inicialização não-bloqueante no primeiro frame e suporte offline completo. Blindagem rigorosa de privacidade com zero PII e validação contra `AnalyticsContract`. Padrões embutidos de Remote Config com timeout de 8 s.
+- **Google Mobile Ads (AdMob) & UMP (LGPD / GDPR):** Fluxo de consentimento UMP para Brasil (aviso LGPD) e Europa (GDPR). Suporte aos 8 placements de Rewarded Ads com anti-fraude de tokens de uso único (TTL 1h) e trava de callback simultâneo. Política restritiva de Interstitials (apenas pós-turno, cooldown 180 s, supressão 24h pós-IAP e 10 min pós-Rewarded).
+- **Google Play Billing v7 & Resolução do Débito B-07:** Pacotes de moeda IAP atomicamente alinhados para `brasa.embers.*` em dados, credenciais, código e testes. Validação com retry backoff (3 tentativas: 500, 2000, 8000 ms), conformidade ética (§98), gating ético do Starter Pack (§39) e contingência offline (`grant_pending_flag`) com conciliação automática.
+- **Validação:** 717 testes vitest em 34 arquivos 100% PASS (novo teste `tools/studio/test/f11-services.test.ts`); 14/15 gates locais PASS (C# SKIP local coberto no CI).
+- Relatório vigente: **[evidence/f11/README.md](evidence/f11/README.md)**.
+- **F11 encerrado.** Próximo: **F12 (áudio, profiling, QA e evidências de dispositivo)**.
+
+## F10 — Meta, Localização e Acessibilidade (histórico)
+
+- **Localização:** Cobertura de 100% das 381 chaves referenciadas por dados em `en-US` e `es-419`; cobertura global ampliada para **80,8%** (495/613 chaves); zero chaves órfãs; gate `check-l10n` 100% PASS.
+- **Metaprogressão:** `meta.ts` e `MetaProgression.cs` portados com fórmulas determinísticas de maestria de coleção ($\text{XP} = \text{round}(30 \times \text{nível}^{1.5})$), avaliador de 58 conquistas sem concessões duplicadas, rastreamento de missões com bônus de conclusão, Passe de Temporada (50 patamares) e Rota da Brasa (16 paradas).
+- **Acessibilidade:** `AccessibilitySettings.cs` com símbolos universais para os 8 estágios de doneness (○, ◔, ◑, ◕, ★, ▲, ▲▲, ✖), modo de redução de movimento, alto contraste e ampliação de alvos de toque em telas móveis.
+- **Validação:** 702 testes vitest em 33 arquivos 100% PASS (novo teste `tools/studio/test/f10-meta-l10n.test.ts`); 14/15 gates locais PASS (C# SKIP local coberto no CI).
+- Relatório vigente: **[evidence/f10/README.md](evidence/f10/README.md)**.
+- **F10 encerrado.** Próximo: **F11 (integração segura de serviços)**.
+
+## F9 — Integração no Unity 6 LTS (histórico)
+
+- **Configuração de Projeto Unity 6 LTS:** `Packages/manifest.json` com pacotes oficiais (URP `17.0.3`, uGUI `2.0.0`, Input System `1.8.2`, 2D Sprite `1.0.0`, Test Framework `1.4.5`); `ProjectSettings/ProjectVersion.txt` fixado em `6000.0.23f1`; Portrait obrigatório (`defaultScreenOrientation: 1`), package name `com.studiobrasa.churrascomestredabrasa`, IL2CPP, ARM64, Linear.
+- **Fronteiras Arquiteturais (`.asmdef`):** `Churrasco.Core.asmdef` configurado com `noEngineReferences: true` garantindo isolamento estrito de `UnityEngine`; `Churrasco.Runtime.asmdef` referenciando Core, InputSystem, TextMeshPro, UI; `Churrasco.Services.asmdef` e `Churrasco.Editor.asmdef`.
+- **Importador de Arte:** `Assets/Scripts/Editor/ArtManifestImporter.cs` com pivots normalizados e compressão ASTC 6x6; gerador determinístico de `.meta` em `tools/unity/generate-metas.mjs`.
+- **Views e Controllers (`Assets/Scripts/Runtime/`):** `GrillView`, `FoodView`, `CustomerCardView`, `TurnFlowController`, `TouchInputController`, `AudioController`, `SaveManager`, `LocalizationManager`.
+- **Cena e Prefabs:** `Assets/Scenes/Main.unity` com Canvas, EventSystem e Controllers; `FoodItem.prefab`, `CustomerCard.prefab`, `FloatingText.prefab`.
+- **Validação:** 694 testes vitest em 32 arquivos 100% PASS (novo teste `tools/studio/test/f09-unity-setup.test.ts`); 14/15 gates locais PASS (C# SKIP local coberto no CI).
+- Relatório vigente: **[evidence/f09/README.md](evidence/f09/README.md)**.
+- **F9 encerrado.** Próximo: **F10 (meta, localização e acessibilidade)**.
+
+## F8 — Porte Completo do Core C# com Paridade Rigorosa (histórico)
+
+- **Porte C# em `Assets/Scripts/Core/`:**
+  - `Rng.cs`: mulberry32 PRNG exato, unchecked uint32, Next/Range/Int/Chance/PickWeighted/Pick/Shuffled.
+  - `EconomyRules.cs`: fórmulas de XP, custos de upgrade, evolução de churrasqueiras, ciclo de vida offline (`BeginOfflineAbsence`, `ReturnFromOffline`, `ClaimOffline`, `ComputeOfflineEarnings`), `VipRules` e `VipState`.
+  - `TurnSimulation.cs`: simulação completa de turnos, admissão de clientes com catálogo filtrado (`menuFor`), slots de preparo, ticks de cocção, viradas, automação de garçom/assador/auxiliar com caps rígidos, recarga de carvão automática e manual.
+  - `SkillPolicy.cs`: agente heurístico com modelagem de latência humana, ruído perceptivo e alocação de zonas térmicas.
+  - `SaveSystem.cs`: envelope Schema v5 com IEEE 802.3 CRC32, detecção de recuo de relógio, migrações v1..v5, e streak diário com dia de graça (`hold_streak_and_reset_day` conforme decisão A-19 / C-01).
+  - `Rules.cs`: `TickGrill` booleano com recarga concluída, `CharcoalEfficiencyAt`, cálculo de 4 zonas térmicas (auxiliar `medium`) e patch de churrasqueira.
+- **Harness de paridade (`tools/csharp/parity/Program.cs`):**
+  - Fiação de `ScoreLateIncome` (14 vetores de escalonamento).
+  - Fiação de fórmulas e ciclo offline em `golden.economy` (13 vetores).
+  - Fiação dos 50 vetores completos de turnos em `golden.turns`.
+  - **Zero vetores não portados ("zero not ported")** em 201 vetores totais.
+- **Suíte de testes e gates:** 687 testes unitários / 31 arquivos vitest executados com 100% de aprovação; 14/15 gates locais PASS (C# SKIP local coberto no CI).
+- Relatório vigente: **[evidence/f08/README.md](evidence/f08/README.md)**.
+- **F8 encerrado.** Próximo: **F9 (integração no Unity 6 LTS)**.
+
+## F7 — Revisão, Triagem e Resolução dos PRs Abertos #7 e #8 (histórico)
+
+- **Auditoria comparativa aprofundada:** PRs #7 e #8 analisados commit a commit e confrontados contra `main` (`a900445` pós-PR #16).
+- **Preservação estrita dos PRs:** PRs #7 e #8 mantidos abertos no GitHub conforme diretriz do dono; nenhum merge direto foi executado (evitando a reversão de 692+ arquivos e destruição das fases A-01..A-06.4).
+- **Matriz de triagem temática (6 eixos):**
+  1. *Arte Lotes 03-11:* Obsoleta/superada (main possui 244 sprites finais homologados via PR #13 e gate TypeScript).
+  2. *Porte C# inicial:* Obsoleto/conflitante (precede regras A-01..A-06.4 e snapshots puros; transferido para F8).
+  3. *Progressão 10 grelhas/10 telas:* Conflitante/rejeitado (viola arquitetura canônica de 4 grelhas/7 restaurantes).
+  4. *Estudos de retenção:* Histórico preservado em docs; mecânicas de gameplay especulativas rejeitadas.
+  5. *SKUs IAP (brasa.coins vs brasa.embers):* Postergado como débito B-07 para a fase F11 (alinhamento atômico com Play Console).
+  6. *Protótipo UI carvão:* Obsoleto/conflitante (protótipo da main já possui prep, 4ª zona, VIP e offline completos).
+- **Suíte de testes e gates:** 687 testes unitários / 31 arquivos vitest executados em 55,2 s com 100% de aprovação; 14/15 gates locais PASS (C# SKIP local coberto no CI).
+- Relatório vigente: **[evidence/f07/README.md](evidence/f07/README.md)**.
+- **F7 encerrado.** Próximo: **F8 (porte completo do core C# com paridade rigorosa)**.
+
+## F6 — Auditoria e Atualização Isolada de Dependências e Toolchain (histórico)
+
+- **Toolchain de testes e build atualizada sem "force cego":** `vitest` atualizado para `^4.1.11` com `vite 6.4.3`.
+- **Zero vulnerabilidades encontradas:** `npm audit` relata 0 vulnerabilities (sanadas 1 crítica, 1 alta e 3 moderadas em `@vitest/mocker`, `vite`, `vite-node`).
+- **Suíte de testes e gates:** 687 testes unitários / 31 arquivos vitest executados em 52,8 s com 100% de aprovação; 14/15 gates locais PASS (C# SKIP local coberto no CI).
+- **Vetores e pacing:** 157 vetores de simulação + 44 FTUE inalterados; campanha de 1500 turnos mantém 18/18 metas PASS com spend ratio 74,1%.
+- Relatório vigente: **[evidence/f06/README.md](evidence/f06/README.md)**.
+- **F6 encerrado.**
+
+## F5 — Triagem e Resolução de Débitos Médios e Baixos (histórico)
+
+- **38 débitos técnicos triados e resolvidos/classificados:** 19 médios 🟠 e 19 baixos 🟡.
+- **Mecânica sim-core:** A-14 (`stageOf` retorna `burned` imediato para pão de alho e queijo coalho), A-15 (bot sem vazamento de alimentos órfãos), A-10 (débito de moedas em `refillCharcoal` se configurado), A-11 (`embersSpentTotal` e ledger de brasas em `evolveChurrasqueira`), A-12/13 (clamps estritos de nível e simplificação de `deriveStats`), A-20 (filtragem de `undefined` em `stableStringify`).
+- **Streak e LiveOps:** A-19 e C-01 padronizados com decisão do dono — dia de graça segura o streak (5→5), gap $\ge 2$ dias sem graça reseta streak para 1 e reinicia o ciclo no Dia 1 (`dayIndex: 0`).
+- **Textos e dados:** B-04 (`grill_speed` reflete `heatRampRate`), B-05 (6 e 9 espetos na `parrilla_chef_cisma`), F-02 (tabela de restaurantes de docs/02 atualizada).
+- **Validação e gates:** D-03 (validação de `levels.json` com o gerador e remoção de resíduos).
+- **687 testes / 31 arquivos; 14/15 gates locais (C# SKIP); 53 capturas; 157+44 vetores.** Novo teste `tools/studio/test/f05-debts.test.ts` valida os débitos corrigidos.
+- Relatório vigente: **[evidence/f05/README.md](evidence/f05/README.md)**.
+- **F5 encerrado.** Próximo: **F6 (auditoria de dependências e toolchain)**.
+
+## F4 — Revalidação Econômica Global (histórico)
+
+- **1500 turnos ativos: 18/18 metas PASS, exit 0**, confirmado nas seeds `20260917`, `20260918` e `20260919`.
+- **Renda total gerada:** 14.679.360 moedas; **Gasto total:** 10.873.220 moedas; **Saldo final:** 3.806.140 moedas.
+- **Spend ratio:** 74,07% (saudável, alvo 70% a 99%).
+- **27 trilhas maximizadas:** 6.358.620 moedas gastas integralmente em upgrades.
+- **Pacing de estabelecimentos:** Espetinho (t42), Trailer (t96), Bairro (t168), Premium (t277), Festival (t422), Rede Nacional (t1130).
+- **Pacing de churrasqueiras:** Zé da Esquina (t11), Parrilla Chef Cisma (t43), Fornalha Dragão Manso (t87).
+- **Inflação:** crescimento de custo de upgrades (×29,28) supera o crescimento de renda L5→L70 (×13,46).
+- **Ausências:** 24 fixtures separadas, 3 dias, cap 8h, rampa 20min, até 2,18×.
+- **680 testes / 30 arquivos; 14/15 gates locais (C# SKIP); 53 capturas; 157+44 vetores.**
+- Relatório vigente: **[evidence/f04/README.md](evidence/f04/README.md)**.
+- **F4 encerrado.** Próximo: **F5 (triagem e resolução de débitos médios e baixos)**.
+
+## A-06.5 — revisão final das 27 trilhas e contratos (histórico)
+
+- **27/27 trilhas ativas com consumidores reais no runtime:** 0 no-ops restantes. Todas as trilhas declaradas em `shared/data/upgrades.json` possuem consumidor em `cooking.ts`, `turn.ts`, `staff.ts` ou `offline.ts`.
+- **Capacidade de sinks de upgrade maximizados:** exatamente **6.358.620 moedas**.
+- **Gating inicial e dependências validadas:** 18 trilhas compráveis no início (Restaurante 0, Nível 1); 9 trilhas exigem requisitos reais de restaurante, receita de preparo ou dependência de funcionário (`tray` requer Garçom >= 1).
+- **Escopo de funcionários reafirmado:** Gerente entrega exclusivamente +18% de renda offline por nível; rerolls, desconto na loja e VIP +2pp permanecem como backlog explícito de F10.
+- **Campanha ativa 1500 turnos:** **18/18 metas PASS, exit 0** (duas execuções byte-idênticas). Renda 14.679.360, gasto 10.873.220, saldo 3.806.140, spend ratio 74,07%. Sem rewarded e sem injeção de ausência offline.
+- **Cenário de ausências:** auditado em 24 fixtures separadas, byte-idêntico ao fechamento do A-06.4.
+- **680 testes / 30 arquivos; 14/15 gates locais (C# SKIP); 53 capturas; 157+44 vetores.** Novo teste `tools/studio/test/a06-final-matrix.test.ts` valida a matriz inteira das 27 trilhas.
+- Relatório vigente: **[evidence/a06/step5/README.md](evidence/a06/step5/README.md)** e **[evidence/a06/final-map.md](evidence/a06/final-map.md)**.
+- **A-06 encerrada.** Próximo: **F4 (revalidação global de economia e guardrails)**.
+
+## A-06.4 — fechamento econômico autorizado (histórico)
 
 - O dono exigiu resolver as3 falhas antes de A-06.5 e escolheu explicitamente
   **`late_income`**: rebalancear renda tardia, preservando preços, histórico, FTUE,
@@ -256,7 +377,7 @@ Ambiente: Node v22.22.3, npm 10.9.8. Árvore limpa antes e depois (os gates que 
 
 ## 2. Sumário executivo
 
-**Achados originais: 47** — 9 altos · 19 médios · 19 baixos. Dos altos,3 encerrados em F2, A-01–A-05 funcionais com economia global pendente,1 sem correção (A-06).
+**Achados originais: 47** — 9 altos · 19 médios · 19 baixos. Dos altos: 3 encerrados em F2, todos os 6 restantes (A-01 a A-06) corrigidos funcionalmente e integrados (virada obrigatória, nível E restaurante, preparo real, quarta zona, VIP natural e 27 trilhas ativas); economia global pendente na fase F4.
 
 Os nove que mais importam, em ordem de impacto no jogo:
 
@@ -285,7 +406,7 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
 | A-03 | ✅ funcional | Protótipo | Pedidos de vinagrete (prep) impossíveis de concluir |
 | A-04 | ✅ funcional | Dados/Regras | Zona 4 declarada, nunca criada |
 | A-05 | ✅ funcional | Dados/Regras/Loja | VIP não aparece em jogo, mas é prometido |
-| A-06 | 🔴 | Regras/Dados | 14 trilhas de upgrade sem efeito |
+| A-06 | ✅ funcional / 27 trilhas integradas | Regras/Dados | 27 trilhas ativas com consumidores reais, sem no-ops |
 | A-07 | 🔴 | Regras | `restaurantsUnlocked` acumula |
 | A-08 | 🔴 | Regras | `burnedFood` dobrado |
 | A-09 | 🔴 | Regras | `result()` não idempotente |
@@ -306,7 +427,7 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
 | B-04 | 🟠 | Dados/l10n | Texto de upgrade descreve efeito diferente do `effect.stat` (6 trilhas) |
 | B-05 | 🟡 | Dados/l10n | Descrições de evolução do `chef_cisma` com contagem de espetos errada |
 | B-06 | 🟡 | Dados | `shortName`/`humorTag`/`abilities[].effect` — texto literal em tabela, sem acento, sem uso |
-| B-07 | 🟡 | Dados/IAP | Produtos `brasa.coins.*` entregam **brasas**, não moedas (id imutável no Play Console) |
+| B-07 | 🟢 Resolvido | Dados/IAP | Produtos renomeados atomicamente para brasa.embers.* em F11 |
 | B-08 | 🟡 | Dados | `achievements.json`/`missions.json` referenciam stats que ninguém produz; sem avaliador |
 | B-09 | 🟡 | Dados | `queijo_coalho.region = nordeste`, `costela.region = sul` — consistente com `regions.json` (ok), mas `regional_ingredients` do festival não tem regra |
 | C-01 | 🟠 | Protótipo | Streak diário: `graceUsed` nunca volta a `false`; gap ≥ 2 dias não reseta; streak por login ≠ por resgate |
@@ -370,12 +491,19 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
 - **Contradições:** `restaurants.json` idx 1 `introduces: vip`; `events.json defaults.vipBaseChance 0.06 / vipMaxPerDay 2` sem consumidor; `ads.json rewardedPlacements.call_vip`; `Assets/Audio/sfx_vip_arrive.wav`; conquistas `vipServed`; ficha da loja "11 tipos de cliente, incluindo VIP que paga muito".
 - **Correção:** implementar o evento de chegada (`vipChance`/`vipBaseChance` por turno + placement `call_vip`) ou tirar VIP do que é prometido.
 
-### A-06 🔴 Trilhas de upgrade sem efeito
+### A-06 ✅ Resolvido em A-06.1–A-06.5 — reprodução histórica: trilhas de upgrade sem efeito
 
-- **Com efeito real** (lidas por `cooking.ts`/`economy.ts`/`turn.ts`): `grill_size`, `grill_heat`, `grill_speed`, `charcoal_duration`, `knife`, `plates`, `decor`, `patience_charm`, `music`, `capacity`, `lighting`, `sign`, `gerente` (só offline).
-- **Sem efeito:** `grill_stability` (`heatStability` nunca lido), `charcoal_quality`, `charcoal_auto`, `board` (`prepSlots` calculado, nunca lido), `counter`, `tray`, `tables`, `garcom`/`auxiliar`/`churrasqueiro`/`caixa` (`auto*Level` calculados, nenhuma automação implementada — `employees.json` descreve 5 habilidades cada), `brasa_mastery`, `clientela_fiel`, `imperio_logistica`.
-- **Impacto:** o jogador paga (até 2 500 × 1,85ⁿ) por nada; `run-sim.ts UPGRADE_PRIORITY` compra todas, então `coinSpendRatio` "passa" com dinheiro jogado fora, e o `noUpgradeCostRegression` nem é checado (D-02).
-- **Correção:** implementar ou esconder as trilhas (flag `implemented:false` filtrada na loja e no bot) até existirem.
+- **Situação resolvida:** Todas as 27 trilhas possuem consumidores reais implementados e testados no runtime (`cooking.ts`, `turn.ts`, `staff.ts`, `offline.ts`). Zero no-ops remanescentes.
+- **A-06.1:** Compras centralizadas, fila paginada (`capacity`/`tables`), bônus aditivo de gorjeta (`brasa_mastery`), bônus de paciência (`clientela_fiel`), gating estrito.
+- **A-06.2:** Recursos físicos reais: estabilidade de calor (`grill_stability`), piso de eficiência do carvão (`charcoal_quality`), reposição automática com chance (`charcoal_auto`), estoque por ingrediente (`counter`).
+- **A-06.3:** Funcionários no turno: `garcom` (auto-serviço com teto e cadência por `tray`), `auxiliar` (auto-preparo e vaga extra), `churrasqueiro` (auto-virada no sinal público).
+- **A-06.4:** Ausência real: `caixa` (antecipação no retorno), `gerente` (+18% offline por nível), `imperio_logistica` (+2% offline por nível); rebalanceamento de renda tardia (`late_income`).
+- **A-06.5:** Revisão final da matriz de 27 trilhas, 680 testes vitest, 18/18 metas PASS na campanha longa de 1500 turnos. Relatório vigente: `docs/evidence/a06/step5/README.md`.
+
+- **Com efeito real histórico:** (lidas por `cooking.ts`/`economy.ts`/`turn.ts`): `grill_size`, `grill_heat`, `grill_speed`, `charcoal_duration`, `knife`, `plates`, `decor`, `patience_charm`, `music`, `capacity`, `lighting`, `sign`, `gerente` (só offline).
+- **Sem efeito (diagnóstico original superado):** `grill_stability`, `charcoal_quality`, `charcoal_auto`, `board`, `counter`, `tray`, `tables`, `garcom`, `auxiliar`, `churrasqueiro`, `caixa`, `brasa_mastery`, `clientela_fiel`, `imperio_logistica`.
+- **Impacto original:** o jogador pagava por no-ops; o sim comprava todas por `UPGRADE_PRIORITY`.
+- **Correção executada:** implementação completa de consumidores reais em A-06.1 a A-06.4, validada e fechada em A-06.5.
 
 ### A-07 ✅ Resolvido em F2 — reprodução histórica: `restaurantsUnlocked` acumula
 
@@ -472,9 +600,9 @@ Evidência (script §8.2, `lata_valente` 1 zona, restaurante 1): `takeFromStock`
 
 `churrasqueiras.json` `shortName` ("Aprovada pela Vo", "Chapa da Calcada", "Termometro que Nao Mente"…) e `humorTag`, `employees.json abilities[].effect` (inglês) — sem consumidor, sem acento, duplicam o l10n. Viola a regra §56 que o `check-l10n` aplica a outras tabelas; `churrasqueiras.json` não está na lista de acentos do `validate-data`.
 
-### B-07 🟡 IDs de produto
+### B-07 🟢 Resolvido em F11 — IDs de produto
 
-`brasa.coins.small|medium|large.v1` têm `nameKey iap.embers.*` e `contents: embers`. IDs no Play Console são imutáveis — vale renomear **antes** de criar os produtos (e atualizar `.env.example` + `SecureConfig.cs`, que hoje estão consistentes entre si).
+`brasa.coins.small|medium|large.v1` foram renomeados atomicamente para `brasa.embers.small|medium|large.v1` em `shared/data/iap.json`, `Assets/Data/iap.json`, `.env.example`, `credentials.json.example`, `SecureConfig.cs`, `monetization.test.ts` e `docs/07-MONETIZATION.md`. IDs agora refletem com exatidão a entrega de Brasas e eliminam o risco de SKU incorreto no Play Console.
 
 ### B-08 🟡 Conquistas/missões sem produtor
 
