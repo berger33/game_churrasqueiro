@@ -1,0 +1,153 @@
+{
+  "_comment": "Lote 10 — terceira das quatro rodadas individuais para substituir os 33 pending do lote 03. Dez imagens = os cinco estados de grelha de contra-filé e os cinco estados de grelha de maminha. Os pratos servidos e o fundo Churrascaria de Bairro ficam para o lote 11 (3 imagens). alignGroups normaliza tela/pivô/tamanho por corte para crossfade sem salto.",
+  "batch": "lote-10",
+  "date": "2026-09-26",
+  "sourceDir": "art/source/lote-10",
+  "reviewLayout": "individual-food-states",
+  "assets": [
+    {
+      "source": "contra_file_raw.png",
+      "mode": "single",
+      "category": "food",
+      "name": "spr_food_contra_file_raw",
+      "label": "Contra-filé · cru",
+      "out": "Assets/Art/Sprites/Food",
+      "review": {
+        "verdict": "ok",
+        "note": "Silhueta longa e retangular, faixa fina de gordura e leitura crua distintas da maminha."
+      }
+    },
+    {
+      "source": "contra_file_rare.png",
+      "mode": "single",
+      "category": "food",
+      "name": "spr_food_contra_file_rare",
+      "label": "Contra-filé · selado",
+      "out": "Assets/Art/Sprites/Food",
+      "review": {
+        "verdict": "ok",
+        "note": "Primeira selagem clara; contorno, câmera e faixa de gordura preservados."
+      }
+    },
+    {
+      "source": "contra_file_medium.png",
+      "mode": "single",
+      "category": "food",
+      "name": "spr_food_contra_file_medium",
+      "label": "Contra-filé · ao ponto",
+      "out": "Assets/Art/Sprites/Food",
+      "review": {
+        "verdict": "ok",
+        "note": "Crosta âmbar e marcas de grelha legíveis; contorno da família preservado."
+      }
+    },
+    {
+      "source": "contra_file_well.png",
+      "mode": "single",
+      "category": "food",
+      "name": "spr_food_contra_file_well",
+      "label": "Contra-filé · bem passado",
+      "out": "Assets/Art/Sprites/Food",
+      "review": {
+        "verdict": "ok",
+        "note": "Marrom profundo e superfície seca, ainda sem leitura de queimado."
+      }
+    },
+    {
+      "source": "contra_file_burned.png",
+      "mode": "single",
+      "category": "food",
+      "name": "spr_food_contra_file_burned",
+      "label": "Contra-filé · queimado",
+      "out": "Assets/Art/Sprites/Food",
+      "review": {
+        "verdict": "ok",
+        "note": "Carvão e cinza legíveis, sem fumaça/chama/objeto extra; contorno preservado."
+      }
+    },
+    {
+      "source": "maminha_raw.png",
+      "mode": "single",
+      "category": "food",
+      "name": "spr_food_maminha_raw",
+      "label": "Maminha · crua",
+      "out": "Assets/Art/Sprites/Food",
+      "review": {
+        "verdict": "ok",
+        "note": "Ponta direita e corpo baixo assimétrico distinguem o corte do contra-filé e da picanha."
+      }
+    },
+    {
+      "source": "maminha_rare.png",
+      "mode": "single",
+      "category": "food",
+      "name": "spr_food_maminha_rare",
+      "label": "Maminha · selada",
+      "out": "Assets/Art/Sprites/Food",
+      "review": {
+        "verdict": "ok",
+        "note": "Primeira selagem clara; ponta direita, câmera e gordura fina preservadas."
+      }
+    },
+    {
+      "source": "maminha_medium.png",
+      "mode": "single",
+      "category": "food",
+      "name": "spr_food_maminha_medium",
+      "label": "Maminha · ao ponto",
+      "out": "Assets/Art/Sprites/Food",
+      "review": {
+        "verdict": "ok",
+        "note": "Crosta âmbar e marcas de grelha legíveis; silhueta afunilada preservada."
+      }
+    },
+    {
+      "source": "maminha_well.png",
+      "mode": "single",
+      "category": "food",
+      "name": "spr_food_maminha_well",
+      "label": "Maminha · bem passada",
+      "out": "Assets/Art/Sprites/Food",
+      "review": {
+        "verdict": "ok",
+        "note": "Marrom profundo e superfície seca, ainda sem leitura de queimado."
+      }
+    },
+    {
+      "source": "maminha_burned.png",
+      "mode": "single",
+      "category": "food",
+      "name": "spr_food_maminha_burned",
+      "label": "Maminha · queimada",
+      "out": "Assets/Art/Sprites/Food",
+      "review": {
+        "verdict": "ok",
+        "note": "Carvão, cinza e fissura rubra legíveis, sem extras; ponta direita preservada."
+      }
+    }
+  ],
+  "alignGroups": [
+    {
+      "id": "contra_file_cooking",
+      "names": [
+        "spr_food_contra_file_raw",
+        "spr_food_contra_file_rare",
+        "spr_food_contra_file_medium",
+        "spr_food_contra_file_well",
+        "spr_food_contra_file_burned"
+      ],
+      "maxTiltDeg": 4
+    },
+    {
+      "id": "maminha_cooking",
+      "names": [
+        "spr_food_maminha_raw",
+        "spr_food_maminha_rare",
+        "spr_food_maminha_medium",
+        "spr_food_maminha_well",
+        "spr_food_maminha_burned"
+      ],
+      "maxTiltDeg": 4
+    }
+  ]
+}

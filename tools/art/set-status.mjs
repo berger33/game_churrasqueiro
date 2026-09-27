@@ -26,7 +26,10 @@ if (!batch || !STATUSES.includes(status)) {
   process.exit(2);
 }
 
-function parseLine(line) {
+function parseLine(rawLine) {
+  // The registry uses CRLF. Strip the record terminator before parsing so the
+  // final header is `notes`, not `notes\r`, and preserve it again on write.
+  const line = rawLine.endsWith('\r') ? rawLine.slice(0, -1) : rawLine;
   const cells = []; let cur = '', q = false;
   for (let i = 0; i < line.length; i++) {
     const ch = line[i];
@@ -38,13 +41,17 @@ function parseLine(line) {
 }
 const cell = (v) => (/[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
 
-const [headLine, ...lines] = (await readFile(REGISTRY, 'utf8')).split('\n').filter((l) => l.trim());
+const registryText = await readFile(REGISTRY, 'utf8');
+const newline = registryText.includes('\r\n') ? '\r\n' : '\n';
+const [rawHeadLine, ...lines] = registryText.split('\n').filter((l) => l.trim());
+const headLine = rawHeadLine.endsWith('\r') ? rawHeadLine.slice(0, -1) : rawHeadLine;
 const head = parseLine(headLine);
 const col = Object.fromEntries(head.map((k, i) => [k, i]));
 const wanted = new Set(names);
 const found = new Set();
 let changed = 0;
-const out = lines.map((line) => {
+const out = lines.map((rawLine) => {
+  const line = rawLine.endsWith('\r') ? rawLine.slice(0, -1) : rawLine;
   const r = parseLine(line);
   if (r[col.batch] !== batch || (wanted.size && !wanted.has(r[col.name]))) return line;
   found.add(r[col.name]);
@@ -56,5 +63,5 @@ const out = lines.map((line) => {
 });
 const missing = [...wanted].filter((n) => !found.has(n));
 if (missing.length) { console.error(`[art] not in ${batch}: ${missing.join(', ')}`); process.exit(1); }
-await writeFile(REGISTRY, [headLine, ...out].join('\n') + '\n');
+await writeFile(REGISTRY, [headLine, ...out].join(newline) + newline);
 console.log(`[art] ${batch}: ${changed} row(s) → ${status}`);

@@ -1,0 +1,129 @@
+{
+  "_comment": "Lote 09 — segunda das quatro rodadas pedidas pelo dono para substituir, uma imagem por sprite, os 33 assets antes pending do lote 03. Esta rodada cobre os oito ícones de upgrade restantes e dois fundos de restaurante. Prompts exatos em art/prompts/lote-09.md. Nenhum asset deste lote entra no runtime antes da aprovação explícita.",
+  "batch": "lote-09",
+  "date": "2026-09-26",
+  "sourceDir": "art/source/lote-09",
+  "reviewLayout": "mixed-icons-backgrounds",
+  "assets": [
+    {
+      "source": "ic_heat.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_heat",
+      "label": "Upgrade · Brasa Mais Forte",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Carvão largo com núcleo e chama conectada; distingue-se da brasa premium a 32 px."
+      }
+    },
+    {
+      "source": "ic_stability.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_stability",
+      "label": "Upgrade · Grelha Estável",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Grelha nivelada sobre base pesada; silhueta estável sem seta ou chama."
+      }
+    },
+    {
+      "source": "ic_speed.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_speed",
+      "label": "Upgrade · Brasa Constante",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Chama constante dentro do anel de controle; anel continua legível em cinza."
+      }
+    },
+    {
+      "source": "ic_charcoal.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_charcoal",
+      "label": "Upgrade · Carvão Duradouro",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Briquete e ampulheta em relevo permanecem legíveis a 32 px."
+      }
+    },
+    {
+      "source": "ic_charcoal_quality.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_charcoal_quality",
+      "label": "Upgrade · Carvão Premium",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Carvão facetado com selo dourado embutido; sem brilho ou peça solta."
+      }
+    },
+    {
+      "source": "ic_auto_refill.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_auto_refill",
+      "label": "Upgrade · Acendedor Automático",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Chaminé, carvões, chama e engrenagem formam uma peça; lê como ferramenta automática."
+      }
+    },
+    {
+      "source": "ic_knife.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_knife",
+      "label": "Upgrade · Faca Afiada",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Faca única, sem brilho solto; cabo e lâmina mantêm leitura a 32 px."
+      }
+    },
+    {
+      "source": "ic_board.png",
+      "mode": "single",
+      "category": "ui",
+      "name": "ic_board",
+      "label": "Upgrade · Quadro de Pedidos",
+      "out": "Assets/Art/UI/Icons",
+      "review": {
+        "verdict": "ok",
+        "note": "Três tickets dentro do quadro, somente rabiscos abstratos e sem texto legível."
+      }
+    },
+    {
+      "source": "bg_restaurant_espetinho_rua.png",
+      "mode": "opaque",
+      "category": "background",
+      "name": "bg_restaurant_espetinho_rua",
+      "label": "Fundo · Espetinho de Rua",
+      "out": "Assets/Art/Backgrounds",
+      "review": {
+        "verdict": "warn",
+        "note": "O modelo espelhou o carrinho e entregou dois pontos de espetinho, um em cada borda, em vez de um só à direita. O eixo central ficou livre, sem pessoas nem texto; decisão do dono."
+      }
+    },
+    {
+      "source": "bg_restaurant_trailer.png",
+      "mode": "opaque",
+      "category": "background",
+      "name": "bg_restaurant_trailer",
+      "label": "Fundo · Trailer",
+      "out": "Assets/Art/Backgrounds",
+      "review": {
+        "verdict": "ok",
+        "note": "Trailer à esquerda, pátio central livre, luz quente, símbolo de chama sem texto e nenhuma pessoa."
+      }
+    }
+  ]
+}
