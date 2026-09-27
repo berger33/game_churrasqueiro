@@ -139,6 +139,9 @@ npm run check-shots             # prototype/shots/14…17 (artefatos ignorados p
 
 Gates locais: **14/15**; C# SKIP sem SDK. Auditoria npm: 5 vulnerabilidades
 (1 crítica, 1 alta, 3 moderadas), lock/dependências intactos, sem force-fix.
-CI remoto e commits finais: consultar plano §9.10 e corpo do PR #14.
+CI remoto A-01: **15/15** em `8b042ca`, [run 36285270473](https://github.com/berger33/game_churrasqueiro/actions/runs/36285270473),
+139 checks C# / 25 not ported. Dispatch manual Nightly negado por permissão da integração
+(403); o longo foi executado **localmente**, duas vezes com saída idêntica. Commits finais:
+consultar plano §9.10 e corpo do PR #14.
 Próximo checkpoint funcional é **A-02**, ainda dentro de F3; transportar estes 3 desvios
 para F4, só depois de A-02–A-06, sem chamar A-01 economicamente encerrado.

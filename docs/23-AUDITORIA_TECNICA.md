@@ -23,7 +23,8 @@ janelas, probe avançado e revisão semântica: [`evidence/a01/`](evidence/a01/R
   econômico pendente; **5 ainda sem correção (A-02–A-06)**. C-06 apenas parcialmente
   resolvido (truncagem da bancada); dívida l10n/polish continua. Totais históricos preservados.
 - C# agora tem 25 casos não portados (5 econômicos + 20 turnos). Sem porta C#/Unity/arte
-  nova; PR #14 aberto/sem merge. CI remoto A-01 pendente de push/execução.
+  nova; PR #14 aberto/sem merge. CI remoto A-01 **15/15**, [run 36285270473](https://github.com/berger33/game_churrasqueiro/actions/runs/36285270473)
+  em `8b042ca` (139 checks C#, 25 não portados). Longo só local; Nightly dispatch negado (403).
 
 ## Atualização F2 — histórico (2026-09-26 local / 27 UTC)
 

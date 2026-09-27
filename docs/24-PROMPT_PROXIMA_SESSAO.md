@@ -24,8 +24,11 @@ estado real de `origin/main` antes de alterar arquivos.
   metadado ingredients 5→6; 8 turnos avançados novos com Fornalha evo 3, restaurantes
   3–6, skills .55/.85. Retém identidades observadas entre compactações, conta served via
   `fulfilledBy` e não flag também usado por discard. Replay confere uso real dos cortes.
-- **Gates locais 14/15**, C# SKIP sem dotnet. CI remoto A-01 pendente de push/execução;
-  conferir registro final no plano §9.10 / corpo do PR. C# **25 not ported** (5+20),
+- **Gates locais 14/15**, C# SKIP sem dotnet. CI remoto A-01 **15/15 aprovado**,
+  [run 36285270473](https://github.com/berger33/game_churrasqueiro/actions/runs/36285270473) em `8b042ca`;
+  conferir HEAD/checks finais no PR. Commits `331e1bb` decisão, `579c846` implementação,
+  `8b042ca` docs/evidências. Nightly dispatch negado (403 permissão da integração),
+  portanto sim longo só executado localmente, repetido e idêntico. C# **25 not ported** (5+20),
   ainda precisa das regressões F2 e A-01 em F8. Não declarar paridade plena.
 - **Sim longo 15/18, exit 1, falha preservada.** 1.500 turnos, nível 80/rest6/Fornalha3:
   renda **22.675.447**, gasto **10.873.220**, saldo **11.802.227**, spend **0,480**,
@@ -40,7 +43,7 @@ estado real de `origin/main` antes de alterar arquivos.
   novas validam página 2 e virada/janela perfeita dos dois cortes via ponteiro real.
   Fixture troca só level inicial/save para restaurante4/grill comprado: **não** é
   desbloqueio natural/metaprogressão pronta. Sobreposição de rótulos continua para polish.
-- npm audit: mesmas5 (1 crítica, 1 alta, 3 moderadas), dependências/lock intactos.
+- npm audit: mesmas 5 (1 crítica, 1 alta, 3 moderadas), dependências/lock intactos.
 - **Próximo: A-02**, ainda dentro da F3: nível no contrato + gating pool/bancada, testes
   antes/no/depois de unlock, preservando FTUE determinístico. Antes, confirmar árvore,
   branch, PR e CI atuais. Transportar os 3 desvios econômicos para F4 após A-02–A-06;

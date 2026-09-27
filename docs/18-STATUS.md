@@ -65,7 +65,9 @@ contra regressão, bot já consumia o flag. Sem mudar tempos/janelas/preços/fó
   desbloqueio natural de restaurantes. Rótulos de pratos vizinhos ainda pedem polish.
 - Dados/logs/revisão completos em [`evidence/a01/README.md`](evidence/a01/README.md).
   npm audit: mesmas 5 vulnerabilidades (1 crítica/1 alta/3 moderadas), sem force-fix.
-- PR #14 aberto/sem merge; CI remoto A-01 **pendente de push/execução**. Próximo A-02,
+- PR #14 aberto/sem merge; CI remoto A-01 **15/15 aprovado** em `8b042ca`,
+  [run 36285270473](https://github.com/berger33/game_churrasqueiro/actions/runs/36285270473); C# 139 checks/25 não portados.
+  Sim longo validado localmente; dispatch Nightly negado por permissão da integração (403). Próximo A-02,
   ainda F3; levar os 3 desvios à F4 depois de A-02–A-06. Não declarar F3/F4 encerradas.
 
 ## Post-art F2 — histórico (2026-09-26 local / 27 UTC)
@@ -273,7 +275,7 @@ Every claim below was produced by a command run in this checkout.
 | Render smoke | `npm run check-render` | **OK, 4 s** — real bundle through the whole FTUE (played by following the hand: 8 events in order, 0 misses), step 6, Home's daily calendar (strip → modal → `RESGATAR` pays once → ✕), an ordinary turn to the result, then a second install that is backgrounded (`tutorial_abandon` once) and skipped (`tutorial_skip` → Home); **~38 M canvas ops, no exceptions** |
 | Shot harness | `npm run check-shots` | **OK — ~6 s.** 17 real PNGs (4 new advanced-page/flip/perfect-window shots via real pointer input), plus the original 13: a fresh install (splash, title, FTUE steps 1 / 2-waiting / 2 / 3 / 4, FTUE result, step 6 on Home), then a relaunch that must open on Home (home, empty grill, cooking, result). Asserts the FTUE funnel from `__churrascoAnalytics` — first PERFEITO 16.1 s, step 6 at 38.3 s (< 60 s), 0 misses. 197 painted frames, 1 806 sim-only ticks, 60 s self-budget. |
 | Prototype server | `node prototype/dev-server.mjs` | **Historical check; no server currently running.** Configured for `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
-| C# core | `npm run check-csharp` | **CI: builds `Assets/Scripts/Core` (netstandard2.1, C# 9, warnings as errors) and 139 parity checks agree** — 13 tables bind losslessly, `GameData.Load` clean, cooking 48/48, scoring 32/32, effective heat, 44 FTUE vectors; 25 economy/turn vectors unported after A-01 (5+20); the 139 existing checks were green in F2, A-01 remote run pending. **Here: SKIP** (no .NET SDK); verified during development with an in-process Roslyn compiler |
+| C# core | `npm run check-csharp` | **CI: builds `Assets/Scripts/Core` (netstandard2.1, C# 9, warnings as errors) and 139 parity checks agree** — 13 tables bind losslessly, `GameData.Load` clean, cooking 48/48, scoring 32/32, effective heat, 44 FTUE vectors; 25 economy/turn vectors unported after A-01 (5+20); 139 checks confirmed by A-01 CI run 36285270473. **Here: SKIP** (no .NET SDK); verified during development with an in-process Roslyn compiler |
 | CI | `.github/workflows/ci.yml` + `npm run gates` | **15 gates on ubuntu-latest** (`check-csharp` added, with `actions/setup-dotnet` 8.0). `check-shots` is in the per-PR list (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. The Unity-side layer is still not compiled — no Unity toolchain. |
 
 ### The localisation gate caught a §56 violation

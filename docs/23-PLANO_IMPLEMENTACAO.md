@@ -448,4 +448,12 @@ não desfazer a correção funcional nem mascarar o efeito com tuning oportunist
 - A-07/A-08/A-09 encerrados; A-01 funcional corrigido com aceite econômico pendente;
   **A-02–A-06 ainda abertos**. F3 não encerrada. Próximo checkpoint A-02, transportando
   os desvios para F4 após as demais correções, sem pedir novamente a decisão A-01.
-- PR #14 será ampliado sem merge. CI remoto deste checkpoint: **pendente de push/execução**.
+- Commits: `331e1bb` decisão, `579c846` dados/validador/UI/testes/vetores, `8b042ca`
+  docs/evidências. Todos enviados à branch da sessão, PR #14 aberto/sem merge.
+- **CI remoto A-01: 15/15 aprovado** em `8b042ca`, [run 36285270473](https://github.com/berger33/game_churrasqueiro/actions/runs/36285270473).
+  C# confirma **139 checks**, declara **25 not ported** (5 economia + 20 turnos).
+  Anotações de Node20 nas actions/Ubuntu26 continuam dívida F6, não falha de gameplay.
+- Tentativa de disparar Nightly manual na mesma branch retornou **403 Resource not
+  accessible by integration** (permissão de dispatch). Portanto evidência longa é
+  **local**, repetida e idêntica; não foi alegada execução remota do longo. Nenhuma
+  credencial solicitada/inserida. O verde do CI por PR não contradiz os 3 alvos falhos.
