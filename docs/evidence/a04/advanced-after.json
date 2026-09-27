@@ -1,0 +1,403 @@
+{
+  "ingredientsVersion": 6,
+  "scenario": {
+    "playerLevel": 44,
+    "stepWindowSec": 0.05,
+    "stepTurnSec": 0.05,
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "churrasqueiraId": "fornalha_dragao_manso",
+    "churrasqueiraLevel": 3,
+    "upgrades": {},
+    "note": "Advanced probe uses restaurant defaults, not campaign upgrades/endless difficulty. Windows use default restaurant 4 grill."
+  },
+  "windows": [
+    {
+      "id": "costela",
+      "zone": 0,
+      "flipNeeded": true,
+      "flips": 1,
+      "firstPerfect": 52.400000000000006,
+      "lastPerfect": 60.150000000000006,
+      "perfectSec": 7.800000000000001,
+      "burnedAt": 70.15
+    },
+    {
+      "id": "costela",
+      "zone": 1,
+      "flipNeeded": true,
+      "flips": 1,
+      "firstPerfect": 30.200000000000003,
+      "lastPerfect": 34.45,
+      "perfectSec": 4.3,
+      "burnedAt": 39.95
+    },
+    {
+      "id": "costela",
+      "zone": 2,
+      "flipNeeded": true,
+      "flips": 1,
+      "firstPerfect": 20.5,
+      "lastPerfect": 23.3,
+      "perfectSec": 2.85,
+      "burnedAt": 26.900000000000002
+    },
+    {
+      "id": "costela",
+      "zone": 3,
+      "flipNeeded": true,
+      "flips": 1,
+      "firstPerfect": 30.200000000000003,
+      "lastPerfect": 34.45,
+      "perfectSec": 4.3,
+      "burnedAt": 39.95
+    },
+    {
+      "id": "cupim",
+      "zone": 0,
+      "flipNeeded": true,
+      "flips": 1,
+      "firstPerfect": 62.650000000000006,
+      "lastPerfect": 71.75,
+      "perfectSec": 9.15,
+      "burnedAt": 82.65
+    },
+    {
+      "id": "cupim",
+      "zone": 1,
+      "flipNeeded": true,
+      "flips": 1,
+      "firstPerfect": 35.85,
+      "lastPerfect": 40.800000000000004,
+      "perfectSec": 5,
+      "burnedAt": 46.85
+    },
+    {
+      "id": "cupim",
+      "zone": 2,
+      "flipNeeded": true,
+      "flips": 1,
+      "firstPerfect": 24.200000000000003,
+      "lastPerfect": 27.400000000000002,
+      "perfectSec": 3.25,
+      "burnedAt": 31.3
+    },
+    {
+      "id": "cupim",
+      "zone": 3,
+      "flipNeeded": true,
+      "flips": 1,
+      "firstPerfect": 35.85,
+      "lastPerfect": 40.800000000000004,
+      "perfectSec": 5,
+      "burnedAt": 46.85
+    }
+  ],
+  "advanced": [
+    {
+      "restaurantIndex": 3,
+      "skill": 0.3,
+      "perfect": 49,
+      "cooked": 240,
+      "burned": 0,
+      "lost": 0,
+      "spawned": 144,
+      "flips": 296,
+      "qualities": {
+        "raw": 33,
+        "good": 158,
+        "perfect": 49
+      },
+      "perfectPerServedItem": 0.20416666666666666,
+      "burnsPerServedItem": 0,
+      "lostPerSpawn": 0,
+      "coinsPerTurn": 1690.25
+    },
+    {
+      "restaurantIndex": 3,
+      "skill": 0.55,
+      "perfect": 78,
+      "cooked": 241,
+      "burned": 0,
+      "lost": 0,
+      "spawned": 144,
+      "flips": 300,
+      "qualities": {
+        "good": 155,
+        "perfect": 78,
+        "raw": 8
+      },
+      "perfectPerServedItem": 0.3236514522821577,
+      "burnsPerServedItem": 0,
+      "lostPerSpawn": 0,
+      "coinsPerTurn": 2128.5
+    },
+    {
+      "restaurantIndex": 3,
+      "skill": 0.85,
+      "perfect": 159,
+      "cooked": 238,
+      "burned": 1,
+      "lost": 2,
+      "spawned": 143,
+      "flips": 298,
+      "qualities": {
+        "perfect": 159,
+        "good": 78,
+        "raw": 1
+      },
+      "perfectPerServedItem": 0.6680672268907563,
+      "burnsPerServedItem": 0.004201680672268907,
+      "lostPerSpawn": 0.013986013986013986,
+      "coinsPerTurn": 2356.125
+    },
+    {
+      "restaurantIndex": 3,
+      "skill": 1,
+      "perfect": 211,
+      "cooked": 237,
+      "burned": 1,
+      "lost": 3,
+      "spawned": 143,
+      "flips": 298,
+      "qualities": {
+        "perfect": 211,
+        "good": 26
+      },
+      "perfectPerServedItem": 0.890295358649789,
+      "burnsPerServedItem": 0.004219409282700422,
+      "lostPerSpawn": 0.02097902097902098,
+      "coinsPerTurn": 2459
+    },
+    {
+      "restaurantIndex": 4,
+      "skill": 0.3,
+      "perfect": 52,
+      "cooked": 252,
+      "burned": 0,
+      "lost": 0,
+      "spawned": 160,
+      "flips": 315,
+      "qualities": {
+        "raw": 31,
+        "good": 169,
+        "perfect": 52
+      },
+      "perfectPerServedItem": 0.20634920634920634,
+      "burnsPerServedItem": 0,
+      "lostPerSpawn": 0,
+      "coinsPerTurn": 2022.875
+    },
+    {
+      "restaurantIndex": 4,
+      "skill": 0.55,
+      "perfect": 87,
+      "cooked": 251,
+      "burned": 2,
+      "lost": 3,
+      "spawned": 160,
+      "flips": 317,
+      "qualities": {
+        "good": 151,
+        "perfect": 87,
+        "raw": 13
+      },
+      "perfectPerServedItem": 0.3466135458167331,
+      "burnsPerServedItem": 0.00796812749003984,
+      "lostPerSpawn": 0.01875,
+      "coinsPerTurn": 2196.5
+    },
+    {
+      "restaurantIndex": 4,
+      "skill": 0.85,
+      "perfect": 159,
+      "cooked": 246,
+      "burned": 0,
+      "lost": 6,
+      "spawned": 160,
+      "flips": 311,
+      "qualities": {
+        "perfect": 159,
+        "good": 87
+      },
+      "perfectPerServedItem": 0.6463414634146342,
+      "burnsPerServedItem": 0,
+      "lostPerSpawn": 0.0375,
+      "coinsPerTurn": 2518.625
+    },
+    {
+      "restaurantIndex": 4,
+      "skill": 1,
+      "perfect": 222,
+      "cooked": 245,
+      "burned": 1,
+      "lost": 8,
+      "spawned": 160,
+      "flips": 312,
+      "qualities": {
+        "perfect": 222,
+        "good": 23
+      },
+      "perfectPerServedItem": 0.9061224489795918,
+      "burnsPerServedItem": 0.004081632653061225,
+      "lostPerSpawn": 0.05,
+      "coinsPerTurn": 2671.875
+    },
+    {
+      "restaurantIndex": 5,
+      "skill": 0.3,
+      "perfect": 57,
+      "cooked": 280,
+      "burned": 0,
+      "lost": 0,
+      "spawned": 176,
+      "flips": 339,
+      "qualities": {
+        "raw": 31,
+        "good": 192,
+        "perfect": 57
+      },
+      "perfectPerServedItem": 0.20357142857142857,
+      "burnsPerServedItem": 0,
+      "lostPerSpawn": 0,
+      "coinsPerTurn": 2317.375
+    },
+    {
+      "restaurantIndex": 5,
+      "skill": 0.55,
+      "perfect": 94,
+      "cooked": 278,
+      "burned": 2,
+      "lost": 3,
+      "spawned": 176,
+      "flips": 340,
+      "qualities": {
+        "good": 171,
+        "perfect": 94,
+        "raw": 13
+      },
+      "perfectPerServedItem": 0.3381294964028777,
+      "burnsPerServedItem": 0.007194244604316547,
+      "lostPerSpawn": 0.017045454545454544,
+      "coinsPerTurn": 2522.125
+    },
+    {
+      "restaurantIndex": 5,
+      "skill": 0.85,
+      "perfect": 180,
+      "cooked": 272,
+      "burned": 1,
+      "lost": 8,
+      "spawned": 176,
+      "flips": 337,
+      "qualities": {
+        "perfect": 180,
+        "good": 92
+      },
+      "perfectPerServedItem": 0.6617647058823529,
+      "burnsPerServedItem": 0.003676470588235294,
+      "lostPerSpawn": 0.045454545454545456,
+      "coinsPerTurn": 2844.125
+    },
+    {
+      "restaurantIndex": 5,
+      "skill": 1,
+      "perfect": 249,
+      "cooked": 273,
+      "burned": 2,
+      "lost": 9,
+      "spawned": 176,
+      "flips": 338,
+      "qualities": {
+        "perfect": 249,
+        "good": 24
+      },
+      "perfectPerServedItem": 0.9120879120879121,
+      "burnsPerServedItem": 0.007326007326007326,
+      "lostPerSpawn": 0.05113636363636364,
+      "coinsPerTurn": 3050
+    },
+    {
+      "restaurantIndex": 6,
+      "skill": 0.3,
+      "perfect": 60,
+      "cooked": 301,
+      "burned": 0,
+      "lost": 1,
+      "spawned": 192,
+      "flips": 371,
+      "qualities": {
+        "raw": 34,
+        "good": 207,
+        "perfect": 60
+      },
+      "perfectPerServedItem": 0.19933554817275748,
+      "burnsPerServedItem": 0,
+      "lostPerSpawn": 0.005208333333333333,
+      "coinsPerTurn": 2476.375
+    },
+    {
+      "restaurantIndex": 6,
+      "skill": 0.55,
+      "perfect": 102,
+      "cooked": 298,
+      "burned": 3,
+      "lost": 3,
+      "spawned": 192,
+      "flips": 371,
+      "qualities": {
+        "good": 181,
+        "perfect": 102,
+        "raw": 15
+      },
+      "perfectPerServedItem": 0.3422818791946309,
+      "burnsPerServedItem": 0.010067114093959731,
+      "lostPerSpawn": 0.015625,
+      "coinsPerTurn": 2714.5
+    },
+    {
+      "restaurantIndex": 6,
+      "skill": 0.85,
+      "perfect": 195,
+      "cooked": 294,
+      "burned": 3,
+      "lost": 8,
+      "spawned": 192,
+      "flips": 365,
+      "qualities": {
+        "perfect": 195,
+        "good": 99
+      },
+      "perfectPerServedItem": 0.6632653061224489,
+      "burnsPerServedItem": 0.01020408163265306,
+      "lostPerSpawn": 0.041666666666666664,
+      "coinsPerTurn": 3113.875
+    },
+    {
+      "restaurantIndex": 6,
+      "skill": 1,
+      "perfect": 268,
+      "cooked": 294,
+      "burned": 3,
+      "lost": 10,
+      "spawned": 192,
+      "flips": 365,
+      "qualities": {
+        "perfect": 268,
+        "good": 26
+      },
+      "perfectPerServedItem": 0.9115646258503401,
+      "burnsPerServedItem": 0.01020408163265306,
+      "lostPerSpawn": 0.052083333333333336,
+      "coinsPerTurn": 3290.5
+    }
+  ]
+}

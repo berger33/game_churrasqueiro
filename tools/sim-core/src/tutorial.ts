@@ -395,6 +395,7 @@ export class TutorialTurn {
     this.director = director;
     this.ingredient = ing;
     this.sim = new TurnSimulation(db, {
+      staffEnabled: false,
       restaurantIndex: opts.restaurantIndex,
       playerLevel: 1, // Scripted first-session curriculum, not the campaign index.
       levelId: table.turn.levelId,

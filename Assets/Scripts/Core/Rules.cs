@@ -319,6 +319,9 @@ namespace Churrasco.Core
         /// </summary>
         public static double EffectiveHeat(GrillRuntime g, int zoneIndex, GameData data)
         {
+            // Mirrors cooking.ts: an exhausted or refilling sack gives no heat, regardless of
+            // residual efficiency or upgrades.
+            if (g.Refilling > 0 || g.CharcoalT >= 1) return 0;
             double baseHeat = zoneIndex >= 0 && zoneIndex < g.Zones.Count
                 ? g.Zones[zoneIndex].Heat
                 : zoneIndex >= 0 && zoneIndex < data.Grill.Zones.Count

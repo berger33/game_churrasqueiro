@@ -10,6 +10,8 @@ import type { GameDatabase, RawDataBundle } from './types.ts';
  */
 export function createDatabase(raw: RawDataBundle): GameDatabase {
   const db: GameDatabase = {
+    events: raw.events, ads: raw.ads, achievements: raw.achievements,
+    employees: raw.employees,
     ingredients: raw.ingredients,
     grill: raw.grill,
     customers: raw.customers,
@@ -38,7 +40,84 @@ export function createDatabase(raw: RawDataBundle): GameDatabase {
 /** Structural + referential validation. Returns a list of human-readable problems. */
 export function validateDatabase(db: GameDatabase): string[] {
   const problems: string[] = [];
+  const income=db.economy.reward.activeCoinMultiplierByRestaurant;
+  if(!Array.isArray(income)||income.length!==db.restaurantByIndex.size||income.some((n,i)=>
+    !Number.isFinite(n)||n<=0||n>1||(i<=3&&n!==1)||(i>0&&n>income[i-1]!)))problems.push('active income: invalid restaurant curve or changed early income');
+
+  const idle=db.economy.idle;
+  if(idle.unlockRestaurantIndex!==3||idle.maxOfflineHours!==8||idle.rampInMinutes!==20||idle.minCollectIntervalMin!==30)problems.push('offline: approved unlock/cap/ramp/cooldown contract');
+  for(const rates of [idle.coinsPerMinuteByRestaurant,idle.xpPerMinuteByRestaurant])
+    if(rates.length!==db.restaurantByIndex.size||rates.some(n=>!Number.isFinite(n)||n<0))problems.push('offline: invalid restaurant rates');
+  const cashier=db.employees?.roles.find(r=>r.id==='caixa');
+  if(!cashier||cashier.abilities.length!==4)problems.push('offline: missing cashier levels');
+  else for(let level=1;level<=4;level++){
+    const a=cashier.abilities.find(a=>a.level===level);
+    if(a?.autoOfflineHours!==level*2||a?.offlineRateBonus!==[0,0,0,.03,.06][level])problems.push('offline: invalid cashier hours/bonus');
+  }
+
+  if(db.employees){
+    const e=db.employees;
+    if(e.automationCap.autoServeMaxCoverage!==.5||e.automationCap.autoFlipMaxCoverage!==.6)problems.push('employees: hard coverage caps');
+    if(!Number.isFinite(e.service?.minimumWaitSec)||e.service.minimumWaitSec<0)problems.push('employees: invalid minimum wait');
+    for(const role of e.roles.filter(r=>['garcom','auxiliar','churrasqueiro'].includes(r.id)))for(const a of role.abilities){
+      if(!Number.isFinite(a.intervalSec)||a.intervalSec!<=0)problems.push(`employees: invalid interval ${role.id}`);
+      const cap=role.id==='garcom'?.5:role.id==='churrasqueiro'?.6:1;
+      if(!Number.isFinite(a.coverage)||a.coverage<0||a.coverage>cap)problems.push(`employees: invalid coverage ${role.id}`);
+      if(role.id==='garcom'&&(!Number.isFinite(a.tipBonus)||a.tipBonus!<0||a.tipBonus!>.1||![1,2].includes(a.platesPerTrip!)))problems.push('employees: invalid service parameters');
+      if(role.id==='auxiliar'&&(!Number.isInteger(a.extraPrepSlots)||a.extraPrepSlots!<0||a.extraPrepSlots!>1))problems.push('employees: invalid extra slots');
+    }
+  }
+
   const ids = new Set<string>();
+  if (!Number.isSafeInteger(db.grill.stock.basePerIngredient) || db.grill.stock.basePerIngredient < 1) problems.push('stock: invalid capacity');
+  if (!Number.isFinite(db.grill.stock.refillTimeSec) || db.grill.stock.refillTimeSec <= 0) problems.push('stock: invalid refill time');
+  if (!Number.isFinite(db.grill.charcoal.refillTimeSec) || db.grill.charcoal.refillTimeSec <= 0) problems.push('charcoal: invalid refill time');
+
+  if (db.events) {
+    const {vipBaseChance:chance,vipMaxPerDay:cap}=db.events.defaults;
+    if(!Number.isFinite(chance)||chance<0||chance>1)problems.push('VIP: invalid base chance');
+    if(!Number.isInteger(cap)||cap<0)problems.push('VIP: invalid daily cap');
+    if(!db.customerById.get('vip')?.isVip)problems.push('VIP: missing VIP customer');
+    for(const e of db.events.weeklyRecurring) {
+      if(!['sunday','monday','tuesday','wednesday','thursday','friday','saturday'].includes(e.dayOfWeek))problems.push('VIP: invalid event weekday');
+      if(!Number.isFinite(e.durationHours)||e.durationHours<=0||e.durationHours>168)problems.push('VIP: invalid event duration');
+      for(const m of e.modifiers)if(m.type==='vipChance'&&!Number.isFinite(m.valueAdd))problems.push('VIP: invalid event chance modifier');
+    }
+  }
+  if(db.ads) {
+    const cfg=db.ads.rewardedPlacements.find(p=>p.id==='call_vip');
+    if(!cfg||!Number.isFinite(cfg.cooldownMin)||cfg.cooldownMin<0||!Number.isInteger(cfg.maxPerDay)||cfg.maxPerDay<0)problems.push('VIP: invalid call placement');
+    if(!Number.isFinite(db.ads.antiFraud.tokenTtlSec)||db.ads.antiFraud.tokenTtlSec<=0)problems.push('VIP: invalid offer TTL');
+  }
+
+  for(const a of db.achievements?.achievements ?? [])if(a.stat==='vipServed') {
+    if(!Number.isSafeInteger(a.goal)||a.goal<1)problems.push('VIP: invalid achievement goal');
+    for(const value of [a.reward.coins??0,a.reward.embers??0])if(!Number.isSafeInteger(value)||value<0)problems.push('VIP: invalid achievement reward');
+  }
+
+  const zoneIds = new Set<string>();
+  const primary = db.grill.zones.filter(z => !z.auxiliaryOf);
+  if (primary.map(z => z.id).join(',') !== 'low,medium,high') {
+    problems.push('grill zones: primary profile must remain low,medium,high; extra zones require auxiliaryOf');
+  }
+  for (const [index, zone] of db.grill.zones.entries()) {
+    if (zoneIds.has(zone.id)) problems.push(`grill zone: duplicate id "${zone.id}"`);
+    zoneIds.add(zone.id);
+    if (zone.index !== index) problems.push(`grill zone ${zone.id}: index must be ${index}`);
+    if (!Number.isFinite(zone.heatMultiplier) || zone.heatMultiplier <= 0) problems.push(`grill zone ${zone.id}: heat must be positive and finite`);
+    if (zone.auxiliaryOf) {
+      const source = primary.find(z => z.id === zone.auxiliaryOf);
+      if (!source || source.index >= index) problems.push(`grill zone ${zone.id}: invalid auxiliary source`);
+      if (source && source.heatMultiplier !== zone.heatMultiplier) problems.push(`grill zone ${zone.id}: auxiliary heat must match its source`);
+      if (index < primary.length) problems.push(`grill zone ${zone.id}: auxiliary zones must follow the primary profile`);
+    }
+  }
+  if (!primary.length) problems.push('grill zones: primary profile cannot be empty');
+  for (const r of db.restaurants.restaurants) {
+    if (!Number.isInteger(r.grill.zoneCount) || r.grill.zoneCount < 1 || r.grill.zoneCount > db.grill.zones.length) {
+      problems.push(`restaurant ${r.id}: unsupported zoneCount ${r.grill.zoneCount}`);
+    }
+  }
 
   for (const it of db.ingredients.items) {
     if (ids.has(it.id)) problems.push(`ingredient: duplicate id "${it.id}"`);
@@ -106,6 +185,18 @@ export function validateDatabase(db: GameDatabase): string[] {
       indices.add(ch.index);
       if (ch.fileiras < 1 || ch.fileiras > 3) problems.push(`churrasqueira ${ch.id}: fileiras must be 1..3`);
       if (ch.fileiras !== ch.evolutions[0]?.zoneCount) problems.push(`churrasqueira ${ch.id}: fileiras mismatch zoneCount of evo 1`);
+      if (ch.restaurantExpansion) {
+        const expansion = ch.restaurantExpansion;
+        const restaurant = db.restaurantByIndex.get(expansion.restaurantIndex);
+        if (!restaurant) problems.push(`churrasqueira ${ch.id}: expansion restaurant does not exist`);
+        if (!Number.isInteger(expansion.zoneCount) || expansion.zoneCount > db.grill.zones.length
+          || expansion.zoneCount <= Math.max(...ch.evolutions.map(e => e.zoneCount))) {
+          problems.push(`churrasqueira ${ch.id}: expansion zoneCount must add defined zones`);
+        }
+        if (restaurant && db.restaurants.restaurants.some(r => r.index >= restaurant.index && r.grill.zoneCount < expansion.zoneCount)) {
+          problems.push(`churrasqueira ${ch.id}: expansion exceeds restaurant zoneCount`);
+        }
+      }
       if (ch.evolutions.length !== 3) problems.push(`churrasqueira ${ch.id}: expected 3 evolutions`);
       ch.evolutions.forEach((evo, i) => {
         if (evo.level !== i + 1) problems.push(`churrasqueira ${ch.id} evo ${evo.level}: level should be ${i + 1}`);

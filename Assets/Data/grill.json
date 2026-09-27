@@ -1,7 +1,7 @@
 {
   "$schema": "schema/grill.schema.json",
-  "_comment": "Grill/heat model. Zones are horizontal bands across the grill bed (top = low, bottom = high) so one-handed vertical dragging changes heat.",
-  "version": 3,
+  "_comment": "Grill/heat model. Primary horizontal bands run low → medium → high. The optional fourth band is auxiliary medium capacity; it must not stretch the primary profile.",
+  "version": 6,
   "zones": [
     {
       "id": "low",
@@ -26,6 +26,15 @@
       "heatMultiplier": 1.55,
       "embers": 4,
       "color": "#E0561F"
+    },
+    {
+      "id": "medium_extra",
+      "nameKey": "zone.medium_extra",
+      "index": 3,
+      "heatMultiplier": 1.0,
+      "embers": 2,
+      "color": "#8C3A18",
+      "auxiliaryOf": "medium"
     }
   ],
   "charcoal": {
@@ -52,12 +61,17 @@
     "refillCostCoins": 0,
     "lowWarningThreshold": 0.22
   },
+  "stock": {
+    "basePerIngredient": 6,
+    "refillTimeSec": 3.0
+  },
   "slots": {
     "baseSlotsPerZone": 2,
     "slotWidthNorm": 0.24,
     "slotHeightNorm": 0.2
   },
   "interaction": {
+    "flipPromptAtSideDoneness": 0.55,
     "dragThresholdPx": 12,
     "flipCooldownSec": 0.18,
     "serveDragToTray": true,

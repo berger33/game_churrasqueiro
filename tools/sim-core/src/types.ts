@@ -1,3 +1,4 @@
+import type { VipEventsTable, VipAdsTable, VipAchievementsTable } from './vip.ts';
 /**
  * CHURRASCO! O Mestre da Brasa — sim-core type definitions.
  *
@@ -72,7 +73,9 @@ export interface IngredientTable {
 // ── Grill ───────────────────────────────────────────────────────────────────
 
 export interface GrillZone {
-  id: Exclude<ZoneId, 'none'>;
+  id: Exclude<ZoneId, 'none'> | 'medium_extra';
+  /** Optional extra capacity; does not stretch the primary low/medium/high profile. */
+  auxiliaryOf?: Exclude<ZoneId, 'none'>;
   nameKey: string;
   index: number;
   heatMultiplier: number;
@@ -90,8 +93,10 @@ export interface GrillTable {
     refillCostCoins: number;
     lowWarningThreshold: number;
   };
+  stock: { basePerIngredient: number; refillTimeSec: number };
   slots: { baseSlotsPerZone: number; slotWidthNorm: number; slotHeightNorm: number };
   interaction: {
+    flipPromptAtSideDoneness: number;
     dragThresholdPx: number;
     flipCooldownSec: number;
     serveDragToTray: boolean;
@@ -201,6 +206,8 @@ export interface EconomyTable {
   currencies: Record<string, { id: string; nameKey: string; premium: boolean; icon: string; cap: number }>;
   xp: { formula: { type: string; a: number; exponent: number; minPerLevel: number }; maxLevel: number };
   reward: {
+    /** Active served-plate revenue only; never XP, purchases or offline rates. */
+    activeCoinMultiplierByRestaurant: number[];
     orderBaseTip: number;
     perfectTipBonus: number;
     speedBonusMax: number;
@@ -216,6 +223,7 @@ export interface EconomyTable {
     roundCoinMultiplierRange: [number, number];
   };
   idle: {
+    unlockRestaurantIndex: number;
     coinsPerMinuteByRestaurant: number[];
     xpPerMinuteByRestaurant: number[];
     maxOfflineHours: number;
@@ -257,6 +265,8 @@ export interface ChurrasqueiraDef {
   unlockLevel: number;
   unlockCostCoins: number;
   fileiras: number;
+  /** Restaurant AND equipped hardware requirement; base evolutions are unchanged. */
+  restaurantExpansion?: { restaurantIndex: number; zoneCount: number };
   visual: { style: string; material: string; color: string; chimney: boolean; brick: boolean };
   evolutions: ChurrasqueiraEvolution[];
 }
@@ -268,7 +278,17 @@ export interface ChurrasqueiraTable {
 
 // ── Raw bundle ──────────────────────────────────────────────────────────────
 
+export interface EmployeeTable {
+  version: number;
+  service: { minimumWaitSec: number };
+  automationCap: { autoFlipMaxCoverage: number; autoServeMaxCoverage: number; neverAutomates: string[] };
+  roles: { id: string; nameKey: string; descKey: string;
+    unlock: { restaurantIndex: number; upgradeTrack: string; level: number };
+    abilities: { level: number; effect: string; coverage: number; intervalSec?: number; tipBonus?: number; platesPerTrip?: number; burnWarningSec?: number; autoOfflineHours?: number; offlineRateBonus?: number; extraPrepSlots?: number }[]; rarity: string }[];
+}
+
 export interface RawDataBundle {
+  employees?: EmployeeTable;
   ingredients: IngredientTable;
   grill: GrillTable;
   customers: CustomerTable;
@@ -276,9 +296,13 @@ export interface RawDataBundle {
   upgrades: UpgradeTable;
   economy: EconomyTable;
   churrasqueiras?: ChurrasqueiraTable;
+  events?: VipEventsTable;
+  ads?: VipAdsTable;
+  achievements?: VipAchievementsTable;
 }
 
 export interface GameDatabase {
+  employees?: EmployeeTable;
   ingredients: IngredientTable;
   grill: GrillTable;
   customers: CustomerTable;
@@ -286,6 +310,9 @@ export interface GameDatabase {
   upgrades: UpgradeTable;
   economy: EconomyTable;
   churrasqueiras?: ChurrasqueiraTable;
+  events?: VipEventsTable;
+  ads?: VipAdsTable;
+  achievements?: VipAchievementsTable;
   ingredientById: Map<string, Ingredient>;
   customerById: Map<string, CustomerDef>;
   restaurantByIndex: Map<number, RestaurantDef>;

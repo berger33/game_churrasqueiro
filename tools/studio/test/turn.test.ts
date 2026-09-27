@@ -262,6 +262,7 @@ describe('food lifecycle', () => {
     const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 0, levelId: 'prep', upgradeLevels: {}, seed: 55 }, 55);
     const ing = db.ingredientById.get('vinagrete')!;
     const f = sim.takeFromStock(ing);
+    expect(sim.startPrep(f)).toBe(true);
     expect(f.onGrill).toBe(false);
     let guard = 0;
     while (f.prepProgress < 1 && guard++ < 1000) sim.tick(1 / 30);

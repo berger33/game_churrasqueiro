@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ✓ tools/studio/test/resources.test.ts (36 tests) 33ms
+ ✓ tools/studio/test/upgrades.test.ts (72 tests) 1556ms
+   ✓ A-06.1 shared quote, limits and persistence > bot spends no coins on pending tracks and actually buys the new direct effects 1479ms
+
+ Test Files  2 passed (2)
+      Tests  108 passed (108)
+   Start at  05:19:44
+   Duration  2.24s (transform 236ms, setup 0ms, collect 308ms, tests 1.59s, environment 0ms, prepare 95ms)
+

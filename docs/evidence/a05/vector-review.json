@@ -1,0 +1,1250 @@
+{
+  "countsBefore": {
+    "cooking": 48,
+    "scoring": 32,
+    "economy": 6,
+    "turns": 20
+  },
+  "countsAfter": {
+    "cooking": 48,
+    "scoring": 32,
+    "economy": 6,
+    "turns": 28
+  },
+  "dataVersionsBefore": {
+    "ingredients": 6,
+    "grill": 4,
+    "economy": 12,
+    "restaurants": 6,
+    "upgrades": 3
+  },
+  "dataVersionsAfter": {
+    "ingredients": 6,
+    "grill": 4,
+    "economy": 12,
+    "restaurants": 6,
+    "upgrades": 3,
+    "customers": 2,
+    "events": 2,
+    "ads": 2,
+    "achievements": 3
+  },
+  "unchanged": [
+    {
+      "group": "cooking",
+      "count": 48
+    },
+    {
+      "group": "scoring",
+      "count": 32
+    },
+    {
+      "group": "economy",
+      "count": 6
+    }
+  ],
+  "ftue": {
+    "payloadsUnchanged": 44,
+    "metadataAnalyticsBefore": 5,
+    "metadataAnalyticsAfter": 6
+  },
+  "note": "Legacy advanced seed4242 does not roll below base .06 until attempt36, beyond its available arrivals. Eight explicit VIP turns therefore added; no old result was silently changed.",
+  "legacy": [
+    {
+      "id": "turn.skill0.35.level_001",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.35,
+        "levelId": "level_001",
+        "levelIndex": 1,
+        "restaurantIndex": 0,
+        "playerLevel": 1,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 90,
+          "spawnIntervalSec": 9,
+          "patienceScalar": 1.28,
+          "difficultyScalar": 0.75,
+          "maxOrdersOnScreen": 2
+        }
+      },
+      "inputAfter": {
+        "skill": 0.35,
+        "levelId": "level_001",
+        "levelIndex": 1,
+        "restaurantIndex": 0,
+        "playerLevel": 1,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 90,
+          "spawnIntervalSec": 9,
+          "patienceScalar": 1.28,
+          "difficultyScalar": 0.75,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 2
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.35.level_011",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.35,
+        "levelId": "level_011",
+        "levelIndex": 11,
+        "restaurantIndex": 0,
+        "playerLevel": 4,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 99,
+          "spawnIntervalSec": 6.48,
+          "patienceScalar": 0.968,
+          "difficultyScalar": 1.109,
+          "maxOrdersOnScreen": 3
+        }
+      },
+      "inputAfter": {
+        "skill": 0.35,
+        "levelId": "level_011",
+        "levelIndex": 11,
+        "restaurantIndex": 0,
+        "playerLevel": 4,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 99,
+          "spawnIntervalSec": 6.48,
+          "patienceScalar": 0.968,
+          "difficultyScalar": 1.109,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 3
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.35.level_031",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.35,
+        "levelId": "level_031",
+        "levelIndex": 31,
+        "restaurantIndex": 1,
+        "playerLevel": 8,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 111,
+          "spawnIntervalSec": 7.35,
+          "patienceScalar": 1.075,
+          "difficultyScalar": 0.986,
+          "maxOrdersOnScreen": 2
+        }
+      },
+      "inputAfter": {
+        "skill": 0.35,
+        "levelId": "level_031",
+        "levelIndex": 31,
+        "restaurantIndex": 1,
+        "playerLevel": 8,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 111,
+          "spawnIntervalSec": 7.35,
+          "patienceScalar": 1.075,
+          "difficultyScalar": 0.986,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 2
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.35.level_060",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.35,
+        "levelId": "level_060",
+        "levelIndex": 60,
+        "restaurantIndex": 1,
+        "playerLevel": 14,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 113,
+          "spawnIntervalSec": 6.69,
+          "patienceScalar": 0.994,
+          "difficultyScalar": 1.08,
+          "maxOrdersOnScreen": 3
+        }
+      },
+      "inputAfter": {
+        "skill": 0.35,
+        "levelId": "level_060",
+        "levelIndex": 60,
+        "restaurantIndex": 1,
+        "playerLevel": 14,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 113,
+          "spawnIntervalSec": 6.69,
+          "patienceScalar": 0.994,
+          "difficultyScalar": 1.08,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 3
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.55.level_001",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.55,
+        "levelId": "level_001",
+        "levelIndex": 1,
+        "restaurantIndex": 0,
+        "playerLevel": 1,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 90,
+          "spawnIntervalSec": 9,
+          "patienceScalar": 1.28,
+          "difficultyScalar": 0.75,
+          "maxOrdersOnScreen": 2
+        }
+      },
+      "inputAfter": {
+        "skill": 0.55,
+        "levelId": "level_001",
+        "levelIndex": 1,
+        "restaurantIndex": 0,
+        "playerLevel": 1,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 90,
+          "spawnIntervalSec": 9,
+          "patienceScalar": 1.28,
+          "difficultyScalar": 0.75,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 2
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.55.level_011",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.55,
+        "levelId": "level_011",
+        "levelIndex": 11,
+        "restaurantIndex": 0,
+        "playerLevel": 4,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 99,
+          "spawnIntervalSec": 6.48,
+          "patienceScalar": 0.968,
+          "difficultyScalar": 1.109,
+          "maxOrdersOnScreen": 3
+        }
+      },
+      "inputAfter": {
+        "skill": 0.55,
+        "levelId": "level_011",
+        "levelIndex": 11,
+        "restaurantIndex": 0,
+        "playerLevel": 4,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 99,
+          "spawnIntervalSec": 6.48,
+          "patienceScalar": 0.968,
+          "difficultyScalar": 1.109,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 3
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.55.level_031",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.55,
+        "levelId": "level_031",
+        "levelIndex": 31,
+        "restaurantIndex": 1,
+        "playerLevel": 8,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 111,
+          "spawnIntervalSec": 7.35,
+          "patienceScalar": 1.075,
+          "difficultyScalar": 0.986,
+          "maxOrdersOnScreen": 2
+        }
+      },
+      "inputAfter": {
+        "skill": 0.55,
+        "levelId": "level_031",
+        "levelIndex": 31,
+        "restaurantIndex": 1,
+        "playerLevel": 8,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 111,
+          "spawnIntervalSec": 7.35,
+          "patienceScalar": 1.075,
+          "difficultyScalar": 0.986,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 2
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.55.level_060",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.55,
+        "levelId": "level_060",
+        "levelIndex": 60,
+        "restaurantIndex": 1,
+        "playerLevel": 14,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 113,
+          "spawnIntervalSec": 6.69,
+          "patienceScalar": 0.994,
+          "difficultyScalar": 1.08,
+          "maxOrdersOnScreen": 3
+        }
+      },
+      "inputAfter": {
+        "skill": 0.55,
+        "levelId": "level_060",
+        "levelIndex": 60,
+        "restaurantIndex": 1,
+        "playerLevel": 14,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 113,
+          "spawnIntervalSec": 6.69,
+          "patienceScalar": 0.994,
+          "difficultyScalar": 1.08,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 3
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.85.level_001",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.85,
+        "levelId": "level_001",
+        "levelIndex": 1,
+        "restaurantIndex": 0,
+        "playerLevel": 1,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 90,
+          "spawnIntervalSec": 9,
+          "patienceScalar": 1.28,
+          "difficultyScalar": 0.75,
+          "maxOrdersOnScreen": 2
+        }
+      },
+      "inputAfter": {
+        "skill": 0.85,
+        "levelId": "level_001",
+        "levelIndex": 1,
+        "restaurantIndex": 0,
+        "playerLevel": 1,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 90,
+          "spawnIntervalSec": 9,
+          "patienceScalar": 1.28,
+          "difficultyScalar": 0.75,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 2
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.85.level_011",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.85,
+        "levelId": "level_011",
+        "levelIndex": 11,
+        "restaurantIndex": 0,
+        "playerLevel": 4,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 99,
+          "spawnIntervalSec": 6.48,
+          "patienceScalar": 0.968,
+          "difficultyScalar": 1.109,
+          "maxOrdersOnScreen": 3
+        }
+      },
+      "inputAfter": {
+        "skill": 0.85,
+        "levelId": "level_011",
+        "levelIndex": 11,
+        "restaurantIndex": 0,
+        "playerLevel": 4,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 99,
+          "spawnIntervalSec": 6.48,
+          "patienceScalar": 0.968,
+          "difficultyScalar": 1.109,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 3
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.85.level_031",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.85,
+        "levelId": "level_031",
+        "levelIndex": 31,
+        "restaurantIndex": 1,
+        "playerLevel": 8,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 111,
+          "spawnIntervalSec": 7.35,
+          "patienceScalar": 1.075,
+          "difficultyScalar": 0.986,
+          "maxOrdersOnScreen": 2
+        }
+      },
+      "inputAfter": {
+        "skill": 0.85,
+        "levelId": "level_031",
+        "levelIndex": 31,
+        "restaurantIndex": 1,
+        "playerLevel": 8,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 111,
+          "spawnIntervalSec": 7.35,
+          "patienceScalar": 1.075,
+          "difficultyScalar": 0.986,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 2
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.85.level_060",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.85,
+        "levelId": "level_060",
+        "levelIndex": 60,
+        "restaurantIndex": 1,
+        "playerLevel": 14,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 113,
+          "spawnIntervalSec": 6.69,
+          "patienceScalar": 0.994,
+          "difficultyScalar": 1.08,
+          "maxOrdersOnScreen": 3
+        }
+      },
+      "inputAfter": {
+        "skill": 0.85,
+        "levelId": "level_060",
+        "levelIndex": 60,
+        "restaurantIndex": 1,
+        "playerLevel": 14,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "overrides": {
+          "turnLengthSec": 113,
+          "spawnIntervalSec": 6.69,
+          "patienceScalar": 0.994,
+          "difficultyScalar": 1.08,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 3
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.55.a01_rest_3",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.55,
+        "levelId": "a01_rest_3",
+        "levelIndex": 63,
+        "restaurantIndex": 3,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      },
+      "inputAfter": {
+        "skill": 0.55,
+        "levelId": "a01_rest_3",
+        "levelIndex": 63,
+        "restaurantIndex": 3,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      }
+    },
+    {
+      "id": "turn.skill0.85.a01_rest_3",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.85,
+        "levelId": "a01_rest_3",
+        "levelIndex": 63,
+        "restaurantIndex": 3,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      },
+      "inputAfter": {
+        "skill": 0.85,
+        "levelId": "a01_rest_3",
+        "levelIndex": 63,
+        "restaurantIndex": 3,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      }
+    },
+    {
+      "id": "turn.skill0.55.a01_rest_4",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.55,
+        "levelId": "a01_rest_4",
+        "levelIndex": 64,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      },
+      "inputAfter": {
+        "skill": 0.55,
+        "levelId": "a01_rest_4",
+        "levelIndex": 64,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      }
+    },
+    {
+      "id": "turn.skill0.85.a01_rest_4",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.85,
+        "levelId": "a01_rest_4",
+        "levelIndex": 64,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      },
+      "inputAfter": {
+        "skill": 0.85,
+        "levelId": "a01_rest_4",
+        "levelIndex": 64,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      }
+    },
+    {
+      "id": "turn.skill0.55.a01_rest_5",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.55,
+        "levelId": "a01_rest_5",
+        "levelIndex": 65,
+        "restaurantIndex": 5,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      },
+      "inputAfter": {
+        "skill": 0.55,
+        "levelId": "a01_rest_5",
+        "levelIndex": 65,
+        "restaurantIndex": 5,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      }
+    },
+    {
+      "id": "turn.skill0.85.a01_rest_5",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.85,
+        "levelId": "a01_rest_5",
+        "levelIndex": 65,
+        "restaurantIndex": 5,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      },
+      "inputAfter": {
+        "skill": 0.85,
+        "levelId": "a01_rest_5",
+        "levelIndex": 65,
+        "restaurantIndex": 5,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      }
+    },
+    {
+      "id": "turn.skill0.55.a01_rest_6",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.55,
+        "levelId": "a01_rest_6",
+        "levelIndex": 66,
+        "restaurantIndex": 6,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      },
+      "inputAfter": {
+        "skill": 0.55,
+        "levelId": "a01_rest_6",
+        "levelIndex": 66,
+        "restaurantIndex": 6,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      }
+    },
+    {
+      "id": "turn.skill0.85.a01_rest_6",
+      "expectedBehaviorUnchanged": true,
+      "newCounters": {
+        "vipSpawned": 0,
+        "vipServed": 0
+      },
+      "inputBefore": {
+        "skill": 0.85,
+        "levelId": "a01_rest_6",
+        "levelIndex": 66,
+        "restaurantIndex": 6,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      },
+      "inputAfter": {
+        "skill": 0.85,
+        "levelId": "a01_rest_6",
+        "levelIndex": 66,
+        "restaurantIndex": 6,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      }
+    }
+  ],
+  "added": [
+    {
+      "id": "turn.a05_vip_natural",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a05_vip_natural",
+        "levelIndex": 71,
+        "restaurantIndex": 1,
+        "playerLevel": 12,
+        "seed": 12,
+        "stepSec": 0.0625,
+        "vipStartUnixSec": 1789948800,
+        "vipState": {
+          "day": -1,
+          "usedToday": 0,
+          "callsToday": 0,
+          "lastCallUnixSec": -1,
+          "lastClockUnixSec": 0,
+          "sequence": 0,
+          "pendingCall": null,
+          "offer": null,
+          "servedTotal": 0,
+          "claimedAchievements": [],
+          "blocked": false
+        },
+        "overrides": {
+          "vipChance": 1
+        }
+      },
+      "expect": {
+        "coins": 825,
+        "xp": 107,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 105,
+        "counters": {
+          "customersSpawned": 14,
+          "vipSpawned": 2,
+          "vipServed": 2,
+          "customersServed": 14,
+          "customersLost": 0,
+          "ordersCompleted": 14,
+          "perfectCooks": 14,
+          "goodCooks": 6,
+          "burnedFood": 0,
+          "bestCombo": 20,
+          "flips": 22,
+          "itemsCooked": 20,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "vipQuota": 2,
+        "vipSources": [
+          "natural",
+          "natural"
+        ]
+      }
+    },
+    {
+      "id": "turn.a05_vip_zero",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a05_vip_zero",
+        "levelIndex": 71,
+        "restaurantIndex": 1,
+        "playerLevel": 12,
+        "seed": 12,
+        "stepSec": 0.0625,
+        "vipStartUnixSec": 1789948800,
+        "vipState": {
+          "day": -1,
+          "usedToday": 0,
+          "callsToday": 0,
+          "lastCallUnixSec": -1,
+          "lastClockUnixSec": 0,
+          "sequence": 0,
+          "pendingCall": null,
+          "offer": null,
+          "servedTotal": 0,
+          "claimedAchievements": [],
+          "blocked": false
+        },
+        "overrides": {
+          "vipChance": 0
+        }
+      },
+      "expect": {
+        "coins": 837,
+        "xp": 118,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 105,
+        "counters": {
+          "customersSpawned": 14,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 14,
+          "customersLost": 0,
+          "ordersCompleted": 14,
+          "perfectCooks": 13,
+          "goodCooks": 7,
+          "burnedFood": 0,
+          "bestCombo": 20,
+          "flips": 25,
+          "itemsCooked": 20,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "vipQuota": 0,
+        "vipSources": []
+      }
+    },
+    {
+      "id": "turn.a05_vip_starter",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a05_vip_starter",
+        "levelIndex": 71,
+        "restaurantIndex": 0,
+        "playerLevel": 12,
+        "seed": 12,
+        "stepSec": 0.0625,
+        "vipStartUnixSec": 1789948800,
+        "vipState": {
+          "day": -1,
+          "usedToday": 0,
+          "callsToday": 0,
+          "lastCallUnixSec": -1,
+          "lastClockUnixSec": 0,
+          "sequence": 0,
+          "pendingCall": null,
+          "offer": null,
+          "servedTotal": 0,
+          "claimedAchievements": [],
+          "blocked": false
+        },
+        "overrides": {
+          "vipChance": 1
+        }
+      },
+      "expect": {
+        "coins": 596,
+        "xp": 86,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 90,
+        "counters": {
+          "customersSpawned": 12,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 11,
+          "customersLost": 0,
+          "ordersCompleted": 11,
+          "perfectCooks": 16,
+          "goodCooks": 0,
+          "burnedFood": 0,
+          "bestCombo": 16,
+          "flips": 16,
+          "itemsCooked": 16,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "vipQuota": 0,
+        "vipSources": []
+      }
+    },
+    {
+      "id": "turn.a05_vip_called",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a05_vip_called",
+        "levelIndex": 71,
+        "restaurantIndex": 1,
+        "playerLevel": 12,
+        "seed": 12,
+        "stepSec": 0.0625,
+        "vipStartUnixSec": 1789948800,
+        "vipState": {
+          "day": 20717,
+          "usedToday": 1,
+          "callsToday": 1,
+          "lastCallUnixSec": 1789948800,
+          "lastClockUnixSec": 1789948800,
+          "sequence": 1,
+          "pendingCall": "vip-test-1",
+          "offer": null,
+          "servedTotal": 0,
+          "claimedAchievements": [],
+          "blocked": false
+        },
+        "overrides": {
+          "vipChance": 0
+        }
+      },
+      "expect": {
+        "coins": 903,
+        "xp": 118,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 105,
+        "counters": {
+          "customersSpawned": 14,
+          "vipSpawned": 1,
+          "vipServed": 1,
+          "customersServed": 14,
+          "customersLost": 0,
+          "ordersCompleted": 14,
+          "perfectCooks": 15,
+          "goodCooks": 6,
+          "burnedFood": 0,
+          "bestCombo": 21,
+          "flips": 24,
+          "itemsCooked": 21,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "vipQuota": 1,
+        "vipSources": [
+          "called"
+        ]
+      }
+    },
+    {
+      "id": "turn.a05_vip_capped",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a05_vip_capped",
+        "levelIndex": 71,
+        "restaurantIndex": 1,
+        "playerLevel": 12,
+        "seed": 12,
+        "stepSec": 0.0625,
+        "vipStartUnixSec": 1789948800,
+        "vipState": {
+          "day": 20717,
+          "usedToday": 2,
+          "callsToday": 0,
+          "lastCallUnixSec": -1,
+          "lastClockUnixSec": 1789948800,
+          "sequence": 0,
+          "pendingCall": null,
+          "offer": null,
+          "servedTotal": 0,
+          "claimedAchievements": [],
+          "blocked": false
+        },
+        "overrides": {
+          "vipChance": 1
+        }
+      },
+      "expect": {
+        "coins": 837,
+        "xp": 118,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 105,
+        "counters": {
+          "customersSpawned": 14,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 14,
+          "customersLost": 0,
+          "ordersCompleted": 14,
+          "perfectCooks": 13,
+          "goodCooks": 7,
+          "burnedFood": 0,
+          "bestCombo": 20,
+          "flips": 25,
+          "itemsCooked": 20,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "vipQuota": 2,
+        "vipSources": []
+      }
+    },
+    {
+      "id": "turn.a05_vip_fallback_weekday",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a05_vip_fallback_weekday",
+        "levelIndex": 71,
+        "restaurantIndex": 1,
+        "playerLevel": 12,
+        "seed": 25,
+        "stepSec": 0.0625,
+        "vipStartUnixSec": 1789948800,
+        "vipState": {
+          "day": -1,
+          "usedToday": 0,
+          "callsToday": 0,
+          "lastCallUnixSec": -1,
+          "lastClockUnixSec": 0,
+          "sequence": 0,
+          "pendingCall": null,
+          "offer": null,
+          "servedTotal": 0,
+          "claimedAchievements": [],
+          "blocked": false
+        },
+        "overrides": {}
+      },
+      "expect": {
+        "coins": 1212,
+        "xp": 148,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 105,
+        "counters": {
+          "customersSpawned": 14,
+          "vipSpawned": 1,
+          "vipServed": 1,
+          "customersServed": 13,
+          "customersLost": 0,
+          "ordersCompleted": 13,
+          "perfectCooks": 16,
+          "goodCooks": 4,
+          "burnedFood": 0,
+          "bestCombo": 20,
+          "flips": 29,
+          "itemsCooked": 20,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "vipQuota": 1,
+        "vipSources": [
+          "natural"
+        ]
+      }
+    },
+    {
+      "id": "turn.a05_vip_fallback_weekend",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a05_vip_fallback_weekend",
+        "levelIndex": 71,
+        "restaurantIndex": 1,
+        "playerLevel": 12,
+        "seed": 25,
+        "stepSec": 0.0625,
+        "vipStartUnixSec": 1790380800,
+        "vipState": {
+          "day": -1,
+          "usedToday": 0,
+          "callsToday": 0,
+          "lastCallUnixSec": -1,
+          "lastClockUnixSec": 0,
+          "sequence": 0,
+          "pendingCall": null,
+          "offer": null,
+          "servedTotal": 0,
+          "claimedAchievements": [],
+          "blocked": false
+        },
+        "overrides": {}
+      },
+      "expect": {
+        "coins": 1845,
+        "xp": 189,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 105,
+        "counters": {
+          "customersSpawned": 14,
+          "vipSpawned": 2,
+          "vipServed": 2,
+          "customersServed": 13,
+          "customersLost": 0,
+          "ordersCompleted": 13,
+          "perfectCooks": 17,
+          "goodCooks": 7,
+          "burnedFood": 0,
+          "bestCombo": 24,
+          "flips": 34,
+          "itemsCooked": 24,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "vipQuota": 2,
+        "vipSources": [
+          "natural",
+          "natural"
+        ]
+      }
+    },
+    {
+      "id": "turn.a05_vip_weekend_zero",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a05_vip_weekend_zero",
+        "levelIndex": 71,
+        "restaurantIndex": 1,
+        "playerLevel": 12,
+        "seed": 25,
+        "stepSec": 0.0625,
+        "vipStartUnixSec": 1790380800,
+        "vipState": {
+          "day": -1,
+          "usedToday": 0,
+          "callsToday": 0,
+          "lastCallUnixSec": -1,
+          "lastClockUnixSec": 0,
+          "sequence": 0,
+          "pendingCall": null,
+          "offer": null,
+          "servedTotal": 0,
+          "claimedAchievements": [],
+          "blocked": false
+        },
+        "overrides": {
+          "vipChance": 0
+        }
+      },
+      "expect": {
+        "coins": 1292,
+        "xp": 160,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 105,
+        "counters": {
+          "customersSpawned": 14,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 13,
+          "customersLost": 0,
+          "ordersCompleted": 13,
+          "perfectCooks": 16,
+          "goodCooks": 6,
+          "burnedFood": 0,
+          "bestCombo": 22,
+          "flips": 33,
+          "itemsCooked": 22,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "vipQuota": 0,
+        "vipSources": []
+      }
+    }
+  ]
+}

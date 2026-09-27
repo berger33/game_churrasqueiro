@@ -1,0 +1,31 @@
+
+> churrasco-mestre-da-brasa@0.1.0 check-shots
+> node prototype/shoot.mjs
+
+art: 244 sprites decoded
+[shoot] 01-splash.png  228.5 kB
+[shoot] 02-title.png  543.8 kB
+[shoot] 03-ftue-place.png  383.3 kB
+[shoot] 04-ftue-wait.png  345.0 kB
+[shoot] 05-ftue-flip.png  340.6 kB
+[shoot] 06-ftue-serve.png  352.4 kB
+[shoot] 07-ftue-perfect.png  465.7 kB
+[shoot] 08-ftue-result.png  105.5 kB
+[shoot] 09-ftue-upgrade.png  148.1 kB
+[shoot] FTUE tutorial_start → step:place → step:flip → step:serve → step:perfect → tutorial_complete → upgrade_purchase → step:upgrade
+[shoot] FTUE first PERFEITO at 16.1s, complete at 32.9s, upgrade at 38.3s, misses 0, coins left 136
+art: 244 sprites decoded
+[shoot] 10-home.png  183.9 kB
+[shoot] 11-turn-empty.png  458.4 kB
+[shoot] 12-grill-cooking.png  453.7 kB
+[shoot] 13-result.png  94.8 kB
+art: 244 sprites decoded
+file:///home/user/game_churrasqueiro/prototype/shoot.mjs:232
+function assert(cond, msg) { if (!cond) throw new Error(`[shoot] ${msg}`); }
+                                              ^
+
+Error: [shoot] A-04 Premium + Fornalha must expose four real zones
+    at assert (file:///home/user/game_churrasqueiro/prototype/shoot.mjs:232:47)
+    at file:///home/user/game_churrasqueiro/prototype/shoot.mjs:423:1
+
+Node.js v22.22.3

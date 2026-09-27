@@ -28,7 +28,7 @@ Eight voluntary placements, each with its own cooldown and daily cap
 | `double_turn` | turn result | 6 | 2× turn coins |
 | `unburn_plate` | burned food | 3 | rescue the plate |
 | `revive_turn` | failed turn | 2 | continue the turn |
-| `call_vip` | home | 2 | summon a VIP now |
+| `call_vip` | home | 2 shared with natural | reserve next eligible VIP arrival (explicit test flow in web) |
 | `extra_chest` | mission complete | 2 | bonus chest |
 | `speed_upgrade` | upgrade screen | 3 | halve an upgrade timer |
 | `reroll_reward` | reward screen | 3 | reroll the reward |
@@ -101,3 +101,23 @@ offer CTR · starter-pack attach rate. Definitions in [09-ANALYTICS.md](09-ANALY
 - No loot boxes / randomised paid content.
 - No paid characters. Employees are bought with coins and level up with play.
 - No ads in the first 6 turns or first 2 sessions.
+
+## A-05 checkpoint — implemented reference, not ad integration
+
+Owner decision: `call_vip` **shares** the2/day total with natural visitors, never adds two
+exclusive paid visits. Same menu/rewards/achievements; natural progression needs no ad.
+The web Home currently has an **explicit test simulation**, complete/cancel. No SDK,
+impression, charge, real eCPM or network request. Local rewarded analytics use
+`network:prototype_test`, not production monetization data.
+
+Cooldown60min/max2/day and1h offer TTL come from ads.json. Persisted single active token,
+revalidation on callback and consumed token prevent duplicate grants. Reservation occupies
+quota until arrival, including the next day; it is not an expiring earned reward. Cancelling
+or failing the offer grants nothing. Global ad caps/consent/SSV/other placements remain for
+platform implementation; this narrow service does not claim those are implemented.
+
+Measured same-seed1500-turn control: natural, **zero calls**, reaches level80/rest6,
+244 VIPs/232 served. Optional calls still244 total/max2 per day; rewards identical. Full
+comparison in evidence/a05. Economy still fails3 global guardrails; no pay-to-progress
+conclusion is inferred merely from green unit tests. Future general achievement service
+must respect the two already-paid VIP achievement claims.

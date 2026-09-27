@@ -1,0 +1,8 @@
+
+> churrasco-mestre-da-brasa@0.1.0 gen-vectors
+> node --experimental-strip-types tools/studio/gen-vectors.ts
+
+[golden] wrote tools/golden/vectors.json and tools/golden/tutorial-vectors.json
+[golden] cooking 48 · scoring 32 · economy 6 · turns 35
+[golden] FTUE: director 6 · restore 15 · coach 1 · hand 10 · mask 1 · analytics 11
+[golden] total 121 + 44 vectors

@@ -1,0 +1,7 @@
+
+> churrasco-mestre-da-brasa@0.1.0 check-vectors
+> node --experimental-strip-types tools/studio/gen-vectors.ts --check
+
+[golden] DRIFT — vectors.json does not match a fresh generation.
+[golden] A rules formula changed, or the TS and C# implementations disagree.
+[golden] Run `npm run gen-vectors`, review the diff, then commit.

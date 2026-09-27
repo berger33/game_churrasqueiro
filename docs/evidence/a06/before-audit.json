@@ -1,0 +1,611 @@
+{
+  "base": "e50ce15 + local A-03/A-04/A-05",
+  "method": "Static consumer inspection plus paired complete-turn traces at skill .3/.85, VIP disabled only in the controlled probe. Equal traces alone are not proof of absence of a consumer.",
+  "tracks": [
+    {
+      "id": "grill_size",
+      "stat": "slotsPerZone",
+      "delta": 1,
+      "maxLevel": 8,
+      "category": "grill",
+      "totalCostAtCurrentTable": 13480,
+      "status": "turn consumer exists"
+    },
+    {
+      "id": "grill_heat",
+      "stat": "highZoneMultiplier",
+      "delta": 0.06,
+      "maxLevel": 8,
+      "category": "grill",
+      "totalCostAtCurrentTable": 15380,
+      "status": "turn consumer exists"
+    },
+    {
+      "id": "grill_stability",
+      "stat": "heatStability",
+      "delta": 0.04,
+      "maxLevel": 6,
+      "category": "grill",
+      "totalCostAtCurrentTable": 7850,
+      "status": "no runtime consumer"
+    },
+    {
+      "id": "grill_speed",
+      "stat": "heatRampRate",
+      "delta": 0.05,
+      "maxLevel": 6,
+      "category": "grill",
+      "totalCostAtCurrentTable": 9470,
+      "status": "turn consumer exists"
+    },
+    {
+      "id": "charcoal_duration",
+      "stat": "charcoalDurationMult",
+      "delta": 0.09,
+      "maxLevel": 10,
+      "category": "charcoal",
+      "totalCostAtCurrentTable": 21560,
+      "status": "turn consumer exists"
+    },
+    {
+      "id": "charcoal_quality",
+      "stat": "minCharcoalEfficiency",
+      "delta": 0.05,
+      "maxLevel": 6,
+      "category": "charcoal",
+      "totalCostAtCurrentTable": 9570,
+      "status": "no runtime consumer"
+    },
+    {
+      "id": "charcoal_auto",
+      "stat": "autoRefillChance",
+      "delta": 0.33,
+      "maxLevel": 3,
+      "category": "charcoal",
+      "totalCostAtCurrentTable": 7810,
+      "status": "no runtime consumer"
+    },
+    {
+      "id": "knife",
+      "stat": "prepSpeedMult",
+      "delta": 0.12,
+      "maxLevel": 6,
+      "category": "prep",
+      "totalCostAtCurrentTable": 2910,
+      "status": "turn consumer exists"
+    },
+    {
+      "id": "board",
+      "stat": "prepSlots",
+      "delta": 1,
+      "maxLevel": 5,
+      "category": "prep",
+      "totalCostAtCurrentTable": 3060,
+      "status": "turn consumer exists"
+    },
+    {
+      "id": "counter",
+      "stat": "rawStockPerTurn",
+      "delta": 1,
+      "maxLevel": 5,
+      "category": "prep",
+      "totalCostAtCurrentTable": 6880,
+      "status": "no runtime consumer"
+    },
+    {
+      "id": "plates",
+      "stat": "tipMult",
+      "delta": 0.06,
+      "maxLevel": 6,
+      "category": "service",
+      "totalCostAtCurrentTable": 3480,
+      "status": "turn consumer exists"
+    },
+    {
+      "id": "tray",
+      "stat": "serveSpeedMult",
+      "delta": 0.1,
+      "maxLevel": 5,
+      "category": "service",
+      "totalCostAtCurrentTable": 4440,
+      "status": "no runtime consumer"
+    },
+    {
+      "id": "patience_charm",
+      "stat": "patienceMult",
+      "delta": 0.07,
+      "maxLevel": 5,
+      "category": "service",
+      "totalCostAtCurrentTable": 9790,
+      "status": "turn consumer exists"
+    },
+    {
+      "id": "tables",
+      "stat": "tables",
+      "delta": 1,
+      "maxLevel": 6,
+      "category": "restaurant",
+      "totalCostAtCurrentTable": 20740,
+      "status": "no runtime consumer"
+    },
+    {
+      "id": "decor",
+      "stat": "tipMult",
+      "delta": 0.05,
+      "maxLevel": 6,
+      "category": "restaurant",
+      "totalCostAtCurrentTable": 14490,
+      "status": "turn consumer exists"
+    },
+    {
+      "id": "lighting",
+      "stat": "xpMult",
+      "delta": 0.05,
+      "maxLevel": 4,
+      "category": "restaurant",
+      "totalCostAtCurrentTable": 7180,
+      "status": "turn consumer exists"
+    },
+    {
+      "id": "capacity",
+      "stat": "maxOrdersOnScreen",
+      "delta": 1,
+      "maxLevel": 5,
+      "category": "restaurant",
+      "totalCostAtCurrentTable": 18180,
+      "status": "shadowed by authored caller override"
+    },
+    {
+      "id": "sign",
+      "stat": "customerSpawnRate",
+      "delta": 0.08,
+      "maxLevel": 4,
+      "category": "restaurant",
+      "totalCostAtCurrentTable": 13060,
+      "status": "turn consumer exists"
+    },
+    {
+      "id": "music",
+      "stat": "patienceMult",
+      "delta": 0.05,
+      "maxLevel": 4,
+      "category": "restaurant",
+      "totalCostAtCurrentTable": 5920,
+      "status": "turn consumer exists"
+    },
+    {
+      "id": "garcom",
+      "stat": "autoServeLevel",
+      "delta": 1,
+      "maxLevel": 5,
+      "category": "employees",
+      "totalCostAtCurrentTable": 60800,
+      "status": "no runtime consumer"
+    },
+    {
+      "id": "auxiliar",
+      "stat": "autoPrepLevel",
+      "delta": 1,
+      "maxLevel": 5,
+      "category": "employees",
+      "totalCostAtCurrentTable": 102130,
+      "status": "no runtime consumer"
+    },
+    {
+      "id": "churrasqueiro",
+      "stat": "autoFlipLevel",
+      "delta": 1,
+      "maxLevel": 5,
+      "category": "employees",
+      "totalCostAtCurrentTable": 211210,
+      "status": "no runtime consumer"
+    },
+    {
+      "id": "caixa",
+      "stat": "autoCollectLevel",
+      "delta": 1,
+      "maxLevel": 4,
+      "category": "employees",
+      "totalCostAtCurrentTable": 160430,
+      "status": "no runtime consumer"
+    },
+    {
+      "id": "gerente",
+      "stat": "idleRateMult",
+      "delta": 0.18,
+      "maxLevel": 4,
+      "category": "employees",
+      "totalCostAtCurrentTable": 354180,
+      "status": "reference offline only; prototype and campaign do not consume offline"
+    },
+    {
+      "id": "brasa_mastery",
+      "stat": "tipMult",
+      "delta": 0.012,
+      "maxLevel": 20,
+      "category": "prestige",
+      "totalCostAtCurrentTable": 1605720,
+      "status": "no runtime consumer"
+    },
+    {
+      "id": "clientela_fiel",
+      "stat": "patienceMult",
+      "delta": 0.01,
+      "maxLevel": 20,
+      "category": "prestige",
+      "totalCostAtCurrentTable": 1778420,
+      "status": "no runtime consumer"
+    },
+    {
+      "id": "imperio_logistica",
+      "stat": "idleRateMult",
+      "delta": 0.02,
+      "maxLevel": 20,
+      "category": "prestige",
+      "totalCostAtCurrentTable": 1890480,
+      "status": "no runtime consumer"
+    }
+  ],
+  "unchanged": [
+    {
+      "id": "grill_stability",
+      "maxLevel": 6,
+      "traces": [
+        {
+          "skill": 0.3,
+          "wholeResultIdentical": true
+        },
+        {
+          "skill": 0.85,
+          "wholeResultIdentical": true
+        }
+      ]
+    },
+    {
+      "id": "charcoal_quality",
+      "maxLevel": 6,
+      "traces": [
+        {
+          "skill": 0.3,
+          "wholeResultIdentical": true
+        },
+        {
+          "skill": 0.85,
+          "wholeResultIdentical": true
+        }
+      ]
+    },
+    {
+      "id": "charcoal_auto",
+      "maxLevel": 3,
+      "traces": [
+        {
+          "skill": 0.3,
+          "wholeResultIdentical": true
+        },
+        {
+          "skill": 0.85,
+          "wholeResultIdentical": true
+        }
+      ]
+    },
+    {
+      "id": "counter",
+      "maxLevel": 5,
+      "traces": [
+        {
+          "skill": 0.3,
+          "wholeResultIdentical": true
+        },
+        {
+          "skill": 0.85,
+          "wholeResultIdentical": true
+        }
+      ]
+    },
+    {
+      "id": "tray",
+      "maxLevel": 5,
+      "traces": [
+        {
+          "skill": 0.3,
+          "wholeResultIdentical": true
+        },
+        {
+          "skill": 0.85,
+          "wholeResultIdentical": true
+        }
+      ]
+    },
+    {
+      "id": "tables",
+      "maxLevel": 6,
+      "traces": [
+        {
+          "skill": 0.3,
+          "wholeResultIdentical": true
+        },
+        {
+          "skill": 0.85,
+          "wholeResultIdentical": true
+        }
+      ]
+    },
+    {
+      "id": "garcom",
+      "maxLevel": 5,
+      "traces": [
+        {
+          "skill": 0.3,
+          "wholeResultIdentical": true
+        },
+        {
+          "skill": 0.85,
+          "wholeResultIdentical": true
+        }
+      ]
+    },
+    {
+      "id": "auxiliar",
+      "maxLevel": 5,
+      "traces": [
+        {
+          "skill": 0.3,
+          "wholeResultIdentical": true
+        },
+        {
+          "skill": 0.85,
+          "wholeResultIdentical": true
+        }
+      ]
+    },
+    {
+      "id": "churrasqueiro",
+      "maxLevel": 5,
+      "traces": [
+        {
+          "skill": 0.3,
+          "wholeResultIdentical": true
+        },
+        {
+          "skill": 0.85,
+          "wholeResultIdentical": true
+        }
+      ]
+    },
+    {
+      "id": "caixa",
+      "maxLevel": 4,
+      "traces": [
+        {
+          "skill": 0.3,
+          "wholeResultIdentical": true
+        },
+        {
+          "skill": 0.85,
+          "wholeResultIdentical": true
+        }
+      ]
+    },
+    {
+      "id": "brasa_mastery",
+      "maxLevel": 20,
+      "traces": [
+        {
+          "skill": 0.3,
+          "wholeResultIdentical": true
+        },
+        {
+          "skill": 0.85,
+          "wholeResultIdentical": true
+        }
+      ]
+    },
+    {
+      "id": "clientela_fiel",
+      "maxLevel": 20,
+      "traces": [
+        {
+          "skill": 0.3,
+          "wholeResultIdentical": true
+        },
+        {
+          "skill": 0.85,
+          "wholeResultIdentical": true
+        }
+      ]
+    },
+    {
+      "id": "imperio_logistica",
+      "maxLevel": 20,
+      "traces": [
+        {
+          "skill": 0.3,
+          "wholeResultIdentical": true
+        },
+        {
+          "skill": 0.85,
+          "wholeResultIdentical": true
+        }
+      ]
+    }
+  ],
+  "capacity": [
+    {
+      "level": 0,
+      "authoredOverride": true,
+      "derivedCap": 3,
+      "waiting": 3
+    },
+    {
+      "level": 2,
+      "authoredOverride": true,
+      "derivedCap": 5,
+      "waiting": 3
+    },
+    {
+      "level": 2,
+      "authoredOverride": false,
+      "derivedCap": 5,
+      "waiting": 5
+    }
+  ],
+  "boughtAtStarter": [
+    {
+      "id": "grill_size",
+      "accepted": true,
+      "debited": 180
+    },
+    {
+      "id": "grill_heat",
+      "accepted": true,
+      "debited": 220
+    },
+    {
+      "id": "grill_stability",
+      "accepted": true,
+      "debited": 260
+    },
+    {
+      "id": "grill_speed",
+      "accepted": true,
+      "debited": 300
+    },
+    {
+      "id": "charcoal_duration",
+      "accepted": true,
+      "debited": 150
+    },
+    {
+      "id": "charcoal_quality",
+      "accepted": true,
+      "debited": 340
+    },
+    {
+      "id": "charcoal_auto",
+      "accepted": true,
+      "debited": 1200
+    },
+    {
+      "id": "knife",
+      "accepted": true,
+      "debited": 140
+    },
+    {
+      "id": "board",
+      "accepted": true,
+      "debited": 200
+    },
+    {
+      "id": "counter",
+      "accepted": true,
+      "debited": 420
+    },
+    {
+      "id": "plates",
+      "accepted": true,
+      "debited": 160
+    },
+    {
+      "id": "tray",
+      "accepted": true,
+      "debited": 280
+    },
+    {
+      "id": "patience_charm",
+      "accepted": true,
+      "debited": 520
+    },
+    {
+      "id": "tables",
+      "accepted": true,
+      "debited": 600
+    },
+    {
+      "id": "decor",
+      "accepted": true,
+      "debited": 480
+    },
+    {
+      "id": "lighting",
+      "accepted": true,
+      "debited": 700
+    },
+    {
+      "id": "capacity",
+      "accepted": true,
+      "debited": 900
+    },
+    {
+      "id": "sign",
+      "accepted": true,
+      "debited": 1100
+    },
+    {
+      "id": "music",
+      "accepted": true,
+      "debited": 640
+    },
+    {
+      "id": "garcom",
+      "accepted": true,
+      "debited": 2500
+    },
+    {
+      "id": "auxiliar",
+      "accepted": true,
+      "debited": 4200
+    },
+    {
+      "id": "churrasqueiro",
+      "accepted": true,
+      "debited": 8000
+    },
+    {
+      "id": "caixa",
+      "accepted": true,
+      "debited": 12000
+    },
+    {
+      "id": "gerente",
+      "accepted": true,
+      "debited": 25000
+    },
+    {
+      "id": "brasa_mastery",
+      "accepted": true,
+      "debited": 2000
+    },
+    {
+      "id": "clientela_fiel",
+      "accepted": true,
+      "debited": 2500
+    },
+    {
+      "id": "imperio_logistica",
+      "accepted": true,
+      "debited": 3000
+    }
+  ],
+  "offline": [
+    {
+      "level": 0,
+      "payout": {
+        "minutes": 60,
+        "coins": 5760,
+        "xp": 300,
+        "capped": false
+      }
+    },
+    {
+      "level": 4,
+      "payout": {
+        "minutes": 60,
+        "coins": 9907,
+        "xp": 516,
+        "capped": false
+      }
+    }
+  ],
+  "noOpMaxSpend": 5866480
+}

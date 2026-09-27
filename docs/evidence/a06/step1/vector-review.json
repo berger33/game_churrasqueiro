@@ -1,0 +1,80 @@
+{
+  "oldCounts": {
+    "cooking": 48,
+    "scoring": 32,
+    "economy": 6,
+    "turns": 28
+  },
+  "newCounts": {
+    "cooking": 48,
+    "scoring": 32,
+    "economy": 6,
+    "turns": 35
+  },
+  "oldSectionsUnchanged": {
+    "cooking": true,
+    "scoring": true,
+    "economy": true,
+    "dataVersions": true
+  },
+  "legacyTurnsUnchanged": true,
+  "tutorialByteIdentical": true,
+  "added": [
+    {
+      "id": "turn.a06_upgrades_control",
+      "upgrades": {},
+      "coins": 3849,
+      "peakOrders": 3
+    },
+    {
+      "id": "turn.a06_upgrades_capacity",
+      "upgrades": {
+        "capacity": 2
+      },
+      "coins": 4601,
+      "peakOrders": 5
+    },
+    {
+      "id": "turn.a06_upgrades_tables",
+      "upgrades": {
+        "tables": 1
+      },
+      "coins": 4624,
+      "peakOrders": 4
+    },
+    {
+      "id": "turn.a06_upgrades_combined",
+      "upgrades": {
+        "capacity": 2,
+        "tables": 1
+      },
+      "coins": 5772,
+      "peakOrders": 6
+    },
+    {
+      "id": "turn.a06_upgrades_mastery",
+      "upgrades": {
+        "brasa_mastery": 20
+      },
+      "coins": 4111,
+      "peakOrders": 3
+    },
+    {
+      "id": "turn.a06_upgrades_loyalty",
+      "upgrades": {
+        "clientela_fiel": 20
+      },
+      "coins": 3875,
+      "peakOrders": 3
+    },
+    {
+      "id": "turn.a06_upgrades_max_queue",
+      "upgrades": {
+        "capacity": 5,
+        "tables": 6
+      },
+      "coins": 8058,
+      "peakOrders": 15
+    }
+  ]
+}

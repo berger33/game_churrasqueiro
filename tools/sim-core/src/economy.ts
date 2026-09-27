@@ -1,3 +1,7 @@
+import { newOfflineState, offlineSnapshot, offlineCredit, type OfflineState } from './offline.ts';
+export { beginOfflineAbsence, returnFromOffline, claimOffline, offlineView, restoreOfflineState } from './offline.ts';
+import { quoteUpgrade, upgradePrice, upgradeLevel, type UpgradeBuyer } from './upgrades.ts';
+import { newVipState, applyVipProgress, type VipState } from './vip.ts';
 import { clamp, levelForXp, upgradeCost, xpForLevel } from './data.ts';
 import type { ChurrasqueiraDef, ChurrasqueiraEvolution, GameDatabase } from './types.ts';
 import type { TurnResult } from './turn.ts';
@@ -6,6 +10,7 @@ import type { TurnResult } from './turn.ts';
 export const STARTER_CHURRASQUEIRA_ID = 'lata_valente';
 
 export interface PlayerState {
+  offline: OfflineState;
   coins: number;
   embers: number;
   xp: number;
@@ -18,10 +23,12 @@ export interface PlayerState {
   churrasqueiraLevels: Record<string, number>;
   counters: Record<string, number>;
   lastSeenUnixSec: number;
+  vip: VipState;
 }
 
 export function newPlayerState(): PlayerState {
   return {
+    offline: newOfflineState(0),
     coins: 0,
     embers: 0,
     xp: 0,
@@ -31,6 +38,7 @@ export function newPlayerState(): PlayerState {
     churrasqueiraId: STARTER_CHURRASQUEIRA_ID,
     churrasqueiraLevels: { [STARTER_CHURRASQUEIRA_ID]: 1 },
     counters: { restaurantsUnlocked: 1 },
+    vip: newVipState(),
     lastSeenUnixSec: 0
   };
 }
@@ -65,13 +73,31 @@ export function applyTurnResult(db: GameDatabase, p: PlayerState, r: TurnResult)
   addCounter(p, 'burnedFood', r.counters.burnedFood);
   addCounter(p, 'customersServed', r.counters.customersServed);
   addCounter(p, 'ordersCompleted', r.counters.ordersCompleted);
+  addCounter(p, 'vipServed', r.counters.vipServed);
+  const vipReward = applyVipProgress(db,p.vip,r.counters.vipServed);
+  for (const currency of ['coins','embers'] as const) if (vipReward[currency]) {
+    p[currency] += vipReward[currency];
+    ledger.push({currency, amount:vipReward[currency], source:'vip_achievement',balance:p[currency]});
+    if(currency==='coins') {addCounter(p,'coinsEarnedTotal',vipReward.coins);addCounter(p,'coinsEarnedSession',vipReward.coins);}
+  }
   addCounter(p, 'bestCombo', Math.max(p.counters['bestCombo'] ?? 0, r.counters.bestCombo));
   if (r.counters.flawless && r.counters.customersLost === 0) addCounter(p, 'flawlessTurns', 1);
 
+  const {levelsGained,levelUpCoins,levelUpEmbers,ledger:xpLedger}=grantExperience(db,p,r.xp);
+  ledger.push(...xpLedger);
+
+  return { coinsEarned: r.coins, xpEarned: r.xp, levelsGained, levelUpRewardCoins: levelUpCoins, levelUpRewardEmbers: levelUpEmbers, ledger };
+}
+
+export interface ExperienceWallet { coins:number; embers:number; xp:number; level:number; counters:Record<string,number> }
+/** Shared level progression/rewards, with no fabricated turn/order counters. */
+export function grantExperience(db:GameDatabase,p:ExperienceWallet,amount:number){
+  if(!Number.isFinite(amount)||amount<0)throw new Error('invalid experience');
+  const econ=db.economy,ledger:LedgerEntry[]=[];
   let levelsGained = 0;
   let levelUpCoins = 0;
   let levelUpEmbers = 0;
-  let xp = p.xp + r.xp;
+  let xp = p.xp + amount;
   const { a, exponent, minPerLevel } = econ.xp.formula;
   let level = p.level;
   while (level < econ.xp.maxLevel) {
@@ -88,14 +114,14 @@ export function applyTurnResult(db: GameDatabase, p: PlayerState, r: TurnResult)
   if (levelUpCoins > 0) {
     p.coins += levelUpCoins;
     ledger.push({ currency: 'coins', amount: levelUpCoins, source: 'level_up', balance: p.coins });
-    addCounter(p, 'coinsEarnedTotal', levelUpCoins);
+    p.counters['coinsEarnedTotal']=(p.counters['coinsEarnedTotal']??0)+levelUpCoins;
   }
   if (levelUpEmbers > 0) {
     p.embers += levelUpEmbers;
     ledger.push({ currency: 'embers', amount: levelUpEmbers, source: 'level_up', balance: p.embers });
   }
 
-  return { coinsEarned: r.coins, xpEarned: r.xp, levelsGained, levelUpRewardCoins: levelUpCoins, levelUpRewardEmbers: levelUpEmbers, ledger };
+  return {levelsGained,levelUpCoins,levelUpEmbers,ledger};
 }
 
 /** Coins granted on reaching `level`. Polynomial on purpose — see ECONOMY.md. */
@@ -113,37 +139,25 @@ export function addFoodCounter(p: PlayerState, ingredientId: string, kind: 'serv
 }
 
 export function costFor(db: GameDatabase, trackId: string, currentLevel: number): number {
-  const t = db.upgradeById.get(trackId);
-  if (!t) return Infinity;
-  if (currentLevel >= t.maxLevel) return Infinity;
-  return upgradeCost(t.baseCost, t.growth, currentLevel + 1);
+  return upgradePrice(db, trackId, currentLevel);
 }
 
-export function canAfford(p: PlayerState, db: GameDatabase, trackId: string): boolean {
-  const t = db.upgradeById.get(trackId);
-  if (!t) return false;
-  const cost = costFor(db, trackId, p.upgradeLevels[trackId] ?? 0);
-  return (t.currency === 'coins' ? p.coins : p.embers) >= cost;
+export function canAfford(p: UpgradeBuyer, db: GameDatabase, trackId: string): boolean {
+  return quoteUpgrade(db, p, trackId).canBuy;
 }
 
-export function buyUpgrade(db: GameDatabase, p: PlayerState, trackId: string): LedgerEntry | null {
-  const t = db.upgradeById.get(trackId);
-  if (!t) return null;
-  const level = p.upgradeLevels[trackId] ?? 0;
-  if (level >= t.maxLevel) return null;
-  const cost = upgradeCost(t.baseCost, t.growth, level + 1);
-  if (t.currency === 'coins') {
-    if (p.coins < cost) return null;
-    p.coins -= cost;
-  } else {
-    if (p.embers < cost) return null;
-    p.embers -= cost;
-  }
-  p.upgradeLevels[trackId] = level + 1;
-  addCounter(p, 'upgradesPurchased', 1);
-  addCounter(p, t.currency === 'coins' ? 'coinsSpentTotal' : 'embersSpentTotal', cost);
-  addCounter(p, 'coinsSpentSession', t.currency === 'coins' ? cost : 0);
-  return { currency: t.currency, amount: -cost, source: `upgrade:${trackId}`, balance: t.currency === 'coins' ? p.coins : p.embers };
+export function buyUpgrade(db: GameDatabase, p: UpgradeBuyer, trackId: string): LedgerEntry | null {
+  const q = quoteUpgrade(db, p, trackId);
+  if (!q.canBuy) return null;
+  const cost = q.cost;
+  if (q.currency === 'coins') p.coins -= cost;
+  else p.embers -= cost;
+  p.upgradeLevels[trackId] = q.recordedLevel + 1;
+  const add = (key: string, value: number): void => { p.counters[key] = (p.counters[key] ?? 0) + value; };
+  add('upgradesPurchased', 1);
+  add(q.currency === 'coins' ? 'coinsSpentTotal' : 'embersSpentTotal', cost);
+  add('coinsSpentSession', q.currency === 'coins' ? cost : 0);
+  return { currency: q.currency, amount: -cost, source: `upgrade:${trackId}`, balance: q.currency === 'coins' ? p.coins : p.embers };
 }
 
 export function canUnlockRestaurant(db: GameDatabase, p: PlayerState, index: number): boolean {
@@ -278,26 +292,9 @@ export interface OfflineEarnings {
  * and caps at `idle.maxOfflineHours` (spec §18).
  */
 export function computeOfflineEarnings(db: GameDatabase, p: PlayerState, elapsedSec: number, nowSec: number): OfflineEarnings {
-  const idle = db.economy.idle;
-  if (p.restaurantIndex <= 0 || elapsedSec <= 0) return { minutes: 0, coins: 0, xp: 0, capped: false };
-
-  const maxSec = idle.maxOfflineHours * 3600 * (p.upgradeLevels['caixa'] ? 1 : 1);
-  const capped = elapsedSec > maxSec;
-  const effective = Math.min(elapsedSec, maxSec);
-  const minutes = effective / 60;
-  const ramp = clamp(minutes / idle.rampInMinutes, 0, 1);
-  const factor = 0.5 + 0.5 * ramp; // never below 50% of nominal rate
-  const perMinCoins = idle.coinsPerMinuteByRestaurant[p.restaurantIndex] ?? 0;
-  const perMinXp = idle.xpPerMinuteByRestaurant[p.restaurantIndex] ?? 0;
-  const gerenteMult = 1 + (p.upgradeLevels['gerente'] ?? 0) * (db.upgradeById.get('gerente')?.effect.delta ?? 0.18);
-
   void nowSec;
-  return {
-    minutes: Math.round(minutes),
-    coins: Math.round(minutes * perMinCoins * factor * gerenteMult),
-    xp: Math.round(minutes * perMinXp * factor * gerenteMult),
-    capped
-  };
+  const snapshot=offlineSnapshot(db,p),credit=offlineCredit(snapshot,elapsedSec/60);
+  return {minutes:Math.round(credit.minutes),coins:Math.round(credit.coins),xp:Math.round(credit.xp),capped:snapshot.eligible&&elapsedSec/60>snapshot.maxMinutes};
 }
 
 // ── Session economy accounting ───────────────────────────────────────────────

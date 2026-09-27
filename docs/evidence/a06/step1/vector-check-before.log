@@ -1,0 +1,5 @@
+
+> churrasco-mestre-da-brasa@0.1.0 check-vectors
+> node --experimental-strip-types tools/studio/gen-vectors.ts --check
+
+[golden] OK — 114 vectors + 44 FTUE vectors unchanged

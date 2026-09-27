@@ -1,0 +1,35 @@
+Counterfactual: reintroduce pre-A06 omitted brasa_mastery consumer only; higher-value picanha fixture avoids rounding masking the effect. Restored after probe.
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/upgrades.test.ts (75 tests | 3 failed | 71 skipped) 33ms
+   × A-06.1: benefits must reach gameplay, not only a derived stat > brasa_mastery 1 increases real served-plate coins 26ms
+     → expected 133 to be greater than 133
+   × A-06.1: benefits must reach gameplay, not only a derived stat > brasa_mastery 10 increases real served-plate coins 3ms
+     → expected 133 to be greater than 133
+   × A-06.1: benefits must reach gameplay, not only a derived stat > brasa_mastery 20 increases real served-plate coins 3ms
+     → expected 133 to be greater than 133
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 1 passed | 71 skipped (75)
+   Start at  04:38:20
+   Duration  517ms (transform 260ms, setup 0ms, collect 289ms, tests 33ms, environment 0ms, prepare 64ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: benefits must reach gameplay, not only a derived stat > brasa_mastery 1 increases real served-plate coins
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: benefits must reach gameplay, not only a derived stat > brasa_mastery 10 increases real served-plate coins
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: benefits must reach gameplay, not only a derived stat > brasa_mastery 20 increases real served-plate coins
+AssertionError: expected 133 to be greater than 133
+ ❯ tools/studio/test/upgrades.test.ts:74:21
+     72|     };
+     73|     const a=serve({}), b=serve({brasa_mastery:level});
+     74|     expect(b.coins).toBeGreaterThan(a.coins); expect(b.scored.quality)…
+       |                     ^
+     75|   });
+     76|   it('normalizes effective levels without mutating the historical map'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+
+EXIT=1

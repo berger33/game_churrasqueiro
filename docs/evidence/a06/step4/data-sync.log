@@ -1,0 +1,5 @@
+
+> churrasco-mestre-da-brasa@0.1.0 sync-data
+> node tools/studio/sync-data.mjs
+
+[sync] wrote 22 tables to Assets/Data

@@ -1,0 +1,78 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/vip.test.ts (29 tests | 9 failed) 612ms
+   × VIP completed service, economy and analytics > pays normal damped VIP tips, counts a whole order once and credits achievement once 10ms
+     → expected [ 'unknown event "vip_arrival"' ] to deeply equal []
+   ✓ VIP completed service, economy and analytics > real progression has natural VIP without rewarded and obeys a persisted daily cap 550ms
+   × VIP data validation > rejects broken chance configuration 2ms
+     → expected '' to match /VIP/
+   × VIP data validation > rejects broken cap configuration 1ms
+     → expected '' to match /VIP/
+   × VIP data validation > rejects broken duration configuration 1ms
+     → expected '' to match /VIP/
+   × VIP data validation > rejects broken day configuration 1ms
+     → expected '' to match /VIP/
+   × VIP data validation > rejects broken bonus configuration 1ms
+     → expected '' to match /VIP/
+   × VIP data validation > rejects broken cooldown configuration 1ms
+     → expected '' to match /VIP/
+   × VIP data validation > rejects broken adCap configuration 1ms
+     → expected '' to match /VIP/
+   × VIP data validation > rejects broken ttl configuration 1ms
+     → expected '' to match /VIP/
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/vip.test.ts > VIP completed service, economy and analytics > pays normal damped VIP tips, counts a whole order once and credits achievement once
+AssertionError: expected [ 'unknown event "vip_arrival"' ] to deeply equal []
+
+- Expected
++ Received
+
+- Array []
++ Array [
++   "unknown event \"vip_arrival\"",
++ ]
+
+ ❯ tools/studio/test/vip.test.ts:148:70
+    146|     const reward=applyVipProgress(db,save.player.vip,24);expect(reward…
+    147|     expect(events.map(e=>e.name)).toEqual(['vip_arrival','vip_served']…
+    148|     for(const event of events)expect(checkAnalyticsEvent(tax,event)).t…
+       |                                                                      ^
+    149|   });
+    150|   it('lost VIP consumes the visit but does not grant served achievemen…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  tools/studio/test/vip.test.ts > VIP data validation > rejects broken chance configuration
+ FAIL  tools/studio/test/vip.test.ts > VIP data validation > rejects broken cap configuration
+ FAIL  tools/studio/test/vip.test.ts > VIP data validation > rejects broken duration configuration
+ FAIL  tools/studio/test/vip.test.ts > VIP data validation > rejects broken day configuration
+ FAIL  tools/studio/test/vip.test.ts > VIP data validation > rejects broken bonus configuration
+ FAIL  tools/studio/test/vip.test.ts > VIP data validation > rejects broken cooldown configuration
+ FAIL  tools/studio/test/vip.test.ts > VIP data validation > rejects broken adCap configuration
+ FAIL  tools/studio/test/vip.test.ts > VIP data validation > rejects broken ttl configuration
+AssertionError: expected '' to match /VIP/
+
+- Expected: 
+/VIP/
+
++ Received: 
+""
+
+ ❯ tools/studio/test/vip.test.ts:171:44
+    169|     const cfg=d.ads!.rewardedPlacements.find(p=>p.id==='call_vip')!;
+    170|     if(kind==='cooldown')cfg.cooldownMin=-1;if(kind==='adCap')cfg.maxP…
+    171|     expect(validateDatabase(d).join('\n')).toMatch(/VIP/);
+       |                                            ^
+    172|   });
+    173| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ Test Files  1 failed (1)
+      Tests  9 failed | 20 passed (29)
+   Start at  03:21:24
+   Duration  1.04s (transform 188ms, setup 0ms, collect 234ms, tests 612ms, environment 0ms, prepare 53ms)
+

@@ -16,6 +16,10 @@ let cached: GameDatabase | null = null;
 export function loadDatabase(): GameDatabase {
   if (cached) return cached;
   const raw: RawDataBundle = {
+    employees: readJson('employees.json') as RawDataBundle['employees'],
+    events: readJson('events.json') as RawDataBundle['events'],
+    ads: readJson('ads.json') as RawDataBundle['ads'],
+    achievements: readJson('achievements.json') as RawDataBundle['achievements'],
     ingredients: readJson('ingredients.json') as RawDataBundle['ingredients'],
     grill: readJson('grill.json') as RawDataBundle['grill'],
     customers: readJson('customers.json') as RawDataBundle['customers'],

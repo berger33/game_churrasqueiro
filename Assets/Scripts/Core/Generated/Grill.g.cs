@@ -19,18 +19,26 @@ namespace Churrasco.Core.Generated
         public GrillInteraction Interaction { get; set; }
         public GrillScoring Scoring { get; set; }
         public GrillSlots Slots { get; set; }
+        public GrillStock Stock { get; set; }
         public int Version { get; set; }
         public List<GrillZones> Zones { get; set; }
     }
 
     public sealed class GrillZones
     {
+        public string AuxiliaryOf { get; set; }
         public string Color { get; set; }
         public int Embers { get; set; }
         public double HeatMultiplier { get; set; }
         public string Id { get; set; }
         public int Index { get; set; }
         public string NameKey { get; set; }
+    }
+
+    public sealed class GrillStock
+    {
+        public int BasePerIngredient { get; set; }
+        public double RefillTimeSec { get; set; }
     }
 
     public sealed class GrillSlots
@@ -56,6 +64,7 @@ namespace Churrasco.Core.Generated
     {
         public int DragThresholdPx { get; set; }
         public double FlipCooldownSec { get; set; }
+        public double FlipPromptAtSideDoneness { get; set; }
         public GrillInteractionHaptics Haptics { get; set; }
         public double LongPressSecToServe { get; set; }
         public bool ServeDragToTray { get; set; }

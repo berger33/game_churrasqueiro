@@ -1,0 +1,314 @@
+
+> churrasco-mestre-da-brasa@0.1.0 gates
+> node tools/studio/run-gates.mjs
+
+── CHURRASCO! CI gates ─────────────────────────────────────────
+15 gates · same list GitHub Actions runs on every push
+
+── typecheck  ─────────────────────────────────────────
+   strict tsc — the gate that caught the dead ideal-zone mechanic
+
+> churrasco-mestre-da-brasa@0.1.0 typecheck
+> tsc --noEmit
+
+PASS  typecheck
+
+── validate  ──────────────────────────────────────────
+   referential + semantic integrity of every data table
+
+> churrasco-mestre-da-brasa@0.1.0 validate
+> node --experimental-strip-types tools/studio/validate-data.ts
+
+── CHURRASCO! data validation ────────────────────────────────
+tables checked : 22
+ingredients    : 16
+customers      : 11
+restaurants    : 7
+upgrade tracks : 27
+achievements   : 58
+collection     : 37 entries in 10 categories
+analytics      : 48 events
+tutorial       : 6 steps (six_step_v1), target < 60s
+authored levels: 60
+
+OK — all data tables valid and internally consistent
+PASS  validate
+
+── check-schema  ──────────────────────────────────────
+   every table against its JSON Schema, plus a negative pass
+
+> churrasco-mestre-da-brasa@0.1.0 check-schema
+> node tools/studio/check-schemas.mjs
+
+[check-schema] OK — 22/22 tables valid against their schema, and every contract rejects a broken copy of itself
+PASS  check-schema
+
+── verify-schemas  ────────────────────────────────────
+   schemas in step with shared/data
+
+> churrasco-mestre-da-brasa@0.1.0 verify-schemas
+> node tools/studio/gen-schemas.mjs --check
+
+[schema] OK — 22 schemas in step with shared/data
+PASS  verify-schemas
+
+── check-l10n  ────────────────────────────────────────
+   no missing keys, no literal pt-BR in data (§56)
+
+> churrasco-mestre-da-brasa@0.1.0 check-l10n
+> node --experimental-strip-types tools/studio/check-l10n.ts
+
+  en-US    coverage  12.1%  (63/521 keys, falls back to pt-BR)
+  es-419   coverage  12.1%  (63/521 keys, falls back to pt-BR)
+── CHURRASCO! localisation check ─────────────────────────────
+data tables scanned : 22
+keys referenced     : 380
+pt-BR                 : 521 keys (authored locale, must be complete)
+
+OK — every referenced key is translated and no literal text leaked into data
+PASS  check-l10n
+
+── check-csharp-types  ────────────────────────────────
+   generated C# types in step with the tables
+
+> churrasco-mestre-da-brasa@0.1.0 check-csharp-types
+> node tools/studio/gen-csharp-types.mjs --check
+
+[csharp] OK — 13 files, 84 classes in step with shared/data
+PASS  check-csharp-types
+
+── verify-data-sync  ──────────────────────────────────
+   Assets/Data matches shared/data
+
+> churrasco-mestre-da-brasa@0.1.0 verify-data-sync
+> node tools/studio/sync-data.mjs --check
+
+[sync] OK — Assets/Data matches shared/data (22 tables)
+PASS  verify-data-sync
+
+── test  ──────────────────────────────────────────────
+   full vitest suite
+
+> churrasco-mestre-da-brasa@0.1.0 test
+> vitest run
+
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ✓ tools/studio/test/turn.test.ts (29 tests) 273ms
+ ✓ tools/studio/test/tutorial.test.ts (22 tests) 123ms
+ ✓ tools/studio/test/cooking.test.ts (23 tests) 74ms
+ ✓ tools/studio/test/economy.test.ts (27 tests) 19ms
+ ✓ tools/studio/test/monetization.test.ts (27 tests) 12ms
+ ✓ tools/studio/test/save.test.ts (28 tests) 110ms
+ ✓ tools/studio/test/art-registry.test.ts (52 tests) 7665ms
+ ✓ tools/studio/test/golden.test.ts (7 tests) 356ms
+ ✓ tools/studio/test/churrasqueira.test.ts (25 tests) 1472ms
+   ✓ skill policy plays every churrasqueira > lata_valente: full turns complete, customers are served, skill still separates quality 484ms
+ ✓ tools/studio/test/data.test.ts (12 tests) 25ms
+ ✓ tools/studio/test/prep.test.ts (16 tests) 21ms
+ ✓ tools/studio/test/policy.test.ts (5 tests) 619ms
+ ✓ tools/studio/test/ingredient-unlock.test.ts (50 tests) 192ms
+ ✓ tools/studio/test/slow-cuts.test.ts (19 tests) 163ms
+ ✓ tools/studio/test/l10n.test.ts (12 tests) 11ms
+ ✓ tools/studio/test/cooking-ui.test.ts (8 tests) 7ms
+ ✓ tools/studio/test/unlock-wiring.test.ts (2 tests) 450ms
+   ✓ A-02: real simulation callers pass player progression, not campaign indices > progression uses pre-payout XP and keeps every order inside the same eligible catalog 375ms
+ ✓ tools/studio/test/sim-grill.test.ts (2 tests) 160ms
+ ✓ tools/studio/test/gates.test.ts (1 test) 4ms
+ ✓ tools/studio/test/prep-ui.test.ts (2 tests) 8ms
+
+ Test Files  20 passed (20)
+      Tests  369 passed (369)
+   Start at  02:45:29
+   Duration  15.96s (transform 367ms, setup 0ms, collect 732ms, tests 11.76s, environment 3ms, prepare 1.01s)
+
+PASS  test
+
+── sim  ───────────────────────────────────────────────
+   short-horizon economy guardrails
+
+> churrasco-mestre-da-brasa@0.1.0 sim
+> node --experimental-strip-types tools/studio/run-sim.ts
+
+── CHURRASCO! economy simulation ─────────────────────────────
+turns simulated: 60
+final level: 10   restaurant: 1   grill: parrilla_chef_cisma evo 2   coins left: 1287
+coins earned: 93647   spent: 92360   spend ratio: 0.986
+perfect rate: 33.0%   burned rate: 0.0%   lost customers: 0.1%
+avg turn length: 105.4s
+
+coins per turn by restaurant tier:
+  tier 0: avg 600 (min 259, max 1102) over 24 turns
+  tier 1: avg 1515 (min 514, max 3324) over 36 turns
+
+faucets:
+  turn                      55707
+  level_first_clear         20627
+  level_reward              13238
+  level_up                   4075
+sinks:
+  churrasqueira_evolve:lata_valente       1000
+  upgrade:charcoal_duration       8810
+  upgrade:grill_size         8210
+  upgrade:plates             3480
+  upgrade:knife              2910
+  upgrade:grill_heat         9470
+  upgrade:board              1020
+  churrasqueira_unlock:ze_da_esquina        900
+  upgrade:grill_stability       4570
+  upgrade:charcoal_quality       9570
+  churrasqueira_evolve:ze_da_esquina       3200
+  upgrade:patience_charm       5450
+  upgrade:capacity           5190
+  upgrade:tray               4440
+  upgrade:tables             6460
+  upgrade:grill_speed        1650
+  upgrade:counter            3990
+  upgrade:decor              2600
+  upgrade:sign               1100
+  restaurant_unlock             0
+  churrasqueira_unlock:parrilla_chef_cisma       3200
+  churrasqueira_evolve:parrilla_chef_cisma       3800
+  upgrade:music               640
+  upgrade:lighting            700
+
+turn at which each establishment was unlocked:
+  espetinho_rua          turn 45
+
+turn at which each churrasqueira was unlocked:
+  ze_da_esquina          turn 11
+  parrilla_chef_cisma    turn 46
+
+target checks:
+  PASS  turnsPerSession                    assumed 4 turns/session, target 3-5
+  PASS  firstUpgradeAffordableAfterTurns   cheapest upgrade reachable after turn 1, target 1-2
+  PASS  unlock:espetinho_rua               unlocked at turn 45, target 28-45
+  PASS  unlock:trailer                     not reached in this run — needs a run of at least 1500 turns (npm run sim:long)
+  PASS  unlock:churrascaria_bairro         not reached in this run — needs a run of at least 1500 turns (npm run sim:long)
+  PASS  unlock:churrascaria_premium        not reached in this run — needs a run of at least 1500 turns (npm run sim:long)
+  PASS  unlock:festival                    not reached in this run — needs a run of at least 1500 turns (npm run sim:long)
+  PASS  unlock:rede_nacional               not reached in this run — needs a run of at least 1500 turns (npm run sim:long)
+  PASS  income:level5                      9478 coins/day at level 5, target 9000-14000
+  PASS  income:level15                     level not reached in this run — needs a run of at least 1500 turns (npm run sim:long)
+  PASS  income:level30                     level not reached in this run — needs a run of at least 1500 turns (npm run sim:long)
+  PASS  income:level50                     level not reached in this run — needs a run of at least 1500 turns (npm run sim:long)
+  PASS  coinSpendRatio                     short-run spend ratio 0.986 (greedy spender) — needs a run of at least 1500 turns (npm run sim:long)
+  PASS  coinSpike                          max/median turn income = 3.90 (max 3324, median 852), cap 6
+  PASS  perfectRateAtSkillMid              perfect rate at skill 0.55 = 46.0%, target 40-62%
+  PASS  grill:ze_da_esquina                unlocked at turn 11, target 4-12
+  PASS  grill:parrilla_chef_cisma          unlocked at turn 46, target 32-60
+  PASS  grill:fornalha_dragao_manso        not reached in this run — needs a run of at least 1500 turns (npm run sim:long)
+
+skill curve (authored content, fixed skill; player level progresses from XP, no purchases):
+  skill  perfect   good   burned   lost   coins/turn
+  0.30    25.0%   75.0%     0.0%    0.9%         430
+  0.45    40.1%   59.6%     0.3%    0.4%         546
+  0.55    46.0%   54.0%     0.0%    0.2%         571
+  0.70    65.7%   34.3%     0.0%    0.2%         659
+  0.85    84.9%   15.1%     0.0%    0.0%         709
+  1.00    97.9%    1.9%     0.1%    0.2%         751
+
+all 18 balance targets met
+PASS  sim
+
+── check-vectors  ─────────────────────────────────────
+   golden vectors still match the rules
+
+> churrasco-mestre-da-brasa@0.1.0 check-vectors
+> node --experimental-strip-types tools/studio/gen-vectors.ts --check
+
+[golden] OK — 106 vectors + 44 FTUE vectors unchanged
+PASS  check-vectors
+
+── check-art-registry  ────────────────────────────────
+   masters, registry, batches, manifest and approved-only runtime agree; preserve 244 approved IDs
+
+> churrasco-mestre-da-brasa@0.1.0 check-art-registry
+> node --experimental-strip-types tools/art/check-art-registry.ts
+
+[art-registry] OK — 245 masters/rows/manifest entries; 244 approved; 244 runtime sprites; 244 baseline IDs preserved
+PASS  check-art-registry
+
+── check-art  ─────────────────────────────────────────
+   16 ingredients × 8 doneness levels all paint
+
+> churrasco-mestre-da-brasa@0.1.0 check-art
+> node prototype/art-coverage.mjs
+
+[art-coverage] OK — 16 ingredients × 8 doneness levels + icons = 144 draws, all painted
+PASS  check-art
+
+── check-render  ──────────────────────────────────────
+   real prototype bundle: the FTUE played by following the hand, skip/abandon, a full turn
+
+> churrasco-mestre-da-brasa@0.1.0 check-render
+> npx esbuild prototype/src/main.ts --bundle --format=esm --target=es2022 --outfile=prototype/dist/bundle.js --log-level=warning && node prototype/render-smoke.mjs
+
+[render-smoke] OK — 28,830,860 canvas ops, no exceptions
+[render-smoke] FTUE played by following the hand: tutorial_start → step:place → step:flip → step:serve → step:perfect → tutorial_complete → upgrade_purchase → step:upgrade (misses 0)
+[render-smoke] second install, backgrounded then skipped: tutorial_start → tutorial_abandon:place → tutorial_skip:place
+[render-smoke] daily calendar: strip opens it, RESGATAR pays day 1 once (+250), ✕ closes it
+[render-smoke] top ops: quadraticCurveTo=12928064 beginPath=3396918 fill=2166526 arcTo=1593172 moveTo=1382253 arc=1261577 stroke=1120890 fillRect=840322
+[render-smoke] gradient calls: linear=531220 radial=514858
+[render-smoke] text drawn: fillText=112026 strokeText=25488
+[render-smoke] frames rendered, render loop never stalled
+[render-smoke] audio: osc=81 noise=19 filter=22 gain=106 started=100
+PASS  check-render
+
+── check-shots  ───────────────────────────────────────
+   real PNGs of the first run (FTUE steps 1-6) and the relaunch path — sim catch-up, not 10 800 draws
+
+> churrasco-mestre-da-brasa@0.1.0 check-shots
+> node prototype/shoot.mjs
+
+art: 244 sprites decoded
+[shoot] 01-splash.png  228.4 kB
+[shoot] 02-title.png  543.8 kB
+[shoot] 03-ftue-place.png  383.0 kB
+[shoot] 04-ftue-wait.png  345.2 kB
+[shoot] 05-ftue-flip.png  339.4 kB
+[shoot] 06-ftue-serve.png  353.1 kB
+[shoot] 07-ftue-perfect.png  464.2 kB
+[shoot] 08-ftue-result.png  105.0 kB
+[shoot] 09-ftue-upgrade.png  148.0 kB
+[shoot] FTUE tutorial_start → step:place → step:flip → step:serve → step:perfect → tutorial_complete → upgrade_purchase → step:upgrade
+[shoot] FTUE first PERFEITO at 16.1s, complete at 32.9s, upgrade at 38.3s, misses 0, coins left 136
+art: 244 sprites decoded
+[shoot] 10-home.png  183.9 kB
+[shoot] 11-turn-empty.png  458.0 kB
+[shoot] 12-grill-cooking.png  454.6 kB
+[shoot] 13-result.png  94.8 kB
+art: 244 sprites decoded
+[shoot] 14-advanced-bench.png  504.1 kB
+[shoot] 15-advanced-flip-hint.png  501.2 kB
+[shoot] 16-costela-perfect-window.png  502.3 kB
+[shoot] 17-cupim-perfect-window.png  501.7 kB
+[shoot] A-01: page 2 → costela/cupim → wait for cue → tap flips once → both perfect windows
+art: 244 sprites decoded
+art: 244 sprites decoded
+[shoot] 18-before-cheese-unlock.png  471.5 kB
+art: 244 sprites decoded
+[shoot] 19-cheese-unlocked.png  481.8 kB
+art: 244 sprites decoded
+[shoot] A-02: saved levels 1/5/6/7 → matching bench/orders → no phantom locked slot → cheese draggable at 6/7
+art: 244 sprites decoded
+[shoot] 20-before-prep-unlock.png  486.8 kB
+art: 244 sprites decoded
+[shoot] 21-prep-in-progress.png  510.4 kB
+[shoot] 22-prep-ready.png  503.0 kB
+[shoot] 23-prep-served.png  489.1 kB
+[shoot] A-03: actual order 10 (vinagrete) served prep, coins=319 xp=66
+art: 244 sprites decoded
+art: 244 sprites decoded
+[shoot] 24-prep-capacity-page-2.png  514.1 kB
+[shoot] A-03: unlock 11/12/13, tap/drag, invalid drops, cancellation, timing, real service, discard, 10 slots + paging
+[shoot] frames written to prototype/shots/
+[shoot] painted=204 skipped=2904 wall=8.5s
+PASS  check-shots
+
+── check-csharp  ──────────────────────────────────────
+   the C# core compiles as Unity would (netstandard2.1, C# 9) and replays the golden + FTUE vectors
+SKIP  check-csharp  (no `dotnet` on this machine — CI runs it)
+
+14 of 15 CI gates met here; skipped (missing toolchain, CI runs them): check-csharp

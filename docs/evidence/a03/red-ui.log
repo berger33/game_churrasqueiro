@@ -1,0 +1,45 @@
+
+> churrasco-mestre-da-brasa@0.1.0 check-shots
+> node prototype/shoot.mjs
+
+art: 244 sprites decoded
+[shoot] 01-splash.png  229.0 kB
+[shoot] 02-title.png  543.8 kB
+[shoot] 03-ftue-place.png  383.3 kB
+[shoot] 04-ftue-wait.png  344.3 kB
+[shoot] 05-ftue-flip.png  339.6 kB
+[shoot] 06-ftue-serve.png  351.8 kB
+[shoot] 07-ftue-perfect.png  462.5 kB
+[shoot] 08-ftue-result.png  105.7 kB
+[shoot] 09-ftue-upgrade.png  148.0 kB
+[shoot] FTUE tutorial_start → step:place → step:flip → step:serve → step:perfect → tutorial_complete → upgrade_purchase → step:upgrade
+[shoot] FTUE first PERFEITO at 16.1s, complete at 32.9s, upgrade at 38.3s, misses 0, coins left 136
+art: 244 sprites decoded
+[shoot] 10-home.png  184.1 kB
+[shoot] 11-turn-empty.png  458.6 kB
+[shoot] 12-grill-cooking.png  453.2 kB
+[shoot] 13-result.png  94.8 kB
+art: 244 sprites decoded
+[shoot] 14-advanced-bench.png  490.4 kB
+[shoot] 15-advanced-flip-hint.png  489.6 kB
+[shoot] 16-costela-perfect-window.png  490.3 kB
+[shoot] 17-cupim-perfect-window.png  490.5 kB
+[shoot] A-01: page 2 → costela/cupim → wait for cue → tap flips once → both perfect windows
+art: 244 sprites decoded
+art: 244 sprites decoded
+[shoot] 18-before-cheese-unlock.png  473.2 kB
+art: 244 sprites decoded
+[shoot] 19-cheese-unlocked.png  481.9 kB
+art: 244 sprites decoded
+[shoot] A-02: saved levels 1/5/6/7 → matching bench/orders → no phantom locked slot → cheese draggable at 6/7
+art: 244 sprites decoded
+art: 244 sprites decoded
+file:///home/user/game_churrasqueiro/prototype/shoot.mjs:232
+function assert(cond, msg) { if (!cond) throw new Error(`[shoot] ${msg}`); }
+                                              ^
+
+Error: [shoot] A-03 level 12: vinagrete must be reachable exactly at 12
+    at assert (file:///home/user/game_churrasqueiro/prototype/shoot.mjs:232:47)
+    at file:///home/user/game_churrasqueiro/prototype/shoot.mjs:514:3
+
+Node.js v22.22.3

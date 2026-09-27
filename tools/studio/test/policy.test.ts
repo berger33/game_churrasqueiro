@@ -29,7 +29,8 @@ import { Rng } from '../../sim-core/src/rng.ts';
 
 const { db } = loadAndValidate();
 const LEVELS = generateLevels([[0, 20], [1, 20], [2, 20], [3, 20], [4, 20], [5, 20]]).levels;
-const ZONE_COUNT = db.grill.zones.length;
+// The first 40 benchmark turns are restaurants 0/1, which still have three zones.
+const ZONE_COUNT = 3;
 
 const idealIndexOf = (ingredientId: string): number => {
   const ing = db.ingredientById.get(ingredientId);
@@ -52,6 +53,7 @@ function measureIdealZoneHits(skill: number, turns = 40): { placed: number; hits
       { playerLevel: 44, restaurantIndex: level.restaurantIndex, levelId: level.id, upgradeLevels: {}, seed: 2000 + i },
       2000 + i
     );
+    expect(sim.grill.zones).toHaveLength(ZONE_COUNT);
     const policy = new SkillPolicy(new Rng(2000 + i * 7919), { skill });
     const seen = new Set<number>();
     let guard = 0;

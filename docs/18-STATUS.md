@@ -1,27 +1,206 @@
 # 18 — Status Report
 
-**Snapshot:** 2026-09-27 · branch `arena/01a0e03e-game-churrasqueiro` · F1+F2 implementadas; A-01/A-02 funcionais validados, aceite econômico global pendente; merge do PR #14 autorizado para fechamento; confirmar integração no GitHub
+> **Fechamento econômico revalidado (2026-09-27):18/18, exit0.** Após autorização
+> explícita `late_income`, renda tardia ajustada no runtime, mantendo preços, histórico,
+> FTUE, offline e todas as metas.672 testes,53 capturas,157+44 vetores; C# SKIP.
+> A-06.5 **não foi iniciada**. Registro anterior abaixo é histórico; relatório vigente:
+> [evidence/a06/step4/reopened/README.md](evidence/a06/step4/reopened/README.md).
 
-**Fechamento da sessão:** o dono autorizou integrar PR #14 e limpar branches já
-integradas, preservando explicitamente os PRs/branches #7/#8. O recibo de merge/CI está
-no [PR #14](https://github.com/berger33/game_churrasqueiro/pull/14); confirmar MERGED e
-base em main antes da retomada. Os registros abaixo conservam o estado histórico de
-cada checkpoint (incluindo “sem merge” antes desta autorização).
-Prompt consolidado em **docs/24-PROMPT_PROXIMA_SESSAO.md**; próximo A-03.
-A autorização atual não se estende às mudanças da próxima sessão.
+**Snapshot:** 2026-09-27 · branch `arena/01a0e099-game-churrasqueiro` · A-03/A-04/A-05 e A-06.1–4 validados localmente; A-06 completo/economia global pendentes.
+
+**Base confirmada:** PR #14 MERGED, `HEAD` inicial e `origin/main` em `e50ce15`;
+CI do merge [36287025604](https://github.com/berger33/game_churrasqueiro/actions/runs/36287025604)
+verde. PRs #7/#8 preservados. Esta entrega A-03/A-04/A-05/A-06.1–4 ainda **sem push/PR/CI remoto/merge**.
+Registros de checkpoints antigos abaixo são históricos, inclusive “sem merge” do PR14.
+Handoff em **docs/24-PROMPT_PROXIMA_SESSAO.md**; A-06.4 concluído; próximo A-06.5 (revisão final das27).
 
 **Estado executivo:** 🟡 protótipo técnico sólido, com dados, regras de referência, FTUE,
 automação, arte e protótipo web avançados; ainda não é um jogo Unity publicável. Não existem
 `Packages/`, `ProjectSettings/`, cenas/prefabs Unity, APK ou AAB. A auditoria técnica
 `docs/23-AUDITORIA_TECNICA.md` registra 47 achados originais (9 altos, 19 médios, 19 baixos). A-07/A-08/A-09 foram
-corrigidos na referência TS. A-01 foi corrigido funcionalmente (virada obrigatória), mas a
-economia longa falha em3 alvos. A-02 aplica nível E restaurante; A-03–A-06 seguem abertos. Não liberar a porta C#.
+corrigidos na referência TS. A-01 foi corrigido funcionalmente (virada obrigatória), e a
+campanha longa agora passa18/18 após rebalanceamento autorizado de renda tardia. A-02 aplica nível E restaurante; A-03 implementa preparo real; A-04 implementa quarta zona; A-05 implementa VIP; A-06 segue aberto. Não liberar a porta C#.
 
 This report states plainly what is **done and verified**, what is **built but
 unverified here**, and what is **not built**. Anything marked ⚠ was not executed
 in this environment and must be re-run before it is trusted.
 
 ---
+
+## A-06.4 — fechamento econômico autorizado (vigente)
+
+- O dono exigiu resolver as3 falhas antes de A-06.5 e escolheu explicitamente
+  **`late_income`**: rebalancear renda tardia, preservando preços, histórico, FTUE,
+  offline e metas. Não confundir com autorização para novos gastos ou tuning futuro.
+- `economy14`: moedas por prato ×1 nos restaurantes0–3, ×.85 no4, ×.62 no5, ×.48 no6.
+  Mesmo scorer no runtime manual/automático/VIP/browser, arredondamento único. Não reduz
+  XP ou saldo já ganho; não muda bônus de fase/nível, preços, unlocks, limites ou metas.
+- **1500 turnos ativos:18/18, exit0**, duas execuções byte-idênticas. Rede1130 (950–1450),
+  rendaL50=123.527 (98.000–152.000), spend74,07% (70–99%). Seeds extras20260918/19 também18/18.
+  Renda14.679.360/gasto10.873.220/saldo3.806.140;**27 trilhas** maximizadas.
+  Gasto inalterado, renda−8.069.590. Receita tardia por turno vira platô, não crescimento
+  garantido a cada restaurante. Campanha sem rewarded/offline, agenda ausente separada intacta.
+- **672 testes/29 arquivos;14/15 gates (C# SKIP);53 capturas;157+44 vetores.** Novo teste
+  de1500 turnos dentro de `npm test` impede que gates curtos escondam novamente esses desvios.
+  116 vetores antigos intactos;27 mudam apenas moedas;14 novos de scoring.44 FTUE byte-idênticos.
+  FTUE16,1/32,9/38,3s/0 misses/136 moedas. UI mostra a taxa; sem porta de regras C#/Unity.
+- Relatório vigente: **[evidence/a06/step4/reopened/README.md](evidence/a06/step4/reopened/README.md)**.
+  **A-06.5 não iniciada.** A-06.4 funcional e estes critérios econômicos locais validados;
+  revisão das27/F4 global ainda separadas. Sem push/PR/merge/arte/SDK/dispositivo/publicação.
+
+## A-06.4 — integração offline antes do rebalanceamento (histórico)
+
+- **27 trilhas integradas**, incluindo Caixa/Gerente/Logística. Âncora real e snapshot
+  por ausência; restaurante3, cap8h acumulado, rampa20min, multiplicador aditivo até2,18×.
+  Caixa antecipa2/4/6/8h no retorno; resto manual conservado. Cooldown30min entre novos
+  lotes, não entre parcelas. High-water, ID/claims e migração sem renda histórica.
+- Browser pausa turno oculto/retorno pendente, persiste carteira+XP+claim em um JSON antes
+  de publicar estado, preserva parcela ao fechar/recarregar e mostra anúncio indisponível.
+  Storage-fault/retry e reabertura pelo Home exercitados por ponteiro. Save5; economy13,
+  employees4; schemas/DTOs/cópias sincronizados, **não porta de regras C#**.
+- **649 testes/27 arquivos;14/15 gates, C# SKIP;52 capturas;143+44 vetores.**135 casos antigos
+  intactos,1 expandido,7 novos de ledger;44 FTUE byte-idênticos. FTUE0 misses/136 moedas.
+  Preços/moedas/crescimentos/máximos/deltas e níveis históricos preservados.
+- Campanha1500 natural **sem offline**:15/18, exit1, repetição idêntica. Renda22.748.950,
+  gasto10.873.220, saldo11.875.730. Falham Rede881, rendaL50=183.646, spend.4779657962.
+  Sinks novos2.405.090, nenhum retuning. Ausências medidas em24 fixtures separadas com
+  agenda explícita, não usadas para tornar a campanha verde.
+- Gerente só18% offline/nível; missões/descontos/VIP+2pp backlog. Browser não é servidor
+  antifraude. XP offline compartilha o caminho do sim-core; XP ativo legado do browser e
+  metaprogressão completa continuam dívida F10. Nenhuma prova de Unity/dispositivo/SDK.
+- Evidência **[evidence/a06/step4/README.md](evidence/a06/step4/README.md)**.
+  Próximo **A-06.5**, revisão final das27 trilhas/contratos e consolidação dos desvios.
+  A-06/F4 ainda abertos; sem commit/push/PR/merge/CI remoto/arte nova.
+
+## A-06.3 — equipe/Bandeja validadas localmente (histórico)
+
+- **24 trilhas integradas / 3 pendentes** (Caixa/Gerente/Logística, A-06.4). Garçom,
+  Auxiliar e Churrasqueiro executam ações reais pelas operações legais compartilhadas.
+  Serviço/virada têm cap `floor(cobertura × elegíveis distintos)`, incluindo manual no
+  denominador; sem crédito por cru/queimado/repetição/falha. Sem rajadas após lag, escolha
+  de zona ou chamada de ponto perfeito. Bandeja reduz viagem real1,5→1s, não reação do bot.
+- Garçom serve desde bom/prep pronta, espera>1,5s, cliente/porção mais antigos; gorjeta
+  automática5/10% só no termo de gorjeta. Nível5 até2/viagem ainda dentro do cap. Aviso3+
+  prevê queima em~1s, não a impede. Auxiliar só prep pedida com estoque/vaga, chance/cadência
+  da tabela e uma vaga extra3+; Faca/Tábua reais. Churrasqueiro usa sinal público.55.
+- **615 testes/26 arquivos,14/15 gates (C# SKIP),49 capturas,136+44 vetores.** Todos127
+  vetores antigos intactos;9 novos com métricas de staff;44 FTUE byte-idênticos.
+  FTUE16,1/32,9/38,3s/0 misses/136 moedas. Ponteiro compra/reabre/atua, mostra cap, vaga e
+  aviso de queima. Harness reutiliza pixels decodificados entre relaunches, não mocks.
+- Dados employees3/grill6; schemas/DTOs/cópias gerados, **não porta de regras C#**.
+  Savev4/CRC e browser meta v2 preservados; budgets/timers/RNG são runtime, não retomada
+  persistente/offline. Preços/moedas/crescimento/máximos/unlocks/coberturas preservados.
+- Longo1500 **15/18, exit1**, repetição idêntica. Renda23.263.609/gasto8.468.130/saldo14.795.479;
+  falham rede729, rendaL50=189.197, spend.364. Novas compras378.580. Perfeitos caem75,4→42,2%
+  com serviço desde bom; não retunar para esconder.64.715 serviços/29.630 viradas/147 prep
+  automáticos; caps verificados por turno. Offline0; A-06/F4 continuam abertos.
+- Relatório **[evidence/a06/step3/README.md](evidence/a06/step3/README.md)**. Próximo **A-06.4**,
+  ledger offline real no índice3 e três trilhas restantes, conforme contrato já aprovado.
+  Sem publicação, arte nova, SDK, C#/Unity ou prova em dispositivo.
+
+## A-06.2 — recursos validados localmente (histórico)
+
+- **20 trilhas integradas / 7 pendentes.** Estabilidade recupera perda; Qualidade eleva
+  piso; Auto33/66/99% tenta uma vez por saco no limiar22%, RNG isolado, mesma reposição2,2s.
+  Sem calor no esgotamento/reposição; sem duração extra/imunidade à queima. Legado heatStability
+  do restaurante não foi reinterpretado (A-13/F5). Estoque por ingrediente6+Balcão (máx11),
+  débito só em admissão válida, reposição explícita grátis3s, UI/bot no mesmo serviço.
+- Cancelamento/erro/vaga cheia não debita nem deixa raw órfão; mover/virar não cobra de novo,
+  descarte não reembolsa. Contagem/falta/reposição visíveis, controles48px. Quatro compras
+  reabertas somente após consumidores reais; níveis históricos preservados, sem reembolso.
+- **565 testes/25 arquivos,14/15 gates locais (C# SKIP),46 capturas,127+44 vetores.**
+  FTUE16,1/32,9/38,3s,0 misses,136 moedas.48 cooking/32 scoring intactos; calor emt=1 corrigido;
+  7 turnos mudaram por estoque (ablação restaura todos os resultados antigos);28 intactos,
+  6 novos.44 FTUE byte-idênticos. DTO/schema/dados gerados não são porta de regras C#.
+- Savev4/CRC e browser metakeyv2 mantidos. Recursos são runtime; não alegar retomada de turno
+  persistido. C# ainda diverge no calor esgotado, além de41 turnos+5 casos econômicos sem port.
+- Longo1500 **15/18, exit1**, repetição idêntica: renda24.816.326/gasto8.089.550/saldo16.726.776.
+  Falham rede670, rendaL50=210.171, spend.326. Novas trilhas gastaram32.110; demais preços,
+  recompensas/metas intactos. Não há renda offline nesta campanha. A-06/F4 continuam abertos.
+- Evidência **[evidence/a06/step2/README.md](evidence/a06/step2/README.md)**. Próximo **A-06.3**,
+  equipe/Bandeja, conforme contrato aprovado. Sem publicação, arte nova ou porta C#/Unity.
+
+## A-06.1 — compras e efeitos diretos (histórico)
+
+- Contrato A-06 aprovado, níveis preservados sem reembolso. **16 trilhas integradas e11
+  temporariamente bloqueadas**, catálogo27 na Loja, compra compartilhada UI/serviço/bot,
+  gates receita/restaurante/dependência e validação de níveis. Não fechar A-06 só com bloqueio.
+- Capacidade/Mesas somam à base autoral; fila paginada, alvos estáveis no drag, pedido oculto
+  sem hitbox. Mestria aumenta apenas parcela de gorjeta, Clientela aumenta paciência.
+  Pratos/Decoração mantêm pagamento legado; textos explicitam esse efeito, sem retuning.
+- **533 testes/24 arquivos**,78 novos; **14/15 gates locais**, C# SKIP; **42 capturas**.
+  Ponteiro compra/reabre/bloqueia, percorre27, alcança14 pedidos, serve página2, testa prep11/12.
+  FTUE16,1/32,9/38,3s, zero misses,136 moedas preservados; prep/quarta zona/VIP preservados.
+- **121+44 vetores**,7 turnos A-06 novos.28 turnos anteriores e86 primitivas intactos;
+  FTUE byte-idêntico ao baseline A-05. Core savev4 sem migração; browser mantém raw metakeyv2
+  com contador opcional de novas compras, sem inventar recibos históricos.
+- Longo1500 **15/18**, repetição idêntica: renda24.859.245, gasto8.057.440, saldo16.801.805;
+  falham rede664, rendaL50=208.316, spend0,324. Gasto caiu2.815.780 por bloqueios temporários;
+  não é reembolso. Sem retuning. Offline ainda não contabilizado/implementado ponta a ponta.
+- Evidência e limites em [evidence/a06/step1/README.md](evidence/a06/step1/README.md).
+  **Próximo A-06.2:** carvão/estoque segundo contrato já aprovado. Depois equipe/offline/
+  fechamento e F4. Sem arte/C#/Unity/commit/push/merge/CI remoto novos.
+
+## A-05 — VIP funcional validado localmente (2026-09-27 UTC)
+
+- Dono confirmou: **por chegada**, chance do nível (zero bloqueia natural), fallback6%,
+  evento ativo +4pp só sobre base positiva; **2 visitas/dia compartilhadas**, reset UTC;
+  chamado de teste explícito na Home, sem SDK/anúncio/cobrança real.
+- Reserva/cota/cooldown60min/callback único persistem; cancelamento não concede nada.
+  Reserva atravessa dias ocupando cota até chegar. Cliente perdido/turno abandonado não
+  devolve visita. Rollback não reinicia limite; não há proteção de servidor contra relógio
+  adiantado/edição de storage. Save core **v4**, migração preserva carteira/FTUE/CRC.
+- Natural/chamado usam mesmos pedidos/pagamentos; VIP servido conta pedido inteiro uma vez.
+  Conquistas VIP1/25 pagam valores existentes, claims persistidos; sistema geral de
+  conquistas ainda pendente e deverá consultar/migrar esses claims para não pagar de novo.
+- **455 testes/22 arquivos**,44 novos; **14/15 gates locais**, C# SKIP. **37 PNGs**,244 sprites;
+  ponteiro cancela/conclui/reabre/reserva/cozinha/vira/serve; natural sem anúncios e cap
+  entre turnos verificados. FTUE16,1/32,9/38,3s/zero misses preservado.
+- **114+44 vetores**:20 resultados anteriores intactos+2 counters zero;8 novos turnos VIP.
+ 44 payloads FTUE iguais, só metadado analytics5→6. Taxonomy/schema/sync revisados;
+  levels sem diff. Nenhuma regra/save C# portada, nenhum asset/SDK/dependência novo.
+- Longo **15/18**: renda22.302.178, gasto10.873.220, saldo11.428.958. Falham rede881,
+  rendaL50=191.586, spend0,488. Campanha sem rewarded tem244 VIPs/232 servidos, cap2/dia,
+  nível80/rest6; chamado opcional não aumenta cota/recompensa. Controle VIP off reproduz A-04.
+  Comparação3 campanhas+864 turnos de skill em [`evidence/a05/`](evidence/a05/README.md).
+- A-06/F4 pendentes. Sem commit/push/PR/merge/CI remoto novo; PR7/8 preservados.
+
+## A-04 — quarta zona funcional validada (2026-09-27)
+
+- Decisões explícitas: manter4 zonas, **exigir Fornalha E restaurante Premium**, média extra1×.
+  Outras churrasqueiras continuam1/2/3, Fornalha antes do Premium3; todas as evoluções
+  da Fornalha passam a4 no índice4+. Default de restaurante avançado também tem4.
+- Perfil primário/IDs/calores preservados; auxiliar herda bônus da média, não da alta.
+  Fornalha evo3:0,891/1,62/1,70/1,62 (antes de carvão/upgrades). Sem tuning de preços/metas.
+- **411 testes/21 arquivos**,42 novos red→green; **14/15 gates locais**, C# SKIP.
+ 29 PNGs/244 sprites; ponteiro real coloca/move/vira/serve pedido na4ª, Home/HUD concordam.
+  FTUE16,1/32,9/38,3s/zero misses. Capturas são fixtures, não campanha Unity avançada.
+- `grill`v4/`churrasqueiras`v2,2 schemas/2 tabelas Assets/Data+manifest/2 DTOs C# gerados.
+  Não houve porta C# de regras. **106+44 vetores**:3 resultados avançados mudam;8 turnos
+  passam a verificar contagem/calores. Demais payloads e44 FTUE intactos; levels sem diff.
+- Longo **15/18**, integralmente igual a A-03. Investigado:1241 turnos com4 zonas, mas
+ 0 ticks ocupados na4ª após ações do bot, que move para as zonas ideais com espaço.
+  Isso limita a medição econômica, não elimina a expansão real testada com lotação/ponteiro.
+  Probe128 turnos avançados sem upgrades registra efeitos em skills0,30/0,55.
+- Evidência: [`evidence/a04/README.md`](evidence/a04/README.md). Sem push/PR/merge/CI remoto
+  novo. A-05/A-06/F4 pendentes; sem C#/Unity/arte nova.
+
+## A-03 — preparo funcional validado (2026-09-27)
+
+- Estoque prep inerte até `startPrep`, capacidade restaurante+tábua, tempo2s/faca,
+  pronto retém vaga até servir/descartar; ações de turno rejeitam grelha e serviço antecipado.
+- Vinagrete no catálogo UI nível12+, estação separada com tap/drag/progresso/PRONTO,
+  serviço ao pedido, descarte/cancelamento seguros e até10 vagas paginadas.
+- 18 regressões novas, red antes do green; **369 testes/20 arquivos**, gates **14/15**,
+  C# SKIP local. **24 screenshots**,244 sprites, FTUE16,1/32,9/38,3s/zero misses.
+- **106+44 vetores e levels sem diff**; sem alteração de dados, C#, Unity ou arte.
+- Longo **15/18**, saída inteira igual ao baseline A-02: renda22.233.557, gasto10.873.220,
+  spend0,489; rede883, rendaL50=192.223. Três desvios mantidos sem retuning.
+- Limite: bot mantém uma porção ativa por ingrediente; lotação humana tem testes próprios.
+  Tábua tem consumidor agora, mas A-06 não está encerrado. Pedido misto validado em regra;
+  harness UI serve pedido natural de vinagrete, não prova campanha avançada completa.
+- Evidência e limites: [`evidence/a03/README.md`](evidence/a03/README.md).
+  Próximo à época: A-04 (agora concluído acima). CI desta entrega continua pendente.
 
 ## AI 2D art pass — complete and approved (docs/22-ARTE_2D_PLANO.md)
 
@@ -51,7 +230,7 @@ The owner approved the final round and authorised the complete merge on 2026-09-
 The art lifecycle is closed; the next work is rule remediation and platform implementation,
 not another replacement batch.
 
-## Post-art A-02 — vigente: nível E restaurante, economia global pendente
+## Post-art A-02 — histórico: nível E restaurante, economia global pendente
 
 - `playerLevel` obrigatório no TurnConfig, inteiro positivo, separado do índice da fase;
   catálogo de início do turno exige nível e restaurante para pedidos/estoque/bancada.
@@ -296,23 +475,23 @@ Every claim below was produced by a command run in this checkout.
 
 | Area | Check | Result |
 |---|---|---|
-| Unit tests | `npx vitest run` | **351 passed / 0 failed** (18 files; A-02 adds52) |
+| Unit tests | `npx vitest run` | **672 passed / 0 failed** (29 files; includes1500-turn economic regression) |
 | Type check | `npm run typecheck` | **OK — 0 errors.** `tsconfig.json` was strict (`strict`, `noUncheckedIndexedAccess`) but no script ever ran it: the first run reported **140 errors**, of which **15 were real code defects** (section 4.1) |
-| Localisation | `npm run check-l10n` | **OK** — 380 keys referenced by data, all translated in pt-BR (515 keys total; the six text-heavy `ui.tut.1–6` gave way to the FTUE's short prompts); en-US / es-419 are declared 11.1 % stubs that fall back to pt-BR |
-| Data integrity | `npm run validate` | **OK** — 22 tables (incl. `churrasqueiras`, `tutorial`), 16 ingredients, 11 customers, 7 restaurants, 27 upgrade tracks, 58 achievements, 37 collection entries, 48 analytics events, 6 FTUE steps, 60 authored levels |
+| Localisation | `npm run check-l10n` | **OK** —381 referenced keys, pt-BR complete with613 keys; en-US/es-419135/613 (22.0%), fallback to pt-BR. |
+| Data integrity | `npm run validate` | **OK** —22 tables,16 ingredients,11 customers,7 restaurants,27 upgrade tracks,58 achievements,37 collection entries,50 analytics events,6 FTUE steps,60 authored levels. |
 | Data contracts | `npm run check-schema` | **OK** — 22/22 tables valid against `shared/schema`, and every contract rejects a broken copy of itself |
 | Contract drift | `npm run verify-schemas` | **OK** — 22 schemas in step with `shared/data` |
 | Short-horizon economy | `npm run sim` | **all balance targets met** (grill:fornalha skipped — needs long horizon) |
-| Long-horizon economy | `npm run sim:long` (1500 turns) | **15/18; exit 1** — A-02 income/unlock/spend failures; see current checkpoint above |
+| Long-horizon economy | `npm run sim:long` (1500 turns) | **18/18; exit0** — authorized A-06.4 late-income rebalance; baseline repeat identical,2 extra seeds also18/18 |
 | Economy report | `HORIZON=1500 npm run balance-report` | **Historical pre-A-01, not revalidated:** reaches level 80; income growth L5→L70 **×12.27** vs cost growth **×29.28** → costs outpace income, so purchases stay meaningful |
 | Unity data copy | `npm run verify-data-sync` | **OK — Assets/Data matches shared/data (22 tables)** |
-| Prototype bundle | `npx esbuild --bundle prototype/src/main.ts` | **290 kB unminified (251 kB before the FTUE), 0 errors** — and the source now type-checks, which it never did |
+| Prototype bundle | esbuild via `check-render` and `check-shots` | **OK**, no build/type errors; current size is not a device/download measurement. |
 | Art registry | `npm run check-art-registry` | **OK** — 245 masters/rows/manifest entries, 244 approved runtime sprites, 244 protected baseline IDs; 52 contract tests (46 negative). |
 | Art coverage | `npm run check-art` | **OK** — 16 ingredients × 8 doneness levels + icons = **144 draws**, all painted |
-| Render smoke | `npm run check-render` | **OK, 4 s** — real bundle through the whole FTUE (played by following the hand: 8 events in order, 0 misses), step 6, Home's daily calendar (strip → modal → `RESGATAR` pays once → ✕), an ordinary turn to the result, then a second install that is backgrounded (`tutorial_abandon` once) and skipped (`tutorial_skip` → Home); **~38 M canvas ops, no exceptions** |
-| Shot harness | `npm run check-shots` | **OK — ~6 s.** 19 real PNGs (4 advanced-page/flip/perfect-window and2 level-boundary shots via real pointer input), plus the original13: a fresh install (splash, title, FTUE steps 1 / 2-waiting / 2 / 3 / 4, FTUE result, step 6 on Home), then a relaunch that must open on Home (home, empty grill, cooking, result). Asserts the FTUE funnel from `__churrascoAnalytics` — first PERFEITO 16.1 s, step 6 at 38.3 s (< 60 s), 0 misses. 199 painted frames, 1 913 sim-only ticks, 60 s self-budget. |
+| Render smoke | `npm run check-render` | **OK** —29,110,136 canvas ops; real FTUE/skip/abandon/calendar/turn, no exceptions. See A-06.4 reopened gate log. |
+| Shot harness | `npm run check-shots` | **OK —53 PNGs**; FTUE16.1/32.9/38.3s,0 misses,136 coins. Staff purchases/real actions/caps/warning plus resource actions through real pointer, plus prior prep/fourth-zone/VIP/catalog paths. Offline return/claim storage-fault/retry and late-income UI included; timings in step4/reopened gate log. |
 | Prototype server | `node prototype/dev-server.mjs` | **Historical check; no server currently running.** Configured for `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
-| C# core | `npm run check-csharp` | **CI: builds `Assets/Scripts/Core` (netstandard2.1, C# 9, warnings as errors) and 139 parity checks agree** — 13 tables bind losslessly, `GameData.Load` clean, cooking 48/48, scoring 32/32, effective heat, 44 FTUE vectors; 25 economy/turn vectors unported after A-01 (5+20); 139 checks confirmed by A-02 CI run36286427123. **Here: SKIP** (no .NET SDK); verified during development with an in-process Roslyn compiler |
+| C# core | `npm run check-csharp` | **Local SKIP (no dotnet); current parity NOT validated.** Historical base CI139 checks does not validate A-06.3. Exhausted-fuel heat changed and `Rules.cs` still lacks the cut;50 turn +5 economy cases also await port. Generated DTO maintenance is not a rules port. |
 | CI | `.github/workflows/ci.yml` + `npm run gates` | **15 gates on ubuntu-latest** (`check-csharp` added, with `actions/setup-dotnet` 8.0). `check-shots` is in the per-PR list (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. The Unity-side layer is still not compiled — no Unity toolchain. |
 
 ### The localisation gate caught a §56 violation
@@ -627,7 +806,7 @@ The prototype proves art *direction*, not the art *budget*.
 ## 7. Historical next-step list — superseded by operational plan §9
 
 **Do not start these ports yet:** remediate TypeScript/data/economy first. The current next
-action is A-03 after functional A-01/A-02; global economic acceptance is still pending. The list below preserves the earlier port backlog.
+action is A-06 after functional A-01–A-05; global economic acceptance is still pending. The list below preserves the earlier port backlog.
 
 1. ~~**Compile the C# core** (`dotnet build` in CI) and add golden-vector parity~~ — **done**:
    `npm run check-csharp` (gate 14), 139 checks agree (see "FTUE follow-ups").

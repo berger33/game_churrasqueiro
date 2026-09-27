@@ -4,17 +4,22 @@
   "note": "Golden vectors for TS <-> C# parity. Regenerate with `npm run gen-vectors`. Never edit by hand.",
   "dataVersions": {
     "ingredients": 6,
-    "grill": 3,
-    "economy": 12,
+    "grill": 6,
+    "economy": 14,
     "restaurants": 6,
-    "upgrades": 3
+    "upgrades": 4,
+    "customers": 2,
+    "events": 2,
+    "ads": 2,
+    "achievements": 3,
+    "employees": 4
   },
   "epsilon": 1e-9,
   "counts": {
     "cooking": 48,
-    "scoring": 32,
-    "economy": 6,
-    "turns": 20
+    "scoring": 46,
+    "economy": 13,
+    "turns": 50
   },
   "cooking": [
     {
@@ -10240,6 +10245,440 @@
           }
         ]
       }
+    },
+    {
+      "id": "lateIncome.0.manual",
+      "input": {
+        "ingredient": "picanha",
+        "sides": [
+          0.7,
+          0.7
+        ],
+        "context": {
+          "restaurantIndex": 0,
+          "target": 0,
+          "toleranceScale": 1,
+          "patienceRemaining": 1,
+          "combo": 12,
+          "tipMult": 1.56,
+          "prestigeTipBonus": 0.12,
+          "autoServiceTipBonus": 0,
+          "xpMult": 1.12,
+          "customerTipMult": 1
+        }
+      },
+      "expect": {
+        "quality": "perfect",
+        "doneness": 0.7,
+        "evenness": 1,
+        "windowLo": 0.64,
+        "windowHi": 0.76,
+        "coins": 316,
+        "xp": 23
+      }
+    },
+    {
+      "id": "lateIncome.0.autoVip",
+      "input": {
+        "ingredient": "picanha",
+        "sides": [
+          0.7,
+          0.7
+        ],
+        "context": {
+          "restaurantIndex": 0,
+          "target": 0,
+          "toleranceScale": 1,
+          "patienceRemaining": 1,
+          "combo": 12,
+          "tipMult": 1.56,
+          "prestigeTipBonus": 0.12,
+          "autoServiceTipBonus": 0.1,
+          "xpMult": 1.12,
+          "customerTipMult": 3
+        }
+      },
+      "expect": {
+        "quality": "perfect",
+        "doneness": 0.7,
+        "evenness": 1,
+        "windowLo": 0.64,
+        "windowHi": 0.76,
+        "coins": 559,
+        "xp": 23
+      }
+    },
+    {
+      "id": "lateIncome.1.manual",
+      "input": {
+        "ingredient": "picanha",
+        "sides": [
+          0.7,
+          0.7
+        ],
+        "context": {
+          "restaurantIndex": 1,
+          "target": 0,
+          "toleranceScale": 1,
+          "patienceRemaining": 1,
+          "combo": 12,
+          "tipMult": 1.56,
+          "prestigeTipBonus": 0.12,
+          "autoServiceTipBonus": 0,
+          "xpMult": 1.12,
+          "customerTipMult": 1
+        }
+      },
+      "expect": {
+        "quality": "perfect",
+        "doneness": 0.7,
+        "evenness": 1,
+        "windowLo": 0.64,
+        "windowHi": 0.76,
+        "coins": 316,
+        "xp": 23
+      }
+    },
+    {
+      "id": "lateIncome.1.autoVip",
+      "input": {
+        "ingredient": "picanha",
+        "sides": [
+          0.7,
+          0.7
+        ],
+        "context": {
+          "restaurantIndex": 1,
+          "target": 0,
+          "toleranceScale": 1,
+          "patienceRemaining": 1,
+          "combo": 12,
+          "tipMult": 1.56,
+          "prestigeTipBonus": 0.12,
+          "autoServiceTipBonus": 0.1,
+          "xpMult": 1.12,
+          "customerTipMult": 3
+        }
+      },
+      "expect": {
+        "quality": "perfect",
+        "doneness": 0.7,
+        "evenness": 1,
+        "windowLo": 0.64,
+        "windowHi": 0.76,
+        "coins": 559,
+        "xp": 23
+      }
+    },
+    {
+      "id": "lateIncome.2.manual",
+      "input": {
+        "ingredient": "picanha",
+        "sides": [
+          0.7,
+          0.7
+        ],
+        "context": {
+          "restaurantIndex": 2,
+          "target": 0,
+          "toleranceScale": 1,
+          "patienceRemaining": 1,
+          "combo": 12,
+          "tipMult": 1.56,
+          "prestigeTipBonus": 0.12,
+          "autoServiceTipBonus": 0,
+          "xpMult": 1.12,
+          "customerTipMult": 1
+        }
+      },
+      "expect": {
+        "quality": "perfect",
+        "doneness": 0.7,
+        "evenness": 1,
+        "windowLo": 0.64,
+        "windowHi": 0.76,
+        "coins": 316,
+        "xp": 23
+      }
+    },
+    {
+      "id": "lateIncome.2.autoVip",
+      "input": {
+        "ingredient": "picanha",
+        "sides": [
+          0.7,
+          0.7
+        ],
+        "context": {
+          "restaurantIndex": 2,
+          "target": 0,
+          "toleranceScale": 1,
+          "patienceRemaining": 1,
+          "combo": 12,
+          "tipMult": 1.56,
+          "prestigeTipBonus": 0.12,
+          "autoServiceTipBonus": 0.1,
+          "xpMult": 1.12,
+          "customerTipMult": 3
+        }
+      },
+      "expect": {
+        "quality": "perfect",
+        "doneness": 0.7,
+        "evenness": 1,
+        "windowLo": 0.64,
+        "windowHi": 0.76,
+        "coins": 559,
+        "xp": 23
+      }
+    },
+    {
+      "id": "lateIncome.3.manual",
+      "input": {
+        "ingredient": "picanha",
+        "sides": [
+          0.7,
+          0.7
+        ],
+        "context": {
+          "restaurantIndex": 3,
+          "target": 0,
+          "toleranceScale": 1,
+          "patienceRemaining": 1,
+          "combo": 12,
+          "tipMult": 1.56,
+          "prestigeTipBonus": 0.12,
+          "autoServiceTipBonus": 0,
+          "xpMult": 1.12,
+          "customerTipMult": 1
+        }
+      },
+      "expect": {
+        "quality": "perfect",
+        "doneness": 0.7,
+        "evenness": 1,
+        "windowLo": 0.64,
+        "windowHi": 0.76,
+        "coins": 316,
+        "xp": 23
+      }
+    },
+    {
+      "id": "lateIncome.3.autoVip",
+      "input": {
+        "ingredient": "picanha",
+        "sides": [
+          0.7,
+          0.7
+        ],
+        "context": {
+          "restaurantIndex": 3,
+          "target": 0,
+          "toleranceScale": 1,
+          "patienceRemaining": 1,
+          "combo": 12,
+          "tipMult": 1.56,
+          "prestigeTipBonus": 0.12,
+          "autoServiceTipBonus": 0.1,
+          "xpMult": 1.12,
+          "customerTipMult": 3
+        }
+      },
+      "expect": {
+        "quality": "perfect",
+        "doneness": 0.7,
+        "evenness": 1,
+        "windowLo": 0.64,
+        "windowHi": 0.76,
+        "coins": 559,
+        "xp": 23
+      }
+    },
+    {
+      "id": "lateIncome.4.manual",
+      "input": {
+        "ingredient": "picanha",
+        "sides": [
+          0.7,
+          0.7
+        ],
+        "context": {
+          "restaurantIndex": 4,
+          "target": 0,
+          "toleranceScale": 1,
+          "patienceRemaining": 1,
+          "combo": 12,
+          "tipMult": 1.56,
+          "prestigeTipBonus": 0.12,
+          "autoServiceTipBonus": 0,
+          "xpMult": 1.12,
+          "customerTipMult": 1
+        }
+      },
+      "expect": {
+        "quality": "perfect",
+        "doneness": 0.7,
+        "evenness": 1,
+        "windowLo": 0.64,
+        "windowHi": 0.76,
+        "coins": 269,
+        "xp": 23
+      }
+    },
+    {
+      "id": "lateIncome.4.autoVip",
+      "input": {
+        "ingredient": "picanha",
+        "sides": [
+          0.7,
+          0.7
+        ],
+        "context": {
+          "restaurantIndex": 4,
+          "target": 0,
+          "toleranceScale": 1,
+          "patienceRemaining": 1,
+          "combo": 12,
+          "tipMult": 1.56,
+          "prestigeTipBonus": 0.12,
+          "autoServiceTipBonus": 0.1,
+          "xpMult": 1.12,
+          "customerTipMult": 3
+        }
+      },
+      "expect": {
+        "quality": "perfect",
+        "doneness": 0.7,
+        "evenness": 1,
+        "windowLo": 0.64,
+        "windowHi": 0.76,
+        "coins": 475,
+        "xp": 23
+      }
+    },
+    {
+      "id": "lateIncome.5.manual",
+      "input": {
+        "ingredient": "picanha",
+        "sides": [
+          0.7,
+          0.7
+        ],
+        "context": {
+          "restaurantIndex": 5,
+          "target": 0,
+          "toleranceScale": 1,
+          "patienceRemaining": 1,
+          "combo": 12,
+          "tipMult": 1.56,
+          "prestigeTipBonus": 0.12,
+          "autoServiceTipBonus": 0,
+          "xpMult": 1.12,
+          "customerTipMult": 1
+        }
+      },
+      "expect": {
+        "quality": "perfect",
+        "doneness": 0.7,
+        "evenness": 1,
+        "windowLo": 0.64,
+        "windowHi": 0.76,
+        "coins": 196,
+        "xp": 23
+      }
+    },
+    {
+      "id": "lateIncome.5.autoVip",
+      "input": {
+        "ingredient": "picanha",
+        "sides": [
+          0.7,
+          0.7
+        ],
+        "context": {
+          "restaurantIndex": 5,
+          "target": 0,
+          "toleranceScale": 1,
+          "patienceRemaining": 1,
+          "combo": 12,
+          "tipMult": 1.56,
+          "prestigeTipBonus": 0.12,
+          "autoServiceTipBonus": 0.1,
+          "xpMult": 1.12,
+          "customerTipMult": 3
+        }
+      },
+      "expect": {
+        "quality": "perfect",
+        "doneness": 0.7,
+        "evenness": 1,
+        "windowLo": 0.64,
+        "windowHi": 0.76,
+        "coins": 347,
+        "xp": 23
+      }
+    },
+    {
+      "id": "lateIncome.6.manual",
+      "input": {
+        "ingredient": "picanha",
+        "sides": [
+          0.7,
+          0.7
+        ],
+        "context": {
+          "restaurantIndex": 6,
+          "target": 0,
+          "toleranceScale": 1,
+          "patienceRemaining": 1,
+          "combo": 12,
+          "tipMult": 1.56,
+          "prestigeTipBonus": 0.12,
+          "autoServiceTipBonus": 0,
+          "xpMult": 1.12,
+          "customerTipMult": 1
+        }
+      },
+      "expect": {
+        "quality": "perfect",
+        "doneness": 0.7,
+        "evenness": 1,
+        "windowLo": 0.64,
+        "windowHi": 0.76,
+        "coins": 152,
+        "xp": 23
+      }
+    },
+    {
+      "id": "lateIncome.6.autoVip",
+      "input": {
+        "ingredient": "picanha",
+        "sides": [
+          0.7,
+          0.7
+        ],
+        "context": {
+          "restaurantIndex": 6,
+          "target": 0,
+          "toleranceScale": 1,
+          "patienceRemaining": 1,
+          "combo": 12,
+          "tipMult": 1.56,
+          "prestigeTipBonus": 0.12,
+          "autoServiceTipBonus": 0.1,
+          "xpMult": 1.12,
+          "customerTipMult": 3
+        }
+      },
+      "expect": {
+        "quality": "perfect",
+        "doneness": 0.7,
+        "evenness": 1,
+        "windowLo": 0.64,
+        "windowHi": 0.76,
+        "coins": 268,
+        "xp": 23
+      }
     }
   ],
   "economy": [
@@ -11873,6 +12312,7 @@
       "id": "econ.offline",
       "input": {
         "idle": {
+          "unlockRestaurantIndex": 3,
           "coinsPerMinuteByRestaurant": [
             0,
             6,
@@ -11944,6 +12384,90 @@
             "capped": false
           },
           {
+            "restaurantIndex": 1,
+            "elapsedSec": 60,
+            "coins": 0,
+            "xp": 0,
+            "capped": false
+          },
+          {
+            "restaurantIndex": 1,
+            "elapsedSec": 300,
+            "coins": 0,
+            "xp": 0,
+            "capped": false
+          },
+          {
+            "restaurantIndex": 1,
+            "elapsedSec": 1200,
+            "coins": 0,
+            "xp": 0,
+            "capped": false
+          },
+          {
+            "restaurantIndex": 1,
+            "elapsedSec": 3600,
+            "coins": 0,
+            "xp": 0,
+            "capped": false
+          },
+          {
+            "restaurantIndex": 1,
+            "elapsedSec": 14400,
+            "coins": 0,
+            "xp": 0,
+            "capped": false
+          },
+          {
+            "restaurantIndex": 1,
+            "elapsedSec": 36000,
+            "coins": 0,
+            "xp": 0,
+            "capped": false
+          },
+          {
+            "restaurantIndex": 2,
+            "elapsedSec": 60,
+            "coins": 0,
+            "xp": 0,
+            "capped": false
+          },
+          {
+            "restaurantIndex": 2,
+            "elapsedSec": 300,
+            "coins": 0,
+            "xp": 0,
+            "capped": false
+          },
+          {
+            "restaurantIndex": 2,
+            "elapsedSec": 1200,
+            "coins": 0,
+            "xp": 0,
+            "capped": false
+          },
+          {
+            "restaurantIndex": 2,
+            "elapsedSec": 3600,
+            "coins": 0,
+            "xp": 0,
+            "capped": false
+          },
+          {
+            "restaurantIndex": 2,
+            "elapsedSec": 14400,
+            "coins": 0,
+            "xp": 0,
+            "capped": false
+          },
+          {
+            "restaurantIndex": 2,
+            "elapsedSec": 36000,
+            "coins": 0,
+            "xp": 0,
+            "capped": false
+          },
+          {
             "restaurantIndex": 3,
             "elapsedSec": 60,
             "coins": 22,
@@ -11983,6 +12507,48 @@
             "elapsedSec": 36000,
             "coins": 20160,
             "xp": 1152,
+            "capped": true
+          },
+          {
+            "restaurantIndex": 4,
+            "elapsedSec": 60,
+            "coins": 50,
+            "xp": 3,
+            "capped": false
+          },
+          {
+            "restaurantIndex": 4,
+            "elapsedSec": 300,
+            "coins": 300,
+            "xp": 16,
+            "capped": false
+          },
+          {
+            "restaurantIndex": 4,
+            "elapsedSec": 1200,
+            "coins": 1920,
+            "xp": 100,
+            "capped": false
+          },
+          {
+            "restaurantIndex": 4,
+            "elapsedSec": 3600,
+            "coins": 5760,
+            "xp": 300,
+            "capped": false
+          },
+          {
+            "restaurantIndex": 4,
+            "elapsedSec": 14400,
+            "coins": 23040,
+            "xp": 1200,
+            "capped": false
+          },
+          {
+            "restaurantIndex": 4,
+            "elapsedSec": 36000,
+            "coins": 46080,
+            "xp": 2400,
             "capped": true
           },
           {
@@ -12031,6 +12597,963 @@
       }
     },
     {
+      "id": "econ.offlineLifecycle.short",
+      "input": {
+        "restaurantIndex": 3,
+        "level": 80,
+        "upgrades": {},
+        "steps": [
+          {
+            "kind": "hide",
+            "at": 1000000
+          },
+          {
+            "kind": "return",
+            "at": 1000600
+          },
+          {
+            "kind": "claim",
+            "at": 1000600
+          },
+          {
+            "kind": "claim",
+            "at": 1000600
+          }
+        ]
+      },
+      "expect": {
+        "trace": [
+          {
+            "kind": "hide",
+            "at": 1000000,
+            "coins": 0,
+            "xp": 0,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": null,
+            "highWater": 1000000,
+            "nextBatchAt": 0
+          },
+          {
+            "kind": "return",
+            "at": 1000600,
+            "coins": 0,
+            "xp": 0,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": {
+              "id": 1,
+              "minutes": 10,
+              "autoMinutes": 0,
+              "coinsRaw": 315,
+              "xpRaw": 18,
+              "autoCoinsRaw": 0,
+              "autoXpRaw": 0,
+              "paidCoins": 0,
+              "paidXp": 0,
+              "availableAt": 0,
+              "settledAt": null,
+              "cooldownSec": 1800
+            },
+            "highWater": 1000600,
+            "nextBatchAt": 0
+          },
+          {
+            "kind": "claim",
+            "at": 1000600,
+            "coins": 315,
+            "xp": 18,
+            "level": 80,
+            "embers": 0,
+            "receipt": {
+              "id": 1,
+              "part": "manual",
+              "at": 1000600,
+              "minutes": 10,
+              "offlineCoins": 315,
+              "offlineXp": 18,
+              "levelCoins": 0,
+              "levelEmbers": 0,
+              "levelsGained": 0
+            },
+            "batch": null,
+            "highWater": 1000600,
+            "nextBatchAt": 1002400
+          },
+          {
+            "kind": "claim",
+            "at": 1000600,
+            "coins": 315,
+            "xp": 18,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": null,
+            "highWater": 1000600,
+            "nextBatchAt": 1002400
+          }
+        ],
+        "counters": {
+          "restaurantsUnlocked": 1,
+          "offlineCoins": 315,
+          "offlineXp": 18,
+          "coinsEarnedTotal": 315
+        },
+        "final": {
+          "coins": 315,
+          "xp": 18,
+          "level": 80,
+          "embers": 0,
+          "offline": {
+            "version": 1,
+            "disabled": false,
+            "highWater": 1000600,
+            "nextId": 2,
+            "nextBatchAt": 1002400,
+            "anchor": null,
+            "batch": null,
+            "lastReceipt": {
+              "id": 1,
+              "part": "manual",
+              "at": 1000600,
+              "minutes": 10,
+              "offlineCoins": 315,
+              "offlineXp": 18,
+              "levelCoins": 0,
+              "levelEmbers": 0,
+              "levelsGained": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "econ.offlineLifecycle.partial",
+      "input": {
+        "restaurantIndex": 3,
+        "level": 80,
+        "upgrades": {
+          "caixa": 1
+        },
+        "steps": [
+          {
+            "kind": "hide",
+            "at": 1000000
+          },
+          {
+            "kind": "return",
+            "at": 1021600
+          },
+          {
+            "kind": "claim",
+            "at": 1021600
+          },
+          {
+            "kind": "return",
+            "at": 1021600
+          }
+        ]
+      },
+      "expect": {
+        "trace": [
+          {
+            "kind": "hide",
+            "at": 1000000,
+            "coins": 0,
+            "xp": 0,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": null,
+            "highWater": 1000000,
+            "nextBatchAt": 0
+          },
+          {
+            "kind": "return",
+            "at": 1021600,
+            "coins": 5040,
+            "xp": 288,
+            "level": 80,
+            "embers": 0,
+            "receipt": {
+              "id": 1,
+              "part": "auto",
+              "at": 1021600,
+              "minutes": 360,
+              "offlineCoins": 5040,
+              "offlineXp": 288,
+              "levelCoins": 0,
+              "levelEmbers": 0,
+              "levelsGained": 0
+            },
+            "batch": {
+              "id": 1,
+              "minutes": 360,
+              "autoMinutes": 120,
+              "coinsRaw": 15120,
+              "xpRaw": 864,
+              "autoCoinsRaw": 5040,
+              "autoXpRaw": 288,
+              "paidCoins": 5040,
+              "paidXp": 288,
+              "availableAt": 0,
+              "settledAt": 1021600,
+              "cooldownSec": 1800
+            },
+            "highWater": 1021600,
+            "nextBatchAt": 1023400
+          },
+          {
+            "kind": "claim",
+            "at": 1021600,
+            "coins": 15120,
+            "xp": 864,
+            "level": 80,
+            "embers": 0,
+            "receipt": {
+              "id": 1,
+              "part": "manual",
+              "at": 1021600,
+              "minutes": 360,
+              "offlineCoins": 10080,
+              "offlineXp": 576,
+              "levelCoins": 0,
+              "levelEmbers": 0,
+              "levelsGained": 0
+            },
+            "batch": null,
+            "highWater": 1021600,
+            "nextBatchAt": 1023400
+          },
+          {
+            "kind": "return",
+            "at": 1021600,
+            "coins": 15120,
+            "xp": 864,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": null,
+            "highWater": 1021600,
+            "nextBatchAt": 1023400
+          }
+        ],
+        "counters": {
+          "restaurantsUnlocked": 1,
+          "offlineCoins": 15120,
+          "offlineXp": 864,
+          "coinsEarnedTotal": 15120
+        },
+        "final": {
+          "coins": 15120,
+          "xp": 864,
+          "level": 80,
+          "embers": 0,
+          "offline": {
+            "version": 1,
+            "disabled": false,
+            "highWater": 1021600,
+            "nextId": 2,
+            "nextBatchAt": 1023400,
+            "anchor": null,
+            "batch": null,
+            "lastReceipt": {
+              "id": 1,
+              "part": "manual",
+              "at": 1021600,
+              "minutes": 360,
+              "offlineCoins": 10080,
+              "offlineXp": 576,
+              "levelCoins": 0,
+              "levelEmbers": 0,
+              "levelsGained": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "econ.offlineLifecycle.cap",
+      "input": {
+        "restaurantIndex": 4,
+        "level": 80,
+        "upgrades": {
+          "caixa": 4,
+          "gerente": 4,
+          "imperio_logistica": 20
+        },
+        "steps": [
+          {
+            "kind": "hide",
+            "at": 1000000
+          },
+          {
+            "kind": "return",
+            "at": 1072000
+          }
+        ]
+      },
+      "expect": {
+        "trace": [
+          {
+            "kind": "hide",
+            "at": 1000000,
+            "coins": 0,
+            "xp": 0,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": null,
+            "highWater": 1000000,
+            "nextBatchAt": 0
+          },
+          {
+            "kind": "return",
+            "at": 1072000,
+            "coins": 100454,
+            "xp": 5232,
+            "level": 80,
+            "embers": 0,
+            "receipt": {
+              "id": 1,
+              "part": "auto",
+              "at": 1072000,
+              "minutes": 480,
+              "offlineCoins": 100454,
+              "offlineXp": 5232,
+              "levelCoins": 0,
+              "levelEmbers": 0,
+              "levelsGained": 0
+            },
+            "batch": null,
+            "highWater": 1072000,
+            "nextBatchAt": 1073800
+          }
+        ],
+        "counters": {
+          "restaurantsUnlocked": 1,
+          "offlineCoins": 100454,
+          "offlineXp": 5232,
+          "coinsEarnedTotal": 100454
+        },
+        "final": {
+          "coins": 100454,
+          "xp": 5232,
+          "level": 80,
+          "embers": 0,
+          "offline": {
+            "version": 1,
+            "disabled": false,
+            "highWater": 1072000,
+            "nextId": 2,
+            "nextBatchAt": 1073800,
+            "anchor": null,
+            "batch": null,
+            "lastReceipt": {
+              "id": 1,
+              "part": "auto",
+              "at": 1072000,
+              "minutes": 480,
+              "offlineCoins": 100454,
+              "offlineXp": 5232,
+              "levelCoins": 0,
+              "levelEmbers": 0,
+              "levelsGained": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "econ.offlineLifecycle.frozen",
+      "input": {
+        "restaurantIndex": 3,
+        "level": 80,
+        "upgrades": {},
+        "steps": [
+          {
+            "kind": "hide",
+            "at": 1000000
+          },
+          {
+            "kind": "change",
+            "at": 1000100,
+            "restaurantIndex": 6,
+            "upgrades": {
+              "caixa": 4,
+              "gerente": 4,
+              "imperio_logistica": 20
+            }
+          },
+          {
+            "kind": "return",
+            "at": 1003600
+          },
+          {
+            "kind": "claim",
+            "at": 1003600
+          }
+        ]
+      },
+      "expect": {
+        "trace": [
+          {
+            "kind": "hide",
+            "at": 1000000,
+            "coins": 0,
+            "xp": 0,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": null,
+            "highWater": 1000000,
+            "nextBatchAt": 0
+          },
+          {
+            "kind": "change",
+            "at": 1000100,
+            "coins": 0,
+            "xp": 0,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": null,
+            "highWater": 1000000,
+            "nextBatchAt": 0
+          },
+          {
+            "kind": "return",
+            "at": 1003600,
+            "coins": 0,
+            "xp": 0,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": {
+              "id": 1,
+              "minutes": 60,
+              "autoMinutes": 0,
+              "coinsRaw": 2520,
+              "xpRaw": 144,
+              "autoCoinsRaw": 0,
+              "autoXpRaw": 0,
+              "paidCoins": 0,
+              "paidXp": 0,
+              "availableAt": 0,
+              "settledAt": null,
+              "cooldownSec": 1800
+            },
+            "highWater": 1003600,
+            "nextBatchAt": 0
+          },
+          {
+            "kind": "claim",
+            "at": 1003600,
+            "coins": 2520,
+            "xp": 144,
+            "level": 80,
+            "embers": 0,
+            "receipt": {
+              "id": 1,
+              "part": "manual",
+              "at": 1003600,
+              "minutes": 60,
+              "offlineCoins": 2520,
+              "offlineXp": 144,
+              "levelCoins": 0,
+              "levelEmbers": 0,
+              "levelsGained": 0
+            },
+            "batch": null,
+            "highWater": 1003600,
+            "nextBatchAt": 1005400
+          }
+        ],
+        "counters": {
+          "restaurantsUnlocked": 1,
+          "offlineCoins": 2520,
+          "offlineXp": 144,
+          "coinsEarnedTotal": 2520
+        },
+        "final": {
+          "coins": 2520,
+          "xp": 144,
+          "level": 80,
+          "embers": 0,
+          "offline": {
+            "version": 1,
+            "disabled": false,
+            "highWater": 1003600,
+            "nextId": 2,
+            "nextBatchAt": 1005400,
+            "anchor": null,
+            "batch": null,
+            "lastReceipt": {
+              "id": 1,
+              "part": "manual",
+              "at": 1003600,
+              "minutes": 60,
+              "offlineCoins": 2520,
+              "offlineXp": 144,
+              "levelCoins": 0,
+              "levelEmbers": 0,
+              "levelsGained": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "econ.offlineLifecycle.cooldown",
+      "input": {
+        "restaurantIndex": 3,
+        "level": 80,
+        "upgrades": {
+          "caixa": 1
+        },
+        "steps": [
+          {
+            "kind": "hide",
+            "at": 1000000
+          },
+          {
+            "kind": "return",
+            "at": 1000600
+          },
+          {
+            "kind": "hide",
+            "at": 1000700
+          },
+          {
+            "kind": "return",
+            "at": 1000710
+          },
+          {
+            "kind": "hide",
+            "at": 1000800
+          },
+          {
+            "kind": "return",
+            "at": 1000810
+          },
+          {
+            "kind": "claim",
+            "at": 1000810
+          },
+          {
+            "kind": "claim",
+            "at": 1002400
+          }
+        ]
+      },
+      "expect": {
+        "trace": [
+          {
+            "kind": "hide",
+            "at": 1000000,
+            "coins": 0,
+            "xp": 0,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": null,
+            "highWater": 1000000,
+            "nextBatchAt": 0
+          },
+          {
+            "kind": "return",
+            "at": 1000600,
+            "coins": 315,
+            "xp": 18,
+            "level": 80,
+            "embers": 0,
+            "receipt": {
+              "id": 1,
+              "part": "auto",
+              "at": 1000600,
+              "minutes": 10,
+              "offlineCoins": 315,
+              "offlineXp": 18,
+              "levelCoins": 0,
+              "levelEmbers": 0,
+              "levelsGained": 0
+            },
+            "batch": null,
+            "highWater": 1000600,
+            "nextBatchAt": 1002400
+          },
+          {
+            "kind": "hide",
+            "at": 1000700,
+            "coins": 315,
+            "xp": 18,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": null,
+            "highWater": 1000700,
+            "nextBatchAt": 1002400
+          },
+          {
+            "kind": "return",
+            "at": 1000710,
+            "coins": 315,
+            "xp": 18,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": {
+              "id": 2,
+              "minutes": 0.16666666666666666,
+              "autoMinutes": 0.16666666666666666,
+              "coinsRaw": 3.529166666666667,
+              "xpRaw": 0.20166666666666663,
+              "autoCoinsRaw": 3.529166666666667,
+              "autoXpRaw": 0.20166666666666663,
+              "paidCoins": 0,
+              "paidXp": 0,
+              "availableAt": 1002400,
+              "settledAt": null,
+              "cooldownSec": 1800
+            },
+            "highWater": 1000710,
+            "nextBatchAt": 1002400
+          },
+          {
+            "kind": "hide",
+            "at": 1000800,
+            "coins": 315,
+            "xp": 18,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": {
+              "id": 2,
+              "minutes": 0.16666666666666666,
+              "autoMinutes": 0.16666666666666666,
+              "coinsRaw": 3.529166666666667,
+              "xpRaw": 0.20166666666666663,
+              "autoCoinsRaw": 3.529166666666667,
+              "autoXpRaw": 0.20166666666666663,
+              "paidCoins": 0,
+              "paidXp": 0,
+              "availableAt": 1002400,
+              "settledAt": null,
+              "cooldownSec": 1800
+            },
+            "highWater": 1000800,
+            "nextBatchAt": 1002400
+          },
+          {
+            "kind": "return",
+            "at": 1000810,
+            "coins": 315,
+            "xp": 18,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": {
+              "id": 2,
+              "minutes": 0.3333333333333333,
+              "autoMinutes": 0.3333333333333333,
+              "coinsRaw": 7.058333333333334,
+              "xpRaw": 0.40333333333333327,
+              "autoCoinsRaw": 7.058333333333334,
+              "autoXpRaw": 0.40333333333333327,
+              "paidCoins": 0,
+              "paidXp": 0,
+              "availableAt": 1002400,
+              "settledAt": null,
+              "cooldownSec": 1800
+            },
+            "highWater": 1000810,
+            "nextBatchAt": 1002400
+          },
+          {
+            "kind": "claim",
+            "at": 1000810,
+            "coins": 315,
+            "xp": 18,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": {
+              "id": 2,
+              "minutes": 0.3333333333333333,
+              "autoMinutes": 0.3333333333333333,
+              "coinsRaw": 7.058333333333334,
+              "xpRaw": 0.40333333333333327,
+              "autoCoinsRaw": 7.058333333333334,
+              "autoXpRaw": 0.40333333333333327,
+              "paidCoins": 0,
+              "paidXp": 0,
+              "availableAt": 1002400,
+              "settledAt": null,
+              "cooldownSec": 1800
+            },
+            "highWater": 1000810,
+            "nextBatchAt": 1002400
+          },
+          {
+            "kind": "claim",
+            "at": 1002400,
+            "coins": 322,
+            "xp": 18,
+            "level": 80,
+            "embers": 0,
+            "receipt": {
+              "id": 2,
+              "part": "manual",
+              "at": 1002400,
+              "minutes": 0.3333333333333333,
+              "offlineCoins": 7,
+              "offlineXp": 0,
+              "levelCoins": 0,
+              "levelEmbers": 0,
+              "levelsGained": 0
+            },
+            "batch": null,
+            "highWater": 1002400,
+            "nextBatchAt": 1004200
+          }
+        ],
+        "counters": {
+          "restaurantsUnlocked": 1,
+          "offlineCoins": 322,
+          "offlineXp": 18,
+          "coinsEarnedTotal": 322
+        },
+        "final": {
+          "coins": 322,
+          "xp": 18,
+          "level": 80,
+          "embers": 0,
+          "offline": {
+            "version": 1,
+            "disabled": false,
+            "highWater": 1002400,
+            "nextId": 3,
+            "nextBatchAt": 1004200,
+            "anchor": null,
+            "batch": null,
+            "lastReceipt": {
+              "id": 2,
+              "part": "manual",
+              "at": 1002400,
+              "minutes": 0.3333333333333333,
+              "offlineCoins": 7,
+              "offlineXp": 0,
+              "levelCoins": 0,
+              "levelEmbers": 0,
+              "levelsGained": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "econ.offlineLifecycle.rollback",
+      "input": {
+        "restaurantIndex": 3,
+        "level": 80,
+        "upgrades": {
+          "caixa": 1
+        },
+        "steps": [
+          {
+            "kind": "hide",
+            "at": 1000000
+          },
+          {
+            "kind": "return",
+            "at": 999900
+          },
+          {
+            "kind": "return",
+            "at": 1003600
+          }
+        ]
+      },
+      "expect": {
+        "trace": [
+          {
+            "kind": "hide",
+            "at": 1000000,
+            "coins": 0,
+            "xp": 0,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": null,
+            "highWater": 1000000,
+            "nextBatchAt": 0
+          },
+          {
+            "kind": "return",
+            "at": 999900,
+            "coins": 0,
+            "xp": 0,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": null,
+            "highWater": 1000000,
+            "nextBatchAt": 0
+          },
+          {
+            "kind": "return",
+            "at": 1003600,
+            "coins": 0,
+            "xp": 0,
+            "level": 80,
+            "embers": 0,
+            "receipt": null,
+            "batch": null,
+            "highWater": 1003600,
+            "nextBatchAt": 0
+          }
+        ],
+        "counters": {
+          "restaurantsUnlocked": 1
+        },
+        "final": {
+          "coins": 0,
+          "xp": 0,
+          "level": 80,
+          "embers": 0,
+          "offline": {
+            "version": 1,
+            "disabled": false,
+            "highWater": 1003600,
+            "nextId": 1,
+            "nextBatchAt": 0,
+            "anchor": null,
+            "batch": null,
+            "lastReceipt": null
+          }
+        }
+      }
+    },
+    {
+      "id": "econ.offlineLifecycle.levels",
+      "input": {
+        "restaurantIndex": 3,
+        "level": 4,
+        "upgrades": {},
+        "steps": [
+          {
+            "kind": "hide",
+            "at": 1000000
+          },
+          {
+            "kind": "return",
+            "at": 1028800
+          },
+          {
+            "kind": "claim",
+            "at": 1028800
+          }
+        ]
+      },
+      "expect": {
+        "trace": [
+          {
+            "kind": "hide",
+            "at": 1000000,
+            "coins": 0,
+            "xp": 0,
+            "level": 4,
+            "embers": 0,
+            "receipt": null,
+            "batch": null,
+            "highWater": 1000000,
+            "nextBatchAt": 0
+          },
+          {
+            "kind": "return",
+            "at": 1028800,
+            "coins": 0,
+            "xp": 0,
+            "level": 4,
+            "embers": 0,
+            "receipt": null,
+            "batch": {
+              "id": 1,
+              "minutes": 480,
+              "autoMinutes": 0,
+              "coinsRaw": 20160,
+              "xpRaw": 1152,
+              "autoCoinsRaw": 0,
+              "autoXpRaw": 0,
+              "paidCoins": 0,
+              "paidXp": 0,
+              "availableAt": 0,
+              "settledAt": null,
+              "cooldownSec": 1800
+            },
+            "highWater": 1028800,
+            "nextBatchAt": 0
+          },
+          {
+            "kind": "claim",
+            "at": 1028800,
+            "coins": 21012,
+            "xp": 217,
+            "level": 6,
+            "embers": 3,
+            "receipt": {
+              "id": 1,
+              "part": "manual",
+              "at": 1028800,
+              "minutes": 480,
+              "offlineCoins": 20160,
+              "offlineXp": 1152,
+              "levelCoins": 852,
+              "levelEmbers": 3,
+              "levelsGained": 2
+            },
+            "batch": null,
+            "highWater": 1028800,
+            "nextBatchAt": 1030600
+          }
+        ],
+        "counters": {
+          "restaurantsUnlocked": 1,
+          "offlineCoins": 20160,
+          "offlineXp": 1152,
+          "coinsEarnedTotal": 21012
+        },
+        "final": {
+          "coins": 21012,
+          "xp": 217,
+          "level": 6,
+          "embers": 3,
+          "offline": {
+            "version": 1,
+            "disabled": false,
+            "highWater": 1028800,
+            "nextId": 2,
+            "nextBatchAt": 1030600,
+            "anchor": null,
+            "batch": null,
+            "lastReceipt": {
+              "id": 1,
+              "part": "manual",
+              "at": 1028800,
+              "minutes": 480,
+              "offlineCoins": 20160,
+              "offlineXp": 1152,
+              "levelCoins": 852,
+              "levelEmbers": 3,
+              "levelsGained": 2
+            }
+          }
+        }
+      }
+    },
+    {
       "id": "econ.effectiveHeat",
       "input": {
         "zoneHeatMultipliers": [
@@ -12060,7 +13583,7 @@
             0.55,
             0.55,
             0.433888889,
-            0.341
+            0
           ],
           [
             0.75,
@@ -12069,7 +13592,7 @@
             1,
             1,
             0.788888889,
-            0.62
+            0
           ],
           [
             1.1625,
@@ -12078,7 +13601,7 @@
             1.55,
             1.55,
             1.222777778,
-            0.961
+            0
           ]
         ]
       }
@@ -12100,6 +13623,7 @@
           "spawnIntervalSec": 9,
           "patienceScalar": 1.28,
           "difficultyScalar": 0.75,
+          "vipChance": 0,
           "maxOrdersOnScreen": 2
         }
       },
@@ -12111,6 +13635,8 @@
         "finalTimeSec": 90,
         "counters": {
           "customersSpawned": 10,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 9,
           "customersLost": 0,
           "ordersCompleted": 9,
@@ -12141,26 +13667,29 @@
           "spawnIntervalSec": 6.48,
           "patienceScalar": 0.968,
           "difficultyScalar": 1.109,
+          "vipChance": 0,
           "maxOrdersOnScreen": 3
         }
       },
       "expect": {
-        "coins": 537,
-        "xp": 82,
-        "stars": 3,
+        "coins": 482,
+        "xp": 74,
+        "stars": 2,
         "failed": false,
         "finalTimeSec": 99,
         "counters": {
           "customersSpawned": 16,
-          "customersServed": 15,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 14,
           "customersLost": 0,
-          "ordersCompleted": 15,
-          "perfectCooks": 8,
-          "goodCooks": 10,
+          "ordersCompleted": 14,
+          "perfectCooks": 7,
+          "goodCooks": 9,
           "burnedFood": 0,
-          "bestCombo": 18,
+          "bestCombo": 16,
           "flips": 18,
-          "itemsCooked": 18,
+          "itemsCooked": 17,
           "charcoalRefills": 0,
           "peakSimultaneousOrders": 2,
           "flawless": true
@@ -12182,6 +13711,7 @@
           "spawnIntervalSec": 7.35,
           "patienceScalar": 1.075,
           "difficultyScalar": 0.986,
+          "vipChance": 0,
           "maxOrdersOnScreen": 2
         }
       },
@@ -12193,6 +13723,8 @@
         "finalTimeSec": 111,
         "counters": {
           "customersSpawned": 13,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 13,
           "customersLost": 0,
           "ordersCompleted": 13,
@@ -12223,6 +13755,7 @@
           "spawnIntervalSec": 6.69,
           "patienceScalar": 0.994,
           "difficultyScalar": 1.08,
+          "vipChance": 0,
           "maxOrdersOnScreen": 3
         }
       },
@@ -12234,6 +13767,8 @@
         "finalTimeSec": 113,
         "counters": {
           "customersSpawned": 17,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 16,
           "customersLost": 0,
           "ordersCompleted": 16,
@@ -12264,26 +13799,29 @@
           "spawnIntervalSec": 9,
           "patienceScalar": 1.28,
           "difficultyScalar": 0.75,
+          "vipChance": 0,
           "maxOrdersOnScreen": 2
         }
       },
       "expect": {
-        "coins": 300,
-        "xp": 43,
+        "coins": 354,
+        "xp": 49,
         "stars": 3,
         "failed": false,
         "finalTimeSec": 90,
         "counters": {
           "customersSpawned": 10,
-          "customersServed": 9,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 10,
           "customersLost": 0,
-          "ordersCompleted": 9,
-          "perfectCooks": 7,
-          "goodCooks": 2,
+          "ordersCompleted": 10,
+          "perfectCooks": 9,
+          "goodCooks": 1,
           "burnedFood": 0,
-          "bestCombo": 9,
-          "flips": 9,
-          "itemsCooked": 9,
+          "bestCombo": 10,
+          "flips": 10,
+          "itemsCooked": 10,
           "charcoalRefills": 0,
           "peakSimultaneousOrders": 2,
           "flawless": true
@@ -12305,6 +13843,7 @@
           "spawnIntervalSec": 6.48,
           "patienceScalar": 0.968,
           "difficultyScalar": 1.109,
+          "vipChance": 0,
           "maxOrdersOnScreen": 3
         }
       },
@@ -12316,6 +13855,8 @@
         "finalTimeSec": 99,
         "counters": {
           "customersSpawned": 16,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 14,
           "customersLost": 0,
           "ordersCompleted": 14,
@@ -12346,6 +13887,7 @@
           "spawnIntervalSec": 7.35,
           "patienceScalar": 1.075,
           "difficultyScalar": 0.986,
+          "vipChance": 0,
           "maxOrdersOnScreen": 2
         }
       },
@@ -12357,6 +13899,8 @@
         "finalTimeSec": 111,
         "counters": {
           "customersSpawned": 14,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 14,
           "customersLost": 0,
           "ordersCompleted": 14,
@@ -12387,6 +13931,7 @@
           "spawnIntervalSec": 6.69,
           "patienceScalar": 0.994,
           "difficultyScalar": 1.08,
+          "vipChance": 0,
           "maxOrdersOnScreen": 3
         }
       },
@@ -12398,6 +13943,8 @@
         "finalTimeSec": 113,
         "counters": {
           "customersSpawned": 17,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 16,
           "customersLost": 0,
           "ordersCompleted": 16,
@@ -12428,6 +13975,7 @@
           "spawnIntervalSec": 9,
           "patienceScalar": 1.28,
           "difficultyScalar": 0.75,
+          "vipChance": 0,
           "maxOrdersOnScreen": 2
         }
       },
@@ -12439,6 +13987,8 @@
         "finalTimeSec": 90,
         "counters": {
           "customersSpawned": 10,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 10,
           "customersLost": 0,
           "ordersCompleted": 10,
@@ -12449,7 +13999,7 @@
           "flips": 10,
           "itemsCooked": 10,
           "charcoalRefills": 0,
-          "peakSimultaneousOrders": 1,
+          "peakSimultaneousOrders": 2,
           "flawless": true
         }
       }
@@ -12469,6 +14019,7 @@
           "spawnIntervalSec": 6.48,
           "patienceScalar": 0.968,
           "difficultyScalar": 1.109,
+          "vipChance": 0,
           "maxOrdersOnScreen": 3
         }
       },
@@ -12480,6 +14031,8 @@
         "finalTimeSec": 99,
         "counters": {
           "customersSpawned": 16,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 14,
           "customersLost": 0,
           "ordersCompleted": 14,
@@ -12510,6 +14063,7 @@
           "spawnIntervalSec": 7.35,
           "patienceScalar": 1.075,
           "difficultyScalar": 0.986,
+          "vipChance": 0,
           "maxOrdersOnScreen": 2
         }
       },
@@ -12521,6 +14075,8 @@
         "finalTimeSec": 111,
         "counters": {
           "customersSpawned": 15,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 14,
           "customersLost": 0,
           "ordersCompleted": 14,
@@ -12551,6 +14107,7 @@
           "spawnIntervalSec": 6.69,
           "patienceScalar": 0.994,
           "difficultyScalar": 1.08,
+          "vipChance": 0,
           "maxOrdersOnScreen": 3
         }
       },
@@ -12562,6 +14119,8 @@
         "finalTimeSec": 113,
         "counters": {
           "customersSpawned": 17,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 16,
           "customersLost": 0,
           "ordersCompleted": 16,
@@ -12599,6 +14158,8 @@
         "finalTimeSec": 135,
         "counters": {
           "customersSpawned": 18,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 17,
           "customersLost": 0,
           "ordersCompleted": 17,
@@ -12612,6 +14173,12 @@
           "peakSimultaneousOrders": 2,
           "flawless": true
         },
+        "zoneCount": 3,
+        "zoneHeats": [
+          0.891,
+          1.62,
+          1.7
+        ],
         "slowCuts": [
           {
             "id": "costela",
@@ -12652,6 +14219,8 @@
         "finalTimeSec": 135,
         "counters": {
           "customersSpawned": 18,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 17,
           "customersLost": 0,
           "ordersCompleted": 17,
@@ -12665,6 +14234,12 @@
           "peakSimultaneousOrders": 3,
           "flawless": true
         },
+        "zoneCount": 3,
+        "zoneHeats": [
+          0.891,
+          1.62,
+          1.7
+        ],
         "slowCuts": [
           {
             "id": "costela",
@@ -12698,26 +14273,35 @@
         "overrides": {}
       },
       "expect": {
-        "coins": 2269,
-        "xp": 270,
+        "coins": 2062,
+        "xp": 264,
         "stars": 2,
         "failed": false,
         "finalTimeSec": 150,
         "counters": {
           "customersSpawned": 20,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 16,
           "customersLost": 2,
           "ordersCompleted": 16,
-          "perfectCooks": 17,
-          "goodCooks": 14,
+          "perfectCooks": 14,
+          "goodCooks": 18,
           "burnedFood": 1,
-          "bestCombo": 13,
-          "flips": 39,
+          "bestCombo": 17,
+          "flips": 40,
           "itemsCooked": 32,
           "charcoalRefills": 0,
           "peakSimultaneousOrders": 3,
           "flawless": false
         },
+        "zoneCount": 4,
+        "zoneHeats": [
+          0.891,
+          1.62,
+          1.7,
+          1.62
+        ],
         "slowCuts": [
           {
             "id": "costela",
@@ -12729,7 +14313,7 @@
           {
             "id": "cupim",
             "taken": 2,
-            "flipped": 1,
+            "flipped": 2,
             "served": 1,
             "burned": 0
           }
@@ -12751,13 +14335,15 @@
         "overrides": {}
       },
       "expect": {
-        "coins": 2589,
+        "coins": 2227,
         "xp": 296,
         "stars": 2,
         "failed": false,
         "finalTimeSec": 150,
         "counters": {
           "customersSpawned": 20,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 16,
           "customersLost": 1,
           "ordersCompleted": 16,
@@ -12771,6 +14357,13 @@
           "peakSimultaneousOrders": 4,
           "flawless": false
         },
+        "zoneCount": 4,
+        "zoneHeats": [
+          0.891,
+          1.62,
+          1.7,
+          1.62
+        ],
         "slowCuts": [
           {
             "id": "costela",
@@ -12804,31 +14397,40 @@
         "overrides": {}
       },
       "expect": {
-        "coins": 2849,
-        "xp": 313,
+        "coins": 1767,
+        "xp": 301,
         "stars": 2,
         "failed": false,
         "finalTimeSec": 165,
         "counters": {
           "customersSpawned": 22,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 19,
           "customersLost": 1,
           "ordersCompleted": 19,
-          "perfectCooks": 14,
-          "goodCooks": 21,
+          "perfectCooks": 13,
+          "goodCooks": 22,
           "burnedFood": 1,
           "bestCombo": 17,
-          "flips": 43,
+          "flips": 42,
           "itemsCooked": 35,
           "charcoalRefills": 0,
           "peakSimultaneousOrders": 4,
           "flawless": false
         },
+        "zoneCount": 4,
+        "zoneHeats": [
+          0.891,
+          1.62,
+          1.7,
+          1.62
+        ],
         "slowCuts": [
           {
             "id": "costela",
             "taken": 4,
-            "flipped": 4,
+            "flipped": 3,
             "served": 2,
             "burned": 1
           },
@@ -12857,13 +14459,15 @@
         "overrides": {}
       },
       "expect": {
-        "coins": 2896,
+        "coins": 1878,
         "xp": 341,
         "stars": 2,
         "failed": false,
         "finalTimeSec": 165,
         "counters": {
           "customersSpawned": 22,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 19,
           "customersLost": 1,
           "ordersCompleted": 19,
@@ -12877,6 +14481,13 @@
           "peakSimultaneousOrders": 4,
           "flawless": false
         },
+        "zoneCount": 4,
+        "zoneHeats": [
+          0.891,
+          1.62,
+          1.7,
+          1.62
+        ],
         "slowCuts": [
           {
             "id": "costela",
@@ -12910,39 +14521,48 @@
         "overrides": {}
       },
       "expect": {
-        "coins": 2990,
-        "xp": 337,
+        "coins": 1481,
+        "xp": 336,
         "stars": 2,
         "failed": false,
         "finalTimeSec": 180,
         "counters": {
           "customersSpawned": 24,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 21,
-          "customersLost": 2,
+          "customersLost": 1,
           "ordersCompleted": 21,
           "perfectCooks": 15,
-          "goodCooks": 23,
+          "goodCooks": 21,
           "burnedFood": 1,
-          "bestCombo": 17,
-          "flips": 46,
+          "bestCombo": 20,
+          "flips": 47,
           "itemsCooked": 39,
           "charcoalRefills": 0,
-          "peakSimultaneousOrders": 3,
+          "peakSimultaneousOrders": 4,
           "flawless": false
         },
+        "zoneCount": 4,
+        "zoneHeats": [
+          0.891,
+          1.62,
+          1.7,
+          1.62
+        ],
         "slowCuts": [
           {
             "id": "costela",
             "taken": 4,
             "flipped": 4,
-            "served": 3,
+            "served": 2,
             "burned": 1
           },
           {
             "id": "cupim",
             "taken": 2,
             "flipped": 2,
-            "served": 1,
+            "served": 2,
             "burned": 0
           }
         ]
@@ -12963,13 +14583,15 @@
         "overrides": {}
       },
       "expect": {
-        "coins": 3077,
+        "coins": 1593,
         "xp": 365,
         "stars": 2,
         "failed": false,
         "finalTimeSec": 180,
         "counters": {
           "customersSpawned": 24,
+          "vipSpawned": 0,
+          "vipServed": 0,
           "customersServed": 20,
           "customersLost": 2,
           "ordersCompleted": 20,
@@ -12983,6 +14605,13 @@
           "peakSimultaneousOrders": 4,
           "flawless": false
         },
+        "zoneCount": 4,
+        "zoneHeats": [
+          0.891,
+          1.62,
+          1.7,
+          1.62
+        ],
         "slowCuts": [
           {
             "id": "costela",
@@ -12999,6 +14628,1789 @@
             "burned": 0
           }
         ]
+      }
+    },
+    {
+      "id": "turn.a05_vip_natural",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a05_vip_natural",
+        "levelIndex": 71,
+        "restaurantIndex": 1,
+        "playerLevel": 12,
+        "seed": 12,
+        "stepSec": 0.0625,
+        "vipStartUnixSec": 1789948800,
+        "vipState": {
+          "day": -1,
+          "usedToday": 0,
+          "callsToday": 0,
+          "lastCallUnixSec": -1,
+          "lastClockUnixSec": 0,
+          "sequence": 0,
+          "pendingCall": null,
+          "offer": null,
+          "servedTotal": 0,
+          "claimedAchievements": [],
+          "blocked": false
+        },
+        "overrides": {
+          "vipChance": 1
+        }
+      },
+      "expect": {
+        "coins": 825,
+        "xp": 107,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 105,
+        "counters": {
+          "customersSpawned": 14,
+          "vipSpawned": 2,
+          "vipServed": 2,
+          "customersServed": 14,
+          "customersLost": 0,
+          "ordersCompleted": 14,
+          "perfectCooks": 14,
+          "goodCooks": 6,
+          "burnedFood": 0,
+          "bestCombo": 20,
+          "flips": 22,
+          "itemsCooked": 20,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "vipQuota": 2,
+        "vipSources": [
+          "natural",
+          "natural"
+        ]
+      }
+    },
+    {
+      "id": "turn.a05_vip_zero",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a05_vip_zero",
+        "levelIndex": 71,
+        "restaurantIndex": 1,
+        "playerLevel": 12,
+        "seed": 12,
+        "stepSec": 0.0625,
+        "vipStartUnixSec": 1789948800,
+        "vipState": {
+          "day": -1,
+          "usedToday": 0,
+          "callsToday": 0,
+          "lastCallUnixSec": -1,
+          "lastClockUnixSec": 0,
+          "sequence": 0,
+          "pendingCall": null,
+          "offer": null,
+          "servedTotal": 0,
+          "claimedAchievements": [],
+          "blocked": false
+        },
+        "overrides": {
+          "vipChance": 0
+        }
+      },
+      "expect": {
+        "coins": 837,
+        "xp": 118,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 105,
+        "counters": {
+          "customersSpawned": 14,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 14,
+          "customersLost": 0,
+          "ordersCompleted": 14,
+          "perfectCooks": 13,
+          "goodCooks": 7,
+          "burnedFood": 0,
+          "bestCombo": 20,
+          "flips": 25,
+          "itemsCooked": 20,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "vipQuota": 0,
+        "vipSources": []
+      }
+    },
+    {
+      "id": "turn.a05_vip_starter",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a05_vip_starter",
+        "levelIndex": 71,
+        "restaurantIndex": 0,
+        "playerLevel": 12,
+        "seed": 12,
+        "stepSec": 0.0625,
+        "vipStartUnixSec": 1789948800,
+        "vipState": {
+          "day": -1,
+          "usedToday": 0,
+          "callsToday": 0,
+          "lastCallUnixSec": -1,
+          "lastClockUnixSec": 0,
+          "sequence": 0,
+          "pendingCall": null,
+          "offer": null,
+          "servedTotal": 0,
+          "claimedAchievements": [],
+          "blocked": false
+        },
+        "overrides": {
+          "vipChance": 1
+        }
+      },
+      "expect": {
+        "coins": 596,
+        "xp": 86,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 90,
+        "counters": {
+          "customersSpawned": 12,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 11,
+          "customersLost": 0,
+          "ordersCompleted": 11,
+          "perfectCooks": 16,
+          "goodCooks": 0,
+          "burnedFood": 0,
+          "bestCombo": 16,
+          "flips": 16,
+          "itemsCooked": 16,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "vipQuota": 0,
+        "vipSources": []
+      }
+    },
+    {
+      "id": "turn.a05_vip_called",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a05_vip_called",
+        "levelIndex": 71,
+        "restaurantIndex": 1,
+        "playerLevel": 12,
+        "seed": 12,
+        "stepSec": 0.0625,
+        "vipStartUnixSec": 1789948800,
+        "vipState": {
+          "day": 20717,
+          "usedToday": 1,
+          "callsToday": 1,
+          "lastCallUnixSec": 1789948800,
+          "lastClockUnixSec": 1789948800,
+          "sequence": 1,
+          "pendingCall": "vip-test-1",
+          "offer": null,
+          "servedTotal": 0,
+          "claimedAchievements": [],
+          "blocked": false
+        },
+        "overrides": {
+          "vipChance": 0
+        }
+      },
+      "expect": {
+        "coins": 903,
+        "xp": 118,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 105,
+        "counters": {
+          "customersSpawned": 14,
+          "vipSpawned": 1,
+          "vipServed": 1,
+          "customersServed": 14,
+          "customersLost": 0,
+          "ordersCompleted": 14,
+          "perfectCooks": 15,
+          "goodCooks": 6,
+          "burnedFood": 0,
+          "bestCombo": 21,
+          "flips": 24,
+          "itemsCooked": 21,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "vipQuota": 1,
+        "vipSources": [
+          "called"
+        ]
+      }
+    },
+    {
+      "id": "turn.a05_vip_capped",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a05_vip_capped",
+        "levelIndex": 71,
+        "restaurantIndex": 1,
+        "playerLevel": 12,
+        "seed": 12,
+        "stepSec": 0.0625,
+        "vipStartUnixSec": 1789948800,
+        "vipState": {
+          "day": 20717,
+          "usedToday": 2,
+          "callsToday": 0,
+          "lastCallUnixSec": -1,
+          "lastClockUnixSec": 1789948800,
+          "sequence": 0,
+          "pendingCall": null,
+          "offer": null,
+          "servedTotal": 0,
+          "claimedAchievements": [],
+          "blocked": false
+        },
+        "overrides": {
+          "vipChance": 1
+        }
+      },
+      "expect": {
+        "coins": 837,
+        "xp": 118,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 105,
+        "counters": {
+          "customersSpawned": 14,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 14,
+          "customersLost": 0,
+          "ordersCompleted": 14,
+          "perfectCooks": 13,
+          "goodCooks": 7,
+          "burnedFood": 0,
+          "bestCombo": 20,
+          "flips": 25,
+          "itemsCooked": 20,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "vipQuota": 2,
+        "vipSources": []
+      }
+    },
+    {
+      "id": "turn.a05_vip_fallback_weekday",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a05_vip_fallback_weekday",
+        "levelIndex": 71,
+        "restaurantIndex": 1,
+        "playerLevel": 12,
+        "seed": 25,
+        "stepSec": 0.0625,
+        "vipStartUnixSec": 1789948800,
+        "vipState": {
+          "day": -1,
+          "usedToday": 0,
+          "callsToday": 0,
+          "lastCallUnixSec": -1,
+          "lastClockUnixSec": 0,
+          "sequence": 0,
+          "pendingCall": null,
+          "offer": null,
+          "servedTotal": 0,
+          "claimedAchievements": [],
+          "blocked": false
+        },
+        "overrides": {}
+      },
+      "expect": {
+        "coins": 1212,
+        "xp": 148,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 105,
+        "counters": {
+          "customersSpawned": 14,
+          "vipSpawned": 1,
+          "vipServed": 1,
+          "customersServed": 13,
+          "customersLost": 0,
+          "ordersCompleted": 13,
+          "perfectCooks": 16,
+          "goodCooks": 4,
+          "burnedFood": 0,
+          "bestCombo": 20,
+          "flips": 29,
+          "itemsCooked": 20,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "vipQuota": 1,
+        "vipSources": [
+          "natural"
+        ]
+      }
+    },
+    {
+      "id": "turn.a05_vip_fallback_weekend",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a05_vip_fallback_weekend",
+        "levelIndex": 71,
+        "restaurantIndex": 1,
+        "playerLevel": 12,
+        "seed": 25,
+        "stepSec": 0.0625,
+        "vipStartUnixSec": 1790380800,
+        "vipState": {
+          "day": -1,
+          "usedToday": 0,
+          "callsToday": 0,
+          "lastCallUnixSec": -1,
+          "lastClockUnixSec": 0,
+          "sequence": 0,
+          "pendingCall": null,
+          "offer": null,
+          "servedTotal": 0,
+          "claimedAchievements": [],
+          "blocked": false
+        },
+        "overrides": {}
+      },
+      "expect": {
+        "coins": 1845,
+        "xp": 189,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 105,
+        "counters": {
+          "customersSpawned": 14,
+          "vipSpawned": 2,
+          "vipServed": 2,
+          "customersServed": 13,
+          "customersLost": 0,
+          "ordersCompleted": 13,
+          "perfectCooks": 17,
+          "goodCooks": 7,
+          "burnedFood": 0,
+          "bestCombo": 24,
+          "flips": 34,
+          "itemsCooked": 24,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "vipQuota": 2,
+        "vipSources": [
+          "natural",
+          "natural"
+        ]
+      }
+    },
+    {
+      "id": "turn.a05_vip_weekend_zero",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a05_vip_weekend_zero",
+        "levelIndex": 71,
+        "restaurantIndex": 1,
+        "playerLevel": 12,
+        "seed": 25,
+        "stepSec": 0.0625,
+        "vipStartUnixSec": 1790380800,
+        "vipState": {
+          "day": -1,
+          "usedToday": 0,
+          "callsToday": 0,
+          "lastCallUnixSec": -1,
+          "lastClockUnixSec": 0,
+          "sequence": 0,
+          "pendingCall": null,
+          "offer": null,
+          "servedTotal": 0,
+          "claimedAchievements": [],
+          "blocked": false
+        },
+        "overrides": {
+          "vipChance": 0
+        }
+      },
+      "expect": {
+        "coins": 1292,
+        "xp": 160,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 105,
+        "counters": {
+          "customersSpawned": 14,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 13,
+          "customersLost": 0,
+          "ordersCompleted": 13,
+          "perfectCooks": 16,
+          "goodCooks": 6,
+          "burnedFood": 0,
+          "bestCombo": 22,
+          "flips": 33,
+          "itemsCooked": 22,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "vipQuota": 0,
+        "vipSources": []
+      }
+    },
+    {
+      "id": "turn.a06_upgrades_control",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a06_upgrades_control",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {},
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {
+          "turnLengthSec": 120,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 3
+        }
+      },
+      "expect": {
+        "coins": 3301,
+        "xp": 378,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 120,
+        "counters": {
+          "customersSpawned": 25,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 22,
+          "customersLost": 0,
+          "ordersCompleted": 22,
+          "perfectCooks": 22,
+          "goodCooks": 18,
+          "burnedFood": 0,
+          "bestCombo": 40,
+          "flips": 48,
+          "itemsCooked": 40,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 3,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.a06_upgrades_capacity",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a06_upgrades_capacity",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "capacity": 2
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {
+          "turnLengthSec": 120,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 3
+        }
+      },
+      "expect": {
+        "coins": 3966,
+        "xp": 538,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 120,
+        "counters": {
+          "customersSpawned": 43,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 37,
+          "customersLost": 1,
+          "ordersCompleted": 37,
+          "perfectCooks": 31,
+          "goodCooks": 29,
+          "burnedFood": 0,
+          "bestCombo": 20,
+          "flips": 76,
+          "itemsCooked": 64,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 5,
+          "flawless": false
+        }
+      }
+    },
+    {
+      "id": "turn.a06_upgrades_tables",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a06_upgrades_tables",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "tables": 1
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {
+          "turnLengthSec": 120,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 3
+        }
+      },
+      "expect": {
+        "coins": 3940,
+        "xp": 486,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 120,
+        "counters": {
+          "customersSpawned": 36,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 32,
+          "customersLost": 0,
+          "ordersCompleted": 32,
+          "perfectCooks": 25,
+          "goodCooks": 30,
+          "burnedFood": 0,
+          "bestCombo": 47,
+          "flips": 65,
+          "itemsCooked": 56,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 4,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.a06_upgrades_combined",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a06_upgrades_combined",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "capacity": 2,
+          "tables": 1
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {
+          "turnLengthSec": 120,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 3
+        }
+      },
+      "expect": {
+        "coins": 5030,
+        "xp": 602,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 120,
+        "counters": {
+          "customersSpawned": 46,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 41,
+          "customersLost": 0,
+          "ordersCompleted": 41,
+          "perfectCooks": 29,
+          "goodCooks": 38,
+          "burnedFood": 0,
+          "bestCombo": 63,
+          "flips": 79,
+          "itemsCooked": 68,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 6,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.a06_upgrades_mastery",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a06_upgrades_mastery",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "brasa_mastery": 20
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {
+          "turnLengthSec": 120,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 3
+        }
+      },
+      "expect": {
+        "coins": 3523,
+        "xp": 378,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 120,
+        "counters": {
+          "customersSpawned": 25,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 22,
+          "customersLost": 0,
+          "ordersCompleted": 22,
+          "perfectCooks": 22,
+          "goodCooks": 18,
+          "burnedFood": 0,
+          "bestCombo": 40,
+          "flips": 48,
+          "itemsCooked": 40,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 3,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.a06_upgrades_loyalty",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a06_upgrades_loyalty",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "clientela_fiel": 20
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {
+          "turnLengthSec": 120,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 3
+        }
+      },
+      "expect": {
+        "coins": 3321,
+        "xp": 378,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 120,
+        "counters": {
+          "customersSpawned": 25,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 22,
+          "customersLost": 0,
+          "ordersCompleted": 22,
+          "perfectCooks": 22,
+          "goodCooks": 18,
+          "burnedFood": 0,
+          "bestCombo": 40,
+          "flips": 48,
+          "itemsCooked": 40,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 3,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.a06_upgrades_max_queue",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a06_upgrades_max_queue",
+        "levelIndex": 77,
+        "restaurantIndex": 6,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "capacity": 5,
+          "tables": 6
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {
+          "turnLengthSec": 120,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0
+        }
+      },
+      "expect": {
+        "coins": 4052,
+        "xp": 939,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 120,
+        "counters": {
+          "customersSpawned": 80,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 62,
+          "customersLost": 3,
+          "ordersCompleted": 62,
+          "perfectCooks": 51,
+          "goodCooks": 55,
+          "burnedFood": 0,
+          "bestCombo": 38,
+          "flips": 134,
+          "itemsCooked": 110,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 15,
+          "flawless": false
+        }
+      }
+    },
+    {
+      "id": "turn.a062_resources_control",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a062_resources_control",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {},
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {
+          "turnLengthSec": 250,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 6
+        }
+      },
+      "expect": {
+        "coins": 10574,
+        "xp": 1292,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 250,
+        "counters": {
+          "customersSpawned": 89,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 81,
+          "customersLost": 3,
+          "ordersCompleted": 81,
+          "perfectCooks": 56,
+          "goodCooks": 80,
+          "burnedFood": 0,
+          "bestCombo": 72,
+          "flips": 163,
+          "itemsCooked": 138,
+          "charcoalRefills": 1,
+          "peakSimultaneousOrders": 6,
+          "flawless": false
+        },
+        "resources": {
+          "autoAttempts": 0,
+          "autoSuccesses": 0,
+          "stock": {
+            "linguica_toscana": 4,
+            "pao_de_alho": 5,
+            "queijo_coalho": 2,
+            "coracao_frango": 5,
+            "frango_coxa": 4,
+            "asinha_frango": 3,
+            "espetinho_frango": 6,
+            "espetinho_misto": 4,
+            "legumes_grelhados": 5,
+            "fraldinha": 5,
+            "contra_file": 3,
+            "maminha": 5,
+            "picanha": 1,
+            "costela": 3,
+            "cupim": 5,
+            "vinagrete": 6
+          }
+        }
+      }
+    },
+    {
+      "id": "turn.a062_resources_stability",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a062_resources_stability",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "grill_stability": 6
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {
+          "turnLengthSec": 250,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 6
+        }
+      },
+      "expect": {
+        "coins": 10311,
+        "xp": 1376,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 250,
+        "counters": {
+          "customersSpawned": 97,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 88,
+          "customersLost": 4,
+          "ordersCompleted": 88,
+          "perfectCooks": 67,
+          "goodCooks": 78,
+          "burnedFood": 0,
+          "bestCombo": 25,
+          "flips": 174,
+          "itemsCooked": 151,
+          "charcoalRefills": 1,
+          "peakSimultaneousOrders": 6,
+          "flawless": false
+        },
+        "resources": {
+          "autoAttempts": 0,
+          "autoSuccesses": 0,
+          "stock": {
+            "linguica_toscana": 4,
+            "pao_de_alho": 2,
+            "queijo_coalho": 0,
+            "coracao_frango": 3,
+            "frango_coxa": 4,
+            "asinha_frango": 3,
+            "espetinho_frango": 5,
+            "espetinho_misto": 4,
+            "legumes_grelhados": 4,
+            "fraldinha": 4,
+            "contra_file": 1,
+            "maminha": 3,
+            "picanha": 1,
+            "costela": 3,
+            "cupim": 5,
+            "vinagrete": 4
+          }
+        }
+      }
+    },
+    {
+      "id": "turn.a062_resources_quality",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a062_resources_quality",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "charcoal_quality": 6
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {
+          "turnLengthSec": 250,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 6
+        }
+      },
+      "expect": {
+        "coins": 10913,
+        "xp": 1402,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 250,
+        "counters": {
+          "customersSpawned": 100,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 91,
+          "customersLost": 4,
+          "ordersCompleted": 91,
+          "perfectCooks": 62,
+          "goodCooks": 92,
+          "burnedFood": 0,
+          "bestCombo": 60,
+          "flips": 181,
+          "itemsCooked": 158,
+          "charcoalRefills": 1,
+          "peakSimultaneousOrders": 6,
+          "flawless": false
+        },
+        "resources": {
+          "autoAttempts": 0,
+          "autoSuccesses": 0,
+          "stock": {
+            "linguica_toscana": 6,
+            "pao_de_alho": 6,
+            "queijo_coalho": 4,
+            "coracao_frango": 6,
+            "frango_coxa": 6,
+            "asinha_frango": 5,
+            "espetinho_frango": 6,
+            "espetinho_misto": 6,
+            "legumes_grelhados": 6,
+            "fraldinha": 6,
+            "contra_file": 6,
+            "maminha": 5,
+            "picanha": 6,
+            "costela": 6,
+            "cupim": 6,
+            "vinagrete": 5
+          }
+        }
+      }
+    },
+    {
+      "id": "turn.a062_resources_automatic",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a062_resources_automatic",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "charcoal_auto": 3
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {
+          "turnLengthSec": 250,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 6
+        }
+      },
+      "expect": {
+        "coins": 10544,
+        "xp": 1313,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 250,
+        "counters": {
+          "customersSpawned": 89,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 83,
+          "customersLost": 3,
+          "ordersCompleted": 83,
+          "perfectCooks": 56,
+          "goodCooks": 81,
+          "burnedFood": 0,
+          "bestCombo": 72,
+          "flips": 162,
+          "itemsCooked": 140,
+          "charcoalRefills": 1,
+          "peakSimultaneousOrders": 6,
+          "flawless": false
+        },
+        "resources": {
+          "autoAttempts": 1,
+          "autoSuccesses": 1,
+          "stock": {
+            "linguica_toscana": 4,
+            "pao_de_alho": 5,
+            "queijo_coalho": 2,
+            "coracao_frango": 5,
+            "frango_coxa": 5,
+            "asinha_frango": 3,
+            "espetinho_frango": 6,
+            "espetinho_misto": 4,
+            "legumes_grelhados": 5,
+            "fraldinha": 5,
+            "contra_file": 3,
+            "maminha": 6,
+            "picanha": 1,
+            "costela": 3,
+            "cupim": 5,
+            "vinagrete": 6
+          }
+        }
+      }
+    },
+    {
+      "id": "turn.a062_resources_counter",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a062_resources_counter",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "counter": 5
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {
+          "turnLengthSec": 250,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 6
+        }
+      },
+      "expect": {
+        "coins": 9918,
+        "xp": 1271,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 250,
+        "counters": {
+          "customersSpawned": 87,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 77,
+          "customersLost": 4,
+          "ordersCompleted": 77,
+          "perfectCooks": 62,
+          "goodCooks": 70,
+          "burnedFood": 0,
+          "bestCombo": 62,
+          "flips": 158,
+          "itemsCooked": 134,
+          "charcoalRefills": 1,
+          "peakSimultaneousOrders": 6,
+          "flawless": false
+        },
+        "resources": {
+          "autoAttempts": 0,
+          "autoSuccesses": 0,
+          "stock": {
+            "linguica_toscana": 9,
+            "pao_de_alho": 10,
+            "queijo_coalho": 8,
+            "coracao_frango": 11,
+            "frango_coxa": 10,
+            "asinha_frango": 8,
+            "espetinho_frango": 11,
+            "espetinho_misto": 9,
+            "legumes_grelhados": 10,
+            "fraldinha": 10,
+            "contra_file": 8,
+            "maminha": 11,
+            "picanha": 8,
+            "costela": 10,
+            "cupim": 10,
+            "vinagrete": 11
+          }
+        }
+      }
+    },
+    {
+      "id": "turn.a062_resources_combined",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a062_resources_combined",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "grill_stability": 6,
+          "charcoal_quality": 6,
+          "charcoal_auto": 3,
+          "counter": 5
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {
+          "turnLengthSec": 250,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 6
+        }
+      },
+      "expect": {
+        "coins": 11460,
+        "xp": 1450,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 250,
+        "counters": {
+          "customersSpawned": 103,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 96,
+          "customersLost": 2,
+          "ordersCompleted": 96,
+          "perfectCooks": 61,
+          "goodCooks": 98,
+          "burnedFood": 1,
+          "bestCombo": 49,
+          "flips": 188,
+          "itemsCooked": 164,
+          "charcoalRefills": 1,
+          "peakSimultaneousOrders": 6,
+          "flawless": false
+        },
+        "resources": {
+          "autoAttempts": 1,
+          "autoSuccesses": 1,
+          "stock": {
+            "linguica_toscana": 9,
+            "pao_de_alho": 7,
+            "queijo_coalho": 2,
+            "coracao_frango": 8,
+            "frango_coxa": 10,
+            "asinha_frango": 6,
+            "espetinho_frango": 10,
+            "espetinho_misto": 8,
+            "legumes_grelhados": 9,
+            "fraldinha": 10,
+            "contra_file": 5,
+            "maminha": 8,
+            "picanha": 8,
+            "costela": 8,
+            "cupim": 10,
+            "vinagrete": 8
+          }
+        }
+      }
+    },
+    {
+      "id": "turn.a063_staff_control",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a063_staff_control",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "counter": 5
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "staffPrepCustomers": 0,
+        "staffPolicy": true,
+        "overrides": {
+          "turnLengthSec": 250,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 6,
+          "autoSpawn": true
+        }
+      },
+      "expect": {
+        "coins": 9918,
+        "xp": 1271,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 250,
+        "counters": {
+          "customersSpawned": 87,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 77,
+          "customersLost": 4,
+          "ordersCompleted": 77,
+          "perfectCooks": 62,
+          "goodCooks": 70,
+          "burnedFood": 0,
+          "bestCombo": 62,
+          "flips": 158,
+          "itemsCooked": 134,
+          "charcoalRefills": 1,
+          "peakSimultaneousOrders": 6,
+          "flawless": false
+        },
+        "staff": {
+          "serveUsed": 0,
+          "serveEligible": 0,
+          "serveLimit": 0,
+          "flipUsed": 0,
+          "flipEligible": 0,
+          "flipLimit": 0,
+          "prepped": 0,
+          "prepAttempts": 0,
+          "prepCapacity": 3,
+          "tripInterval": 1.5
+        }
+      }
+    },
+    {
+      "id": "turn.a063_staff_waiter1",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a063_staff_waiter1",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "counter": 5,
+          "garcom": 1
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "staffPrepCustomers": 0,
+        "staffPolicy": true,
+        "overrides": {
+          "turnLengthSec": 250,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 6,
+          "autoSpawn": true
+        }
+      },
+      "expect": {
+        "coins": 10305,
+        "xp": 1310,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 250,
+        "counters": {
+          "customersSpawned": 93,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 83,
+          "customersLost": 4,
+          "ordersCompleted": 83,
+          "perfectCooks": 54,
+          "goodCooks": 88,
+          "burnedFood": 0,
+          "bestCombo": 48,
+          "flips": 167,
+          "itemsCooked": 145,
+          "charcoalRefills": 1,
+          "peakSimultaneousOrders": 6,
+          "flawless": false
+        },
+        "staff": {
+          "serveUsed": 28,
+          "serveEligible": 143,
+          "serveLimit": 28,
+          "flipUsed": 0,
+          "flipEligible": 0,
+          "flipLimit": 0,
+          "prepped": 0,
+          "prepAttempts": 0,
+          "prepCapacity": 3,
+          "tripInterval": 1.5
+        }
+      }
+    },
+    {
+      "id": "turn.a063_staff_waiter3",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a063_staff_waiter3",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "counter": 5,
+          "garcom": 3
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "staffPrepCustomers": 0,
+        "staffPolicy": true,
+        "overrides": {
+          "turnLengthSec": 250,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 6,
+          "autoSpawn": true
+        }
+      },
+      "expect": {
+        "coins": 9667,
+        "xp": 1208,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 250,
+        "counters": {
+          "customersSpawned": 91,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 81,
+          "customersLost": 4,
+          "ordersCompleted": 81,
+          "perfectCooks": 36,
+          "goodCooks": 100,
+          "burnedFood": 0,
+          "bestCombo": 46,
+          "flips": 162,
+          "itemsCooked": 139,
+          "charcoalRefills": 1,
+          "peakSimultaneousOrders": 6,
+          "flawless": false
+        },
+        "staff": {
+          "serveUsed": 68,
+          "serveEligible": 137,
+          "serveLimit": 68,
+          "flipUsed": 0,
+          "flipEligible": 0,
+          "flipLimit": 0,
+          "prepped": 0,
+          "prepAttempts": 0,
+          "prepCapacity": 3,
+          "tripInterval": 1.5
+        }
+      }
+    },
+    {
+      "id": "turn.a063_staff_waiter5",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a063_staff_waiter5",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "counter": 5,
+          "garcom": 5
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "staffPrepCustomers": 0,
+        "staffPolicy": true,
+        "overrides": {
+          "turnLengthSec": 250,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 6,
+          "autoSpawn": true
+        }
+      },
+      "expect": {
+        "coins": 9732,
+        "xp": 1208,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 250,
+        "counters": {
+          "customersSpawned": 91,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 81,
+          "customersLost": 4,
+          "ordersCompleted": 81,
+          "perfectCooks": 36,
+          "goodCooks": 100,
+          "burnedFood": 0,
+          "bestCombo": 46,
+          "flips": 162,
+          "itemsCooked": 139,
+          "charcoalRefills": 1,
+          "peakSimultaneousOrders": 6,
+          "flawless": false
+        },
+        "staff": {
+          "serveUsed": 68,
+          "serveEligible": 137,
+          "serveLimit": 68,
+          "flipUsed": 0,
+          "flipEligible": 0,
+          "flipLimit": 0,
+          "prepped": 0,
+          "prepAttempts": 0,
+          "prepCapacity": 3,
+          "tripInterval": 1.5
+        }
+      }
+    },
+    {
+      "id": "turn.a063_staff_tray",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a063_staff_tray",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "counter": 5,
+          "garcom": 3,
+          "tray": 5
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "staffPrepCustomers": 0,
+        "staffPolicy": true,
+        "overrides": {
+          "turnLengthSec": 250,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 6,
+          "autoSpawn": true
+        }
+      },
+      "expect": {
+        "coins": 10065,
+        "xp": 1237,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 250,
+        "counters": {
+          "customersSpawned": 87,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 80,
+          "customersLost": 2,
+          "ordersCompleted": 80,
+          "perfectCooks": 38,
+          "goodCooks": 98,
+          "burnedFood": 0,
+          "bestCombo": 46,
+          "flips": 159,
+          "itemsCooked": 137,
+          "charcoalRefills": 1,
+          "peakSimultaneousOrders": 6,
+          "flawless": false
+        },
+        "staff": {
+          "serveUsed": 68,
+          "serveEligible": 136,
+          "serveLimit": 68,
+          "flipUsed": 0,
+          "flipEligible": 0,
+          "flipLimit": 0,
+          "prepped": 0,
+          "prepAttempts": 0,
+          "prepCapacity": 3,
+          "tripInterval": 1
+        }
+      }
+    },
+    {
+      "id": "turn.a063_staff_helper",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a063_staff_helper",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "counter": 5,
+          "auxiliar": 5
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "staffPrepCustomers": 6,
+        "staffPolicy": false,
+        "overrides": {
+          "turnLengthSec": 60,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 6,
+          "autoSpawn": false
+        }
+      },
+      "expect": {
+        "coins": 25,
+        "xp": 0,
+        "stars": 0,
+        "failed": false,
+        "finalTimeSec": 60,
+        "counters": {
+          "customersSpawned": 6,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 0,
+          "customersLost": 0,
+          "ordersCompleted": 0,
+          "perfectCooks": 0,
+          "goodCooks": 0,
+          "burnedFood": 0,
+          "bestCombo": 0,
+          "flips": 0,
+          "itemsCooked": 0,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 6,
+          "flawless": true
+        },
+        "staff": {
+          "serveUsed": 0,
+          "serveEligible": 0,
+          "serveLimit": 0,
+          "flipUsed": 0,
+          "flipEligible": 0,
+          "flipLimit": 0,
+          "prepped": 4,
+          "prepAttempts": 4,
+          "prepCapacity": 4,
+          "tripInterval": 1.5
+        }
+      }
+    },
+    {
+      "id": "turn.a063_staff_cook",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a063_staff_cook",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "counter": 5,
+          "churrasqueiro": 5
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "staffPrepCustomers": 0,
+        "staffPolicy": true,
+        "overrides": {
+          "turnLengthSec": 250,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 6,
+          "autoSpawn": true
+        }
+      },
+      "expect": {
+        "coins": 9918,
+        "xp": 1271,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 250,
+        "counters": {
+          "customersSpawned": 87,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 77,
+          "customersLost": 4,
+          "ordersCompleted": 77,
+          "perfectCooks": 62,
+          "goodCooks": 70,
+          "burnedFood": 0,
+          "bestCombo": 62,
+          "flips": 158,
+          "itemsCooked": 134,
+          "charcoalRefills": 1,
+          "peakSimultaneousOrders": 6,
+          "flawless": false
+        },
+        "staff": {
+          "serveUsed": 0,
+          "serveEligible": 0,
+          "serveLimit": 0,
+          "flipUsed": 29,
+          "flipEligible": 128,
+          "flipLimit": 76,
+          "prepped": 0,
+          "prepAttempts": 0,
+          "prepCapacity": 3,
+          "tripInterval": 1.5
+        }
+      }
+    },
+    {
+      "id": "turn.a063_staff_combined",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a063_staff_combined",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "counter": 5,
+          "garcom": 5,
+          "auxiliar": 5,
+          "churrasqueiro": 5,
+          "tray": 5
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "staffPrepCustomers": 0,
+        "staffPolicy": true,
+        "overrides": {
+          "turnLengthSec": 250,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 6,
+          "autoSpawn": true
+        }
+      },
+      "expect": {
+        "coins": 10132,
+        "xp": 1237,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 250,
+        "counters": {
+          "customersSpawned": 87,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 80,
+          "customersLost": 2,
+          "ordersCompleted": 80,
+          "perfectCooks": 38,
+          "goodCooks": 98,
+          "burnedFood": 0,
+          "bestCombo": 46,
+          "flips": 159,
+          "itemsCooked": 137,
+          "charcoalRefills": 1,
+          "peakSimultaneousOrders": 6,
+          "flawless": false
+        },
+        "staff": {
+          "serveUsed": 68,
+          "serveEligible": 136,
+          "serveLimit": 68,
+          "flipUsed": 36,
+          "flipEligible": 128,
+          "flipLimit": 76,
+          "prepped": 0,
+          "prepAttempts": 0,
+          "prepCapacity": 4,
+          "tripInterval": 1
+        }
+      }
+    },
+    {
+      "id": "turn.a063_staff_prep_service",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a063_staff_prep_service",
+        "levelIndex": 77,
+        "restaurantIndex": 4,
+        "playerLevel": 44,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "upgradeLevels": {
+          "counter": 5,
+          "garcom": 5,
+          "auxiliar": 5,
+          "tray": 5
+        },
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "staffPrepCustomers": 6,
+        "staffPolicy": false,
+        "overrides": {
+          "turnLengthSec": 60,
+          "spawnIntervalSec": 1.5,
+          "patienceScalar": 2,
+          "vipChance": 0,
+          "maxOrdersOnScreen": 6,
+          "autoSpawn": false
+        }
+      },
+      "expect": {
+        "coins": 71,
+        "xp": 9,
+        "stars": 1,
+        "failed": false,
+        "finalTimeSec": 60,
+        "counters": {
+          "customersSpawned": 6,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 3,
+          "customersLost": 0,
+          "ordersCompleted": 3,
+          "perfectCooks": 3,
+          "goodCooks": 0,
+          "burnedFood": 0,
+          "bestCombo": 3,
+          "flips": 0,
+          "itemsCooked": 3,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 6,
+          "flawless": true
+        },
+        "staff": {
+          "serveUsed": 3,
+          "serveEligible": 6,
+          "serveLimit": 3,
+          "flipUsed": 0,
+          "flipEligible": 0,
+          "flipLimit": 0,
+          "prepped": 6,
+          "prepAttempts": 6,
+          "prepCapacity": 4,
+          "tripInterval": 1
+        }
       }
     }
   ]

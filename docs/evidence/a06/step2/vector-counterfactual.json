@@ -1,0 +1,201 @@
+{
+  "method": "Replay the seven changed legacy turn vectors with only stockRemaining overridden to unlimited. No production edits, prices or target changes. All old expected results restored; this isolates finite-stock admission/replenishment and the resulting policy scheduling.",
+  "result": [
+    {
+      "id": "turn.skill0.35.level_011",
+      "restoresOldExpected": true,
+      "counterfactual": {
+        "coins": 537,
+        "xp": 82,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 99,
+        "counters": {
+          "customersSpawned": 16,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 15,
+          "customersLost": 0,
+          "ordersCompleted": 15,
+          "perfectCooks": 8,
+          "goodCooks": 10,
+          "burnedFood": 0,
+          "bestCombo": 18,
+          "flips": 18,
+          "itemsCooked": 18,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.55.level_001",
+      "restoresOldExpected": true,
+      "counterfactual": {
+        "coins": 300,
+        "xp": 43,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 90,
+        "counters": {
+          "customersSpawned": 10,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 9,
+          "customersLost": 0,
+          "ordersCompleted": 9,
+          "perfectCooks": 7,
+          "goodCooks": 2,
+          "burnedFood": 0,
+          "bestCombo": 9,
+          "flips": 9,
+          "itemsCooked": 9,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.85.level_001",
+      "restoresOldExpected": true,
+      "counterfactual": {
+        "coins": 369,
+        "xp": 50,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 90,
+        "counters": {
+          "customersSpawned": 10,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 10,
+          "customersLost": 0,
+          "ordersCompleted": 10,
+          "perfectCooks": 10,
+          "goodCooks": 0,
+          "burnedFood": 0,
+          "bestCombo": 10,
+          "flips": 10,
+          "itemsCooked": 10,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 1,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.a06_upgrades_capacity",
+      "restoresOldExpected": true,
+      "counterfactual": {
+        "coins": 4601,
+        "xp": 541,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 120,
+        "counters": {
+          "customersSpawned": 43,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 37,
+          "customersLost": 1,
+          "ordersCompleted": 37,
+          "perfectCooks": 33,
+          "goodCooks": 26,
+          "burnedFood": 0,
+          "bestCombo": 20,
+          "flips": 76,
+          "itemsCooked": 64,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 5,
+          "flawless": false
+        }
+      }
+    },
+    {
+      "id": "turn.a06_upgrades_tables",
+      "restoresOldExpected": true,
+      "counterfactual": {
+        "coins": 4624,
+        "xp": 493,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 120,
+        "counters": {
+          "customersSpawned": 36,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 32,
+          "customersLost": 0,
+          "ordersCompleted": 32,
+          "perfectCooks": 27,
+          "goodCooks": 28,
+          "burnedFood": 0,
+          "bestCombo": 47,
+          "flips": 66,
+          "itemsCooked": 56,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 4,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.a06_upgrades_combined",
+      "restoresOldExpected": true,
+      "counterfactual": {
+        "coins": 5772,
+        "xp": 594,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 120,
+        "counters": {
+          "customersSpawned": 46,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 40,
+          "customersLost": 1,
+          "ordersCompleted": 40,
+          "perfectCooks": 32,
+          "goodCooks": 34,
+          "burnedFood": 0,
+          "bestCombo": 62,
+          "flips": 78,
+          "itemsCooked": 67,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 6,
+          "flawless": false
+        }
+      }
+    },
+    {
+      "id": "turn.a06_upgrades_max_queue",
+      "restoresOldExpected": true,
+      "counterfactual": {
+        "coins": 8058,
+        "xp": 965,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 120,
+        "counters": {
+          "customersSpawned": 80,
+          "vipSpawned": 0,
+          "vipServed": 0,
+          "customersServed": 62,
+          "customersLost": 3,
+          "ordersCompleted": 62,
+          "perfectCooks": 51,
+          "goodCooks": 56,
+          "burnedFood": 0,
+          "bestCombo": 38,
+          "flips": 135,
+          "itemsCooked": 112,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 15,
+          "flawless": false
+        }
+      }
+    }
+  ]
+}

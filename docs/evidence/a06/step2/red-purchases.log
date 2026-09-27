@@ -1,0 +1,42 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/resources.test.ts (29 tests | 4 failed) 42ms
+   × A-06.2 shared resource purchases/UI geometry > grill_stability is purchasable without rewriting history 7ms
+     → expected false to be true // Object.is equality
+   × A-06.2 shared resource purchases/UI geometry > charcoal_quality is purchasable without rewriting history 1ms
+     → expected false to be true // Object.is equality
+   × A-06.2 shared resource purchases/UI geometry > charcoal_auto is purchasable without rewriting history 1ms
+     → expected false to be true // Object.is equality
+   × A-06.2 shared resource purchases/UI geometry > counter is purchasable without rewriting history 1ms
+     → expected false to be true // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 shared resource purchases/UI geometry > grill_stability is purchasable without rewriting history
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 shared resource purchases/UI geometry > charcoal_quality is purchasable without rewriting history
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 shared resource purchases/UI geometry > charcoal_auto is purchasable without rewriting history
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 shared resource purchases/UI geometry > counter is purchasable without rewriting history
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tools/studio/test/resources.test.ts:152:52
+    150|   it.each(['grill_stability','charcoal_quality','charcoal_auto','count…
+    151|     const p=newPlayerState();p.level=44;p.restaurantIndex=4;p.coins=10…
+    152|     const q=quoteUpgrade(db,p,id);expect(q.canBuy).toBe(true);expect(q…
+       |                                                    ^
+    153|     expect(buyUpgrade(db,p,id)).toBe(true);expect(p.coins).toBe(100000…
+    154|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 25 passed (29)
+   Start at  05:05:10
+   Duration  531ms (transform 223ms, setup 0ms, collect 255ms, tests 42ms, environment 0ms, prepare 71ms)
+

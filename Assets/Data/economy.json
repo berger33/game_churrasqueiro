@@ -1,7 +1,7 @@
 {
   "$schema": "schema/economy.schema.json",
   "_comment": "Economy curves & targets. The simulator (tools/studio/run-sim.ts) asserts the `targets` block; balance changes must keep them green.",
-  "version": 12,
+  "version": 14,
   "currencies": {
     "coins": {
       "id": "coins",
@@ -54,9 +54,19 @@
     ],
     "_note": "coins = value * satisfaction * (1 + perfectTipBonus*[perfect] + speedBonus) * comboMult * tipMult * eventMult * (1 + (customerTipMultiplier - 1) * customerTipWeight). Customer generosity scales a damped tip term, never the whole plate price, so a VIP cannot swing a turn by 6x. Verified by tools/studio/run-sim.ts (coinSpike target).",
     "customerTipWeight": 0.35,
-    "_curvesNote": "levelUpCoins(level) = round(base * level^exponent). A geometric curve here was measured to pay 10.3M coins at level 47 (see docs/06-ECONOMY.md \"exponential blow-up\"); polynomial keeps level rewards in the same order of magnitude as turn income."
+    "_curvesNote": "levelUpCoins(level) = round(base * level^exponent). A geometric curve here was measured to pay 10.3M coins at level 47 (see docs/06-ECONOMY.md \"exponential blow-up\"); polynomial keeps level rewards in the same order of magnitude as turn income.",
+    "activeCoinMultiplierByRestaurant": [
+      1,
+      1,
+      1,
+      1,
+      0.85,
+      0.62,
+      0.48
+    ]
   },
   "idle": {
+    "unlockRestaurantIndex": 3,
     "coinsPerMinuteByRestaurant": [
       0,
       6,

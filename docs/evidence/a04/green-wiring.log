@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ✓ tools/studio/test/sim-grill.test.ts (3 tests) 1334ms
+   ✓ A-04: real progression passes the restaurant AND equipment expansion context > keeps three zones before Premium and reports four actual zones after unlock 1150ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  02:53:54
+   Duration  1.73s (transform 185ms, setup 0ms, collect 215ms, tests 1.33s, environment 0ms, prepare 58ms)
+

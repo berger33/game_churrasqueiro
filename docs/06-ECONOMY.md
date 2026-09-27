@@ -13,7 +13,149 @@ Both exit non-zero when a guardrail in `shared/data/economy.json → targets` is
 
 ---
 
-## Revalidação A-02 — estado vigente (2026-09-26 local / 27 UTC)
+## A-06.4 — fechamento econômico autorizado (vigente)
+
+- O dono exigiu resolver as3 falhas antes de A-06.5 e escolheu explicitamente
+  **`late_income`**: rebalancear renda tardia, preservando preços, histórico, FTUE,
+  offline e metas. Não confundir com autorização para novos gastos ou tuning futuro.
+- `economy14`: moedas por prato ×1 nos restaurantes0–3, ×.85 no4, ×.62 no5, ×.48 no6.
+  Mesmo scorer no runtime manual/automático/VIP/browser, arredondamento único. Não reduz
+  XP ou saldo já ganho; não muda bônus de fase/nível, preços, unlocks, limites ou metas.
+- **1500 turnos ativos:18/18, exit0**, duas execuções byte-idênticas. Rede1130 (950–1450),
+  rendaL50=123.527 (98.000–152.000), spend74,07% (70–99%). Seeds extras20260918/19 também18/18.
+  Renda14.679.360/gasto10.873.220/saldo3.806.140;**27 trilhas** maximizadas.
+  Gasto inalterado, renda−8.069.590. Receita tardia por turno vira platô, não crescimento
+  garantido a cada restaurante. Campanha sem rewarded/offline, agenda ausente separada intacta.
+- **672 testes/29 arquivos;14/15 gates (C# SKIP);53 capturas;157+44 vetores.** Novo teste
+  de1500 turnos dentro de `npm test` impede que gates curtos escondam novamente esses desvios.
+  116 vetores antigos intactos;27 mudam apenas moedas;14 novos de scoring.44 FTUE byte-idênticos.
+  FTUE16,1/32,9/38,3s/0 misses/136 moedas. UI mostra a taxa; sem porta de regras C#/Unity.
+- Relatório vigente: **[evidence/a06/step4/reopened/README.md](evidence/a06/step4/reopened/README.md)**.
+  **A-06.5 não iniciada.** A-06.4 funcional e estes critérios econômicos locais validados;
+  revisão das27/F4 global ainda separadas. Sem push/PR/merge/arte/SDK/dispositivo/publicação.
+
+## A-06.4 — integração offline antes do rebalanceamento (histórico)
+
+- **27 trilhas integradas**, incluindo Caixa/Gerente/Logística. Âncora real e snapshot
+  por ausência; restaurante3, cap8h acumulado, rampa20min, multiplicador aditivo até2,18×.
+  Caixa antecipa2/4/6/8h no retorno; resto manual conservado. Cooldown30min entre novos
+  lotes, não entre parcelas. High-water, ID/claims e migração sem renda histórica.
+- Browser pausa turno oculto/retorno pendente, persiste carteira+XP+claim em um JSON antes
+  de publicar estado, preserva parcela ao fechar/recarregar e mostra anúncio indisponível.
+  Storage-fault/retry e reabertura pelo Home exercitados por ponteiro. Save5; economy13,
+  employees4; schemas/DTOs/cópias sincronizados, **não porta de regras C#**.
+- **649 testes/27 arquivos;14/15 gates, C# SKIP;52 capturas;143+44 vetores.**135 casos antigos
+  intactos,1 expandido,7 novos de ledger;44 FTUE byte-idênticos. FTUE0 misses/136 moedas.
+  Preços/moedas/crescimentos/máximos/deltas e níveis históricos preservados.
+- Campanha1500 natural **sem offline**:15/18, exit1, repetição idêntica. Renda22.748.950,
+  gasto10.873.220, saldo11.875.730. Falham Rede881, rendaL50=183.646, spend.4779657962.
+  Sinks novos2.405.090, nenhum retuning. Ausências medidas em24 fixtures separadas com
+  agenda explícita, não usadas para tornar a campanha verde.
+- Gerente só18% offline/nível; missões/descontos/VIP+2pp backlog. Browser não é servidor
+  antifraude. XP offline compartilha o caminho do sim-core; XP ativo legado do browser e
+  metaprogressão completa continuam dívida F10. Nenhuma prova de Unity/dispositivo/SDK.
+- Evidência **[evidence/a06/step4/README.md](evidence/a06/step4/README.md)**.
+  Próximo **A-06.5**, revisão final das27 trilhas/contratos e consolidação dos desvios.
+  A-06/F4 ainda abertos; sem commit/push/PR/merge/CI remoto/arte nova.
+
+## Revalidação A-06.3 — histórico (2026-09-27 UTC)
+
+24 trilhas integradas/3 pendentes. Equipe atua de verdade com caps por turno e Bandeja
+acelera viagens, sem garantir perfeito. Campanha comparável1500 natural/sem offline:
+**15/18, exit1**, repetição byte-idêntica; renda23.263.609/gasto8.468.130/saldo14.795.479.
+Falham rede729, rendaL50=189.197, spend.3640075794. Unlocks42/96/168/272/422/729; grills11/43/87.
+
+Perfeitos75,4→42,2%, perdidos3,2→2,3%, VIP244/238.64.715 serviços/29.630 viradas/147 prep
+automáticos, caps por turno verificados. Serviço desde bom tem consequências sobre qualidade;
+não o atrasamos até perfeito para maquiar a economia. A curva autoral sem compras fica45,6%
+no skill.55. Renda−1.552.717 vsA-06.2 mistura ações e cronologia, não causalidade por trilha.
+Gasto+378.580 é exatamente a capacidade comprada das quatro trilhas;24 ativas3.953.530,
+3 pendentes2.405.090, todas27 seguem6.358.620. Nenhum preço/recompensa/meta retunado.
+Ver [evidence/a06/step3/README.md](evidence/a06/step3/README.md). Offline/A-06.4, revisão27 e F4 abertos.
+
+## Revalidação A-06.2 — histórica (2026-09-27 UTC)
+
+Recursos reais:20 trilhas integradas/7 pendentes, estoque por ingrediente/reabastecimento3s,
+qualidade/estabilidade e auto-carvão. Campanha comparável1500, seed20260917/dt1/12, natural,
+sem rewarded/offline: **15/18, exit1**, repetição byte-idêntica. Renda24.816.326/gasto8.089.550/
+saldo16.726.776; rede670, rendaL50=210.171 e spend.3259769395 continuam fora dos mesmos alvos.
+Unlocks42/95/162/256/403/670; grills11/43/84; VIP244/232. Nenhum retuning.
+
+As quatro trilhas adicionam exatamente32.110 em compras verificadas;20 ativas somam3.574.950,
+7 pendentes2.783.670, todas27 continuam6.358.620. Renda−42.919 e saldo−75.029 vsA-06.1 misturam
+recursos/progressão, não benefício causal isolado. Sem prêmio por estoque ou offline inventado.
+Ver [evidence/a06/step2/README.md](evidence/a06/step2/README.md). A-06/F4 ainda pendentes.
+
+## Revalidação A-06.1 — histórica (2026-09-27 UTC)
+
+Compras compartilhadas, fila real Capacidade/Mesas e prestígios de turno implementados;
+16 trilhas integradas,11 incompletas temporariamente bloqueadas. Não é fechamento de A-06.
+1500 turnos com mesma seed/dt, VIP natural e sem offline: **15/18, exit1**. Renda24.859.245,
+gasto8.057.440, saldo16.801.805. Falham rede664 vs950–1450, rendaL50=208.316 vs98.000–152.000,
+spend0,324 vs0,70–0,99. Unlocks40/91/158/251/395/664, grills10/41/79, VIP244/231.
+
+A queda de gasto2.815.780 é exatamente a capacidade máxima das11 trilhas bloqueadas nesta
+campanha saturada; não é recibo histórico nem reembolso. Capacidade total de upgrades6.358.620;
+integradas3.542.840. Sem alterar preços/recompensas/metas ou simular offline para verde.
+Mestria aplica+.012/nível só na parcela de gorjeta; pagamento legado Pratos/Decoração mantido.
+Clientela+.01/nível de paciência. Relatório/limites/reprodução em
+[evidence/a06/step1/README.md](evidence/a06/step1/README.md). F4/economia global pendentes.
+
+## Revalidação A-05 — baseline anterior (2026-09-27 UTC)
+
+VIP natural por chegada, cap2/dia compartilhado/UTC, mesma recompensa para natural/chamado.
+Sem alterar receitas/calores/preços/metas. Conquistas VIP1/25 agora pagam valores já declarados.
+Longo1500, sem rewarded: **15/18**, renda22.302.178, gasto10.873.220, saldo11.428.958.
+Continuam fora de faixa rede881 vs950–1450, rendaL50=191.586 vs98.000–152.000 e spend0,488
+vs0,70–0,99. Unlocks42/97/165/262/406/881, grills10/45/93. Não retunamos para verde.
+
+Comparação controlada: VIP off reproduz exatamente A-04. Natural tem244 visitas/232 servidos,
+zero ofertas, máximo2/dia e nível80/rest6. Chamado opcional tem244 visitas (125 chamadas),
+236 servidos, renda22.276.110. Ambas modalidades obtêm16.000 moedas de conquistas VIP;
+chamado não aumenta cota/recompensa. Uma seed não prova impacto estatístico/monetização.
+
+Curva autoral skill.55 fica46,0%/571: seus primeiros40 níveis não exercitam VIP. Complemento
+864 turnos (4 skills×3 modos×3 seeds×24 turnos, rest1/nível12/Parrilla3, sem compras):
+na skill.55, moedas/turno1093,19 off,1163,03 natural,1152,36 chamado, incluindo primeira
+conquista. Não tratar bônus único como renda recorrente. JSON e script reproduzível em
+[`evidence/a05/`](evidence/a05/README.md). **A-06→F4 e aceite global continuam pendentes.**
+
+## Revalidação A-04 — histórico (2026-09-27 UTC)
+
+Quarta zona média1×, somente Fornalha E Premium no equipamento, sem modificar os calores
+primários/preços/recompensas/metas. Longo1500: **15/18, saída integralmente igual a A-03**.
+Renda22.233.557, gasto10.873.220, saldo11.360.337; spend0,489, rede883 e rendaL50=192.223
+continuam fora das metas. Não retunamos números para voltar ao verde.
+
+Igualdade investigada: snapshots do sim mostram **1241 turnos com4 zonas**, mas **0 ticks
+ocupados na quarta após as ações**. O bot já tem skill>0,55 e move pratos às zonas ideais
+originais quando cabe; compras deixam espaço. Logo esta campanha não mede benefício
+marginal da nova zona. A regra/bot em lotação e UI por ponteiro a exercitam de fato.
+
+Probe complementar128 turnos sem upgrades (8 seeds por skill/restaurante): na skill.55,
+moedas/turno mudam de2140,88→2196,50 no Premium,2409,63→2522,13 no Festival,
+2624,13→2714,50 na Rede; restaurante3 intacto. Skills.85/1 continuam iguais pela política
+de movimento; .30 varia sem melhora uniforme. JSONs trazem perfect/burned/lost/receitas.
+
+411 testes,106+44 vetores revisados (3 resultados avançados mudam),29 PNGs/FTUE intacto.
+Evidência: [`evidence/a04/`](evidence/a04/README.md). **Aceite global pendente: A-05/A-06→F4.**
+
+## Revalidação A-03 — histórico (2026-09-27 UTC)
+
+Prep explícito/capacidade/tábua e UI implementados sem tuning de dados.
+`npm run sim:long` repetido: **saída integralmente idêntica ao baseline A-02** abaixo,
+1.500 turnos/15 de18 alvos/exit1. Renda22.233.557, gasto10.873.220, saldo11.360.337;
+spend0,489, Rede883 e rendaL50=192.223 continuam falhando. Curva skill intacta.
+Logs antes/depois e contratos em [`evidence/a03/`](evidence/a03/README.md).
+
+Limite importante: o bot inicia a porção na mesma ação de retirada e continua evitando
+mais de uma porção por ingrediente; por isso não mede ganho de concorrência da tábua.
+Teste humano/harness ocupa até10 vagas reais, mas não é calibração econômica. A-06 deve
+reavaliar sinks/consumidores, incluindo essa limitação, antes do aceite F4.
+106+44 vetores não regenerados, levels sem diff. Sem mudanças de preços/recompensas/metas.
+**Economia ainda não estabilizada; próximos A-04–A-06.**
+
+## Revalidação A-02 — histórico (2026-09-26 local / 27 UTC)
 
 Pedidos/estoque agora respeitam nível **e** restaurante. Sim passa p.level, UI meta.level;
 curva de skill parte do nível1 e acumula XP real por skill, sem compras. Não há fallback
@@ -31,7 +173,7 @@ logs longos e amostra de60 turnos com XP/pedidos em [`evidence/a02/`](evidence/a
 Probe avançado A-01 com nível44 explícito mantém janelas/128 turnos agregados idênticos.
 
 **Aceite econômico global pendente**. A-03–A-06 precedem F4. Vinagrete continua no pool
-quando desbloqueado (nível12/rest0); a UI prep será A-03, não esconder o item. As seções
+quando desbloqueado (nível12/rest0); a UI prep foi implementada em A-03 (acima), sem esconder o item. As seções
 abaixo preservam medições históricas, não devem ser usadas como balanço atual.
 
 ## Revalidação A-01 — histórico (2026-09-26 local / 27 UTC)

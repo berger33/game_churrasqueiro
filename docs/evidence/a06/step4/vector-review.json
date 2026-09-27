@@ -1,0 +1,67 @@
+{
+  "scope": "Explicit A-06.4: index3 offline unlock and ledger lifecycle vectors. No active turn/scoring drift allowed.",
+  "versions": {
+    "before": {
+      "ingredients": 6,
+      "grill": 6,
+      "economy": 12,
+      "restaurants": 6,
+      "upgrades": 4,
+      "customers": 2,
+      "events": 2,
+      "ads": 2,
+      "achievements": 3,
+      "employees": 3
+    },
+    "after": {
+      "ingredients": 6,
+      "grill": 6,
+      "economy": 13,
+      "restaurants": 6,
+      "upgrades": 4,
+      "customers": 2,
+      "events": 2,
+      "ads": 2,
+      "achievements": 3,
+      "employees": 4
+    }
+  },
+  "sections": {
+    "cooking": {
+      "unchanged": 48,
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "scoring": {
+      "unchanged": 32,
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "economy": {
+      "unchanged": 5,
+      "changed": [
+        "econ.offline"
+      ],
+      "added": [
+        "econ.offlineLifecycle.short",
+        "econ.offlineLifecycle.partial",
+        "econ.offlineLifecycle.cap",
+        "econ.offlineLifecycle.frozen",
+        "econ.offlineLifecycle.cooldown",
+        "econ.offlineLifecycle.rollback",
+        "econ.offlineLifecycle.levels"
+      ],
+      "removed": []
+    },
+    "turns": {
+      "unchanged": 50,
+      "changed": [],
+      "added": [],
+      "removed": []
+    }
+  },
+  "tutorialByteIdentical": true,
+  "offlineReview": "Existing restaurant0/3/6 quote rows unchanged; add1/2 lock and4, snapshot/max multiplier/cooldown/rollback/level rewards in7 lifecycle cases. XP now asserted alongside coins."
+}

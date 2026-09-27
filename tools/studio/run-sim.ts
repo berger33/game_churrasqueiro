@@ -1,3 +1,5 @@
+import { quoteUpgrade } from '../sim-core/src/upgrades.ts';
+import { beginVipCall, finishVipCall } from '../sim-core/src/vip.ts';
 /**
  * Progression simulator (spec §20).
  *
@@ -25,6 +27,10 @@ export interface LevelOutcome {
   ingredientIds: string[];
   restaurantIndex: number;
   orderedIngredientIds: string[];
+  /** Actual pre-payout hardware, not inferred from the final save/evolution table. */
+  staffSnapshot: TurnSimulation['staff']['snapshot'];
+  grillSnapshot: { id: string | null; evolution: number; zoneCount: number; slotsPerZone: number; zoneHeats: number[]; occupiedTicksByZone: number[] };
+  vipSnapshot: { day: number; arrived: number; served: number; usedToday: number; called: number; plateCoins: number };
   coins: number;
   xp: number;
   perfect: number;
@@ -57,7 +63,10 @@ export interface ProgressionReport {
 }
 
 export interface SimOptions {
-  /** Turns the player plays per day (used for the daily-income projection). */
+  /** Experiments only; normal progression has natural VIP and no rewarded calls. */
+  disableNaturalVip?: boolean;
+  vipCalls?: boolean;
+  /** Turns per UTC day: both the persisted VIP clock and daily-income projection. */
   turnsPerDay?: number;
   seed?: number;
   levels?: GeneratedLevel[];
@@ -118,10 +127,16 @@ export function simulateProgression(opts: SimOptions = {}): ProgressionReport {
     const skill = clamp(skillFloor + (p.level - 1) * 0.014, skillFloor, skillCeiling);
     const grill = equippedChurrasqueira(db, p);
     const evo = equippedEvolution(db, p);
+    const startUnixSec = Date.UTC(2026,8,21)/1000 + li * 86400 / turnsPerDay;
+    if(opts.vipCalls) {
+      const token=beginVipCall(db,p.vip,p.restaurantIndex,startUnixSec);
+      if(token)finishVipCall(db,p.vip,p.restaurantIndex,startUnixSec,token,true);
+    }
     const sim = new TurnSimulation(
       db,
       {
         restaurantIndex: p.restaurantIndex,
+        vip: {state:p.vip,startUnixSec},
         playerLevel: p.level,
         levelId: level.id,
         upgradeLevels: { ...p.upgradeLevels },
@@ -133,6 +148,7 @@ export function simulateProgression(opts: SimOptions = {}): ProgressionReport {
           spawnIntervalSec: level.spawnIntervalSec,
           patienceScalar: level.patienceScalar,
           difficultyScalar: level.difficultyScalar,
+          vipChance: opts.disableNaturalVip ? 0 : level.vipChance,
           maxOrdersOnScreen: level.maxOrdersOnScreen
         }
       },
@@ -143,7 +159,11 @@ export function simulateProgression(opts: SimOptions = {}): ProgressionReport {
     // 1/20s is fine for balance work (the shipped client steps at 1/30 or vsync).
     const dt = opts.stepSec ?? 1 / 20;
     let guard = 0;
-    while (!sim.finished && guard++ < 40000) sim.tick(dt, (a) => policy.act(a));
+    const occupiedTicksByZone = sim.grill.zones.map(() => 0);
+    while (!sim.finished && guard++ < 40000) {
+      sim.tick(dt, (a) => policy.act(a));
+      for (const z of sim.grill.zones) if (z.items.length) occupiedTicksByZone[z.index]!++;
+    }
     const r = sim.result();
 
     const applied = applyTurnResult(db, p, r);
@@ -190,8 +210,9 @@ export function simulateProgression(opts: SimOptions = {}): ProgressionReport {
     while (bought) {
       bought = false;
       for (const trackId of UPGRADE_PRIORITY) {
-        const cost = costFor(db, trackId, p.upgradeLevels[trackId] ?? 0);
-        if (cost === Infinity) continue;
+        const quote = quoteUpgrade(db, p, trackId);
+        if (!quote.canBuy) continue;
+        const cost = quote.cost;
         // Keep a reserve so the next restaurant *and* the next grill step stay in sight.
         const nextRestaurant = db.restaurantByIndex.get(p.restaurantIndex + 1);
         const restaurantReserve = nextRestaurant ? nextRestaurant.unlockCostCoins * 0.15 : 0;
@@ -212,6 +233,12 @@ export function simulateProgression(opts: SimOptions = {}): ProgressionReport {
     outcomes.push({
       playerLevel: sim.config.playerLevel,
       restaurantIndex: sim.restaurant.index,
+      staffSnapshot: sim.staff.snapshot,
+      grillSnapshot: { id: grill?.id ?? null, evolution: evo?.level ?? 1, zoneCount: sim.grill.zones.length,
+        slotsPerZone: sim.stats.slotsPerZone, zoneHeats: sim.grill.zones.map(z => z.heat), occupiedTicksByZone },
+      vipSnapshot: { day:sim.vipState.day, arrived:r.counters.vipSpawned, served:r.counters.vipServed, usedToday:sim.vipState.usedToday,
+        called:r.events.filter(e=>e.type==='spawn'&&e.customer.vipSource==='called').length,
+        plateCoins:r.events.reduce((n,e)=>n+(e.type==='serve'&&e.customer.def.isVip?e.coins:0),0) },
       orderedIngredientIds: [...new Set(r.events.flatMap(e => e.type === 'spawn' ? e.customer.lines.map(l => l.ingredientId) : []))],
       ingredientIds: sim.availableIngredients.map(i => i.id),
       level,
@@ -310,6 +337,7 @@ export function measureSkillCurve(opts: { skills?: number[]; levels?: GeneratedL
         db,
         {
           restaurantIndex: level.restaurantIndex,
+          vip: {state:player.vip,startUnixSec:Date.UTC(2026,8,21)/1000 + levels.indexOf(level)*7200},
           playerLevel: player.level,
           levelId: level.id,
           upgradeLevels: {},
@@ -319,6 +347,7 @@ export function measureSkillCurve(opts: { skills?: number[]; levels?: GeneratedL
             spawnIntervalSec: level.spawnIntervalSec,
             patienceScalar: level.patienceScalar,
             difficultyScalar: level.difficultyScalar,
+            vipChance: level.vipChance,
             maxOrdersOnScreen: level.maxOrdersOnScreen
           }
         },

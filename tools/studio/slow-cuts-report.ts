@@ -10,7 +10,8 @@ import { Rng } from '../sim-core/src/rng.ts';
 
 const db = loadDatabase();
 const windows = [];
-for (const id of ['costela', 'cupim']) for (const zone of [0, 1, 2]) {
+const windowZoneCount = new TurnSimulation(db, { playerLevel:44, restaurantIndex:4, levelId:'zones', seed:1, upgradeLevels:{} }).grill.zones.length;
+for (const id of ['costela', 'cupim']) for (let zone=0;zone<windowZoneCount;zone++) {
   const ing = db.ingredientById.get(id)!;
   const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 4, levelId: 'window', upgradeLevels: {}, seed: 1 });
   const f = createFood(1, ing);

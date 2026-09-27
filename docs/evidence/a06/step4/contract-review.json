@@ -1,0 +1,13 @@
+{
+  "base": "e50ce1523fa3d04119dc454e3edb050070641c10",
+  "all27UpgradePricesCurrenciesGrowthMaxDeltaUnchanged": true,
+  "previousApprovedStatRename": "counter rawStockPerTurn -> rawStockCapacityPerIngredient in A-06.2, not a changed price/delta",
+  "allEmployeeUnlocksLevelsCoverageUnchanged": true,
+  "existingIdleRatesCapRampCooldownAdFlagUnchanged": true,
+  "newUnlockRestaurantIndex": 3,
+  "economyVersion": 13,
+  "employeesVersion": 4,
+  "save": "schema5; v4 and older gain an anchorless ledger, no historical reward; current malformed ledger fails closed. Browser meta v2 includes wallet and ledger in one JSON write.",
+  "scope": "Gerente offline18% per level only. Mission rerolls/discounts/VIP+2pp remain backlog.",
+  "rulesPortedToCSharp": false
+}

@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ✓ tools/studio/test/staff.test.ts (54 tests) 121ms
+ ✓ tools/studio/test/offline.test.ts (34 tests) 28ms
+ ✓ tools/studio/test/late-income.test.ts (22 tests) 21ms
+
+ Test Files  3 passed (3)
+      Tests  110 passed (110)
+   Start at  06:33:02
+   Duration  1.09s (transform 241ms, setup 0ms, collect 339ms, tests 171ms, environment 1ms, prepare 160ms)
+

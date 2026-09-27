@@ -1,0 +1,21 @@
+{
+  "authorization": "Owner explicitly selected late_income: rebalance late active income, preserve prices/purchases/FTUE/offline/targets.",
+  "base": "e50ce15",
+  "economyVersion": 14,
+  "curve": [
+    1,
+    1,
+    1,
+    1,
+    0.85,
+    0.62,
+    0.48
+  ],
+  "onlyEconomicDataChangesSinceBase": "version, previously approved offline unlock3, and now authorized active plate income curve",
+  "allOriginalTargetsByteEquivalentAsObjects": true,
+  "upgradeAndRestaurantAndGrillPricesGatesUnchanged": true,
+  "ingredientBaseValueAndXpUnchanged": true,
+  "xpRewardsAndLevelCurvesUnchanged": true,
+  "offlineAndLevelRewardTablesUnchanged": true,
+  "noWalletMigrationOrHistoryErasure": true
+}

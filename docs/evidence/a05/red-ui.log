@@ -1,0 +1,70 @@
+
+> churrasco-mestre-da-brasa@0.1.0 check-shots
+> node prototype/shoot.mjs
+
+art: 244 sprites decoded
+[shoot] 01-splash.png  229.1 kB
+[shoot] 02-title.png  544.0 kB
+[shoot] 03-ftue-place.png  383.2 kB
+[shoot] 04-ftue-wait.png  343.8 kB
+[shoot] 05-ftue-flip.png  339.5 kB
+[shoot] 06-ftue-serve.png  352.8 kB
+[shoot] 07-ftue-perfect.png  464.4 kB
+[shoot] 08-ftue-result.png  105.4 kB
+[shoot] 09-ftue-upgrade.png  148.0 kB
+[shoot] FTUE tutorial_start → step:place → step:flip → step:serve → step:perfect → tutorial_complete → upgrade_purchase → step:upgrade
+[shoot] FTUE first PERFEITO at 16.1s, complete at 32.9s, upgrade at 38.3s, misses 0, coins left 136
+art: 244 sprites decoded
+[shoot] 10-home.png  183.9 kB
+[shoot] 11-turn-empty.png  458.6 kB
+[shoot] 12-grill-cooking.png  453.2 kB
+[shoot] 13-result.png  94.8 kB
+art: 244 sprites decoded
+[shoot] 14-advanced-bench.png  507.1 kB
+[shoot] 15-advanced-flip-hint.png  503.6 kB
+[shoot] 16-costela-perfect-window.png  502.8 kB
+[shoot] 17-cupim-perfect-window.png  504.7 kB
+[shoot] A-01: page 2 → costela/cupim → wait for cue → tap flips once → both perfect windows
+art: 244 sprites decoded
+art: 244 sprites decoded
+[shoot] 18-before-cheese-unlock.png  474.1 kB
+art: 244 sprites decoded
+[shoot] 19-cheese-unlocked.png  481.3 kB
+art: 244 sprites decoded
+[shoot] A-02: saved levels 1/5/6/7 → matching bench/orders → no phantom locked slot → cheese draggable at 6/7
+art: 244 sprites decoded
+[shoot] 20-before-prep-unlock.png  486.2 kB
+art: 244 sprites decoded
+[shoot] 21-prep-in-progress.png  510.3 kB
+[shoot] 22-prep-ready.png  506.3 kB
+[shoot] 23-prep-served.png  493.4 kB
+[shoot] A-03: actual order 10 (vinagrete) served prep, coins=319 xp=66
+art: 244 sprites decoded
+art: 244 sprites decoded
+[shoot] 24-prep-capacity-page-2.png  516.2 kB
+[shoot] A-03: unlock 11/12/13, tap/drag, invalid drops, cancellation, timing, real service, discard, 10 slots + paging
+art: 244 sprites decoded
+[shoot] 25-before-fourth-zone.png  456.2 kB
+art: 244 sprites decoded
+art: 244 sprites decoded
+art: 244 sprites decoded
+[shoot] 26-fourth-zone-unlocked.png  505.3 kB
+[shoot] 27-fourth-zone-cooking.png  503.2 kB
+[shoot] 28-fourth-zone-order-served.png  491.8 kB
+art: 244 sprites decoded
+art: 244 sprites decoded
+art: 244 sprites decoded
+art: 244 sprites decoded
+art: 244 sprites decoded
+[shoot] 29-premium-without-fornalha.png  498.2 kB
+[shoot] A-04: Home/runtime/HUD agree; Fornalha3→4 at Premium, evo1/2/3; others1/2/3; real fourth-row placement/move/flip/mixed-order service
+art: 244 sprites decoded
+file:///home/user/game_churrasqueiro/prototype/shoot.mjs:232
+function assert(cond, msg) { if (!cond) throw new Error(`[shoot] ${msg}`); }
+                                              ^
+
+Error: [shoot] VIP call must be exposed by the real Home, not only core tests
+    at assert (file:///home/user/game_churrasqueiro/prototype/shoot.mjs:232:47)
+    at file:///home/user/game_churrasqueiro/prototype/shoot.mjs:702:3
+
+Node.js v22.22.3

@@ -1,7 +1,7 @@
 {
   "$schema": "schema/analytics.schema.json",
   "_comment": "Analytics taxonomy (spec §59-§61). Validated by tools/studio/validate-data.ts: every event logged in code must exist here, and no event may declare a PII parameter.",
-  "version": 5,
+  "version": 6,
   "provider": "firebase_analytics",
   "piiPolicy": {
     "forbiddenParams": ["email", "name", "phone", "cpf", "address", "device_id_raw", "ip", "gps", "user_name"],
@@ -63,7 +63,9 @@
     { "name": "settings_change", "trigger": "option toggled", "params": { "setting": "string", "value": "string" } },
     { "name": "performance_sample", "trigger": "sampled 1/20 sessions", "params": { "avg_fps": "double", "p1_fps": "double", "draw_calls": "long", "mem_mb": "long", "quality": "string" } },
     { "name": "churn_risk_signal", "trigger": "heuristic risk detected", "params": { "signal": "string", "turns": "long", "last_fail_streak": "long" } },
-    { "name": "error_nonfatal", "trigger": "handled exception", "params": { "error_type": "string", "context": "string" } }
+    { "name": "error_nonfatal", "trigger": "handled exception", "params": { "error_type": "string", "context": "string" } },
+    {"name": "vip_arrival", "trigger": "VIP occupies a free arrival slot", "params": {"source": "string", "restaurant_index": "long", "customer_id": "long"}},
+    {"name": "vip_served", "trigger": "Entire VIP order completed once", "params": {"source": "string", "restaurant_index": "long", "customer_id": "long"}}
   ],
   "funnel": [
     { "id": "install", "event": "first_open" },

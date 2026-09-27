@@ -131,9 +131,12 @@ costs 2.2 s of attention — the source of the emergent "o carvão está acaband
 
 ### 4.7 Zones
 
-Three bands across the grill bed, top → bottom = low → high (0.55 / 1.00 / 1.55). Portrait
-layout means dragging a steak **down** the screen raises the heat — a single-finger,
-one-handed gesture with no menus. A fourth zone unlocks at restaurant 5.
+The first three bands run top → bottom = low → medium → high (0.55 / 1.00 / 1.55).
+Moving **down within those three** raises heat with one finger. At restaurant5/Premium,
+**equipped Fornalha only**, a fourth **medium1.00×** band is appended below high: it adds
+capacity, not a new hottest endpoint. Its label explicitly says extra medium. Other grills
+retain1/2/3 zones; Fornalha retains3 before Premium. Default advanced restaurant profiles
+without equipment have4. See the A-04 contract below; never stretch the original profile.
 
 ## 5. Scoring
 
@@ -183,8 +186,9 @@ tolerance are data.
 Patience budget: `(26 + 12 · items) · patienceMultiplier · upgradeMult · levelPatienceScalar`.
 Below 35 % the character turns impatient; below 15 %, angry. They leave when it hits zero.
 
-**VIP arrival** is an event, not a spawn: banner, sting, and an *optional* rewarded ad to
-"call a VIP now" (§13). Never mandatory.
+**VIP arrival** uses a special per-arrival lottery outside the ordinary weighted pool,
+with gold styling/sting. Optional call reserves the next eligible arrival inside the same
+daily cap; current web call is an explicit test simulation. See the A-05 contract below.
 
 ## 8. Progression
 
@@ -272,7 +276,16 @@ A recipe needs **both** its `unlock.level` and `unlock.restaurantIndex`. The pla
 is snapshotted at turn start; XP payouts unlock new stock/orders on the next turn. At
 player1/restaurant0 only linguiça is available; cheese appears at player6, vinagrete at12.
 UI and bot use the same catalog as orders. Scripted FTUE remains level1/linguiça.
-Vinagrete still needs its actual non-grill UI flow (A-03); eligibility is not prep implementation.
+Vinagrete has a separate prep station (A-03, validated locally 2026-09-27): tap stock to
+start in the first free slot or drag it to a chosen slot. Wait for READY, then drag to an
+order; dropping it back on the stock discards it. No coals, flipping or burning.
+Taking stock alone does not start a timer. Slots come from restaurant service + board;
+preparation takes `prepSec / prepSpeedMult` (2s at knife0). Ready portions retain their
+slot until served/discarded, including during drag. Wrong/early drops do not pay or free
+capacity. Mixed orders finish only after all lines; normal patience/combo/scoring apply.
+The web prototype pages up to10 slots with >=48px touch targets. FTUE level1 is unchanged.
+Evidence: `docs/evidence/a03/`. Bot still preps one portion per ingredient at a time;
+that benchmark does not measure the human benefit of parallel prep slots.
 
 ## 11. FTUE (§40, §41, §76)
 
@@ -302,3 +315,41 @@ The model produces these without scripting:
 - saving everything and hitting `🔥 COMBO ×10`.
 
 They emerge because heat, patience, spawn rate and charcoal decay are **independent clocks**.
+
+
+## A-04 implementation contract — fourth zone (2026-09-27)
+
+Owner decision: **Premium (restaurant index4+) AND Fornalha**, any evolution. Other
+hardware stays1/2/3 zones, Fornalha before Premium stays3; a default unequipped advanced
+restaurant profile has4. Player level alone never grants this expansion.
+
+The fourth band is **extra medium1.00×**, appended after high, not a hotter endpoint.
+Original low/medium/high IDs and0.55/1.00/1.55 profile stay intact. Equipped heat scales by
+heatBase with existing1.7 base cap, then normal charcoal/upgrades; extra gets the same
+upgrade bonus as medium. Fornalha evo3 base profile:0.891/1.62/1.70/1.62. No extra purchase,
+new recipe, new flip rule or unlock reward was introduced.
+
+UI renders four bands using approved art, labels extra medium and uses the actual count
+in Home/HUD/drop geometry. Existing1/2/3 play and FTUE are preserved. Capacity can be used
+by player and bot, but the standard long sim never cooks in the extra row: its skill policy
+moves to primary ideal zones with spare capacity. This limits economic evidence, not the
+implemented unlock. See `docs/evidence/a04/` for tests, input screenshots and probes.
+
+## A-05 implementation contract — VIP (2026-09-27 UTC)
+
+VIP is excluded from ordinary weighted selection. From Espetinho de Rua onward, each
+**free arrival slot** can become a VIP: explicit level chance wins, absent uses6%, explicit
+zero blocks natural visits even during events. Active weekend modifier adds4 percentage
+points only to a positive base; result clamped to1. The unlocked ingredient catalog still
+applies; an unusual-only customer without a menu cannot consume a reserved visit.
+
+Owner chose **2 visits per UTC day, shared natural+called**. The optional Home call only
+reserves one of those visits, with the same food/tip/XP rules. Current web UI is clearly
+labelled **test simulation**, not a real advertisement. Cancel never rewards; completion
+reserves the next eligible free arrival. A reserved visit occupies quota until arrival,
+including a new day; lost/abandoned visits are not refunded. Cooldown60min, offer TTL1h.
+
+Whole-order completion increments vipServed once. The two VIP achievements pay existing
+values; claims are persisted and must be respected by the future general achievement
+system. Full LiveOps, advertisement SDKs and general achievements are not implemented by
+this change. See evidence/a05 for no-rewarded progression, probabilities, saves and limits.

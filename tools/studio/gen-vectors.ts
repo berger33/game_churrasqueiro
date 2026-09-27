@@ -1,3 +1,5 @@
+import {runOfflineScenario,offlineScenarios} from './offline-scenario.ts';
+import { newVipState, beginVipCall, finishVipCall, admitVip } from '../sim-core/src/vip.ts';
 /**
  * gen-vectors — golden vectors for cross-language parity (`npm run gen-vectors`).
  *
@@ -82,7 +84,8 @@ const SAMPLES = [1, 2, 3, 5, 8, 12, 20, 30];
 // Per ingredient × zone, integrate in fixed 1/12 s steps and record per-side
 // doneness at sampled times. This pins the heat model exactly.
 for (const ing of db.ingredients.items) {
-  for (let zi = 0; zi < db.grill.zones.length; zi++) {
+  // Pin the original restaurant1 profile; do not generate an invalid placement in its locked fourth zone.
+  for (let zi = 0; zi < STATS.zoneCount; zi++) {
     const grill = createGrill(STATS, db);
     const food = createFood(1, ing);
     placeOnGrill(grill, db, food, zi);
@@ -214,6 +217,15 @@ for (const ing of db.ingredients.items) {
   });
 }
 
+// Authorized late-income curve: identical food/quality/XP, explicit restaurant context.
+for(const restaurantIndex of [0,1,2,3,4,5,6])for(const automaticVip of [false,true]){
+  const f=createFood(1,db.ingredientById.get('picanha')!);f.sides=[.7,.7];
+  const context={restaurantIndex,target:0,toleranceScale:1,patienceRemaining:1,combo:12,
+    tipMult:1.56,prestigeTipBonus:.12,autoServiceTipBonus:automaticVip?.1:0,xpMult:1.12,customerTipMult:automaticVip?3:1};
+  scoring.push({id:`lateIncome.${restaurantIndex}.${automaticVip?'autoVip':'manual'}`,
+    input:{ingredient:'picanha',sides:[.7,.7],context},expect:scoreItem(db,f,{...context,tuning:TUNING})});
+}
+
 // ── 4. Economy curves ───────────────────────────────────────────────────────
 const xpF = db.economy.xp.formula;
 const LEVELS = Array.from({ length: 80 }, (_, i) => i + 1);
@@ -253,7 +265,7 @@ economy.push({
 });
 
 const offlineRows: { restaurantIndex: number; elapsedSec: number; coins: number; xp: number; capped: boolean }[] = [];
-for (const ri of [0, 3, 6]) {
+for (const ri of [0, 1, 2, 3, 4, 6]) {
   for (const mins of [1, 5, 20, 60, 240, 600]) {
     const p = newPlayerState();
     p.restaurantIndex = ri;
@@ -267,9 +279,11 @@ economy.push({
   expect: { rows: offlineRows }
 });
 
+for(const [id,input] of Object.entries(offlineScenarios))economy.push({id:`econ.offlineLifecycle.${id}`,input,expect:runOfflineScenario(db,input)});
+
 const CHARCOAL_SAMPLES = [0, 0.05, 0.12, 0.3, 0.55, 0.8, 1.0];
 const heatByZone: number[][] = [];
-for (let zi = 0; zi < db.grill.zones.length; zi++) {
+for (let zi = 0; zi < STATS.zoneCount; zi++) {
   heatByZone.push(CHARCOAL_SAMPLES.map((t) => {
     const g = createGrill(STATS, db);
     g.charcoalT = t;
@@ -281,7 +295,7 @@ for (let zi = 0; zi < db.grill.zones.length; zi++) {
 economy.push({
   id: 'econ.effectiveHeat',
   input: {
-    zoneHeatMultipliers: db.grill.zones.map((z) => z.heatMultiplier),
+    zoneHeatMultipliers: createGrill(STATS, db).zones.map(z => z.heat),
     charcoalT: CHARCOAL_SAMPLES,
     derivedStats: { highZoneBonus: STATS.highZoneBonus }
   },
@@ -332,6 +346,7 @@ for (const skill of [0.35, 0.55, 0.85]) {
           spawnIntervalSec: lvl.spawnIntervalSec,
           patienceScalar: lvl.patienceScalar,
           difficultyScalar: lvl.difficultyScalar,
+          vipChance: lvl.vipChance,
           maxOrdersOnScreen: lvl.maxOrdersOnScreen
         }
       },
@@ -356,6 +371,7 @@ for (const skill of [0.35, 0.55, 0.85]) {
           spawnIntervalSec: lvl.spawnIntervalSec,
           patienceScalar: lvl.patienceScalar,
           difficultyScalar: lvl.difficultyScalar,
+          vipChance: lvl.vipChance,
           maxOrdersOnScreen: lvl.maxOrdersOnScreen
         }
       },
@@ -398,6 +414,7 @@ for (const restaurantIndex of [3, 4, 5, 6]) for (const skill of [0.55, 0.85]) {
       churrasqueiraId, churrasqueiraLevel, overrides: {} },
     expect: { coins: r9(res.coins), xp: r9(res.xp), stars: res.stars, failed: res.failed,
       finalTimeSec: r9(sim.time), counters: res.counters,
+      zoneCount: sim.grill.zones.length, zoneHeats: sim.grill.zones.map(z => r9(z.heat)),
       slowCuts: ['costela', 'cupim'].map(id => {
         const foods = [...observed.values()].filter(f => f.ingredient.id === id);
         return { id, taken: foods.length, flipped: foods.filter(f => f.flips > 0).length,
@@ -722,6 +739,100 @@ for (const v of tDirector) {
   }
 }
 
+// A-05: legacy seeds happen to produce no VIP. Explicit turn contracts must exercise
+// the feature, not merely append two zero counters to old expectations.
+for (const scenario of [
+  {id:'natural',chance:1,restaurant:1,called:false,used:0,start:Date.UTC(2026,8,21)/1000,seed:12},
+  {id:'zero',chance:0,restaurant:1,called:false,used:0,start:Date.UTC(2026,8,21)/1000,seed:12},
+  {id:'starter',chance:1,restaurant:0,called:false,used:0,start:Date.UTC(2026,8,21)/1000,seed:12},
+  {id:'called',chance:0,restaurant:1,called:true,used:0,start:Date.UTC(2026,8,21)/1000,seed:12},
+  {id:'capped',chance:1,restaurant:1,called:false,used:2,start:Date.UTC(2026,8,21)/1000,seed:12},
+  {id:'fallback_weekday',chance:undefined,restaurant:1,called:false,used:0,start:Date.UTC(2026,8,21)/1000,seed:25},
+  {id:'fallback_weekend',chance:undefined,restaurant:1,called:false,used:0,start:Date.UTC(2026,8,26)/1000,seed:25},
+  {id:'weekend_zero',chance:0,restaurant:1,called:false,used:0,start:Date.UTC(2026,8,26)/1000,seed:25}
+]) {
+  const state=newVipState();
+  for(let i=0;i<scenario.used;i++)admitVip(db,state,1,scenario.start,1,()=>0);
+  if(scenario.called) {
+    const token=beginVipCall(db,state,scenario.restaurant,scenario.start)!;
+    if(!finishVipCall(db,state,scenario.restaurant,scenario.start,token,true))throw Error('VIP vector reservation failed');
+  }
+  const input={skill:.85,levelId:`a05_vip_${scenario.id}`,levelIndex:71,restaurantIndex:scenario.restaurant,
+    playerLevel:12,seed:scenario.seed,stepSec:STEP,vipStartUnixSec:scenario.start,vipState:structuredClone(state),
+    overrides:scenario.chance===undefined?{}:{vipChance:scenario.chance}};
+  const sim=new TurnSimulation(db,{...input,upgradeLevels:{},vip:{state,startUnixSec:scenario.start}});
+  const policy=new SkillPolicy(new Rng(input.seed+input.levelIndex*104729),{skill:input.skill});
+  while(!sim.finished)sim.tick(STEP,a=>policy.act(a));
+  const res=sim.result();
+  turns.push({id:`turn.${input.levelId}`,input,expect:{coins:r9(res.coins),xp:r9(res.xp),stars:res.stars,failed:res.failed,
+    finalTimeSec:r9(sim.time),counters:res.counters,vipQuota:state.usedToday,
+    vipSources:res.events.flatMap(e=>e.type==='spawn'&&e.customer.vipSource?[e.customer.vipSource]:[])}});
+}
+
+// A-06.1: paired whole turns with explicit upgrade inputs; preserve legacy no-upgrade cases.
+for (const scenario of [
+  {id:'control',levels:{},restaurant:4,base:3},
+  {id:'capacity',levels:{capacity:2},restaurant:4,base:3},
+  {id:'tables',levels:{tables:1},restaurant:4,base:3},
+  {id:'combined',levels:{capacity:2,tables:1},restaurant:4,base:3},
+  {id:'mastery',levels:{brasa_mastery:20},restaurant:4,base:3},
+  {id:'loyalty',levels:{clientela_fiel:20},restaurant:4,base:3},
+  {id:'max_queue',levels:{capacity:5,tables:6},restaurant:6,base:undefined}
+]) {
+  const input={skill:.55,levelId:`a06_upgrades_${scenario.id}`,levelIndex:77,restaurantIndex:scenario.restaurant,
+    playerLevel:44,seed:4242,stepSec:STEP,upgradeLevels:scenario.levels as Record<string,number>,
+    churrasqueiraId:'fornalha_dragao_manso',churrasqueiraLevel:3,
+    overrides:{turnLengthSec:120,spawnIntervalSec:1.5,patienceScalar:2,vipChance:0,
+      ...(scenario.base===undefined?{}:{maxOrdersOnScreen:scenario.base})}};
+  const sim=new TurnSimulation(db,input);
+  const policy=new SkillPolicy(new Rng(input.seed+input.levelIndex*104729),{skill:input.skill});
+  while(!sim.finished)sim.tick(STEP,a=>policy.act(a));
+  const r=sim.result();
+  turns.push({id:`turn.${input.levelId}`,input,expect:{coins:r9(r.coins),xp:r9(r.xp),stars:r.stars,failed:r.failed,
+    finalTimeSec:r9(sim.time),counters:r.counters}});
+}
+
+// A-06.2: real resource consumers over a full sack, shared bot/refill operations.
+for(const scenario of [
+  {id:'control',levels:{}}, {id:'stability',levels:{grill_stability:6}},
+  {id:'quality',levels:{charcoal_quality:6}}, {id:'automatic',levels:{charcoal_auto:3}},
+  {id:'counter',levels:{counter:5}},
+  {id:'combined',levels:{grill_stability:6,charcoal_quality:6,charcoal_auto:3,counter:5}}
+]) {
+  const input={skill:.55,levelId:`a062_resources_${scenario.id}`,levelIndex:77,restaurantIndex:4,
+    playerLevel:44,seed:4242,stepSec:STEP,upgradeLevels:scenario.levels as Record<string,number>,
+    churrasqueiraId:'fornalha_dragao_manso',churrasqueiraLevel:3,
+    overrides:{turnLengthSec:250,spawnIntervalSec:1.5,patienceScalar:2,vipChance:0,maxOrdersOnScreen:6}};
+  const sim=new TurnSimulation(db,input),policy=new SkillPolicy(new Rng(input.seed+input.levelIndex*104729),{skill:input.skill});
+  while(!sim.finished)sim.tick(STEP,a=>policy.act(a));
+  const r=sim.result();
+  turns.push({id:`turn.${input.levelId}`,input,expect:{coins:r9(r.coins),xp:r9(r.xp),stars:r.stars,failed:r.failed,
+    finalTimeSec:r9(sim.time),counters:r.counters,resources:{autoAttempts:sim.autoRefillAttempts,autoSuccesses:sim.autoRefillSuccesses,
+      stock:Object.fromEntries(sim.availableIngredients.map(i=>[i.id,sim.stockRemaining(i.id)]))}}});
+}
+
+// A-06.3: staff acts through the real turn API, with the same bot and isolated prep controls.
+for(const scenario of [
+  {id:'control',levels:{}}, {id:'waiter1',levels:{garcom:1}}, {id:'waiter3',levels:{garcom:3}},
+  {id:'waiter5',levels:{garcom:5}}, {id:'tray',levels:{garcom:3,tray:5}},
+  {id:'helper',levels:{auxiliar:5},scripted:true}, {id:'cook',levels:{churrasqueiro:5}},
+  {id:'combined',levels:{garcom:5,auxiliar:5,churrasqueiro:5,tray:5}},
+  {id:'prep_service',levels:{garcom:5,auxiliar:5,tray:5},scripted:true}
+]){
+  const input={skill:.55,levelId:`a063_staff_${scenario.id}`,levelIndex:77,restaurantIndex:4,playerLevel:44,
+    seed:4242,stepSec:STEP,upgradeLevels:{counter:5,...scenario.levels} as Record<string,number>,
+    churrasqueiraId:'fornalha_dragao_manso',churrasqueiraLevel:3,staffPrepCustomers:scenario.scripted?6:0,staffPolicy:!scenario.scripted,
+    overrides:{turnLengthSec:scenario.scripted?60:250,spawnIntervalSec:1.5,patienceScalar:2,vipChance:0,maxOrdersOnScreen:6,autoSpawn:!scenario.scripted}};
+  const sim=new TurnSimulation(db,input),policy=new SkillPolicy(new Rng(input.seed+input.levelIndex*104729),{skill:input.skill});
+  for(let i=0;i<input.staffPrepCustomers;i++)sim.spawnScriptedCustomer('comum',['vinagrete'],100);
+  while(!sim.finished)sim.tick(STEP,input.staffPolicy?a=>policy.act(a):undefined);
+  const r=sim.result(),staff=sim.staff.snapshot;
+  turns.push({id:`turn.${input.levelId}`,input,expect:{coins:r9(r.coins),xp:r9(r.xp),stars:r.stars,failed:r.failed,
+    finalTimeSec:r9(sim.time),counters:r.counters,staff:{serveUsed:staff.serve.used,serveEligible:staff.serve.eligible,
+      serveLimit:staff.serve.limit,flipUsed:staff.flip.used,flipEligible:staff.flip.eligible,flipLimit:staff.flip.limit,
+      prepped:staff.prep.used,prepAttempts:staff.prep.attempts,prepCapacity:sim.prepSlots.length,tripInterval:r9(staff.serve.interval)}}});
+}
+
 // ── Write ───────────────────────────────────────────────────────────────────
 const doc = {
   version: 2, // A-02: full-turn inputs require an explicit playerLevel.
@@ -732,7 +843,8 @@ const doc = {
     grill: db.grill.version,
     economy: db.economy.version,
     restaurants: db.restaurants.version,
-    upgrades: db.upgrades.version
+    upgrades: db.upgrades.version, customers:db.customers.version, events:db.events!.version,
+    ads:db.ads!.version, achievements:db.achievements!.version, employees:db.employees!.version
   },
   epsilon: 1e-9,
   counts: { cooking: cooking.length, scoring: scoring.length, economy: economy.length, turns: turns.length },

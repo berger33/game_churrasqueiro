@@ -96,3 +96,16 @@ Rule: **never attribute a product problem to marketing.**
 
 One variable per experiment. `ab_test_id` on every event. Minimum 5 000 users per arm and
 95 % confidence before a decision. Never change two variables at once (§73).
+
+## A-05 VIP taxonomy — version6
+
+- `vip_arrival{source,restaurant_index,customer_id}`: one actual admitted VIP; source is
+  natural/called and customer_id is the fictional per-turn integer, not a user identifier.
+- `vip_served{source,restaurant_index,customer_id}`: whole order completed once, not each plate.
+- Home test call uses rewarded_offer/start/complete/fail with placement call_vip,
+  network prototype_test and eCPM0. Never interpret these as real ad impressions/revenue.
+- VIP achievement credits use existing currency_earned source vip_achievement locally.
+
+Browser recorder validates against the shipped taxonomy; reference callers can inject a
+sink. No Firebase/SDK delivery is claimed. FTUE event payloads unchanged, metadata version
+updated explicitly. General achievement/event analytics remain outside this narrow change.

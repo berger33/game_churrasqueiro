@@ -1,0 +1,284 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/staff.test.ts (20 tests | 20 failed) 34ms
+   × A-06.3 bounded real staff > waiter serves real ready prep, not a derived stat or synthetic bot reaction 10ms
+     → expected +0 to be 2 // Object.is equality
+   × A-06.3 bounded real staff > waiter level1 uses a strict floor budget including manual serves 3ms
+     → expected 1 to be 2 // Object.is equality
+   × A-06.3 bounded real staff > waiter level2 uses a strict floor budget including manual serves 1ms
+     → expected 1 to be 3 // Object.is equality
+   × A-06.3 bounded real staff > waiter level3 uses a strict floor budget including manual serves 1ms
+     → expected 1 to be 4 // Object.is equality
+   × A-06.3 bounded real staff > waiter level4 uses a strict floor budget including manual serves 1ms
+     → expected 1 to be 4 // Object.is equality
+   × A-06.3 bounded real staff > waiter level5 uses a strict floor budget including manual serves 3ms
+     → expected 1 to be 4 // Object.is equality
+   × A-06.3 bounded real staff > one eligible plate cannot round coverage up to100% 1ms
+     → Cannot read properties of undefined (reading 'snapshot')
+   × A-06.3 bounded real staff > tray changes real waiter cadence, not manual service 1ms
+     → expected +0 to be 1 // Object.is equality
+   × A-06.3 bounded real staff > waiter5 carries at most two per trip; lag never produces a backlog burst 1ms
+     → expected +0 to be 2 // Object.is equality
+   × A-06.3 bounded real staff > helper level1 uses declared cadence/chance and actual prep slots 2ms
+     → expected [] to have a length of 1 but got +0
+   × A-06.3 bounded real staff > helper level2 uses declared cadence/chance and actual prep slots 1ms
+     → expected [] to have a length of 1 but got +0
+   × A-06.3 bounded real staff > helper level3 uses declared cadence/chance and actual prep slots 1ms
+     → expected 3 to be 4 // Object.is equality
+   × A-06.3 bounded real staff > helper level4 uses declared cadence/chance and actual prep slots 1ms
+     → expected 3 to be 4 // Object.is equality
+   × A-06.3 bounded real staff > helper level5 uses declared cadence/chance and actual prep slots 1ms
+     → expected 3 to be 4 // Object.is equality
+   × A-06.3 bounded real staff > helper never admits meat, duplicates covered demand, or serves food 1ms
+     → expected [] to have a length of 1 but got +0
+   × A-06.3 bounded real staff > cook level1 flips only the public cue, bounded once per plate, without moving zones 1ms
+     → expected +0 to be 2 // Object.is equality
+   × A-06.3 bounded real staff > cook level2 flips only the public cue, bounded once per plate, without moving zones 1ms
+     → expected +0 to be 2 // Object.is equality
+   × A-06.3 bounded real staff > cook level3 flips only the public cue, bounded once per plate, without moving zones 1ms
+     → expected +0 to be 3 // Object.is equality
+   × A-06.3 bounded real staff > cook level4 flips only the public cue, bounded once per plate, without moving zones 1ms
+     → expected +0 to be 4 // Object.is equality
+   × A-06.3 bounded real staff > cook level5 flips only the public cue, bounded once per plate, without moving zones 1ms
+     → expected +0 to be 4 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 20 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > waiter serves real ready prep, not a derived stat or synthetic bot reaction
+AssertionError: expected +0 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 0
+
+ ❯ tools/studio/test/staff.test.ts:16:44
+     14|  it('waiter serves real ready prep, not a derived stat or synthetic bo…
+     15|   const s=make({garcom:5,board:1});for(let i=0;i<4;i++){s.spawnScripte…
+     16|   s.tick(4);expect(s.counters.itemsCooked).toBe(2);expect(s.coins).toB…
+       |                                            ^
+     17|  });
+     18|  it.each([1,2,3,4,5])('waiter level%i uses a strict floor budget inclu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/20]⎯
+
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > waiter level1 uses a strict floor budget including manual serves
+AssertionError: expected 1 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ tools/studio/test/staff.test.ts:23:34
+     21|   for(let i=0;i<8;i++)s.tick(2);
+     22|   const allowed=Math.floor([0,.2,.4,.5,.5,.5][level]!*6);
+     23|   expect(s.counters.itemsCooked).toBe(1+allowed);
+       |                                  ^
+     24|   expect(s.staff.snapshot.serve.eligible).toBe(6);expect(s.staff.snaps…
+     25|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/20]⎯
+
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > waiter level2 uses a strict floor budget including manual serves
+AssertionError: expected 1 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 1
+
+ ❯ tools/studio/test/staff.test.ts:23:34
+     21|   for(let i=0;i<8;i++)s.tick(2);
+     22|   const allowed=Math.floor([0,.2,.4,.5,.5,.5][level]!*6);
+     23|   expect(s.counters.itemsCooked).toBe(1+allowed);
+       |                                  ^
+     24|   expect(s.staff.snapshot.serve.eligible).toBe(6);expect(s.staff.snaps…
+     25|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/20]⎯
+
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > waiter level3 uses a strict floor budget including manual serves
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > waiter level4 uses a strict floor budget including manual serves
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > waiter level5 uses a strict floor budget including manual serves
+AssertionError: expected 1 to be 4 // Object.is equality
+
+- Expected
++ Received
+
+- 4
++ 1
+
+ ❯ tools/studio/test/staff.test.ts:23:34
+     21|   for(let i=0;i<8;i++)s.tick(2);
+     22|   const allowed=Math.floor([0,.2,.4,.5,.5,.5][level]!*6);
+     23|   expect(s.counters.itemsCooked).toBe(1+allowed);
+       |                                  ^
+     24|   expect(s.staff.snapshot.serve.eligible).toBe(6);expect(s.staff.snaps…
+     25|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/20]⎯
+
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > one eligible plate cannot round coverage up to100%
+TypeError: Cannot read properties of undefined (reading 'snapshot')
+ ❯ tools/studio/test/staff.test.ts:28:55
+     26|  it('one eligible plate cannot round coverage up to100%',()=>{
+     27|   const s=make({garcom:5,churrasqueiro:5}),{foods}=ready(s,1);s.tick(1…
+     28|   expect(foods[0]!.served).toBe(false);expect(s.staff.snapshot.serve.u…
+       |                                                       ^
+     29|  });
+     30|  it('tray changes real waiter cadence, not manual service',()=>{
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/20]⎯
+
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > tray changes real waiter cadence, not manual service
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tools/studio/test/staff.test.ts:31:110
+     29|  });
+     30|  it('tray changes real waiter cadence, not manual service',()=>{
+     31|   for(const tray of [0,5]){const s=make({garcom:3,tray});ready(s,6);s.…
+       |                                                                                                              ^
+     32|  });
+     33|  it('waiter5 carries at most two per trip; lag never produces a backlo…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/20]⎯
+
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > waiter5 carries at most two per trip; lag never produces a backlog burst
+AssertionError: expected +0 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 0
+
+ ❯ tools/studio/test/staff.test.ts:34:82
+     32|  });
+     33|  it('waiter5 carries at most two per trip; lag never produces a backlo…
+     34|   const s=make({garcom:5});ready(s,6);s.tick(100);expect(s.counters.it…
+       |                                                                                  ^
+     35|  });
+     36|  it.each([1,2,3,4,5])('helper level%i uses declared cadence/chance and…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/20]⎯
+
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > helper level1 uses declared cadence/chance and actual prep slots
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > helper level2 uses declared cadence/chance and actual prep slots
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tools/studio/test/staff.test.ts:42:39
+     40|   expect(s.prepSlots.length).toBe(db.restaurants.restaurants[4]!.servi…
+     41|   s.tick(interval-.01);expect(s.prepSlots.filter(Boolean)).toHaveLengt…
+     42|   expect(s.prepSlots.filter(Boolean)).toHaveLength(1);expect(s.stockRe…
+       |                                       ^
+     43|  });
+     44|  it('helper never admits meat, duplicates covered demand, or serves fo…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/20]⎯
+
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > helper level3 uses declared cadence/chance and actual prep slots
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > helper level4 uses declared cadence/chance and actual prep slots
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > helper level5 uses declared cadence/chance and actual prep slots
+AssertionError: expected 3 to be 4 // Object.is equality
+
+- Expected
++ Received
+
+- 4
++ 3
+
+ ❯ tools/studio/test/staff.test.ts:40:30
+     38|   let seed=1;while(new Rng(seed^0xa063).next()>=.2)seed++;
+     39|   const s=make({auxiliar:level},4,seed);s.spawnScriptedCustomer('comum…
+     40|   expect(s.prepSlots.length).toBe(db.restaurants.restaurants[4]!.servi…
+       |                              ^
+     41|   s.tick(interval-.01);expect(s.prepSlots.filter(Boolean)).toHaveLengt…
+     42|   expect(s.prepSlots.filter(Boolean)).toHaveLength(1);expect(s.stockRe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/20]⎯
+
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > helper never admits meat, duplicates covered demand, or serves food
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tools/studio/test/staff.test.ts:46:39
+     44|  it('helper never admits meat, duplicates covered demand, or serves fo…
+     45|   const s=make({auxiliar:5});s.spawnScriptedCustomer('comum',[prep.id,…
+     46|   expect(s.prepSlots.filter(Boolean)).toHaveLength(1);expect(s.foods.f…
+       |                                       ^
+     47|  });
+     48|  it.each([1,2,3,4,5])('cook level%i flips only the public cue, bounded…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/20]⎯
+
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > cook level1 flips only the public cue, bounded once per plate, without moving zones
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > cook level2 flips only the public cue, bounded once per plate, without moving zones
+AssertionError: expected +0 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 0
+
+ ❯ tools/studio/test/staff.test.ts:51:28
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/20]⎯
+
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > cook level3 flips only the public cue, bounded once per plate, without moving zones
+AssertionError: expected +0 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 0
+
+ ❯ tools/studio/test/staff.test.ts:51:28
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/20]⎯
+
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > cook level4 flips only the public cue, bounded once per plate, without moving zones
+ FAIL  tools/studio/test/staff.test.ts > A-06.3 bounded real staff > cook level5 flips only the public cue, bounded once per plate, without moving zones
+AssertionError: expected +0 to be 4 // Object.is equality
+
+- Expected
++ Received
+
+- 4
++ 0
+
+ ❯ tools/studio/test/staff.test.ts:51:28
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/20]⎯
+
+ Test Files  1 failed (1)
+      Tests  20 failed (20)
+   Start at  05:24:05
+   Duration  417ms (transform 156ms, setup 0ms, collect 186ms, tests 34ms, environment 0ms, prepare 53ms)
+

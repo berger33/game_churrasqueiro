@@ -1,0 +1,124 @@
+{
+  "baseline": "HEAD e50ce1523fa3d04119dc454e3edb050070641c10; existing upgrade price tables unchanged through A-06.1",
+  "tracks": [
+    {
+      "id": "grill_size",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "grill_heat",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "grill_stability",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "grill_speed",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "charcoal_duration",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "charcoal_quality",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "charcoal_auto",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "knife",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "board",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "counter",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "plates",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "tray",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "patience_charm",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "tables",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "decor",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "lighting",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "capacity",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "sign",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "music",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "garcom",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "auxiliar",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "churrasqueiro",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "caixa",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "gerente",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "brasa_mastery",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "clientela_fiel",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    },
+    {
+      "id": "imperio_logistica",
+      "priceCurrencyGrowthMaxDeltaUnchanged": true
+    }
+  ],
+  "save": "core v4/CRC unchanged; browser meta v2 unchanged; turn resources not persisted",
+  "newData": {
+    "grillVersion": 5,
+    "stock": {
+      "basePerIngredient": 6,
+      "refillTimeSec": 3
+    },
+    "upgradesVersion": 4,
+    "counterStat": "rawStockCapacityPerIngredient"
+  },
+  "rulesPortedToCSharp": false
+}

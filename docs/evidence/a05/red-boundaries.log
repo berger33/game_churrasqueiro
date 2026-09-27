@@ -1,0 +1,111 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/vip.test.ts (41 tests | 9 failed | 29 skipped) 27ms
+   × VIP boundary validation and recovery > service rejects invalid probability -1 before admitting 8ms
+     → expected [Function] to throw an error
+   × VIP boundary validation and recovery > service rejects invalid probability NaN before admitting 1ms
+     → expected [Function] to throw an error
+   × VIP boundary validation and recovery > service rejects invalid probability Infinity before admitting 1ms
+     → expected [Function] to throw an error
+   × VIP boundary validation and recovery > service rejects invalid probability 1.1 before admitting 2ms
+     → expected [Function] to throw an error
+   × VIP boundary validation and recovery > cannot corrupt lifetime counters with invalid served delta -1 1ms
+     → expected [Function] to throw an error
+   × VIP boundary validation and recovery > cannot corrupt lifetime counters with invalid served delta 0.5 1ms
+     → expected [Function] to throw an error
+   × VIP boundary validation and recovery > cannot corrupt lifetime counters with invalid served delta NaN 1ms
+     → expected [Function] to throw an error
+   × VIP boundary validation and recovery > fails closed on a reservation without its reserved budget or inconsistent clock 3ms
+     → expected false to be true // Object.is equality
+   × VIP boundary validation and recovery > validates VIP achievement goals/rewards rather than paying a no-service achievement 3ms
+     → expected '' to match /VIP/
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/vip.test.ts > VIP boundary validation and recovery > service rejects invalid probability -1 before admitting
+ FAIL  tools/studio/test/vip.test.ts > VIP boundary validation and recovery > service rejects invalid probability NaN before admitting
+ FAIL  tools/studio/test/vip.test.ts > VIP boundary validation and recovery > service rejects invalid probability Infinity before admitting
+ FAIL  tools/studio/test/vip.test.ts > VIP boundary validation and recovery > service rejects invalid probability 1.1 before admitting
+AssertionError: expected [Function] to throw an error
+
+- Expected: 
+null
+
++ Received: 
+undefined
+
+ ❯ tools/studio/test/vip.test.ts:183:63
+    181| describe('VIP boundary validation and recovery',()=>{
+    182|   it.each([-1,NaN,Infinity,1.1])('service rejects invalid probability …
+    183|     expect(()=>admitVip(db,newVipState(),1,MON,chance,()=>0)).toThrow(…
+       |                                                               ^
+    184|   });
+    185|   it.each([-1,.5,NaN])('cannot corrupt lifetime counters with invalid …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  tools/studio/test/vip.test.ts > VIP boundary validation and recovery > cannot corrupt lifetime counters with invalid served delta -1
+ FAIL  tools/studio/test/vip.test.ts > VIP boundary validation and recovery > cannot corrupt lifetime counters with invalid served delta 0.5
+ FAIL  tools/studio/test/vip.test.ts > VIP boundary validation and recovery > cannot corrupt lifetime counters with invalid served delta NaN
+AssertionError: expected [Function] to throw an error
+
+- Expected: 
+null
+
++ Received: 
+undefined
+
+ ❯ tools/studio/test/vip.test.ts:186:69
+    184|   });
+    185|   it.each([-1,.5,NaN])('cannot corrupt lifetime counters with invalid …
+    186|     const s=newVipState();expect(()=>applyVipProgress(db,s,served)).to…
+       |                                                                     ^
+    187|   });
+    188|   it('fails closed on a reservation without its reserved budget or inc…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  tools/studio/test/vip.test.ts > VIP boundary validation and recovery > fails closed on a reservation without its reserved budget or inconsistent clock
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tools/studio/test/vip.test.ts:189:69
+    187|   });
+    188|   it('fails closed on a reservation without its reserved budget or inc…
+    189|     const s=call();s.usedToday=0;expect(restoreVipState(s).blocked).to…
+       |                                                                     ^
+    190|     const next=call();next.day++;expect(restoreVipState(next).blocked)…
+    191|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  tools/studio/test/vip.test.ts > VIP boundary validation and recovery > validates VIP achievement goals/rewards rather than paying a no-service achievement
+AssertionError: expected '' to match /VIP/
+
+- Expected: 
+/VIP/
+
++ Received: 
+""
+
+ ❯ tools/studio/test/vip.test.ts:194:44
+    192|   it('validates VIP achievement goals/rewards rather than paying a no-…
+    193|     const d=structuredClone(db);d.achievements!.achievements.find(a=>a…
+    194|     expect(validateDatabase(d).join('\n')).toMatch(/VIP/);
+       |                                            ^
+    195|     const e=structuredClone(db);e.achievements!.achievements.find(a=>a…
+    196|     expect(validateDatabase(e).join('\n')).toMatch(/VIP/);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ Test Files  1 failed (1)
+      Tests  9 failed | 3 passed | 29 skipped (41)
+   Start at  03:32:35
+   Duration  465ms (transform 222ms, setup 0ms, collect 255ms, tests 27ms, environment 0ms, prepare 48ms)
+

@@ -358,6 +358,8 @@ async function main() {
     document.visibilityState = 'hidden';
     for (const fn of docListeners.get('visibilitychange') ?? []) fn({ type: 'visibilitychange' });
     document.visibilityState = 'visible';
+    // Returning to a visible tab also emits visibilitychange in a real browser.
+    for (const fn of docListeners.get('visibilitychange') ?? []) fn({ type: 'visibilitychange' });
   };
   background();
   background(); // same step: still one event

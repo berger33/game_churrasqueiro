@@ -1,0 +1,181 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/prep.test.ts (16 tests | 15 failed) 21ms
+   × A-03: prep is an explicit, bounded station, not a free stock timer > does not prepare stock until admitted to the station 8ms
+     → expected 1 to be +0 // Object.is equality
+   × A-03: prep is an explicit, bounded station, not a free stock timer > rejects placing, moving or flipping prep through player actions 1ms
+     → expected true to be false // Object.is equality
+   × A-03: prep is an explicit, bounded station, not a free stock timer > holds capacity while preparing AND ready, releases only on service/discard 0ms
+     → s.startPrep is not a function
+   × A-03: prep is an explicit, bounded station, not a free stock timer > uses prepSec / knife multiplier exactly (knife 0) 1ms
+     → s.startPrep is not a function
+   × A-03: prep is an explicit, bounded station, not a free stock timer > uses prepSec / knife multiplier exactly (knife 1) 1ms
+     → s.startPrep is not a function
+   × A-03: prep is an explicit, bounded station, not a free stock timer > uses prepSec / knife multiplier exactly (knife 6) 1ms
+     → s.startPrep is not a function
+   × A-03: prep is an explicit, bounded station, not a free stock timer > consumes restaurant capacity plus board (restaurant 0) 2ms
+     → Target cannot be null or undefined.
+   × A-03: prep is an explicit, bounded station, not a free stock timer > consumes restaurant capacity plus board (restaurant 2) 0ms
+     → Target cannot be null or undefined.
+   × A-03: prep is an explicit, bounded station, not a free stock timer > consumes restaurant capacity plus board (restaurant 6) 3ms
+     → Target cannot be null or undefined.
+   × A-03: prep is an explicit, bounded station, not a free stock timer > rejects foreign, grilled, invalid-slot and duplicate admissions without effects 1ms
+     → s.startPrep is not a function
+   × A-03: prep is an explicit, bounded station, not a free stock timer > preserves level gating at player 12 0ms
+     → s.startPrep is not a function
+   × A-03: prep is an explicit, bounded station, not a free stock timer > preserves level gating at player 13 0ms
+     → s.startPrep is not a function
+   × A-03: prep is an explicit, bounded station, not a free stock timer > completes mixed orders only after both lines, counts rewards once, keeps result pure 0ms
+     → s.startPrep is not a function
+   × A-03: prep is an explicit, bounded station, not a free stock timer > keeps failed drops and departed customers from consuming a prepared plate 0ms
+     → s.startPrep is not a function
+   × A-03: prep is an explicit, bounded station, not a free stock timer > bot uses the station and serves two waiting prep orders without stock leakage 2ms
+     → Cannot read properties of undefined (reading 'every')
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 15 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/prep.test.ts > A-03: prep is an explicit, bounded station, not a free stock timer > does not prepare stock until admitted to the station
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ tools/studio/test/prep.test.ts:18:28
+     16|     const s = make(), f = s.takeFromStock(recipe), c = order(s);
+     17|     s.tick(3);
+     18|     expect(f.prepProgress).toBe(0);
+       |                            ^
+     19|     expect(s.serve(c, f)).toBeNull();
+     20|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/15]⎯
+
+ FAIL  tools/studio/test/prep.test.ts > A-03: prep is an explicit, bounded station, not a free stock timer > rejects placing, moving or flipping prep through player actions
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tools/studio/test/prep.test.ts:23:27
+     21|   it('rejects placing, moving or flipping prep through player actions'…
+     22|     const s = make(), f = s.takeFromStock(recipe);
+     23|     expect(s.place(f, 0)).toBe(false);
+       |                           ^
+     24|     expect(s.move(f, 0)).toBe(false);
+     25|     expect(s.flip(f)).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/15]⎯
+
+ FAIL  tools/studio/test/prep.test.ts > A-03: prep is an explicit, bounded station, not a free stock timer > holds capacity while preparing AND ready, releases only on service/discard
+TypeError: s.startPrep is not a function
+ ❯ tools/studio/test/prep.test.ts:30:14
+     28|   it('holds capacity while preparing AND ready, releases only on servi…
+     29|     const s = make(), a = s.takeFromStock(recipe), b = s.takeFromStock…
+     30|     expect(s.startPrep(a)).toBe(true);
+       |              ^
+     31|     expect(s.startPrep(a)).toBe(false);
+     32|     expect(s.startPrep(b)).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/15]⎯
+
+ FAIL  tools/studio/test/prep.test.ts > A-03: prep is an explicit, bounded station, not a free stock timer > uses prepSec / knife multiplier exactly (knife 0)
+ FAIL  tools/studio/test/prep.test.ts > A-03: prep is an explicit, bounded station, not a free stock timer > uses prepSec / knife multiplier exactly (knife 1)
+ FAIL  tools/studio/test/prep.test.ts > A-03: prep is an explicit, bounded station, not a free stock timer > uses prepSec / knife multiplier exactly (knife 6)
+TypeError: s.startPrep is not a function
+ ❯ tools/studio/test/prep.test.ts:45:14
+     43|   it.each([0, 1, 6])('uses prepSec / knife multiplier exactly (knife %…
+     44|     const s = make({ knife }), f = s.takeFromStock(recipe), c = order(…
+     45|     expect(s.startPrep(f)).toBe(true);
+       |              ^
+     46|     const duration = recipe.prepSec! / s.stats.prepSpeedMult;
+     47|     s.tick(duration / 2); expect(f.prepProgress).toBeCloseTo(0.5);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/15]⎯
+
+ FAIL  tools/studio/test/prep.test.ts > A-03: prep is an explicit, bounded station, not a free stock timer > consumes restaurant capacity plus board (restaurant 0)
+ FAIL  tools/studio/test/prep.test.ts > A-03: prep is an explicit, bounded station, not a free stock timer > consumes restaurant capacity plus board (restaurant 2)
+ FAIL  tools/studio/test/prep.test.ts > A-03: prep is an explicit, bounded station, not a free stock timer > consumes restaurant capacity plus board (restaurant 6)
+AssertionError: Target cannot be null or undefined.
+ ❯ tools/studio/test/prep.test.ts:58:25
+     56|     const s = make({ board: 5 }, restaurant);
+     57|     const capacity = db.restaurants.restaurants[restaurant]!.service.p…
+     58|     expect(s.prepSlots).toHaveLength(capacity);
+       |                         ^
+     59|     for (let i = 0; i < capacity; i++) expect(s.startPrep(s.takeFromSt…
+     60|     expect(s.startPrep(s.takeFromStock(recipe))).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/15]⎯
+
+ FAIL  tools/studio/test/prep.test.ts > A-03: prep is an explicit, bounded station, not a free stock timer > rejects foreign, grilled, invalid-slot and duplicate admissions without effects
+TypeError: s.startPrep is not a function
+ ❯ tools/studio/test/prep.test.ts:65:52
+     63|   it('rejects foreign, grilled, invalid-slot and duplicate admissions …
+     64|     const s = make(), f = s.takeFromStock(recipe), g = s.takeFromStock…
+     65|     for (const slot of [-1, 1, 0.5, NaN]) expect(s.startPrep(f, slot))…
+       |                                                    ^
+     66|     expect(s.startPrep(createFood(999, recipe))).toBe(false);
+     67|     expect(s.startPrep(g)).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/15]⎯
+
+ FAIL  tools/studio/test/prep.test.ts > A-03: prep is an explicit, bounded station, not a free stock timer > preserves level gating at player 12
+ FAIL  tools/studio/test/prep.test.ts > A-03: prep is an explicit, bounded station, not a free stock timer > preserves level gating at player 13
+TypeError: s.startPrep is not a function
+ ❯ tools/studio/test/prep.test.ts:76:14
+     74|     const s = make({}, 0, level);
+     75|     if (level < 12) { expect(() => s.takeFromStock(recipe)).toThrow(/l…
+     76|     expect(s.startPrep(s.takeFromStock(recipe))).toBe(true);
+       |              ^
+     77|   });
+     78|   it('completes mixed orders only after both lines, counts rewards onc…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/15]⎯
+
+ FAIL  tools/studio/test/prep.test.ts > A-03: prep is an explicit, bounded station, not a free stock timer > completes mixed orders only after both lines, counts rewards once, keeps result pure
+TypeError: s.startPrep is not a function
+ ❯ tools/studio/test/prep.test.ts:81:7
+     79|     const s = make(), c = order(s, ['vinagrete', 'linguica_toscana']);
+     80|     const prep = s.takeFromStock(recipe), grill = s.takeFromStock(db.i…
+     81|     s.startPrep(prep); s.place(grill, 0);
+       |       ^
+     82|     s.tick(2);
+     83|     const p = s.serve(c, prep)!;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/15]⎯
+
+ FAIL  tools/studio/test/prep.test.ts > A-03: prep is an explicit, bounded station, not a free stock timer > keeps failed drops and departed customers from consuming a prepared plate
+TypeError: s.startPrep is not a function
+ ❯ tools/studio/test/prep.test.ts:102:7
+    100|     const s = make(), f = s.takeFromStock(recipe), left = order(s, ['v…
+    101|     const wrong = order(s, ['linguica_toscana']);
+    102|     s.startPrep(f); s.tick(2);
+       |       ^
+    103|     expect(left.state).toBe('left'); expect(s.serve(left, f)).toBeNull…
+    104|     expect(s.serve(wrong, f)).toBeNull(); expect(s.prepSlots[0]).toBe(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/15]⎯
+
+ FAIL  tools/studio/test/prep.test.ts > A-03: prep is an explicit, bounded station, not a free stock timer > bot uses the station and serves two waiting prep orders without stock leakage
+TypeError: Cannot read properties of undefined (reading 'every')
+ ❯ tools/studio/test/prep.test.ts:116:24
+    114|     for (let i = 0; i < 100; i++) { s.tick(0.1, a => bot.act(a)); peak…
+    115|     expect(s.counters.customersServed).toBe(2); expect(peak).toBe(1);
+    116|     expect(s.prepSlots.every(f => f === null)).toBe(true);
+       |                        ^
+    117|   });
+    118| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/15]⎯
+
+ Test Files  1 failed (1)
+      Tests  15 failed | 1 passed (16)
+   Start at  02:09:49
+   Duration  339ms (transform 137ms, setup 0ms, collect 144ms, tests 21ms, environment 0ms, prepare 43ms)
+

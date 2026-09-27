@@ -1,0 +1,111 @@
+
+> churrasco-mestre-da-brasa@0.1.0 check-shots
+> node prototype/shoot.mjs
+
+art: 244 sprites decoded
+[shoot] 01-splash.png  228.7 kB
+[shoot] 02-title.png  543.8 kB
+[shoot] 03-ftue-place.png  383.9 kB
+[shoot] 04-ftue-wait.png  345.1 kB
+[shoot] 05-ftue-flip.png  340.9 kB
+[shoot] 06-ftue-serve.png  353.0 kB
+[shoot] 07-ftue-perfect.png  463.6 kB
+[shoot] 08-ftue-result.png  104.8 kB
+[shoot] 09-ftue-upgrade.png  148.1 kB
+[shoot] FTUE tutorial_start → step:place → step:flip → step:serve → step:perfect → tutorial_complete → upgrade_purchase → step:upgrade
+[shoot] FTUE first PERFEITO at 16.1s, complete at 32.9s, upgrade at 38.3s, misses 0, coins left 136
+art: 244 sprites decoded
+[shoot] 10-home.png  187.8 kB
+[shoot] 11-turn-empty.png  437.6 kB
+[shoot] 12-grill-cooking.png  433.5 kB
+[shoot] 13-result.png  94.8 kB
+art: 244 sprites decoded
+[shoot] 14-advanced-bench.png  492.5 kB
+[shoot] 15-advanced-flip-hint.png  490.3 kB
+[shoot] 16-costela-perfect-window.png  490.3 kB
+[shoot] 17-cupim-perfect-window.png  490.3 kB
+[shoot] A-01: page 2 → costela/cupim → wait for cue → tap flips once → both perfect windows
+art: 244 sprites decoded
+art: 244 sprites decoded
+[shoot] 18-before-cheese-unlock.png  452.2 kB
+art: 244 sprites decoded
+[shoot] 19-cheese-unlocked.png  462.6 kB
+art: 244 sprites decoded
+[shoot] A-02: saved levels 1/5/6/7 → matching bench/orders → no phantom locked slot → cheese draggable at 6/7
+art: 244 sprites decoded
+[shoot] 20-before-prep-unlock.png  464.1 kB
+art: 244 sprites decoded
+[shoot] 21-prep-in-progress.png  488.3 kB
+[shoot] 22-prep-ready.png  481.3 kB
+[shoot] 23-prep-served.png  477.6 kB
+[shoot] A-03: actual order 10 (vinagrete) served prep, coins=319 xp=66
+art: 244 sprites decoded
+art: 244 sprites decoded
+[shoot] 24-prep-capacity-page-2.png  496.7 kB
+[shoot] A-03: unlock 11/12/13, tap/drag, invalid drops, cancellation, timing, real service, discard, 10 slots + paging
+art: 244 sprites decoded
+[shoot] 25-before-fourth-zone.png  442.8 kB
+art: 244 sprites decoded
+art: 244 sprites decoded
+art: 244 sprites decoded
+[shoot] 26-fourth-zone-unlocked.png  489.9 kB
+[shoot] 27-fourth-zone-cooking.png  489.2 kB
+[shoot] 28-fourth-zone-order-served.png  483.1 kB
+art: 244 sprites decoded
+art: 244 sprites decoded
+art: 244 sprites decoded
+art: 244 sprites decoded
+art: 244 sprites decoded
+[shoot] 29-premium-without-fornalha.png  484.2 kB
+[shoot] A-04: Home/runtime/HUD agree; Fornalha3→4 at Premium, evo1/2/3; others1/2/3; real fourth-row placement/move/flip/mixed-order service
+art: 244 sprites decoded
+[shoot] 30-vip-home-test.png  191.9 kB
+[shoot] 31-vip-explicit-simulation.png  116.4 kB
+art: 244 sprites decoded
+art: 244 sprites decoded
+[shoot] 32-vip-reserved-after-relaunch.png  188.9 kB
+[shoot] 33-vip-called-arrival.png  460.3 kB
+[shoot] A-05 called order: [ 'picanha', 'coracao_frango' ]
+[shoot] 34-vip-order-served.png  443.0 kB
+[shoot] 37-vip-achievement-result.png  95.0 kB
+art: 244 sprites decoded
+art: 244 sprites decoded
+[shoot] 35-vip-natural-arrival.png  461.6 kB
+art: 244 sprites decoded
+[shoot] 36-vip-daily-limit.png  188.4 kB
+art: 244 sprites decoded
+[shoot] A-05: zero/one authored chance; cancel/complete; persistent reserved call, real cooking/flip/service, VIP achievement; natural no-ads, shared cap/relaunch, starter locked
+art: 244 sprites decoded
+[shoot] 38-upgrade-catalog.png  175.5 kB
+art: 244 sprites decoded
+art: 244 sprites decoded
+[shoot] 39-orders-paged.png  471.4 kB
+[shoot] 40-orders-page2-service.png  483.7 kB
+art: 244 sprites decoded
+art: 244 sprites decoded
+[shoot] 41-upgrade-prep-locked.png  168.6 kB
+art: 244 sprites decoded
+[shoot] 42-upgrade-prep-unlocked.png  177.7 kB
+[shoot] A-06.1: all27 catalog, shared purchase/relaunch, pending/max no debit; capacity14 all reachable, page2 real service, drag stable across arrivals, prep11/12 purchase gating
+art: 244 sprites decoded
+[shoot] 43-stock-empty.png  493.5 kB
+[shoot] 44-stock-refilling.png  495.7 kB
+[shoot] 45-stock-restored.png  493.3 kB
+[shoot] 46-charcoal-automatic.png  476.1 kB
+[shoot] A-06.2: cancel, six legal admissions/discards, empty stock, three-second free refill, seeded low-fuel auto refill, zero heat/collision in four zones
+art: 244 sprites decoded
+[shoot] 47-staff-auto-flip.png  476.4 kB
+[shoot] 49-staff-burn-warning.png  476.1 kB
+[shoot] staff snapshot {"serve":{"level":3,"eligible":2,"used":1,"limit":1,"coverage":0.5,"interval":1,"nextAt":11.283333333333424},"flip":{"level":5,"eligible":2,"used":1,"limit":1,"coverage":0.6,"nextAt":22.000000000000146},"prep":{"level":5,"used":1,"attempts":1,"nextAt":22.500000000000146},"riskFoodIds":[]}
+[shoot] 48-staff-prep-and-service.png  482.3 kB
+[shoot] A-06.3: pointer places two plates; public cue/one bounded auto flip, no zone move; manual overlap; helper actual prep/extra slot, waiter actual payout and tray cadence
+art: 244 sprites decoded
+file:///home/user/game_churrasqueiro/prototype/shoot.mjs:263
+function assert(cond, msg) { if (!cond) throw new Error(`[shoot] ${msg}`); }
+                                              ^
+
+Error: [shoot] A-06.4: real ledger UI/read-only layout must replace the random date-change popup
+    at assert (file:///home/user/game_churrasqueiro/prototype/shoot.mjs:263:47)
+    at file:///home/user/game_churrasqueiro/prototype/shoot.mjs:1024:3
+
+Node.js v22.22.3

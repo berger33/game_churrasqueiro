@@ -1,0 +1,36 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/fourth-zone.test.ts (41 tests | 2 failed | 31 skipped) 16ms
+   × A-04: auxiliary zones and hardware expansion references are validated > rejects broken missingAuxiliary contract 6ms
+     → expected '' to match /zone|expansion/i
+   × A-04: auxiliary zones and hardware expansion references are validated > rejects broken emptyAuxiliary contract 1ms
+     → expected '' to match /zone|expansion/i
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: auxiliary zones and hardware expansion references are validated > rejects broken missingAuxiliary contract
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: auxiliary zones and hardware expansion references are validated > rejects broken emptyAuxiliary contract
+AssertionError: expected '' to match /zone|expansion/i
+
+- Expected: 
+/zone|expansion/i
+
++ Received: 
+""
+
+ ❯ tools/studio/test/fourth-zone.test.ts:135:44
+    133|     if(kind==='fraction')expansion.zoneCount=3.5;
+    134|     if(kind==='notExpansion')expansion.zoneCount=2;
+    135|     expect(validateDatabase(d).join('\n')).toMatch(/zone|expansion/i);
+       |                                            ^
+    136|   });
+    137| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 8 passed | 31 skipped (41)
+   Start at  02:57:45
+   Duration  386ms (transform 160ms, setup 0ms, collect 185ms, tests 16ms, environment 0ms, prepare 51ms)
+

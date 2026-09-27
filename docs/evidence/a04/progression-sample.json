@@ -1,0 +1,167 @@
+{
+  "note": "Actual sim snapshots; occupied ticks sampled AFTER policy moves. No test-written food/heat state.",
+  "expandedTurns": 1241,
+  "occupiedFourthTicks": 0,
+  "samples": [
+    {
+      "turn": 1,
+      "restaurant": 0,
+      "playerLevel": 1,
+      "coins": 307,
+      "id": "lata_valente",
+      "evolution": 1,
+      "zoneCount": 1,
+      "slotsPerZone": 2,
+      "zoneHeats": [
+        0.65
+      ],
+      "occupiedTicksByZone": [
+        1067
+      ]
+    },
+    {
+      "turn": 2,
+      "restaurant": 0,
+      "playerLevel": 1,
+      "coins": 425,
+      "id": "lata_valente",
+      "evolution": 2,
+      "zoneCount": 1,
+      "slotsPerZone": 3,
+      "zoneHeats": [
+        0.82
+      ],
+      "occupiedTicksByZone": [
+        1091
+      ]
+    },
+    {
+      "turn": 258,
+      "restaurant": 3,
+      "playerLevel": 33,
+      "coins": 9679,
+      "id": "fornalha_dragao_manso",
+      "evolution": 3,
+      "zoneCount": 3,
+      "slotsPerZone": 12,
+      "zoneHeats": [
+        0.8910000000000001,
+        1.62,
+        1.7
+      ],
+      "occupiedTicksByZone": [
+        0,
+        997,
+        973
+      ]
+    },
+    {
+      "turn": 259,
+      "restaurant": 3,
+      "playerLevel": 33,
+      "coins": 8951,
+      "id": "fornalha_dragao_manso",
+      "evolution": 3,
+      "zoneCount": 3,
+      "slotsPerZone": 12,
+      "zoneHeats": [
+        0.8910000000000001,
+        1.62,
+        1.7
+      ],
+      "occupiedTicksByZone": [
+        0,
+        1152,
+        793
+      ]
+    },
+    {
+      "turn": 260,
+      "restaurant": 4,
+      "playerLevel": 34,
+      "coins": 12905,
+      "id": "fornalha_dragao_manso",
+      "evolution": 3,
+      "zoneCount": 4,
+      "slotsPerZone": 12,
+      "zoneHeats": [
+        0.8910000000000001,
+        1.62,
+        1.7,
+        1.62
+      ],
+      "occupiedTicksByZone": [
+        620,
+        902,
+        1270,
+        0
+      ]
+    },
+    {
+      "turn": 261,
+      "restaurant": 4,
+      "playerLevel": 34,
+      "coins": 11983,
+      "id": "fornalha_dragao_manso",
+      "evolution": 3,
+      "zoneCount": 4,
+      "slotsPerZone": 12,
+      "zoneHeats": [
+        0.8910000000000001,
+        1.62,
+        1.7,
+        1.62
+      ],
+      "occupiedTicksByZone": [
+        569,
+        1119,
+        1125,
+        0
+      ]
+    },
+    {
+      "turn": 262,
+      "restaurant": 4,
+      "playerLevel": 34,
+      "coins": 11847,
+      "id": "fornalha_dragao_manso",
+      "evolution": 3,
+      "zoneCount": 4,
+      "slotsPerZone": 12,
+      "zoneHeats": [
+        0.8910000000000001,
+        1.62,
+        1.7,
+        1.62
+      ],
+      "occupiedTicksByZone": [
+        1475,
+        1325,
+        987,
+        0
+      ]
+    },
+    {
+      "turn": 1500,
+      "restaurant": 6,
+      "playerLevel": 80,
+      "coins": 16607,
+      "id": "fornalha_dragao_manso",
+      "evolution": 3,
+      "zoneCount": 4,
+      "slotsPerZone": 12,
+      "zoneHeats": [
+        0.8910000000000001,
+        1.62,
+        1.7,
+        1.62
+      ],
+      "occupiedTicksByZone": [
+        2282,
+        1535,
+        970,
+        0
+      ]
+    }
+  ]
+}

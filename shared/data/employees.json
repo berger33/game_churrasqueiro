@@ -1,24 +1,71 @@
 {
   "$schema": "schema/employees.schema.json",
   "_comment": "Employees automate parts of the operation (spec §17). Automation strength is capped so the skill game is never fully removed.",
-  "version": 2,
+  "version": 4,
   "automationCap": {
     "autoFlipMaxCoverage": 0.6,
     "autoServeMaxCoverage": 0.5,
-    "neverAutomates": ["zone_choice", "perfect_timing_call"]
+    "neverAutomates": [
+      "zone_choice",
+      "perfect_timing_call"
+    ]
   },
   "roles": [
     {
       "id": "garcom",
       "nameKey": "employee.garcom.name",
       "descKey": "employee.garcom.desc",
-      "unlock": { "restaurantIndex": 1, "upgradeTrack": "garcom", "level": 1 },
+      "unlock": {
+        "restaurantIndex": 1,
+        "upgradeTrack": "garcom",
+        "level": 1
+      },
       "abilities": [
-        { "level": 1, "effect": "Serves finished plates automatically when a customer is waiting > 1.5s", "coverage": 0.2 },
-        { "level": 2, "effect": "Serve coverage 40%, +5% tip on auto-served plates", "coverage": 0.4 },
-        { "level": 3, "effect": "Serve coverage 50%, warns when a plate is 1s from burning", "coverage": 0.5 },
-        { "level": 4, "effect": "Serve coverage 50%, +10% tip on auto-served plates", "coverage": 0.5 },
-        { "level": 5, "effect": "Serve coverage 50%, carries 2 plates per trip", "coverage": 0.5 }
+        {
+          "level": 1,
+          "effect": "Serves finished plates automatically when a customer is waiting > 1.5s",
+          "coverage": 0.2,
+          "intervalSec": 1.5,
+          "tipBonus": 0.0,
+          "platesPerTrip": 1,
+          "burnWarningSec": 0.0
+        },
+        {
+          "level": 2,
+          "effect": "Serve coverage 40%, +5% tip on auto-served plates",
+          "coverage": 0.4,
+          "intervalSec": 1.5,
+          "tipBonus": 0.05,
+          "platesPerTrip": 1,
+          "burnWarningSec": 0.0
+        },
+        {
+          "level": 3,
+          "effect": "Serve coverage 50%, warns when a plate is 1s from burning",
+          "coverage": 0.5,
+          "intervalSec": 1.5,
+          "tipBonus": 0.05,
+          "platesPerTrip": 1,
+          "burnWarningSec": 1.0
+        },
+        {
+          "level": 4,
+          "effect": "Serve coverage 50%, +10% tip on auto-served plates",
+          "coverage": 0.5,
+          "intervalSec": 1.5,
+          "tipBonus": 0.1,
+          "platesPerTrip": 1,
+          "burnWarningSec": 1.0
+        },
+        {
+          "level": 5,
+          "effect": "Serve coverage 50%, carries 2 plates per trip",
+          "coverage": 0.5,
+          "intervalSec": 1.5,
+          "tipBonus": 0.1,
+          "platesPerTrip": 2,
+          "burnWarningSec": 1.0
+        }
       ],
       "rarity": "common"
     },
@@ -26,13 +73,47 @@
       "id": "auxiliar",
       "nameKey": "employee.auxiliar.name",
       "descKey": "employee.auxiliar.desc",
-      "unlock": { "restaurantIndex": 2, "upgradeTrack": "auxiliar", "level": 1 },
+      "unlock": {
+        "restaurantIndex": 2,
+        "upgradeTrack": "auxiliar",
+        "level": 1
+      },
       "abilities": [
-        { "level": 1, "effect": "Prepares 1 raw item per 6s from stock", "coverage": 0.2 },
-        { "level": 2, "effect": "Prep every 4.5s", "coverage": 0.4 },
-        { "level": 3, "effect": "Prep every 3.5s, +1 prep slot", "coverage": 0.6 },
-        { "level": 4, "effect": "Prep every 3s", "coverage": 0.8 },
-        { "level": 5, "effect": "Prep every 2.5s, never mis-preps", "coverage": 1.0 }
+        {
+          "level": 1,
+          "effect": "Starts demanded prep recipes at cadence with coverage probability; requires stock and a free slot",
+          "coverage": 0.2,
+          "intervalSec": 6.0,
+          "extraPrepSlots": 0
+        },
+        {
+          "level": 2,
+          "effect": "Starts demanded prep recipes at cadence with coverage probability; requires stock and a free slot",
+          "coverage": 0.4,
+          "intervalSec": 4.5,
+          "extraPrepSlots": 0
+        },
+        {
+          "level": 3,
+          "effect": "Starts demanded prep recipes at cadence with coverage probability; requires stock and a free slot",
+          "coverage": 0.6,
+          "intervalSec": 3.5,
+          "extraPrepSlots": 1
+        },
+        {
+          "level": 4,
+          "effect": "Starts demanded prep recipes at cadence with coverage probability; requires stock and a free slot",
+          "coverage": 0.8,
+          "intervalSec": 3.0,
+          "extraPrepSlots": 1
+        },
+        {
+          "level": 5,
+          "effect": "Starts demanded prep recipes at cadence with coverage probability; requires stock and a free slot",
+          "coverage": 1.0,
+          "intervalSec": 2.5,
+          "extraPrepSlots": 1
+        }
       ],
       "rarity": "common"
     },
@@ -40,13 +121,42 @@
       "id": "churrasqueiro",
       "nameKey": "employee.churrasqueiro.name",
       "descKey": "employee.churrasqueiro.desc",
-      "unlock": { "restaurantIndex": 3, "upgradeTrack": "churrasqueiro", "level": 1 },
+      "unlock": {
+        "restaurantIndex": 3,
+        "upgradeTrack": "churrasqueiro",
+        "level": 1
+      },
       "abilities": [
-        { "level": 1, "effect": "Flips the oldest unflipped item every 5s", "coverage": 0.2 },
-        { "level": 2, "effect": "Flips every 4s", "coverage": 0.3 },
-        { "level": 3, "effect": "Flips every 3s, moves 1 item to a better zone per 8s", "coverage": 0.4 },
-        { "level": 4, "effect": "Flips every 2.5s, zone moves every 6s", "coverage": 0.5 },
-        { "level": 5, "effect": "Flips every 2s, zone moves every 5s, never burns while staffed", "coverage": 0.6 }
+        {
+          "level": 1,
+          "effect": "Flips the oldest publicly eligible unflipped plate within a strict cumulative coverage budget; never moves zones or prevents burning",
+          "coverage": 0.2,
+          "intervalSec": 5.0
+        },
+        {
+          "level": 2,
+          "effect": "Flips the oldest publicly eligible unflipped plate within a strict cumulative coverage budget; never moves zones or prevents burning",
+          "coverage": 0.3,
+          "intervalSec": 4.0
+        },
+        {
+          "level": 3,
+          "effect": "Flips the oldest publicly eligible unflipped plate within a strict cumulative coverage budget; never moves zones or prevents burning",
+          "coverage": 0.4,
+          "intervalSec": 3.0
+        },
+        {
+          "level": 4,
+          "effect": "Flips the oldest publicly eligible unflipped plate within a strict cumulative coverage budget; never moves zones or prevents burning",
+          "coverage": 0.5,
+          "intervalSec": 2.5
+        },
+        {
+          "level": 5,
+          "effect": "Flips the oldest publicly eligible unflipped plate within a strict cumulative coverage budget; never moves zones or prevents burning",
+          "coverage": 0.6,
+          "intervalSec": 2.0
+        }
       ],
       "rarity": "uncommon"
     },
@@ -54,12 +164,40 @@
       "id": "caixa",
       "nameKey": "employee.caixa.name",
       "descKey": "employee.caixa.desc",
-      "unlock": { "restaurantIndex": 3, "upgradeTrack": "caixa", "level": 1 },
+      "unlock": {
+        "restaurantIndex": 3,
+        "upgradeTrack": "caixa",
+        "level": 1
+      },
       "abilities": [
-        { "level": 1, "effect": "Collects idle earnings automatically up to 2h", "coverage": 0.25 },
-        { "level": 2, "effect": "Idle auto-collect 4h", "coverage": 0.5 },
-        { "level": 3, "effect": "Idle auto-collect 6h, +3% offline rate", "coverage": 0.75 },
-        { "level": 4, "effect": "Idle auto-collect 8h, +6% offline rate", "coverage": 1.0 }
+        {
+          "level": 1,
+          "effect": "Collects idle earnings automatically up to 2h",
+          "coverage": 0.25,
+          "autoOfflineHours": 2,
+          "offlineRateBonus": 0.0
+        },
+        {
+          "level": 2,
+          "effect": "Idle auto-collect 4h",
+          "coverage": 0.5,
+          "autoOfflineHours": 4,
+          "offlineRateBonus": 0.0
+        },
+        {
+          "level": 3,
+          "effect": "Idle auto-collect 6h, +3% offline rate",
+          "coverage": 0.75,
+          "autoOfflineHours": 6,
+          "offlineRateBonus": 0.03
+        },
+        {
+          "level": 4,
+          "effect": "Idle auto-collect 8h, +6% offline rate",
+          "coverage": 1.0,
+          "autoOfflineHours": 8,
+          "offlineRateBonus": 0.06
+        }
       ],
       "rarity": "uncommon"
     },
@@ -67,14 +205,37 @@
       "id": "gerente",
       "nameKey": "employee.gerente.name",
       "descKey": "employee.gerente.desc",
-      "unlock": { "restaurantIndex": 4, "upgradeTrack": "gerente", "level": 1 },
+      "unlock": {
+        "restaurantIndex": 4,
+        "upgradeTrack": "gerente",
+        "level": 1
+      },
       "abilities": [
-        { "level": 1, "effect": "+18% idle rate, daily mission reroll", "coverage": 1.0 },
-        { "level": 2, "effect": "+36% idle rate, weekly reroll", "coverage": 1.0 },
-        { "level": 3, "effect": "+54% idle rate, -10% upgrade costs", "coverage": 1.0 },
-        { "level": 4, "effect": "+72% idle rate, -15% upgrade costs, VIP chance +2%", "coverage": 1.0 }
+        {
+          "level": 1,
+          "effect": "+18% offline rate only; mission rerolls, discounts and VIP bonus remain backlog",
+          "coverage": 1.0
+        },
+        {
+          "level": 2,
+          "effect": "+36% offline rate only; mission rerolls, discounts and VIP bonus remain backlog",
+          "coverage": 1.0
+        },
+        {
+          "level": 3,
+          "effect": "+54% offline rate only; mission rerolls, discounts and VIP bonus remain backlog",
+          "coverage": 1.0
+        },
+        {
+          "level": 4,
+          "effect": "+72% offline rate only; mission rerolls, discounts and VIP bonus remain backlog",
+          "coverage": 1.0
+        }
       ],
       "rarity": "rare"
     }
-  ]
+  ],
+  "service": {
+    "minimumWaitSec": 1.5
+  }
 }

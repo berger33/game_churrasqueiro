@@ -1,0 +1,45 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/staff.test.ts (53 tests | 5 failed) 119ms
+   × employee data rejects invalid interval before simulation 8ms
+     → expected false to be true // Object.is equality
+   × employee data rejects invalid coverage before simulation 1ms
+     → expected false to be true // Object.is equality
+   × employee data rejects invalid cap before simulation 1ms
+     → expected false to be true // Object.is equality
+   × employee data rejects invalid tip before simulation 1ms
+     → expected false to be true // Object.is equality
+   × employee data rejects invalid slots before simulation 1ms
+     → expected false to be true // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/staff.test.ts > employee data rejects invalid interval before simulation
+ FAIL  tools/studio/test/staff.test.ts > employee data rejects invalid coverage before simulation
+ FAIL  tools/studio/test/staff.test.ts > employee data rejects invalid cap before simulation
+ FAIL  tools/studio/test/staff.test.ts > employee data rejects invalid tip before simulation
+ FAIL  tools/studio/test/staff.test.ts > employee data rejects invalid slots before simulation
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tools/studio/test/staff.test.ts:154:69
+    152|  if(kind==='tip')e.roles.find(r=>r.id==='garcom')!.abilities[0]!.tipBo…
+    153|  if(kind==='slots')e.roles.find(r=>r.id==='auxiliar')!.abilities[2]!.e…
+    154|  expect(validateDatabase(copy).some(p=>p.startsWith('employees:'))).to…
+       |                                                                     ^
+    155| });
+    156| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 48 passed (53)
+   Start at  05:38:05
+   Duration  573ms (transform 197ms, setup 0ms, collect 236ms, tests 119ms, environment 0ms, prepare 59ms)
+

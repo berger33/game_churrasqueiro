@@ -1,0 +1,37 @@
+
+> churrasco-mestre-da-brasa@0.1.0 gen-schemas
+> node tools/studio/gen-schemas.mjs
+
+[schema] wrote 22 schemas to shared/schema
+
+> churrasco-mestre-da-brasa@0.1.0 gen-csharp-types
+> node tools/studio/gen-csharp-types.mjs
+
+[csharp] wrote 13 files / 87 classes to Assets/Scripts/Core/Generated
+  Ingredients        7 classes  <- ingredients.json
+  Grill              9 classes  <- grill.json
+  Customers          4 classes  <- customers.json
+  Restaurants        5 classes  <- restaurants.json
+  Upgrades           5 classes  <- upgrades.json
+  Economy           15 classes  <- economy.json
+  Levels             4 classes  <- levels.json
+  Employees          6 classes  <- employees.json
+  Collection         7 classes  <- collection.json
+  Pass               9 classes  <- pass.json
+  Churrasqueiras     5 classes  <- churrasqueiras.json
+  Tutorial           6 classes  <- tutorial.json
+  Analytics          5 classes  <- analytics.json
+
+> churrasco-mestre-da-brasa@0.1.0 sync-data
+> node tools/studio/sync-data.mjs
+
+[sync] wrote 22 tables to Assets/Data
+[sync] updated: economy.json
+
+> churrasco-mestre-da-brasa@0.1.0 gen-vectors
+> node --experimental-strip-types tools/studio/gen-vectors.ts
+
+[golden] wrote tools/golden/vectors.json and tools/golden/tutorial-vectors.json
+[golden] cooking 48 · scoring 46 · economy 13 · turns 50
+[golden] FTUE: director 6 · restore 15 · coach 1 · hand 10 · mask 1 · analytics 11
+[golden] total 157 + 44 vectors

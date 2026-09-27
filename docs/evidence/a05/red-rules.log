@@ -1,0 +1,72 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/vip.test.ts (4 tests | 3 failed) 28ms
+   × A-05: VIP admission regressions > chance one admits a natural VIP with a nonempty unlocked menu 7ms
+     → expected 'vizinho' to be 'vip' // Object.is equality
+   × A-05: VIP admission regressions > natural visits reach but never exceed the configured two/day 8ms
+     → expected [] to have a length of 2 but got +0
+   × A-05: VIP admission regressions > direct forced or scripted VIP cannot bypass the daily ledger 1ms
+     → expected [Function] to throw an error
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/vip.test.ts > A-05: VIP admission regressions > chance one admits a natural VIP with a nonempty unlocked menu
+AssertionError: expected 'vizinho' to be 'vip' // Object.is equality
+
+Expected: "vip"
+Received: "vizinho"
+
+ ❯ tools/studio/test/vip.test.ts:12:36
+     10|   it('chance one admits a natural VIP with a nonempty unlocked menu',(…
+     11|     const s=turn(); s.tick(1.3);
+     12|     expect(s.customers[0]?.def.id).toBe('vip');
+       |                                    ^
+     13|     expect(s.customers[0]!.lines.length).toBeGreaterThan(0);
+     14|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tools/studio/test/vip.test.ts > A-05: VIP admission regressions > natural visits reach but never exceed the configured two/day
+AssertionError: expected [] to have a length of 2 but got +0
+
+- Expected
++ Received
+
+- 2
++ 0
+
+ ❯ tools/studio/test/vip.test.ts:20:72
+     18|   it('natural visits reach but never exceed the configured two/day',()…
+     19|     const s=turn();while(!s.finished)s.tick(.1);
+     20|     expect(s.events.filter(e=>e.type==='spawn'&&e.customer.def.isVip))…
+       |                                                                        ^
+     21|   });
+     22|   it('direct forced or scripted VIP cannot bypass the daily ledger',()…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tools/studio/test/vip.test.ts > A-05: VIP admission regressions > direct forced or scripted VIP cannot bypass the daily ledger
+AssertionError: expected [Function] to throw an error
+
+- Expected: 
+null
+
++ Received: 
+undefined
+
+ ❯ tools/studio/test/vip.test.ts:23:45
+     21|   });
+     22|   it('direct forced or scripted VIP cannot bypass the daily ledger',()…
+     23|     expect(()=>turn().spawnCustomer('vip')).toThrow(/VIP/);
+       |                                             ^
+     24|     expect(()=>turn().spawnScriptedCustomer('vip',['linguica_toscana']…
+     25|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 1 passed (4)
+   Start at  03:18:11
+   Duration  367ms (transform 145ms, setup 0ms, collect 155ms, tests 28ms, environment 0ms, prepare 52ms)
+

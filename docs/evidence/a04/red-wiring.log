@@ -1,0 +1,26 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/sim-grill.test.ts (3 tests | 1 failed) 1271ms
+   × A-04: real progression passes the restaurant AND equipment expansion context > keeps three zones before Premium and reports four actual zones after unlock 1082ms
+     → Cannot read properties of undefined (reading 'zoneCount')
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/sim-grill.test.ts > A-04: real progression passes the restaurant AND equipment expansion context > keeps three zones before Premium and reports four actual zones after unlock
+TypeError: Cannot read properties of undefined (reading 'zoneCount')
+ ❯ tools/studio/test/sim-grill.test.ts:45:51
+     43|     const after=report.outcomes.filter(t=>t.restaurantIndex===4);
+     44|     expect(before.length).toBeGreaterThan(0);expect(after.length).toBe…
+     45|     for(const t of before) expect(t.grillSnapshot.zoneCount).toBe(3);
+       |                                                   ^
+     46|     for(const t of after) {
+     47|       expect(t.grillSnapshot.id).toBe('fornalha_dragao_manso');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  02:53:52
+   Duration  1.64s (transform 183ms, setup 0ms, collect 198ms, tests 1.27s, environment 0ms, prepare 46ms)
+

@@ -1,0 +1,335 @@
+{
+  "beforeVersions": {
+    "ingredients": 6,
+    "grill": 6,
+    "economy": 13,
+    "restaurants": 6,
+    "upgrades": 4,
+    "customers": 2,
+    "events": 2,
+    "ads": 2,
+    "achievements": 3,
+    "employees": 4
+  },
+  "afterVersions": {
+    "ingredients": 6,
+    "grill": 6,
+    "economy": 14,
+    "restaurants": 6,
+    "upgrades": 4,
+    "customers": 2,
+    "events": 2,
+    "ads": 2,
+    "achievements": 3,
+    "employees": 4
+  },
+  "sections": {
+    "cooking": {
+      "unchanged": 48,
+      "changed": [],
+      "added": []
+    },
+    "scoring": {
+      "unchanged": 32,
+      "changed": [],
+      "added": [
+        "lateIncome.0.manual",
+        "lateIncome.0.autoVip",
+        "lateIncome.1.manual",
+        "lateIncome.1.autoVip",
+        "lateIncome.2.manual",
+        "lateIncome.2.autoVip",
+        "lateIncome.3.manual",
+        "lateIncome.3.autoVip",
+        "lateIncome.4.manual",
+        "lateIncome.4.autoVip",
+        "lateIncome.5.manual",
+        "lateIncome.5.autoVip",
+        "lateIncome.6.manual",
+        "lateIncome.6.autoVip"
+      ]
+    },
+    "economy": {
+      "unchanged": 13,
+      "changed": [],
+      "added": []
+    },
+    "turns": {
+      "unchanged": 23,
+      "changed": [
+        {
+          "id": "turn.skill0.55.a01_rest_4",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 2410,
+              "after": 2062
+            }
+          ]
+        },
+        {
+          "id": "turn.skill0.85.a01_rest_4",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 2589,
+              "after": 2227
+            }
+          ]
+        },
+        {
+          "id": "turn.skill0.55.a01_rest_5",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 2785,
+              "after": 1767
+            }
+          ]
+        },
+        {
+          "id": "turn.skill0.85.a01_rest_5",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 2896,
+              "after": 1878
+            }
+          ]
+        },
+        {
+          "id": "turn.skill0.55.a01_rest_6",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 2953,
+              "after": 1481
+            }
+          ]
+        },
+        {
+          "id": "turn.skill0.85.a01_rest_6",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 3077,
+              "after": 1593
+            }
+          ]
+        },
+        {
+          "id": "turn.a06_upgrades_control",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 3849,
+              "after": 3301
+            }
+          ]
+        },
+        {
+          "id": "turn.a06_upgrades_capacity",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 4618,
+              "after": 3966
+            }
+          ]
+        },
+        {
+          "id": "turn.a06_upgrades_tables",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 4596,
+              "after": 3940
+            }
+          ]
+        },
+        {
+          "id": "turn.a06_upgrades_combined",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 5874,
+              "after": 5030
+            }
+          ]
+        },
+        {
+          "id": "turn.a06_upgrades_mastery",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 4111,
+              "after": 3523
+            }
+          ]
+        },
+        {
+          "id": "turn.a06_upgrades_loyalty",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 3875,
+              "after": 3321
+            }
+          ]
+        },
+        {
+          "id": "turn.a06_upgrades_max_queue",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 8046,
+              "after": 4052
+            }
+          ]
+        },
+        {
+          "id": "turn.a062_resources_control",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 12374,
+              "after": 10574
+            }
+          ]
+        },
+        {
+          "id": "turn.a062_resources_stability",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 12052,
+              "after": 10311
+            }
+          ]
+        },
+        {
+          "id": "turn.a062_resources_quality",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 12770,
+              "after": 10913
+            }
+          ]
+        },
+        {
+          "id": "turn.a062_resources_automatic",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 12338,
+              "after": 10544
+            }
+          ]
+        },
+        {
+          "id": "turn.a062_resources_counter",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 11593,
+              "after": 9918
+            }
+          ]
+        },
+        {
+          "id": "turn.a062_resources_combined",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 13409,
+              "after": 11460
+            }
+          ]
+        },
+        {
+          "id": "turn.a063_staff_control",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 11593,
+              "after": 9918
+            }
+          ]
+        },
+        {
+          "id": "turn.a063_staff_waiter1",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 12059,
+              "after": 10305
+            }
+          ]
+        },
+        {
+          "id": "turn.a063_staff_waiter3",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 11329,
+              "after": 9667
+            }
+          ]
+        },
+        {
+          "id": "turn.a063_staff_waiter5",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 11409,
+              "after": 9732
+            }
+          ]
+        },
+        {
+          "id": "turn.a063_staff_tray",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 11794,
+              "after": 10065
+            }
+          ]
+        },
+        {
+          "id": "turn.a063_staff_cook",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 11593,
+              "after": 9918
+            }
+          ]
+        },
+        {
+          "id": "turn.a063_staff_combined",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 11871,
+              "after": 10132
+            }
+          ]
+        },
+        {
+          "id": "turn.a063_staff_prep_service",
+          "changes": [
+            {
+              "path": ".expect.coins",
+              "before": 74,
+              "after": 71
+            }
+          ]
+        }
+      ],
+      "added": []
+    }
+  },
+  "tutorialByteIdentical": true
+}

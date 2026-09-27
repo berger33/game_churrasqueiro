@@ -1,3 +1,5 @@
+import {runOfflineScenario} from '../offline-scenario.ts';
+import { restoreVipState } from '../../sim-core/src/vip.ts';
 /**
  * Golden-vector replay.
  *
@@ -53,7 +55,8 @@ describe.skipIf(!hasVectors)('golden vectors', () => {
       grill: db.grill.version,
       economy: db.economy.version,
       restaurants: db.restaurants.version,
-      upgrades: db.upgrades.version
+      upgrades: db.upgrades.version, customers:db.customers.version, events:db.events!.version,
+      ads:db.ads!.version, achievements:db.achievements!.version, employees:db.employees!.version
     });
   });
 
@@ -93,7 +96,10 @@ describe.skipIf(!hasVectors)('golden vectors', () => {
 
   it('replays every scoring and flip vector', () => {
     for (const v of doc.scoring) {
-      if (v.id.startsWith('score.')) {
+      if(v.id.startsWith('lateIncome.')){
+        const f=createFood(1,db.ingredientById.get(v.input.ingredient)!);f.sides=[...v.input.sides];
+        expect(scoreItem(db,f,{...v.input.context,tuning:TUNING})).toEqual(v.expect);
+      } else if (v.id.startsWith('score.')) {
         const ing = db.ingredientById.get(v.input.ingredient)!;
         for (const row of v.expect.rows) {
           const f = createFood(1, ing);
@@ -152,12 +158,15 @@ describe.skipIf(!hasVectors)('golden vectors', () => {
         v.expect.coins.forEach((expected: number, i: number) => {
           expect(levelUpCoinReward(db.economy.reward.levelUpCoins, i + 1), `levelUp ${i + 1}`).toBe(expected);
         });
+      } else if(v.id.startsWith('econ.offlineLifecycle.')){
+        expect(runOfflineScenario(db,v.input)).toEqual(v.expect);
       } else if (v.id === 'econ.offline') {
         for (const row of v.expect.rows) {
           const p = newPlayerState();
           p.restaurantIndex = row.restaurantIndex;
           const o = computeOfflineEarnings(db, p, row.elapsedSec, 1_000_000);
           expect(o.coins, `offline ${row.restaurantIndex}/${row.elapsedSec}s`).toBeCloseTo(row.coins, 6);
+          expect(o.xp, `offline XP ${row.restaurantIndex}/${row.elapsedSec}s`).toBeCloseTo(row.xp,6);
           expect(o.capped, `offline capped ${row.elapsedSec}s`).toBe(row.capped);
         }
       } else if (v.id === 'econ.effectiveHeat') {
@@ -192,7 +201,7 @@ describe.skipIf(!hasVectors)('golden vectors', () => {
     const authored = generateLevels([[0, 24], [1, 36]]).levels;
     for (const v of doc.turns) {
       const lvl = authored.find((l) => l.id === v.input.levelId);
-      if (!v.input.levelId.startsWith('a01_rest_')) {
+      if (!v.input.levelId.startsWith('a01_rest_') && !v.input.levelId.startsWith('a05_vip_') && !v.input.levelId.startsWith('a06_upgrades_') && !v.input.levelId.startsWith('a062_resources_') && !v.input.levelId.startsWith('a063_staff_')) {
         expect(lvl).toBeDefined();
         expect(v.input.restaurantIndex).toBe(lvl!.restaurantIndex);
         expect(v.input.levelIndex).toBe(lvl!.index);
@@ -206,17 +215,19 @@ describe.skipIf(!hasVectors)('golden vectors', () => {
           levelId: v.input.levelId,
           churrasqueiraId: v.input.churrasqueiraId,
           churrasqueiraLevel: v.input.churrasqueiraLevel,
-          upgradeLevels: {},
+          upgradeLevels: v.input.upgradeLevels ?? {},
           seed,
+          vip: v.input.vipState ? {state:restoreVipState(v.input.vipState),startUnixSec:v.input.vipStartUnixSec} : undefined,
           overrides: v.input.overrides
         },
         seed
       );
       const policy = new SkillPolicy(new Rng(seed + v.input.levelIndex * 104729), { skill: v.input.skill });
+      for(let i=0;i<(v.input.staffPrepCustomers??0);i++)sim.spawnScriptedCustomer('comum',['vinagrete'],100);
       let guard = 0;
       const allFoods = new Map<number, typeof sim.foods[number]>();
       while (!sim.finished && guard++ < 40000) {
-        sim.tick(v.input.stepSec, (a) => policy.act(a));
+        sim.tick(v.input.stepSec, v.input.staffPolicy===false?undefined:(a) => policy.act(a));
         for (const f of sim.foods) allFoods.set(f.uid, f);
       }
       const res = sim.result();
@@ -228,6 +239,10 @@ describe.skipIf(!hasVectors)('golden vectors', () => {
       }
 
       expect(sim.time, `${v.id} final time`).toBeCloseTo(v.expect.finalTimeSec, 9);
+      if (v.expect.zoneCount !== undefined) {
+        expect(sim.grill.zones.length, `${v.id} zone count`).toBe(v.expect.zoneCount);
+        sim.grill.zones.forEach((z, i) => expect(z.heat, `${v.id} heat${i}`).toBeCloseTo(v.expect.zoneHeats[i], 9));
+      }
       if (v.expect.slowCuts) {
         const fulfilled = new Set(res.events.flatMap(e => e.type === 'serve' ? e.customer.lines.flatMap(l => l.fulfilledBy) : []));
         const observed = ['costela', 'cupim'].map(id => {
@@ -239,6 +254,16 @@ describe.skipIf(!hasVectors)('golden vectors', () => {
         expect(observed[0]!.served, `${v.id} must actually serve costela`).toBeGreaterThan(0);
         if (v.input.restaurantIndex >= 4) expect(observed[1]!.served, `${v.id} must actually serve cupim`).toBeGreaterThan(0);
       }
+      if(v.expect.vipQuota!==undefined) {
+        expect(sim.vipState.usedToday,`${v.id} quota`).toBe(v.expect.vipQuota);
+        expect(res.events.flatMap(e=>e.type==='spawn'&&e.customer.vipSource?[e.customer.vipSource]:[])).toEqual(v.expect.vipSources);
+      }
+      if(v.expect.staff){const x=sim.staff.snapshot;expect({serveUsed:x.serve.used,serveEligible:x.serve.eligible,serveLimit:x.serve.limit,
+        flipUsed:x.flip.used,flipEligible:x.flip.eligible,flipLimit:x.flip.limit,prepped:x.prep.used,prepAttempts:x.prep.attempts,
+        prepCapacity:sim.prepSlots.length,tripInterval:Math.round(x.serve.interval*1e9)/1e9}).toEqual(v.expect.staff);
+        expect(x.serve.used).toBeLessThanOrEqual(Math.floor(.5*x.serve.eligible));expect(x.flip.used).toBeLessThanOrEqual(Math.floor(.6*x.flip.eligible));}
+      if(v.expect.resources) expect({autoAttempts:sim.autoRefillAttempts,autoSuccesses:sim.autoRefillSuccesses,
+        stock:Object.fromEntries(sim.availableIngredients.map(i=>[i.id,sim.stockRemaining(i.id)]))}).toEqual(v.expect.resources);
       expect(res.coins, `${v.id} coins`).toBe(v.expect.coins);
       expect(res.xp, `${v.id} xp`).toBe(v.expect.xp);
       expect(res.stars, `${v.id} stars`).toBe(v.expect.stars);
