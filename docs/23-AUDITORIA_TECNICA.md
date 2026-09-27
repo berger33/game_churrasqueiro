@@ -22,7 +22,8 @@ UnusualOnly sem menu não sorteado; forçado sem menu rejeitado; nenhuma ordem v
   persistem, sem retuning. Logs/diffs/regressões em [`evidence/a02/`](evidence/a02/README.md).
 - Dos9 altos:3 encerrados F2; A-01/A-02 funcionais com economia global pendente;
   **4 sem correção (A-03–A-06)**. Vinagrete permanece após nível12/rest0; não apagar para
-  contornar A-03. F3/F4 não encerradas. PR14 sem merge; CI A-02 pendente de push/execução.
+  contornar A-03. F3/F4 não encerradas. PR14 sem merge; CI A-02 **15/15 aprovado**,
+  [run36286427123](https://github.com/berger33/game_churrasqueiro/actions/runs/36286427123) em44ccf11, C#139 checks/25 não portados.
 
 ## Atualização A-01 — histórico (2026-09-26 local /27 UTC)
 

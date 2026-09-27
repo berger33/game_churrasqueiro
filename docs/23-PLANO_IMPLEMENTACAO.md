@@ -507,4 +507,8 @@ Próximo checkpoint depois deste: A-03 prep, sem escondê-lo do pool para evitar
   Longo local; permissão Nightly foi negada403 na etapa anterior, não alegar longo remoto.
 - A-01/A-02 funcionais, **A-03–A-06 abertos**. Próximo A-03 prep; manter gates e transportar
   desvios econômicos para F4. Documentos/evidências atualizados. Sem C#/Unity/arte/merge.
-- Commits e CI deste checkpoint: **pendentes de push/execução**; ampliar o mesmo PR14.
+- Commits enviados: **8d6fbde** implementação/testes/vetores, **44ccf11** docs/evidências.
+  **CI remoto15/15 aprovado** em44ccf11: [run36286427123](https://github.com/berger33/game_churrasqueiro/actions/runs/36286427123),
+  incluindo C#139 checks com25 casos explicitamente não portados. Anotações Node20/Ubuntu26
+  continuam F6. PR14 ampliado, aberto/sem merge; consultar corpo do PR para CI do HEAD final.
+  O CI por PR não roda longo; suas3 falhas locais permanecem registradas e bloqueiam aceite global.

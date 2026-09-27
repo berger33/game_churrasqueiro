@@ -19,8 +19,10 @@ estado real de `origin/main` antes de alterar arquivos.
   preservar a regra isolada; não existe fallback44 na produção.
 - **351/351 testes**,18 arquivos;50 regressões red no original,2 wiring red com caller
   all-unlocked, harness red com bancada antiga e tentativa de legumes bloqueados.
-  Agora **14/15 gates locais**, C# SKIP. **CI A-02 pendente de push/execução**; ver
-  fechamento no plano §9.12/corpo do PR antes de avançar.
+  Agora **14/15 gates locais**, C# SKIP. **CI A-02 15/15 aprovado**,
+  [run36286427123](https://github.com/berger33/game_churrasqueiro/actions/runs/36286427123) em44ccf11.
+  Commits8d6fbde (código/testes/vetores) e44ccf11 (docs/evidências) enviados. Ver HEAD/CI
+  final no corpo do PR antes de avançar; C#139 checks com25 not ported, não paridade total.
 - **106+44 vetores**: formato principalv2, playerLevel nos20 turnos. Perfis1/4/8/14 nos
   12 autorais (fixtures de cobertura, não previsão de XP da campanha),44 nos8 avançados.
   **9 expectativas mudam**,3 de nível14 e8 avançadas intactas; cooking48/scoring32/economy6

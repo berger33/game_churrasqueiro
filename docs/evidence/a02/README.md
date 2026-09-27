@@ -138,6 +138,7 @@ node --experimental-strip-types tools/studio/slow-cuts-report.ts
 
 npm audit: mesmas5 vulnerabilidades (1 crítica,1 alta,3 moderadas), lock/dependências
 intactos; sem force-fix. Nightly manual negada pela integração na etapa anterior (403):
-o longo continua evidência **local**, sem fingir execução remota. CI/commits finais no
-plano §9.12 e PR14. Próximo: **A-03**, fluxo real de prep/vinagrete, preservando os novos
+o longo continua evidência **local**, sem fingir execução remota. CI A-02 **15/15** em
+44ccf11: [run36286427123](https://github.com/berger33/game_churrasqueiro/actions/runs/36286427123), C#139 checks/25 não portados.
+Commits8d6fbde (implementação) e44ccf11 (docs); HEAD/CI final no plano §9.12 e PR14. Próximo: **A-03**, fluxo real de prep/vinagrete, preservando os novos
 gates de desbloqueio. A-04 ainda precisa da decisão do dono. F3/F4/C#/Unity/merge bloqueados.
