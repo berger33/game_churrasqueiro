@@ -3,7 +3,7 @@
   "generatedBy": "tools/studio/gen-vectors.ts",
   "note": "Golden vectors for TS <-> C# parity. Regenerate with `npm run gen-vectors`. Never edit by hand.",
   "dataVersions": {
-    "ingredients": 5,
+    "ingredients": 6,
     "grill": 3,
     "economy": 12,
     "restaurants": 6,
@@ -14,7 +14,7 @@
     "cooking": 48,
     "scoring": 32,
     "economy": 6,
-    "turns": 12
+    "turns": 20
   },
   "cooking": [
     {
@@ -12563,6 +12563,422 @@
           "peakSimultaneousOrders": 2,
           "flawless": true
         }
+      }
+    },
+    {
+      "id": "turn.skill0.55.a01_rest_3",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a01_rest_3",
+        "levelIndex": 63,
+        "restaurantIndex": 3,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      },
+      "expect": {
+        "coins": 2562,
+        "xp": 258,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 135,
+        "counters": {
+          "customersSpawned": 18,
+          "customersServed": 17,
+          "customersLost": 0,
+          "ordersCompleted": 17,
+          "perfectCooks": 15,
+          "goodCooks": 16,
+          "burnedFood": 0,
+          "bestCombo": 31,
+          "flips": 37,
+          "itemsCooked": 31,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 2,
+            "flipped": 1,
+            "served": 1,
+            "burned": 0
+          },
+          {
+            "id": "cupim",
+            "taken": 0,
+            "flipped": 0,
+            "served": 0,
+            "burned": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "turn.skill0.85.a01_rest_3",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a01_rest_3",
+        "levelIndex": 63,
+        "restaurantIndex": 3,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      },
+      "expect": {
+        "coins": 2714,
+        "xp": 284,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 135,
+        "counters": {
+          "customersSpawned": 18,
+          "customersServed": 17,
+          "customersLost": 0,
+          "ordersCompleted": 17,
+          "perfectCooks": 24,
+          "goodCooks": 7,
+          "burnedFood": 0,
+          "bestCombo": 31,
+          "flips": 37,
+          "itemsCooked": 31,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 3,
+          "flawless": true
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 2,
+            "flipped": 1,
+            "served": 1,
+            "burned": 0
+          },
+          {
+            "id": "cupim",
+            "taken": 0,
+            "flipped": 0,
+            "served": 0,
+            "burned": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "turn.skill0.55.a01_rest_4",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a01_rest_4",
+        "levelIndex": 64,
+        "restaurantIndex": 4,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      },
+      "expect": {
+        "coins": 2269,
+        "xp": 270,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 150,
+        "counters": {
+          "customersSpawned": 20,
+          "customersServed": 16,
+          "customersLost": 2,
+          "ordersCompleted": 16,
+          "perfectCooks": 17,
+          "goodCooks": 14,
+          "burnedFood": 1,
+          "bestCombo": 13,
+          "flips": 39,
+          "itemsCooked": 32,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 3,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 3,
+            "flipped": 3,
+            "served": 1,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 1,
+            "served": 1,
+            "burned": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "turn.skill0.85.a01_rest_4",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a01_rest_4",
+        "levelIndex": 64,
+        "restaurantIndex": 4,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      },
+      "expect": {
+        "coins": 2589,
+        "xp": 296,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 150,
+        "counters": {
+          "customersSpawned": 20,
+          "customersServed": 16,
+          "customersLost": 1,
+          "ordersCompleted": 16,
+          "perfectCooks": 23,
+          "goodCooks": 9,
+          "burnedFood": 1,
+          "bestCombo": 14,
+          "flips": 39,
+          "itemsCooked": 32,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 4,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 3,
+            "flipped": 3,
+            "served": 1,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 1,
+            "served": 1,
+            "burned": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "turn.skill0.55.a01_rest_5",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a01_rest_5",
+        "levelIndex": 65,
+        "restaurantIndex": 5,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      },
+      "expect": {
+        "coins": 2849,
+        "xp": 313,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 165,
+        "counters": {
+          "customersSpawned": 22,
+          "customersServed": 19,
+          "customersLost": 1,
+          "ordersCompleted": 19,
+          "perfectCooks": 14,
+          "goodCooks": 21,
+          "burnedFood": 1,
+          "bestCombo": 17,
+          "flips": 43,
+          "itemsCooked": 35,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 4,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 4,
+            "flipped": 4,
+            "served": 2,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 2,
+            "served": 1,
+            "burned": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "turn.skill0.85.a01_rest_5",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a01_rest_5",
+        "levelIndex": 65,
+        "restaurantIndex": 5,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      },
+      "expect": {
+        "coins": 2896,
+        "xp": 341,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 165,
+        "counters": {
+          "customersSpawned": 22,
+          "customersServed": 19,
+          "customersLost": 1,
+          "ordersCompleted": 19,
+          "perfectCooks": 26,
+          "goodCooks": 9,
+          "burnedFood": 1,
+          "bestCombo": 16,
+          "flips": 42,
+          "itemsCooked": 35,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 4,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 4,
+            "flipped": 3,
+            "served": 2,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 2,
+            "served": 1,
+            "burned": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "turn.skill0.55.a01_rest_6",
+      "input": {
+        "skill": 0.55,
+        "levelId": "a01_rest_6",
+        "levelIndex": 66,
+        "restaurantIndex": 6,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      },
+      "expect": {
+        "coins": 2990,
+        "xp": 337,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 180,
+        "counters": {
+          "customersSpawned": 24,
+          "customersServed": 21,
+          "customersLost": 2,
+          "ordersCompleted": 21,
+          "perfectCooks": 15,
+          "goodCooks": 23,
+          "burnedFood": 1,
+          "bestCombo": 17,
+          "flips": 46,
+          "itemsCooked": 39,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 3,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 4,
+            "flipped": 4,
+            "served": 3,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 2,
+            "served": 1,
+            "burned": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "turn.skill0.85.a01_rest_6",
+      "input": {
+        "skill": 0.85,
+        "levelId": "a01_rest_6",
+        "levelIndex": 66,
+        "restaurantIndex": 6,
+        "seed": 4242,
+        "stepSec": 0.0625,
+        "churrasqueiraId": "fornalha_dragao_manso",
+        "churrasqueiraLevel": 3,
+        "overrides": {}
+      },
+      "expect": {
+        "coins": 3077,
+        "xp": 365,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 180,
+        "counters": {
+          "customersSpawned": 24,
+          "customersServed": 20,
+          "customersLost": 2,
+          "ordersCompleted": 20,
+          "perfectCooks": 30,
+          "goodCooks": 8,
+          "burnedFood": 1,
+          "bestCombo": 19,
+          "flips": 47,
+          "itemsCooked": 38,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 4,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 4,
+            "flipped": 4,
+            "served": 2,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 2,
+            "served": 1,
+            "burned": 0
+          }
+        ]
       }
     }
   ]

@@ -365,6 +365,41 @@ for (const skill of [0.35, 0.55, 0.85]) {
   }
 }
 
+// A-01: the authored vectors above only reach restaurants 0/1. Explicit advanced
+// fixtures exercise actual random orders/policy on the owned grill, not fake food
+// sides or new campaign content. Keep the original twelve expectations intact.
+for (const restaurantIndex of [3, 4, 5, 6]) for (const skill of [0.55, 0.85]) {
+  const seed = 4242;
+  const levelId = `a01_rest_${restaurantIndex}`;
+  const levelIndex = 60 + restaurantIndex;
+  const churrasqueiraId = 'fornalha_dragao_manso';
+  const churrasqueiraLevel = 3;
+  const sim = new TurnSimulation(db, {
+    restaurantIndex, levelId, seed, upgradeLevels: {}, churrasqueiraId, churrasqueiraLevel
+  }, seed);
+  const policy = new SkillPolicy(new Rng(seed + levelIndex * 104729), { skill });
+  // The hot foods array is compacted; retain observed identities for coverage.
+  const observed = new Map<number, FoodRuntime>();
+  while (!sim.finished) {
+    sim.tick(STEP, a => policy.act(a));
+    for (const food of sim.foods) observed.set(food.uid, food);
+  }
+  const res = sim.result();
+  const fulfilled = new Set(res.events.flatMap(e => e.type === 'serve' ? e.customer.lines.flatMap(l => l.fulfilledBy) : []));
+  turns.push({
+    id: `turn.skill${skill}.${levelId}`,
+    input: { skill, levelId, levelIndex, restaurantIndex, seed, stepSec: STEP,
+      churrasqueiraId, churrasqueiraLevel, overrides: {} },
+    expect: { coins: r9(res.coins), xp: r9(res.xp), stars: res.stars, failed: res.failed,
+      finalTimeSec: r9(sim.time), counters: res.counters,
+      slowCuts: ['costela', 'cupim'].map(id => {
+        const foods = [...observed.values()].filter(f => f.ingredient.id === id);
+        return { id, taken: foods.length, flipped: foods.filter(f => f.flips > 0).length,
+          served: foods.filter(f => fulfilled.has(f.uid)).length, burned: foods.filter(f => f.burned).length };
+      }) }
+  });
+}
+
 // ── 6. FTUE (tools/sim-core/src/tutorial.ts) → tutorial-vectors.json ────────
 // Replayed by the C# port (Assets/Scripts/Core/Tutorial.cs + Analytics.cs) in
 // tools/csharp/parity. Inputs are written at full double precision — a JSON

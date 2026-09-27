@@ -191,25 +191,48 @@ describe.skipIf(!hasVectors)('golden vectors', () => {
   it('replays every full-turn vector', () => {
     const authored = generateLevels([[0, 24], [1, 36]]).levels;
     for (const v of doc.turns) {
-      const lvl = authored.find((l) => l.id === v.input.levelId)!;
+      const lvl = authored.find((l) => l.id === v.input.levelId);
+      if (!v.input.levelId.startsWith('a01_rest_')) {
+        expect(lvl).toBeDefined();
+        expect(v.input.restaurantIndex).toBe(lvl!.restaurantIndex);
+        expect(v.input.levelIndex).toBe(lvl!.index);
+      }
       const seed = v.input.seed;
       const sim = new TurnSimulation(
         db,
         {
-          restaurantIndex: lvl.restaurantIndex,
-          levelId: lvl.id,
+          restaurantIndex: v.input.restaurantIndex,
+          levelId: v.input.levelId,
+          churrasqueiraId: v.input.churrasqueiraId,
+          churrasqueiraLevel: v.input.churrasqueiraLevel,
           upgradeLevels: {},
           seed,
           overrides: v.input.overrides
         },
         seed
       );
-      const policy = new SkillPolicy(new Rng(seed + lvl.index * 104729), { skill: v.input.skill });
+      const policy = new SkillPolicy(new Rng(seed + v.input.levelIndex * 104729), { skill: v.input.skill });
       let guard = 0;
-      while (!sim.finished && guard++ < 40000) sim.tick(v.input.stepSec, (a) => policy.act(a));
+      const allFoods = new Map<number, typeof sim.foods[number]>();
+      while (!sim.finished && guard++ < 40000) {
+        sim.tick(v.input.stepSec, (a) => policy.act(a));
+        for (const f of sim.foods) allFoods.set(f.uid, f);
+      }
       const res = sim.result();
       expect(sim.result(), `${v.id} repeat read`).toEqual(res);
 
+      expect(sim.time, `${v.id} final time`).toBeCloseTo(v.expect.finalTimeSec, 9);
+      if (v.expect.slowCuts) {
+        const fulfilled = new Set(res.events.flatMap(e => e.type === 'serve' ? e.customer.lines.flatMap(l => l.fulfilledBy) : []));
+        const observed = ['costela', 'cupim'].map(id => {
+          const foods = [...allFoods.values()].filter(f => f.ingredient.id === id);
+          return { id, taken: foods.length, flipped: foods.filter(f => f.flips > 0).length,
+            served: foods.filter(f => fulfilled.has(f.uid)).length, burned: foods.filter(f => f.burned).length };
+        });
+        expect(observed, `${v.id} actual slow-cut use`).toEqual(v.expect.slowCuts);
+        expect(observed[0]!.served, `${v.id} must actually serve costela`).toBeGreaterThan(0);
+        if (v.input.restaurantIndex >= 4) expect(observed[1]!.served, `${v.id} must actually serve cupim`).toBeGreaterThan(0);
+      }
       expect(res.coins, `${v.id} coins`).toBe(v.expect.coins);
       expect(res.xp, `${v.id} xp`).toBe(v.expect.xp);
       expect(res.stars, `${v.id} stars`).toBe(v.expect.stars);

@@ -47,6 +47,9 @@ export function validateDatabase(db: GameDatabase): string[] {
     if (it.cookMethod === 'grill' && it.sideCookSec <= 0) {
       problems.push(`ingredient ${it.id}: grilled items need sideCookSec > 0`);
     }
+    if (it.cookMethod === 'grill' && it.sides > 1 && !it.flipNeeded) {
+      problems.push(`ingredient ${it.id}: multi-side grilling requires flipNeeded`);
+    }
     if (it.cookMethod === 'prep' && !it.prepSec) {
       problems.push(`ingredient ${it.id}: prep items need prepSec > 0`);
     }
