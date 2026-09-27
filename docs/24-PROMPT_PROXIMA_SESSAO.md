@@ -4,14 +4,64 @@ Use este texto como contexto inicial da próxima sessão no repositório
 `berger33/game_churrasqueiro`. Trabalhe somente na branch atribuída à nova sessão e confirme o
 estado real de `origin/main` antes de alterar arquivos.
 
-## Objetivo da próxima sessão
+## Handoff atualizado — 2026-09-27 (prevalece sobre o histórico abaixo)
+
+### Entrega desta sessão
+
+- Branch usada exclusivamente: `arena/01a0e03e-game-churrasqueiro`.
+- Baseline `4fe4f4f` contém o merge PR #13, também confirmado em `origin/main` após fetch.
+  CI de PR #13 aprovado, run `36281871246`; árvore inicial limpa; Node 22.22.3/npm 10.9.8.
+- Commits: `70a60b3` (plano/baseline), `ad29b56` (gate e testes). PR/CI desta entrega:
+  pendente de abertura/verificação; registrar resultado no fechamento, sem fazer merge.
+- **F1 implementada:** `npm run check-art-registry`, CLI somente leitura em
+  `tools/art/check-art-registry.ts`, integrado em `run-gates.mjs`, package e CI.
+  Confere masters ↔ CSV ↔ especificações de lote ↔ manifesto ↔ runtime e lookups;
+  recusa pending/rejected/superseded no bundle, órfãos/links/caminhos inseguros/duplicatas;
+  mantém os 244 IDs de `art/approved-runtime-baseline.json` (extraídos e conferidos em PR #13).
+  Não regenerar essa lista para fazer um teste passar. PNG/WebP não foram alterados.
+- Reprodução: gate antigo aceitou arquivo órfão; 49 testes inicialmente vermelhos.
+  Final: **52 testes do gate** (46 negativos + 6 positivos), **254/254 testes no total**,
+  14 arquivos; **14/15 gates locais**, único SKIP = C# sem .NET SDK.
+- `sim:long`: **18/18** e saída integral idêntica ao baseline; spend 0,741, burned 5,7%,
+  perfect 71,8%, perdidos 6,9%, duração 169,8 s, nível 80 em 1.500 turnos.
+  Vetores 98 + 44 intactos; FTUE 16,1/32,9/38,3 s e zero erros; 244 sprites/13 screenshots.
+- `npm audit` antes/depois: **5 vulnerabilidades**, 1 crítica, 1 alta, 3 moderadas; exit 1.
+  Nenhuma atualização major aplicada, nem `audit fix --force`.
+- **Todos A-01–A-09 continuam abertos.** Nenhum contrato de gameplay/save/dados mudou.
+  Nenhuma decisão de produto foi aplicada; não confundir esta F1 com correção das regras.
+
+### Próxima ação concreta
+
+1. Na branch atribuída à próxima sessão, fetch/confirmar base real e árvore limpa; conferir
+   estado do PR desta entrega. Não assumir que ele foi integrado. Reexecutar baseline.
+2. Ler integralmente os documentos obrigatórios e **docs/23-PLANO §9**, ordem vigente:
+   F1 arte (implementada) → **F2 A-07/A-08/A-09** → F3 A-01–A-06 → F4 revalidação →
+   F5 dívida média/baixa → F6 segurança → F7 revisão seletiva PRs antigos → F8 C# →
+   F9 Unity → F10 metajogo/l10n/acessibilidade → F11 serviços → F12 QA → F13 publicação.
+3. **Reproduzir A-07 primeiro** (`economy.ts`, `newPlayerState`, `unlockRestaurant` e save).
+   Escrever testes vermelhos para inicial=1, sequência 2..7, tentativa repetida, roundtrip e
+   save antigo com contador inflado; considerar metas de conquistas 3/5/7. Só então corrigir.
+4. A-08: única contagem por alimento queimado, servir/descartar/múltiplos/resultado/restauração.
+   A-09: result puro/memoizado, repetição/igualdade/moedas/XP/serialização/chamadores reais.
+5. Antes de A-01/A-04, pedir confirmação: recomendados cortes efetivamente de um lado
+   mantendo `flipNeeded:false` e quarta zona real ponta a ponta. Não aprovados ainda.
+   VIP/caps/placement, política de upgrades comprados e streak/offline também têm decisões
+   listadas no plano; não bloqueiam F2.
+6. Teste red antes de cada correção; revisar diff semântico antes de regenerar vetores;
+   gates + sim longo por grupo. Não retunar para mascarar falhas; não iniciar arte/C#/Unity.
+7. Fazer commits coerentes/PR na branch atribuída. Não mergear sem autorização explícita;
+   não mergear PRs #7/#8; revisar por tema antes de paridade econômica C#.
+
+---
+
+## Objetivo original pós-arte (histórico; atualização abaixo prevalece)
 
 Começar a correção sistemática dos **nove achados de alta severidade** de
 `docs/23-AUDITORIA_TECNICA.md`, com testes negativos que falhem antes da correção. Não iniciar
 o projeto Unity nem portar regras defeituosas para C# antes de estabilizar a referência
 TypeScript e revalidar a economia.
 
-## Estado confirmado em 2026-09-26
+## Estado confirmado em 2026-09-26 (histórico)
 
 ### Visão executiva
 
@@ -162,7 +212,7 @@ Fonte de evidência e scripts de reprodução: `docs/23-AUDITORIA_TECNICA.md`.
 9. Não tratar arte aprovada como implementação das telas de metajogo.
 10. Atualizar `docs/18-STATUS.md`, `docs/23-PLANO_IMPLEMENTACAO.md` e este prompt ao encerrar.
 
-# TODOS OS PRÓXIMOS PASSOS — REFERÊNCIA OBRIGATÓRIA PARA A NOVA SESSÃO
+# SEQUÊNCIA HISTÓRICA COMPLETA — ESCOPO PRESERVADO, ORDEM ATUAL EM DOCS/23-PLANO §9
 
 1. **Confirmar o merge e o CI**
    - atualizar `origin/main` e confirmar árvore limpa;
@@ -227,7 +277,7 @@ Fonte de evidência e scripts de reprodução: `docs/23-AUDITORIA_TECNICA.md`.
     - atualizar números publicados em `docs/06`, `docs/18` e auditoria.
 
 11. **Atualizar dependências de desenvolvimento**
-    - planejar upgrade major de Vitest/Vite/esbuild em branch isolada;
+    - planejar upgrade major de Vitest/Vite/esbuild em commit/PR isolado na branch atribuída à sessão;
     - registrar `npm audit` antes/depois;
     - rodar toda a suíte, render e screenshots;
     - não usar `npm audit fix --force` sem revisar breaking changes.

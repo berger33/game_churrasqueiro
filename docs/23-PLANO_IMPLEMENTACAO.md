@@ -80,7 +80,7 @@ aprovação do dono → `set-status` → `build-runtime`.
   - Lote 10: 10/10 aprovados; runtime 231 → 241 sprites / 3,88 MB.
   - Lote 11: 3/3 aprovados; runtime final **244 sprites / 3,98 MB**, 16 comidas e 7 fundos.
   - Registro final: **244 approved, 0 pending, 1 superseded**. As 33 substituições e o merge completo foram autorizados pelo dono em 2026-09-26.
-- [ ] **1.4 — Gate `check-art-registry` no CI.**
+- [x] **1.4 — Gate `check-art-registry` no CI.** (2026-09-27: implementado em `ad29b56`, 52 testes de contrato; 14/15 gates locais, C# SKIP; CI remoto registrado no encerramento abaixo.)
   Ações: todo arquivo em `Assets/Art` tem linha no registro; toda linha aponta para um
   arquivo existente; o runtime só contém `approved` (promessa de docs/04 §11).
   Verifica: `npm run gates` inclui o novo gate, verde.
@@ -156,8 +156,8 @@ Cada passo, ao ser aberto, ganha sub-passos próprios neste documento (mesmo for
 
 ## 8. Próximo passo imediato
 
-👉 **Executar a fase operacional F1 (§9): `check-art-registry`, testes negativos e CI.**
-Depois, iniciar F2 na ordem A-07 → A-08 → A-09. A arte está encerrada; não abrir lote.
+👉 **Iniciar F2: reproduzir A-07 e escrever regressões antes de corrigir `restaurantsUnlocked`.**
+F1 está implementada; depois de A-07, seguir A-08 → A-09. A arte está encerrada; não abrir lote.
 C# e Unity bloqueados até estabilização da referência. Não fazer merge sem nova autorização.
 
 **Registro de progresso:**
@@ -215,7 +215,7 @@ não se aplica a recomendação antiga de trocar para outra branch.
 
 | Fase / estado | Ordem e dependências | Arquivos/contratos previstos | Testes negativos e critério de conclusão |
 |---|---|---|---|
-| **F1 — em andamento** | Baseline → testes vermelhos → gate → CI | `tools/art/check-art-registry.ts`, baseline nominal `art/approved-runtime-baseline.json`, `tools/studio/test/art-registry.test.ts`, `package.json`, `run-gates.mjs`, `gates.test.ts`, `ci.yml` | Masters ↔ CSV ↔ manifesto ↔ runtime; nomes/caminhos/batch/status, duplicatas, flags, arquivos órfãos, remoção inclusive coordenada; fixtures isoladas e exit != 0. Manter os 244 IDs aprovados e CI com 15 gates. Sem regenerar arte. |
+| **F1 — implementada; CI remoto a confirmar** | Baseline → testes vermelhos → gate → CI | `tools/art/check-art-registry.ts`, baseline nominal `art/approved-runtime-baseline.json`, `tools/studio/test/art-registry.test.ts`, `package.json`, `run-gates.mjs`, `gates.test.ts`, `ci.yml` | Masters ↔ CSV ↔ manifesto ↔ runtime; nomes/caminhos/batch/status, duplicatas, flags, arquivos órfãos, remoção inclusive coordenada; fixtures isoladas e exit != 0. Manter os 244 IDs aprovados e CI com 15 gates. Sem regenerar arte. |
 | **F2 — pendente** | **A-07 → A-08 → A-09**; depois de F1 | `economy.ts`, `turn.ts`, `save.ts` se normalização exigir, testes economy/turn/save, `gen-vectors.ts` só se contrato mudar | A-07: inicial=1, sequência 2..7, repetição sem crédito, roundtrip/save antigo com contador inflado e metas 3/5/7. A-08: queimar+descartar/servir, vários alimentos, resultado/restauração sem contar duas vezes. A-09: 2+ chamadas estruturalmente iguais, moedas/XP não duplicados, serialização e chamadores reais. Reproduzir cada falha antes da correção; gates+sim longo verdes ou divergência econômica explicitamente investigada, nunca retunada por conveniência. |
 | **F3 — pendente** | A-01 → A-02 → A-03 → A-04 → A-05 → A-06; decisões abaixo | `ingredients.json`, `grill.json`, `restaurants.json`, `levels.json`, `upgrades.json`, `events.json`, `types.ts`, `cooking.ts`, `turn.ts`, `policy.ts`, `economy.ts`, `prototype/src/main.ts`, tutorial/analytics/audio/l10n, `run-sim.ts` e testes | Janela perfeita costela/cupim e bot avançado; unlock imediatamente antes/no/depois (nível+restaurante), FTUE determinístico; prep com slots/input/hitboxes/pedido misto/paciência/combo/resultado; 4 zonas reais em grelha/bot/UI/calor/screenshots; VIP chance 0/natural/forçado/cap/recompensa/placement; mapa das 27 trilhas (consumidor/fórmula/limite/tela/teste/sim), no-ops explicitamente ocultos e incompráveis. Nove altos resolvidos, nenhuma promessa sem consumidor. |
 | **F4 — pendente** | Todas A-01–A-09 resolvidas | `shared/data`, schemas necessários, `Assets/Data`, `tools/golden`, docs 06/18/23 | Revisar dados antes de `gen-levels` e `gen-vectors`; revisar cada diff semântico, gates e 1.500 turnos; publicar unlocks/renda/spend/perfect/burned/perdidos/duração/grills. Não aceitar vetores novos apenas por terem sido gerados. |
@@ -273,3 +273,28 @@ não se aplica a recomendação antiga de trocar para outra branch.
 5. F3: checkpoints por achado/decisão; F4 um checkpoint de revalidação. F5 por contrato;
    F6 isolada; F7 inventário+extrações; F8 por port; F9–F13 por milestone com evidências.
    Cada fase fecha com docs sincronizadas, testes e verificações da tabela; merge só com dono.
+
+
+### 9.6 Encerramento F1 — 2026-09-27
+
+- Planejamento/baseline: `70a60b3`; implementação gate/testes/CI: `ad29b56`.
+- Prova red: 49/49 testes iniciais falharam antes de existir o gate; a reprodução anterior
+  mostrou `check-art` aceitando um WebP órfão. Depois: **52/52** testes do gate (46 negativos,
+  6 positivos), incluindo status não aprovados fora do bundle e aprovação adicional válida.
+- Contrato: `tools/art/check-art-registry.ts` é somente leitura; inventaria recursivamente
+  masters e runtime, rejeita links/caminhos inseguros/duplicatas/CSV malformado, confere saídas
+  contra `art/lote-NN.json` e manifesto, `includePending:false`, cobertura approved e lookups.
+  Baseline nominal independente dos **244 IDs** de PR #13 bloqueia deleções coordenadas e
+  trocas que mantêm a contagem. Não é regenerado pelo builder. Novos approved são permitidos;
+  remoção/substituição de IDs protegidos exige revisão explícita desse contrato.
+- Escopo da prova: metadados/inventário do checkout (inclui arquivos órfãos não indexados),
+  não autenticidade da aprovação humana ou equivalência de pixels WebP/PNG. `check-shots`
+  continua decodificando todos os 244 sprites; não foi substituído/enfraquecido.
+- Final local: **254/254 testes em 14 arquivos**, **14/15 gates**; único SKIP = C# sem .NET.
+  Schemas/dados 22, vetores 98 + 44, draws 144, screenshots 13; FTUE inalterado.
+- `sim:long`: **18/18**, saída integral idêntica ao baseline (diff vazio); economia não retunada.
+  `npm audit` novamente exit 1, mesmas 5 vulnerabilidades; major fica na F6 isolada.
+- Zero alterações de masters, runtime, dados, schemas, vetores ou contratos de gameplay.
+  Nenhuma decisão de produto aplicada. A-01–A-09 e F2–F13 continuam abertas/bloqueadas conforme §9.2.
+- Próxima ação: A-07, testes inicial/sequencial/repetido/restauração/metas de conquistas;
+  depois A-08/A-09. Não iniciar Unity/C# nem arte nova. PR/CI remoto: atualizar após execução.

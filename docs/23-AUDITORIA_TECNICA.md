@@ -8,6 +8,21 @@
 
 ---
 
+## Atualização pós-auditoria — 2026-09-27
+
+Sessão `arena/01a0e03e-game-churrasqueiro`: baseline reexecutado sobre o merge PR #13
+(`4fe4f4f`), sem divergência nos 202 testes, 13/14 gates locais e 18/18 guardrails longos.
+A lacuna do pipeline de arte foi reproduzida: `check-art` aceitava WebP órfão no runtime;
+`check-art-registry` não existia. Agora há gate dedicado, incluído no CI, com 52 testes
+(46 negativos). Total atual **254 testes**, **14/15 gates locais**, C# ainda SKIP sem SDK.
+O inventário protege os 244 IDs aprovados e valida masters/CSV/lotes/manifesto/runtime.
+
+**Isto não resolve A-01–A-09:** os nove permanecem abertos. Não houve mudança de regras,
+dados, vetores ou economia; simulação longa integralmente idêntica. Vulnerabilidades também
+permanecem 5 (1 crítica/1 alta/3 moderadas). Ordem operacional vigente: F1 concluída localmente,
+A-07 → A-08 → A-09 em seguida; demais fases e decisões em `23-PLANO_IMPLEMENTACAO.md` §9.
+A §9 histórica abaixo é referência, não autorização para portar regras defeituosas.
+
 ## 1. Baseline (o que roda e o que não roda)
 
 | Gate (`npm run …`) | Resultado | Observação |

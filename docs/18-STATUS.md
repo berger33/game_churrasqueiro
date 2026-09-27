@@ -1,6 +1,6 @@
 # 18 — Status Report
 
-**Snapshot:** 2026-09-26 · branch `arena/01a0e001-game-churrasqueiro` · merge completo autorizado
+**Snapshot:** 2026-09-27 · branch `arena/01a0e03e-game-churrasqueiro` · F1 pós-arte implementada; merge desta sessão não autorizado
 
 **Estado executivo:** 🟡 protótipo técnico sólido, com dados, regras de referência, FTUE,
 automação, arte e protótipo web avançados; ainda não é um jogo Unity publicável. Não existem
@@ -33,12 +33,28 @@ The owner approved the final round and authorised the complete merge on 2026-09-
 - **Prototype integration:** `tools/art/build-runtime.mjs` ships approved-only WebP assets;
   `check-shots` decodes all 244 and the FTUE remains unchanged (first PERFEITO 16.1 s,
   completion 32.9 s, upgrade 38.3 s, zero misses).
-- **Still open:** `check-art-registry` does not yet exist, and Unity still lacks an
-  `AssetPostprocessor`/atlas import pipeline. Approved art does not implement the collection,
+- **Registry gate implemented:** `npm run check-art-registry` checks masters, CSV, batch specs,
+  manifest, approved-only runtime and the 244-ID floor from PR #13; 52 contract tests include
+  46 negative mutations. Unity still lacks an `AssetPostprocessor`/atlas import pipeline.
+  Approved art does not implement the collection,
   events, IAP, pass, route or achievements screens by itself.
 
 The art lifecycle is closed; the next work is rule remediation and platform implementation,
 not another replacement batch.
+
+## Post-art F1 verification — 2026-09-27
+
+- Baseline: PR #13 merged at `4fe4f4f`; clean session branch; Node 22.22.3/npm 10.9.8.
+- Tests **202 → 254**, all passing (14 files). `npm run gates`: **14/15 local gates**,
+  only `check-csharp` skipped without .NET. CI now includes `check-art-registry` (gate 15).
+- `sim:long`: **18/18**, full output unchanged from baseline: spend 0.741, burned 5.7%,
+  perfect 71.8%, lost 6.9%, mean duration 169.8 s, level 80 after 1,500 turns.
+- `npm audit`: unchanged **1 critical + 1 high + 3 moderate**, deferred to isolated F6.
+- No gameplay semantics, vectors, data or art changed. **All nine high findings remain open.**
+- Next: **A-07 → A-08 → A-09**, then content/progression and economic revalidation, medium/low
+  debt, tooling security, selective PR #7/#8 review, C# and Unity, in that order. Operational
+  plan and exit criteria: `23-PLANO_IMPLEMENTACAO.md` §9 (supersedes historical sequences).
+- Remote CI for this delivery: pending PR creation; update with evidence before handoff.
 
 ## FTUE follow-ups (§7 item 6)
 
@@ -191,7 +207,7 @@ Every claim below was produced by a command run in this checkout.
 
 | Area | Check | Result |
 |---|---|---|
-| Unit tests | `npx vitest run` | **202 passed / 0 failed** (13 files — `tutorial.test.ts` adds 22, `save.test.ts` 5 for `SaveGame` v3) |
+| Unit tests | `npx vitest run` | **254 passed / 0 failed** (14 files; `art-registry.test.ts` adds 52 contract tests) |
 | Type check | `npm run typecheck` | **OK — 0 errors.** `tsconfig.json` was strict (`strict`, `noUncheckedIndexedAccess`) but no script ever ran it: the first run reported **140 errors**, of which **15 were real code defects** (section 4.1) |
 | Localisation | `npm run check-l10n` | **OK** — 380 keys referenced by data, all translated in pt-BR (514 keys total; the six text-heavy `ui.tut.1–6` gave way to the FTUE's short prompts); en-US / es-419 are declared 10.5 % stubs that fall back to pt-BR |
 | Data integrity | `npm run validate` | **OK** — 22 tables (incl. `churrasqueiras`, `tutorial`), 16 ingredients, 11 customers, 7 restaurants, 27 upgrade tracks, 58 achievements, 37 collection entries, 48 analytics events, 6 FTUE steps, 60 authored levels |
@@ -207,7 +223,7 @@ Every claim below was produced by a command run in this checkout.
 | Shot harness | `npm run check-shots` | **OK — ~6 s.** 13 real PNGs: a fresh install (splash, title, FTUE steps 1 / 2-waiting / 2 / 3 / 4, FTUE result, step 6 on Home), then a relaunch that must open on Home (home, empty grill, cooking, result). Asserts the FTUE funnel from `__churrascoAnalytics` — first PERFEITO 16.1 s, step 6 at 38.3 s (< 60 s), 0 misses. 193 painted frames, ~1 390 sim-only ticks, 60 s self-budget. |
 | Prototype server | `node prototype/dev-server.mjs` | listening on `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
 | C# core | `npm run check-csharp` | **CI: builds `Assets/Scripts/Core` (netstandard2.1, C# 9, warnings as errors) and 139 parity checks agree** — 13 tables bind losslessly, `GameData.Load` clean, cooking 48/48, scoring 32/32, effective heat, 44 FTUE vectors; 17 economy/turn vectors listed as not ported. **Here: SKIP** (no .NET SDK); verified during development with an in-process Roslyn compiler |
-| CI | `.github/workflows/ci.yml` + `npm run gates` | **14 gates on ubuntu-latest** (`check-csharp` added, with `actions/setup-dotnet` 8.0). `check-shots` is in the per-PR list (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. The Unity-side layer is still not compiled — no Unity toolchain. |
+| CI | `.github/workflows/ci.yml` + `npm run gates` | **15 gates on ubuntu-latest** (`check-csharp` added, with `actions/setup-dotnet` 8.0). `check-shots` is in the per-PR list (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. The Unity-side layer is still not compiled — no Unity toolchain. |
 
 ### The localisation gate caught a §56 violation
 
@@ -506,12 +522,15 @@ of shipped behaviour.
 records what the design-verification prototype *actually renders* (theme,
 per-ingredient silhouettes, composition), which rules are verified by
 `npm run check-art` / `npm run check-render`, and states plainly that the §6 food
-shader, §7 lighting rig, §8 VFX budgets and §11 asset registry remain
-specification. The prototype proves art *direction*, not the art *budget*.
+shader, §7 lighting rig, §8 VFX budgets remain specification. The §11 asset registry now has an executable inventory gate
+(`check-art-registry`, F1); Unity import remains pending. The prototype proves art *direction*, not the art *budget*.
 
 ---
 
-## 7. What to do next
+## 7. Historical next-step list — superseded by operational plan §9
+
+**Do not start these ports yet:** remediate TypeScript/data/economy first. The current next
+action is A-07, followed by A-08/A-09. The list below preserves the earlier port backlog.
 
 1. ~~**Compile the C# core** (`dotnet build` in CI) and add golden-vector parity~~ — **done**:
    `npm run check-csharp` (gate 14), 139 checks agree (see "FTUE follow-ups").
@@ -530,9 +549,6 @@ specification. The prototype proves art *direction*, not the art *budget*.
    - ~~The Home daily-strip hit box sits below the drawn strip~~ — **fixed**, with the
      calendar modal's three hit-box bugs and the unlimited claims it was hiding.
 7. **Professional 2D art** (docs/22):
-   - ~~get lotes 01–02 approved~~ — **approved and integrated in the prototype**;
-   - get lote 03 approved (recommended: approve the icons, backgrounds and meats; redo the
-     3 grills with a layout guide);
-   - lotes 04–07 (docs/22 §6);
-   - write the `check-art-registry` gate;
-   - Unity import postprocessor (docs/22 §7.2).
+   - lotes 01–11 closed; 244 approved, 0 pending, 1 superseded;
+   - `check-art-registry` implemented and included in local/CI gate lists;
+   - Unity import postprocessor remains pending (docs/22 §7.2), after reference/C# stability.
