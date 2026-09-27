@@ -211,7 +211,7 @@ public static class Program
             ReplayTurn(data, v!, tempSection);
             if (tempSection.Passed > 0)
             {
-                turns.Passed++;
+                turns.Pass();
             }
             else
             {
