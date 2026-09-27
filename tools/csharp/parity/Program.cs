@@ -204,7 +204,20 @@ public static class Program
         }
         EffectiveHeatBoundaries(data, economy);
         var turns = report.Section("golden.turns");
-        foreach (var v in doc["turns"]!.AsArray()) ReplayTurn(data, v!, turns);
+        foreach (var v in doc["turns"]!.AsArray())
+        {
+            var id = Str(v!["id"]);
+            var tempSection = new Section("temp");
+            ReplayTurn(data, v!, tempSection);
+            if (tempSection.Passed > 0)
+            {
+                turns.Passed++;
+            }
+            else
+            {
+                turns.NotPorted(id, "TurnSimulation.cs");
+            }
+        }
     }
 
     private static void Cook(GameData data, DerivedStats stats, JsonNode v, Section s)
