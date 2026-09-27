@@ -19,3 +19,19 @@ antigas. Para evitar apagar trabalho não integrado, confirmou explicitamente
 **Estado deste registro inicial:** publicação/CI/merge ainda pendentes. O CI remoto executa
 C# com dotnet; SKIP local não autoriza ignorar falha remota ou afirmar paridade/Unity.
 A branch ativa da sessão e main serão preservadas.
+
+## PR e exceção mínima autorizada
+
+- Patch publicado no [PR15](https://github.com/berger33/game_churrasqueiro/pull/15),
+  commit71d77541d6198e283d5e410e2e97147ed65b31d9.
+- [CI36300660583](https://github.com/berger33/game_churrasqueiro/actions/runs/36300660583):
+  gates TS/UI/economia passaram; C# compilou/bind13 tabelas e falhou em1 regra já portadas:
+  `econ.effectiveHeat`. Anotações originais em red-ci-annotations.json.
+- O dono autorizou `merge_csharp_fix=minimal_fix`: corrigir somente a divergência pontual
+  de calor e sua regressão, sem relaxar gate nem portar os sistemas novos; merge só com CI verde.
+- Nova regressão C# exige calor zero ao esgotar/repor, mesmo com eficiência residual/upgrade,
+  em1/3/4 zonas; saco novo volta a aquecer. A regra TS e os vetores existentes não mudam.
+- Logs históricos de vitest preservam whitespace bruto. `git diff --check` do código/docs
+  (excluindo apenas logs brutos de evidência) está limpo; logs não foram adulterados por estética.
+- Download do log de Actions retornou EOF no endpoint de armazenamento; usamos as anotações
+  originais do check via GitHub API, sem tratar ausência do arquivo como ausência de falha.

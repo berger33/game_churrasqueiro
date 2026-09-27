@@ -195,6 +195,7 @@ public static class Program
             if (id == "econ.effectiveHeat") EffectiveHeat(data, stats, v, economy);
             else economy.NotPorted(id, "EconomyRules.cs");
         }
+        EffectiveHeatBoundaries(data, economy);
         var turns = report.Section("golden.turns");
         foreach (var v in doc["turns"]!.AsArray()) turns.NotPorted(Str(v!["id"]), "TurnSimulation.cs");
     }
@@ -306,6 +307,37 @@ public static class Program
             }
         }
         s.Result(Str(v["id"]), fails);
+    }
+
+    // Regression for the existing heat implementation, not a port of new gameplay.
+    private static void EffectiveHeatBoundaries(GameData data, Section s)
+    {
+        var fails = new List<string>();
+        var stats = CookingRules.DeriveStats(data, data.RestaurantByIndex(1)!, new Dictionary<string, int>());
+        stats.HighZoneBonus = 0.4;
+        foreach (int count in new[] { 1, 3, 4 })
+        {
+            var g = CookingRules.CreateGrill(stats, data);
+            g.Zones.Clear();
+            for (int z = 0; z < count; z++) g.Zones.Add(new GrillZoneRuntime { Index = z, Heat = 1 });
+            // A nonzero efficiency/upgrade cannot resurrect an exhausted or refilling sack.
+            g.CharcoalEfficiency = 1;
+            foreach (double spent in new[] { 1.0, 1.2 })
+            {
+                g.CharcoalT = spent;
+                for (int z = 0; z < count; z++)
+                    Near(fails, $"{count} zones exhausted={spent} z={z}", CookingRules.EffectiveHeat(g, z, data), 0);
+            }
+            g.CharcoalT = 0.5;
+            g.Refilling = 2.2;
+            for (int z = 0; z < count; z++)
+                Near(fails, $"{count} zones refilling z={z}", CookingRules.EffectiveHeat(g, z, data), 0);
+            g.CharcoalT = 0;
+            g.Refilling = 0;
+            for (int z = 0; z < count; z++)
+                if (CookingRules.EffectiveHeat(g, z, data) <= 0) fails.Add($"{count} zones fresh sack must heat z={z}");
+        }
+        s.Result("econ.effectiveHeat.boundaries", fails);
     }
 
     // ── 4. ftue (Tutorial.cs, Analytics.cs) ─────────────────────────────────
