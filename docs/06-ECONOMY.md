@@ -13,7 +13,28 @@ Both exit non-zero when a guardrail in `shared/data/economy.json → targets` is
 
 ---
 
-## Revalidação A-01 — estado vigente (2026-09-26 local / 27 UTC)
+## Revalidação A-02 — estado vigente (2026-09-26 local / 27 UTC)
+
+Pedidos/estoque agora respeitam nível **e** restaurante. Sim passa p.level, UI meta.level;
+curva de skill parte do nível1 e acumula XP real por skill, sem compras. Não há fallback
+liberando receitas futuras. Dados/preços/tempos/receitas/recompensas/alvos intactos.
+
+Em1.500 turnos: nível80/rest6/Fornalha3; renda **22.233.557**, gasto **10.873.220**, saldo
+**11.360.337**; perfect **75,7%**, burned **0,2%**, perdidos **3,5%**, média **172,5s**.
+Restaurantes **42/98/165/259/398/883**; grills **10/45/89**; renda L5/15/30/50
+**10.480/39.445/108.533/192.223**. **15/18, exit1**: rede883<950, L50=192.223>152.000,
+spend **0,489**<0,70. São os mesmos três desvios A-01, não corrigidos por tuning.
+
+Curva skill.55 **46,0% perfect /571 moedas** (antes55,7%/793). Curva completa/antes-depois,
+logs longos e amostra de60 turnos com XP/pedidos em [`evidence/a02/`](evidence/a02/README.md).
+`sim` curto segue verde; não substitui longo nem resolve os sinks no-op de A-06.
+Probe avançado A-01 com nível44 explícito mantém janelas/128 turnos agregados idênticos.
+
+**Aceite econômico global pendente**. A-03–A-06 precedem F4. Vinagrete continua no pool
+quando desbloqueado (nível12/rest0); a UI prep será A-03, não esconder o item. As seções
+abaixo preservam medições históricas, não devem ser usadas como balanço atual.
+
+## Revalidação A-01 — histórico (2026-09-26 local / 27 UTC)
 
 **Correção funcional validada, economia NÃO aprovada.** A escolha do dono foi manter
 2 lados e exigir virada em costela/cupim. Com os flags corrigidos, `sim:long` **falha em

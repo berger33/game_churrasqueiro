@@ -8,7 +8,23 @@
 
 ---
 
-## Atualização A-01 — vigente (2026-09-26 local / 27 UTC)
+## Atualização A-02 — vigente (2026-09-26 local /27 UTC)
+
+**A-02 funcional corrigido:** playerLevel obrigatório/integral/positivo no contrato,
+catálogo de pedidos/estoque/UI por nível E restaurante, snapshot no início. Sim p.level,
+UI meta.level, FTUE1; skill curve usa XP real, não índice de fase/default all-unlocked.
+UnusualOnly sem menu não sorteado; forçado sem menu rejeitado; nenhuma ordem vazia.
+
+- **351 testes** (50 novos red +2 wiring red antes do green), gates locais14/15;
+ 19 screenshots/244 sprites, FTUE inalterado.106+44 vetores:20 entradas com playerLevel,
+ 9 expectativas iniciais mudam,11 preservadas;44 FTUE byte-idênticos. C#25 não portados.
+- **Longo15/18**: rede883<950, rendaL50=192.223>152.000, spend0,489<0,70. Três desvios
+  persistem, sem retuning. Logs/diffs/regressões em [`evidence/a02/`](evidence/a02/README.md).
+- Dos9 altos:3 encerrados F2; A-01/A-02 funcionais com economia global pendente;
+  **4 sem correção (A-03–A-06)**. Vinagrete permanece após nível12/rest0; não apagar para
+  contornar A-03. F3/F4 não encerradas. PR14 sem merge; CI A-02 pendente de push/execução.
+
+## Atualização A-01 — histórico (2026-09-26 local /27 UTC)
 
 **A-01 funcional corrigido, aceite econômico pendente.** O dono escolheu 2 lados e
 virada obrigatória em costela/cupim. Dados v6, bot usando os flags, UI paginada/dica
@@ -83,7 +99,7 @@ Ambiente: Node v22.22.3, npm 10.9.8. Árvore limpa antes e depois (os gates que 
 
 ## 2. Sumário executivo
 
-**Achados originais: 47** — 9 altos · 19 médios · 19 baixos. Dos altos, 3 encerrados em F2, A-01 funcional corrigido/aceite econômico pendente, 5 ainda sem correção.
+**Achados originais: 47** — 9 altos · 19 médios · 19 baixos. Dos altos,3 encerrados em F2, A-01/A-02 funcionais com economia global pendente,4 sem correção (A-03–A-06).
 
 Os nove que mais importam, em ordem de impacto no jogo:
 
@@ -108,7 +124,7 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
 | ID | Sev | Área | Título |
 |---|---|---|---|
 | A-01 | 🟠 funcional corrigido; economia pendente | Regras/Dados | Reprodução histórica: costela e cupim inalcançáveis sem virar (`flipNeeded:false` + `sides:2`) |
-| A-02 | 🔴 | Regras/Dados | `unlock.level` de ingrediente nunca aplicado |
+| A-02 | ✅ funcional | Regras/Dados | `unlock.level` de ingrediente nunca aplicado |
 | A-03 | 🔴 | Protótipo | Pedidos de vinagrete (prep) impossíveis de concluir |
 | A-04 | 🔴 | Dados/Regras | Zona 4 declarada, nunca criada |
 | A-05 | 🔴 | Dados/Regras/Loja | VIP não aparece em jogo, mas é prometido |
@@ -155,7 +171,7 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
 | E-04 | 🟡 | C# | Nenhum `.cs` foi compilado neste ambiente (ver §1) |
 | F-01 | 🟠 | Docs | README: `Packages/`, `ProjectSettings/`, `marketing/`, `Assets/Scripts/Sim/`, `tools/studio/golden.test.ts` não existem |
 | F-02 | 🟠 | Docs | `docs/02` tabela de restaurantes: custos 3 500/12 000/70 000/150 000/500 000/2 800 000 vs dados 0/3 500/15 000/67 000/178 000/4 200 000 |
-| F-03 | 🟡 | Docs | `docs/02` §10 curva de skill defasada vs `npm run sim`; §4.5 "janela de 4,3 s da costela" pressupõe algo impossível (A-01) |
+| F-03 | 🟡 | Docs | `docs/02` §10 curva atualizada em A-02 e §4.5 janelas/matemática corrigidas em A-01; descrições antigas abaixo são históricas |
 | F-04 | 🟡 | Docs | README "Not started: art assets, recorded audio" — há 100+ PNG e WAVs gerados |
 | F-05 | 🟡 | Docs | `types.ts` e `docs/03` citam `tools/sim-core/golden/` (é `tools/golden/`) |
 
@@ -178,7 +194,7 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
 - **Impacto:** `flipFood` **não** checa `flipNeeded`, então um humano que virar mesmo assim consegue — **correção da descrição original:** a UI normal já mostrava uma dica genérica, porém imediatamente/cedo demais; o FTUE usava prontidão contextual. O bot que calibra `docs/06`, `perfectRateAtSkillMid` e as metas L30/L50 nunca vira. As metas dos restaurantes 3–6 foram medidas com os cortes mais caros do jogo valendo `ing.value * 0.35` ou zero.
 - **Correção sugerida:** ou `sides: 1` para itens `flipNeeded:false` (cozinha "overall" de verdade), ou remover `flipNeeded:false` e ensinar o bot/UI a virar. Regerar `tools/golden/vectors.json` depois (`npm run gen-vectors`) e reavaliar `npm run sim`.
 
-### A-02 🔴 `unlock.level` de ingrediente nunca aplicado
+### A-02 ✅ funcional corrigido — reprodução histórica: `unlock.level` ignorado
 
 - **Onde:** `turn.ts spawnCustomer` monta o pool por `unlock.restaurantIndex <= restaurantIndex` (só isso). `unlock.level` aparece apenas em `tools/studio/test/data.test.ts:40`. O simulador nem recebe o nível do jogador.
 - **Evidência (script §8.1, 24 níveis do restaurante 0, seeds do protótipo):** queijo_coalho 16,1 % (nível 6), legumes 15,5 % (nível 10), pão de alho 13,4 %, coração 12,9 %, frango 11,8 %, fraldinha 10,8 % (nível 14), linguiça 10,5 %, vinagrete 8,9 %.

@@ -4,7 +4,53 @@ Use este texto como contexto inicial da próxima sessão no repositório
 `berger33/game_churrasqueiro`. Trabalhe somente na branch atribuída à nova sessão e confirme o
 estado real de `origin/main` antes de alterar arquivos.
 
-## Handoff A-01 — vigente (2026-09-26 local / 27 UTC)
+## Handoff A-02 — vigente (2026-09-26 local /27 UTC)
+
+- Mesma branch **arena/01a0e03e-game-churrasqueiro**, PR14 aberto/sem merge. Baseline
+  **223b843**: árvore limpa, fetch/ancestralidadePR13, npm ci,299 testes,14/15 gates
+  locais, sim longo15/18 com os3 desvios A-01. Nenhuma autorização de merge.
+- **A-02 funcional validado.** `TurnConfig.playerLevel` agora obrigatório, inteiro>=1,
+  snapshot no começo. Catálogo exige nível E restaurante. Natural/scripted orders,
+  estoque canônico, bot e bancada usam esse conjunto. Menu vazio rejeitado; unusualOnly
+  só sorteado se houver receita não comum desbloqueada, forçado sem menu gera erro.
+- Callers: progressão p.level antes de crédito, UI meta.level, FTUE1. Curva skill cria
+  newPlayerState por skill e acumula XP real via applyTurnResult, sem compras/upgrades.
+  Não derivar nível de levelId/index. Mechanics fixtures usam44 explicitamente para
+  preservar a regra isolada; não existe fallback44 na produção.
+- **351/351 testes**,18 arquivos;50 regressões red no original,2 wiring red com caller
+  all-unlocked, harness red com bancada antiga e tentativa de legumes bloqueados.
+  Agora **14/15 gates locais**, C# SKIP. **CI A-02 pendente de push/execução**; ver
+  fechamento no plano §9.12/corpo do PR antes de avançar.
+- **106+44 vetores**: formato principalv2, playerLevel nos20 turnos. Perfis1/4/8/14 nos
+  12 autorais (fixtures de cobertura, não previsão de XP da campanha),44 nos8 avançados.
+  **9 expectativas mudam**,3 de nível14 e8 avançadas intactas; cooking48/scoring32/economy6
+  e44 FTUE intactos. Tutorial vectors byte-idênticos. Replay valida os limites dos pedidos.
+- **Dados, schemas, Assets/Data, savev3 e tiposC# intactos**. C# permanece25 not ported
+  (5 economia+20 turnos); portar o novo contrato e regressões F2/A-01/A-02 só em F8.
+- **19 screenshots/244 sprites**, levels1/5/6/7 no save: catálogo/pedidos coerentes,
+  sem slot fantasma, queijo arrastável exatamente6 e após7. Fixture troca contexto/save;
+  não é metaprogressão natural concluída. FTUE16,1/32,9/38,3s e zero misses intactos.
+- **Longo15/18, exit1**:1500turnos, nível80/rest6/Fornalha3, renda22.233.557,
+  gasto10.873.220, saldo11.360.337, spend0,489, perfect75,7%, burned0,2%, lost3,5%,
+  duração172,5s. Restaurantes42/98/165/259/398/883; grills10/45/89; rendaL5/15/30/50
+  **10.480/39.445/108.533/192.223**. Falhas: rede883<950, L50=192.223>152.000,
+  spend0,489<0,70. Nenhum preço/tempo/receita/recompensa/limite retunado.
+- Curva .55 agora46,0% perfect/571moedas (antes55,7%/793), XP controla acesso aos itens.
+  Probe avançado A-01 nível44 mantém janelas/128turnos agregados inalterados.
+- **evidence/a02/**: red rules/wiring/UI, logs longos íntegros, vector-review.json,
+  progression-sample.json com60turnos reais/XP/pedidos. README explica métodos/limites.
+- npm audit mesmas5 (1 crítica/1 alta/3 moderadas), lock intacto/sem force-fix. Nightly
+  manual negado403 na etapa anterior: longo é evidência local, não inventar remoto.
+- **Próximo A-03:** fluxo real de prep/vinagrete no core/UI (input/hitboxes, pedidos mistos,
+  paciência/combo/resultado e orientação contextual), regressões antes da correção.
+  Vinagrete fica elegível em nível12/rest0; não remover para contornar o problema.
+- A-01 continua **2lados/flipNeeded:true por decisão explícita**, não perguntar de novo.
+  A-04 ainda exige decisão do dono. A-03–A-06 pendentes, economia global/F3/F4 não encerradas.
+  Ordem posterior preservada: F4 revalidação →F5 dívida →F6 tooling/security →F7 extração
+  seletivaPR7/8 →F8 C# →F9 Unity →F10 meta/l10n/a11y →F11 serviços →F12 QA →F13 release.
+  Sem arte nova, sem merge, sem portas C#/Unity/credenciais/publicação sem evidência.
+
+## Handoff A-01 — histórico, substituído por A-02 acima (2026-09-26 local /27 UTC)
 
 - Branch desta sessão **`arena/01a0e03e-game-churrasqueiro`**, PR #14 aberto/sem merge.
   F1/F2 concluídas; baseline A-01 `ec8ce1b`, árvore limpa, fetch/PR13 ancestry, npm ci,

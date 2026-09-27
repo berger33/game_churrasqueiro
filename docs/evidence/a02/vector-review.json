@@ -1,0 +1,1287 @@
+{
+  "baseline": "223b843",
+  "vectorVersion": [
+    1,
+    2
+  ],
+  "unchangedSections": [
+    "cooking (48)",
+    "scoring (32)",
+    "economy (6)",
+    "FTUE (44, byte-identical)"
+  ],
+  "turns": [
+    {
+      "id": "turn.skill0.35.level_001",
+      "playerLevel": 1,
+      "changedExpectedFields": [
+        "coins",
+        "xp",
+        "counters"
+      ],
+      "before": {
+        "coins": 628,
+        "xp": 85,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 90,
+        "counters": {
+          "customersSpawned": 10,
+          "customersServed": 10,
+          "customersLost": 0,
+          "ordersCompleted": 10,
+          "perfectCooks": 7,
+          "goodCooks": 6,
+          "burnedFood": 0,
+          "bestCombo": 13,
+          "flips": 13,
+          "itemsCooked": 13,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      },
+      "after": {
+        "coins": 300,
+        "xp": 43,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 90,
+        "counters": {
+          "customersSpawned": 10,
+          "customersServed": 9,
+          "customersLost": 0,
+          "ordersCompleted": 9,
+          "perfectCooks": 7,
+          "goodCooks": 2,
+          "burnedFood": 0,
+          "bestCombo": 9,
+          "flips": 10,
+          "itemsCooked": 9,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.35.level_011",
+      "playerLevel": 4,
+      "changedExpectedFields": [
+        "coins",
+        "xp"
+      ],
+      "before": {
+        "coins": 768,
+        "xp": 109,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 99,
+        "counters": {
+          "customersSpawned": 16,
+          "customersServed": 15,
+          "customersLost": 0,
+          "ordersCompleted": 15,
+          "perfectCooks": 8,
+          "goodCooks": 10,
+          "burnedFood": 0,
+          "bestCombo": 18,
+          "flips": 18,
+          "itemsCooked": 18,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      },
+      "after": {
+        "coins": 537,
+        "xp": 82,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 99,
+        "counters": {
+          "customersSpawned": 16,
+          "customersServed": 15,
+          "customersLost": 0,
+          "ordersCompleted": 15,
+          "perfectCooks": 8,
+          "goodCooks": 10,
+          "burnedFood": 0,
+          "bestCombo": 18,
+          "flips": 18,
+          "itemsCooked": 18,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.35.level_031",
+      "playerLevel": 8,
+      "changedExpectedFields": [
+        "coins",
+        "counters"
+      ],
+      "before": {
+        "coins": 1267,
+        "xp": 156,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 111,
+        "counters": {
+          "customersSpawned": 14,
+          "customersServed": 13,
+          "customersLost": 0,
+          "ordersCompleted": 13,
+          "perfectCooks": 12,
+          "goodCooks": 9,
+          "burnedFood": 0,
+          "bestCombo": 21,
+          "flips": 28,
+          "itemsCooked": 21,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      },
+      "after": {
+        "coins": 1284,
+        "xp": 156,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 111,
+        "counters": {
+          "customersSpawned": 13,
+          "customersServed": 13,
+          "customersLost": 0,
+          "ordersCompleted": 13,
+          "perfectCooks": 6,
+          "goodCooks": 15,
+          "burnedFood": 0,
+          "bestCombo": 21,
+          "flips": 37,
+          "itemsCooked": 21,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.35.level_060",
+      "playerLevel": 14,
+      "changedExpectedFields": [],
+      "before": {
+        "coins": 1501,
+        "xp": 194,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 113,
+        "counters": {
+          "customersSpawned": 17,
+          "customersServed": 16,
+          "customersLost": 0,
+          "ordersCompleted": 16,
+          "perfectCooks": 10,
+          "goodCooks": 17,
+          "burnedFood": 0,
+          "bestCombo": 22,
+          "flips": 37,
+          "itemsCooked": 28,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      },
+      "after": {
+        "coins": 1501,
+        "xp": 194,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 113,
+        "counters": {
+          "customersSpawned": 17,
+          "customersServed": 16,
+          "customersLost": 0,
+          "ordersCompleted": 16,
+          "perfectCooks": 10,
+          "goodCooks": 17,
+          "burnedFood": 0,
+          "bestCombo": 22,
+          "flips": 37,
+          "itemsCooked": 28,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.55.level_001",
+      "playerLevel": 1,
+      "changedExpectedFields": [
+        "coins",
+        "xp",
+        "counters"
+      ],
+      "before": {
+        "coins": 651,
+        "xp": 89,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 90,
+        "counters": {
+          "customersSpawned": 10,
+          "customersServed": 10,
+          "customersLost": 0,
+          "ordersCompleted": 10,
+          "perfectCooks": 8,
+          "goodCooks": 5,
+          "burnedFood": 0,
+          "bestCombo": 13,
+          "flips": 13,
+          "itemsCooked": 13,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      },
+      "after": {
+        "coins": 300,
+        "xp": 43,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 90,
+        "counters": {
+          "customersSpawned": 10,
+          "customersServed": 9,
+          "customersLost": 0,
+          "ordersCompleted": 9,
+          "perfectCooks": 7,
+          "goodCooks": 2,
+          "burnedFood": 0,
+          "bestCombo": 9,
+          "flips": 9,
+          "itemsCooked": 9,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.55.level_011",
+      "playerLevel": 4,
+      "changedExpectedFields": [
+        "coins",
+        "xp",
+        "stars",
+        "counters"
+      ],
+      "before": {
+        "coins": 862,
+        "xp": 121,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 99,
+        "counters": {
+          "customersSpawned": 16,
+          "customersServed": 15,
+          "customersLost": 0,
+          "ordersCompleted": 15,
+          "perfectCooks": 13,
+          "goodCooks": 5,
+          "burnedFood": 0,
+          "bestCombo": 18,
+          "flips": 18,
+          "itemsCooked": 18,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      },
+      "after": {
+        "coins": 534,
+        "xp": 79,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 99,
+        "counters": {
+          "customersSpawned": 16,
+          "customersServed": 14,
+          "customersLost": 0,
+          "ordersCompleted": 14,
+          "perfectCooks": 10,
+          "goodCooks": 7,
+          "burnedFood": 0,
+          "bestCombo": 17,
+          "flips": 17,
+          "itemsCooked": 17,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.55.level_031",
+      "playerLevel": 8,
+      "changedExpectedFields": [
+        "coins",
+        "xp",
+        "counters"
+      ],
+      "before": {
+        "coins": 1272,
+        "xp": 158,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 111,
+        "counters": {
+          "customersSpawned": 15,
+          "customersServed": 14,
+          "customersLost": 0,
+          "ordersCompleted": 14,
+          "perfectCooks": 12,
+          "goodCooks": 10,
+          "burnedFood": 0,
+          "bestCombo": 22,
+          "flips": 29,
+          "itemsCooked": 22,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      },
+      "after": {
+        "coins": 1404,
+        "xp": 172,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 111,
+        "counters": {
+          "customersSpawned": 14,
+          "customersServed": 14,
+          "customersLost": 0,
+          "ordersCompleted": 14,
+          "perfectCooks": 8,
+          "goodCooks": 15,
+          "burnedFood": 0,
+          "bestCombo": 23,
+          "flips": 39,
+          "itemsCooked": 23,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.55.level_060",
+      "playerLevel": 14,
+      "changedExpectedFields": [],
+      "before": {
+        "coins": 1673,
+        "xp": 205,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 113,
+        "counters": {
+          "customersSpawned": 17,
+          "customersServed": 16,
+          "customersLost": 0,
+          "ordersCompleted": 16,
+          "perfectCooks": 15,
+          "goodCooks": 12,
+          "burnedFood": 0,
+          "bestCombo": 27,
+          "flips": 38,
+          "itemsCooked": 27,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 3,
+          "flawless": true
+        }
+      },
+      "after": {
+        "coins": 1673,
+        "xp": 205,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 113,
+        "counters": {
+          "customersSpawned": 17,
+          "customersServed": 16,
+          "customersLost": 0,
+          "ordersCompleted": 16,
+          "perfectCooks": 15,
+          "goodCooks": 12,
+          "burnedFood": 0,
+          "bestCombo": 27,
+          "flips": 38,
+          "itemsCooked": 27,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 3,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.85.level_001",
+      "playerLevel": 1,
+      "changedExpectedFields": [
+        "coins",
+        "xp",
+        "counters"
+      ],
+      "before": {
+        "coins": 742,
+        "xp": 101,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 90,
+        "counters": {
+          "customersSpawned": 10,
+          "customersServed": 10,
+          "customersLost": 0,
+          "ordersCompleted": 10,
+          "perfectCooks": 13,
+          "goodCooks": 0,
+          "burnedFood": 0,
+          "bestCombo": 13,
+          "flips": 13,
+          "itemsCooked": 13,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 1,
+          "flawless": true
+        }
+      },
+      "after": {
+        "coins": 369,
+        "xp": 50,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 90,
+        "counters": {
+          "customersSpawned": 10,
+          "customersServed": 10,
+          "customersLost": 0,
+          "ordersCompleted": 10,
+          "perfectCooks": 10,
+          "goodCooks": 0,
+          "burnedFood": 0,
+          "bestCombo": 10,
+          "flips": 10,
+          "itemsCooked": 10,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 1,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.85.level_011",
+      "playerLevel": 4,
+      "changedExpectedFields": [
+        "coins",
+        "xp",
+        "stars",
+        "counters"
+      ],
+      "before": {
+        "coins": 880,
+        "xp": 120,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 99,
+        "counters": {
+          "customersSpawned": 16,
+          "customersServed": 15,
+          "customersLost": 0,
+          "ordersCompleted": 15,
+          "perfectCooks": 15,
+          "goodCooks": 3,
+          "burnedFood": 0,
+          "bestCombo": 18,
+          "flips": 18,
+          "itemsCooked": 18,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      },
+      "after": {
+        "coins": 619,
+        "xp": 89,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 99,
+        "counters": {
+          "customersSpawned": 16,
+          "customersServed": 14,
+          "customersLost": 0,
+          "ordersCompleted": 14,
+          "perfectCooks": 17,
+          "goodCooks": 0,
+          "burnedFood": 0,
+          "bestCombo": 17,
+          "flips": 18,
+          "itemsCooked": 17,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.85.level_031",
+      "playerLevel": 8,
+      "changedExpectedFields": [
+        "coins",
+        "xp",
+        "counters"
+      ],
+      "before": {
+        "coins": 1441,
+        "xp": 178,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 111,
+        "counters": {
+          "customersSpawned": 15,
+          "customersServed": 14,
+          "customersLost": 0,
+          "ordersCompleted": 14,
+          "perfectCooks": 19,
+          "goodCooks": 3,
+          "burnedFood": 0,
+          "bestCombo": 22,
+          "flips": 29,
+          "itemsCooked": 22,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      },
+      "after": {
+        "coins": 1618,
+        "xp": 195,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 111,
+        "counters": {
+          "customersSpawned": 15,
+          "customersServed": 14,
+          "customersLost": 0,
+          "ordersCompleted": 14,
+          "perfectCooks": 20,
+          "goodCooks": 3,
+          "burnedFood": 0,
+          "bestCombo": 23,
+          "flips": 40,
+          "itemsCooked": 23,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.85.level_060",
+      "playerLevel": 14,
+      "changedExpectedFields": [],
+      "before": {
+        "coins": 1897,
+        "xp": 232,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 113,
+        "counters": {
+          "customersSpawned": 17,
+          "customersServed": 16,
+          "customersLost": 0,
+          "ordersCompleted": 16,
+          "perfectCooks": 23,
+          "goodCooks": 5,
+          "burnedFood": 0,
+          "bestCombo": 28,
+          "flips": 37,
+          "itemsCooked": 28,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      },
+      "after": {
+        "coins": 1897,
+        "xp": 232,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 113,
+        "counters": {
+          "customersSpawned": 17,
+          "customersServed": 16,
+          "customersLost": 0,
+          "ordersCompleted": 16,
+          "perfectCooks": 23,
+          "goodCooks": 5,
+          "burnedFood": 0,
+          "bestCombo": 28,
+          "flips": 37,
+          "itemsCooked": 28,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        }
+      }
+    },
+    {
+      "id": "turn.skill0.55.a01_rest_3",
+      "playerLevel": 44,
+      "changedExpectedFields": [],
+      "before": {
+        "coins": 2562,
+        "xp": 258,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 135,
+        "counters": {
+          "customersSpawned": 18,
+          "customersServed": 17,
+          "customersLost": 0,
+          "ordersCompleted": 17,
+          "perfectCooks": 15,
+          "goodCooks": 16,
+          "burnedFood": 0,
+          "bestCombo": 31,
+          "flips": 37,
+          "itemsCooked": 31,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 2,
+            "flipped": 1,
+            "served": 1,
+            "burned": 0
+          },
+          {
+            "id": "cupim",
+            "taken": 0,
+            "flipped": 0,
+            "served": 0,
+            "burned": 0
+          }
+        ]
+      },
+      "after": {
+        "coins": 2562,
+        "xp": 258,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 135,
+        "counters": {
+          "customersSpawned": 18,
+          "customersServed": 17,
+          "customersLost": 0,
+          "ordersCompleted": 17,
+          "perfectCooks": 15,
+          "goodCooks": 16,
+          "burnedFood": 0,
+          "bestCombo": 31,
+          "flips": 37,
+          "itemsCooked": 31,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 2,
+          "flawless": true
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 2,
+            "flipped": 1,
+            "served": 1,
+            "burned": 0
+          },
+          {
+            "id": "cupim",
+            "taken": 0,
+            "flipped": 0,
+            "served": 0,
+            "burned": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "turn.skill0.85.a01_rest_3",
+      "playerLevel": 44,
+      "changedExpectedFields": [],
+      "before": {
+        "coins": 2714,
+        "xp": 284,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 135,
+        "counters": {
+          "customersSpawned": 18,
+          "customersServed": 17,
+          "customersLost": 0,
+          "ordersCompleted": 17,
+          "perfectCooks": 24,
+          "goodCooks": 7,
+          "burnedFood": 0,
+          "bestCombo": 31,
+          "flips": 37,
+          "itemsCooked": 31,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 3,
+          "flawless": true
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 2,
+            "flipped": 1,
+            "served": 1,
+            "burned": 0
+          },
+          {
+            "id": "cupim",
+            "taken": 0,
+            "flipped": 0,
+            "served": 0,
+            "burned": 0
+          }
+        ]
+      },
+      "after": {
+        "coins": 2714,
+        "xp": 284,
+        "stars": 3,
+        "failed": false,
+        "finalTimeSec": 135,
+        "counters": {
+          "customersSpawned": 18,
+          "customersServed": 17,
+          "customersLost": 0,
+          "ordersCompleted": 17,
+          "perfectCooks": 24,
+          "goodCooks": 7,
+          "burnedFood": 0,
+          "bestCombo": 31,
+          "flips": 37,
+          "itemsCooked": 31,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 3,
+          "flawless": true
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 2,
+            "flipped": 1,
+            "served": 1,
+            "burned": 0
+          },
+          {
+            "id": "cupim",
+            "taken": 0,
+            "flipped": 0,
+            "served": 0,
+            "burned": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "turn.skill0.55.a01_rest_4",
+      "playerLevel": 44,
+      "changedExpectedFields": [],
+      "before": {
+        "coins": 2269,
+        "xp": 270,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 150,
+        "counters": {
+          "customersSpawned": 20,
+          "customersServed": 16,
+          "customersLost": 2,
+          "ordersCompleted": 16,
+          "perfectCooks": 17,
+          "goodCooks": 14,
+          "burnedFood": 1,
+          "bestCombo": 13,
+          "flips": 39,
+          "itemsCooked": 32,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 3,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 3,
+            "flipped": 3,
+            "served": 1,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 1,
+            "served": 1,
+            "burned": 0
+          }
+        ]
+      },
+      "after": {
+        "coins": 2269,
+        "xp": 270,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 150,
+        "counters": {
+          "customersSpawned": 20,
+          "customersServed": 16,
+          "customersLost": 2,
+          "ordersCompleted": 16,
+          "perfectCooks": 17,
+          "goodCooks": 14,
+          "burnedFood": 1,
+          "bestCombo": 13,
+          "flips": 39,
+          "itemsCooked": 32,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 3,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 3,
+            "flipped": 3,
+            "served": 1,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 1,
+            "served": 1,
+            "burned": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "turn.skill0.85.a01_rest_4",
+      "playerLevel": 44,
+      "changedExpectedFields": [],
+      "before": {
+        "coins": 2589,
+        "xp": 296,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 150,
+        "counters": {
+          "customersSpawned": 20,
+          "customersServed": 16,
+          "customersLost": 1,
+          "ordersCompleted": 16,
+          "perfectCooks": 23,
+          "goodCooks": 9,
+          "burnedFood": 1,
+          "bestCombo": 14,
+          "flips": 39,
+          "itemsCooked": 32,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 4,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 3,
+            "flipped": 3,
+            "served": 1,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 1,
+            "served": 1,
+            "burned": 0
+          }
+        ]
+      },
+      "after": {
+        "coins": 2589,
+        "xp": 296,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 150,
+        "counters": {
+          "customersSpawned": 20,
+          "customersServed": 16,
+          "customersLost": 1,
+          "ordersCompleted": 16,
+          "perfectCooks": 23,
+          "goodCooks": 9,
+          "burnedFood": 1,
+          "bestCombo": 14,
+          "flips": 39,
+          "itemsCooked": 32,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 4,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 3,
+            "flipped": 3,
+            "served": 1,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 1,
+            "served": 1,
+            "burned": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "turn.skill0.55.a01_rest_5",
+      "playerLevel": 44,
+      "changedExpectedFields": [],
+      "before": {
+        "coins": 2849,
+        "xp": 313,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 165,
+        "counters": {
+          "customersSpawned": 22,
+          "customersServed": 19,
+          "customersLost": 1,
+          "ordersCompleted": 19,
+          "perfectCooks": 14,
+          "goodCooks": 21,
+          "burnedFood": 1,
+          "bestCombo": 17,
+          "flips": 43,
+          "itemsCooked": 35,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 4,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 4,
+            "flipped": 4,
+            "served": 2,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 2,
+            "served": 1,
+            "burned": 0
+          }
+        ]
+      },
+      "after": {
+        "coins": 2849,
+        "xp": 313,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 165,
+        "counters": {
+          "customersSpawned": 22,
+          "customersServed": 19,
+          "customersLost": 1,
+          "ordersCompleted": 19,
+          "perfectCooks": 14,
+          "goodCooks": 21,
+          "burnedFood": 1,
+          "bestCombo": 17,
+          "flips": 43,
+          "itemsCooked": 35,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 4,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 4,
+            "flipped": 4,
+            "served": 2,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 2,
+            "served": 1,
+            "burned": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "turn.skill0.85.a01_rest_5",
+      "playerLevel": 44,
+      "changedExpectedFields": [],
+      "before": {
+        "coins": 2896,
+        "xp": 341,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 165,
+        "counters": {
+          "customersSpawned": 22,
+          "customersServed": 19,
+          "customersLost": 1,
+          "ordersCompleted": 19,
+          "perfectCooks": 26,
+          "goodCooks": 9,
+          "burnedFood": 1,
+          "bestCombo": 16,
+          "flips": 42,
+          "itemsCooked": 35,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 4,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 4,
+            "flipped": 3,
+            "served": 2,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 2,
+            "served": 1,
+            "burned": 0
+          }
+        ]
+      },
+      "after": {
+        "coins": 2896,
+        "xp": 341,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 165,
+        "counters": {
+          "customersSpawned": 22,
+          "customersServed": 19,
+          "customersLost": 1,
+          "ordersCompleted": 19,
+          "perfectCooks": 26,
+          "goodCooks": 9,
+          "burnedFood": 1,
+          "bestCombo": 16,
+          "flips": 42,
+          "itemsCooked": 35,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 4,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 4,
+            "flipped": 3,
+            "served": 2,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 2,
+            "served": 1,
+            "burned": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "turn.skill0.55.a01_rest_6",
+      "playerLevel": 44,
+      "changedExpectedFields": [],
+      "before": {
+        "coins": 2990,
+        "xp": 337,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 180,
+        "counters": {
+          "customersSpawned": 24,
+          "customersServed": 21,
+          "customersLost": 2,
+          "ordersCompleted": 21,
+          "perfectCooks": 15,
+          "goodCooks": 23,
+          "burnedFood": 1,
+          "bestCombo": 17,
+          "flips": 46,
+          "itemsCooked": 39,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 3,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 4,
+            "flipped": 4,
+            "served": 3,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 2,
+            "served": 1,
+            "burned": 0
+          }
+        ]
+      },
+      "after": {
+        "coins": 2990,
+        "xp": 337,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 180,
+        "counters": {
+          "customersSpawned": 24,
+          "customersServed": 21,
+          "customersLost": 2,
+          "ordersCompleted": 21,
+          "perfectCooks": 15,
+          "goodCooks": 23,
+          "burnedFood": 1,
+          "bestCombo": 17,
+          "flips": 46,
+          "itemsCooked": 39,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 3,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 4,
+            "flipped": 4,
+            "served": 3,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 2,
+            "served": 1,
+            "burned": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "turn.skill0.85.a01_rest_6",
+      "playerLevel": 44,
+      "changedExpectedFields": [],
+      "before": {
+        "coins": 3077,
+        "xp": 365,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 180,
+        "counters": {
+          "customersSpawned": 24,
+          "customersServed": 20,
+          "customersLost": 2,
+          "ordersCompleted": 20,
+          "perfectCooks": 30,
+          "goodCooks": 8,
+          "burnedFood": 1,
+          "bestCombo": 19,
+          "flips": 47,
+          "itemsCooked": 38,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 4,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 4,
+            "flipped": 4,
+            "served": 2,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 2,
+            "served": 1,
+            "burned": 0
+          }
+        ]
+      },
+      "after": {
+        "coins": 3077,
+        "xp": 365,
+        "stars": 2,
+        "failed": false,
+        "finalTimeSec": 180,
+        "counters": {
+          "customersSpawned": 24,
+          "customersServed": 20,
+          "customersLost": 2,
+          "ordersCompleted": 20,
+          "perfectCooks": 30,
+          "goodCooks": 8,
+          "burnedFood": 1,
+          "bestCombo": 19,
+          "flips": 47,
+          "itemsCooked": 38,
+          "charcoalRefills": 0,
+          "peakSimultaneousOrders": 4,
+          "flawless": false
+        },
+        "slowCuts": [
+          {
+            "id": "costela",
+            "taken": 4,
+            "flipped": 4,
+            "served": 2,
+            "burned": 1
+          },
+          {
+            "id": "cupim",
+            "taken": 2,
+            "flipped": 2,
+            "served": 1,
+            "burned": 0
+          }
+        ]
+      }
+    }
+  ]
+}

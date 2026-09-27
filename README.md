@@ -97,7 +97,7 @@ See [docs/18-STATUS.md](docs/18-STATUS.md) for an honest, itemised account of wh
 implemented and verified versus what is still open. Short version:
 
 - **Implemented and verified here:** 22 data tables and schemas, the TypeScript reference
-  rules, level/save/balance tooling, a playable browser prototype, 299 tests and per-PR CI gates.
+  rules, level/save/balance tooling, a playable browser prototype, 351 tests and per-PR CI gates.
 - **Approved 2D art:** 244 sprites / 3.98 MB WebP, covering all 16 foods and 7 restaurant
   backgrounds; registry state is 244 approved, 0 pending and 1 superseded.
 - **Compiled and partially parity-checked in CI:** the engine-free C# core
@@ -105,8 +105,9 @@ implemented and verified versus what is still open. Short version:
 - **Known technical debt:** `docs/23-AUDITORIA_TECNICA.md` records 47 findings, including
   9 original high-severity findings: A-07/A-08/A-09 are fixed in TypeScript. A-01 now requires flipping both slow cuts
   (owner decision), with functional tests/UI passed but **economic acceptance pending**:
-  long sim fails 3/18 targets (late-game income, unlock timing and spend ratio). A-02–A-06
-  remain open. Evidence: [A-01 report](docs/evidence/a01/README.md). Green gates do not prove those remaining design defects are fixed.
+  long sim fails 3/18 targets (late-game income, unlock timing and spend ratio). A-02 now
+  applies player-level AND restaurant unlocks to orders/stock/UI; A-03–A-06 remain open.
+  Current evidence: [A-02 report](docs/evidence/a02/README.md). Green gates do not prove those remaining design defects are fixed.
 - **Not yet a Unity game:** there are no `Packages/`, `ProjectSettings/`, scenes, prefabs,
   APK or AAB. Unity services are stubs and have not been compiled against real SDKs.
 - **Audio and store material exist**, but still need Unity integration, device validation,

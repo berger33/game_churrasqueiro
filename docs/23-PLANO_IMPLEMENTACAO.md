@@ -156,13 +156,14 @@ Cada passo, ao ser aberto, ganha sub-passos próprios neste documento (mesmo for
 
 ## 8. Próximo passo imediato
 
-👉 **Próximo checkpoint: A-02 (nível do jogador no contrato e nos pools de pedidos/bancada), ainda dentro de F3.**
-A-01 segue a escolha confirmada do dono: **2 lados + virada obrigatória**, não `sides:1`.
-Correção funcional, UI/bot e 299 testes validados; **aceite econômico pendente**: sim longo
-15/18, com Rede Nacional cedo, renda L50 alta e spend ratio baixo. Carregar os três desvios
-para a revalidação F4, depois de A-02–A-06, sem retuning oportunista nem fechar F3/F4 agora.
-Detalhes/evidências em §9.10 e `docs/evidence/a01/README.md`.
-F1/F2 concluídas; sem arte nova, C#/Unity bloqueados, nenhum merge sem autorização.
+👉 **Próximo checkpoint: A-03 — fluxo real de preparo/vinagrete, ainda dentro de F3.**
+A-01 mantém a decisão do dono (2 lados + virada obrigatória). A-02 agora aplica **nível
+E restaurante** no turno, pedidos/estoque/bancada e chamadores, preservando o FTUE.
+**351 testes** e gates locais 14/15; economia longa **15/18**, mesmos três desvios:
+Rede883, L50=192.223/dia, spend0,489. Não retunar nem declarar F3/F4 encerradas.
+Vinagrete permanece no pool a partir de nível12/restaurante0, mas UI de prep ainda falta;
+não apagar/ocultar o item para fugir de A-03. Detalhes em §9.12 e evidence/a02.
+Sem arte nova, C#/Unity bloqueados, nenhum merge sem autorização. A-04 ainda exige decisão.
 
 **Registro de progresso:**
 
@@ -185,7 +186,7 @@ F1/F2 concluídas; sem arte nova, C#/Unity bloqueados, nenhum merge sem autoriza
 
 Esta seção prevalece sobre a numeração histórica das §§1–7 e a ordem antiga do handoff.
 Escopo inicial: baseline, planejamento e F1. Na continuação autorizada pelo dono,
-o mesmo PR #14 foi ampliado para **F1+F2+A-01** (§§9.7–9.10); F3 está em curso, F4–F13 pendentes/bloqueadas. Uma mudança de segurança será isolada em commit/PR, **na branch da sessão**;
+o mesmo PR #14 foi ampliado para **F1+F2+A-01+A-02** (§§9.7–9.12); F3 está em curso, F4–F13 pendentes/bloqueadas. Uma mudança de segurança será isolada em commit/PR, **na branch da sessão**;
 não se aplica a recomendação antiga de trocar para outra branch.
 
 ### 9.1 Baseline reproduzido antes de alterações
@@ -457,3 +458,53 @@ não desfazer a correção funcional nem mascarar o efeito com tuning oportunist
   accessible by integration** (permissão de dispatch). Portanto evidência longa é
   **local**, repetida e idêntica; não foi alegada execução remota do longo. Nenhuma
   credencial solicitada/inserida. O verde do CI por PR não contradiz os 3 alvos falhos.
+
+### 9.11 A-02 — registro de início (concluído funcionalmente em §9.12): nível do jogador no contrato
+
+Baseline `223b843`, árvore limpa, branch da sessão, fetch/ancestralidade PR13 e PR14 aberto
+sem merge confirmados. npm ci, 299 testes, gates 14/15 (C# SKIP), sim longo 15/18 com os
+mesmos três desvios A-01, sem retuning. Regressões anteriores à correção em evidence/a02.
+
+Contrato previsto: `TurnConfig.playerLevel` obrigatório, inteiro positivo, snapshot no
+início do turno; não inferir de `levelId`, índice da campanha ou tier do restaurante.
+Pedido natural, estoque/bancada e pedido roteirizado exigem **nível E restaurante**.
+Evitar clientes com menu vazio (inclusive unusualOnly); erro explícito em chamada forçada
+sem ingredientes elegíveis. FTUE explicita nível 1, mantém seus pedidos/tempos/seed.
+Sim progressivo passa p.level; UI passa meta.level; curva de skill acompanha XP/nível a
+partir de newPlayerState por skill, sem alterar sua política/grill/upgrades. Fixtures
+isoladas passam níveis explícitos justificados; nenhum default que libera todos os itens.
+Vetores existentes de turnos ganham playerLevel e cenários iniciais 1/4/8/14; os oito
+avançados usam 44 (ambos cortes disponíveis). Revisar cada expectativa antes de aceitar.
+Próximo checkpoint depois deste: A-03 prep, sem escondê-lo do pool para evitar implementação.
+
+
+### 9.12 Checkpoint A-02 — desbloqueio funcional validado; economia global pendente
+
+- `TurnConfig.playerLevel` obrigatório/integral/positivo, snapshot no início, não índice
+  de fase. Catálogo único exige **restaurante E nível** para pedidos, estoque, bot e UI;
+  pedido roteirizado também respeita. Rejeita menu vazio; unusualOnly só sorteado quando
+  existe receita não comum elegível. Forçar cliente sem receita gera erro, nunca pedido vazio.
+- Sim passa p.level, UI meta.level, FTUE1; curva de skill inicia jogador1 por skill e
+  acumula XP via regra, sem compras. Relatório expõe contexto/catalogo/pedidos reais.
+  Fixtures isoladas de mecânica usam44 explicitamente; nenhum default em produção.
+- **50/50 regressões vermelhas antes**; **2/2 regressões de wiring** detectam callers
+  artificialmente44. Harness vermelho com bancada antiga (tentativa de legumes bloqueados),
+  restaurado em finally. Agora **351/351 testes**, 18 arquivos, gates locais **14/15**, C# SKIP.
+- UI real: níveis1/5/6/7 no save, catálogo/pedidos coerentes, sem hitbox fantasma,
+  queijo arrastável exatamente6 e depois7; **19 screenshots**, 244 sprites. FTUE mantém
+ 16,1/32,9/38,3s, zero misses. Fixture não prova metaprogressão completa do protótipo.
+- `vectors.version`1→2, playerLevel nos20 turnos. Perfis iniciais1/4/8/14: **9 expectativas
+  mudam**, 3 de nível14 e8 avançadas nível44 preservadas. Cooking48/scoring32/economy6
+  intactos;44 FTUE byte a byte idênticos. Total106+44; sem schema/data/save/level/C# gerado.
+  Diff por caso em `evidence/a02/vector-review.json`; C# continua25 not ported.
+- Sim longo: **15/18, exit1**. Renda22.233.557, gasto10.873.220, saldo11.360.337;
+  perfect75,7%, burned0,2%, perdidos3,5%, duração172,5s. Restaurantes42/98/165/259/398/883;
+  grills10/45/89; renda L5/15/30/50=10.480/39.445/108.533/192.223. Falhas mantidas:
+  rede883 vs950–1450, L50=192.223 vs98.000–152.000, spend0,489 vs0,70–0,99.
+  Curva .55 passa de55,7%/793 moedas para46,0%/571; agora só recebe receitas desbloqueadas
+  por XP real. Probe avançado A-01 inalterado no perfil44. **Nenhum tuning/limite alterado.**
+- npm audit mesmas5 vulnerabilidades (1 crítica/1 alta/3 moderadas); sem force-fix.
+  Longo local; permissão Nightly foi negada403 na etapa anterior, não alegar longo remoto.
+- A-01/A-02 funcionais, **A-03–A-06 abertos**. Próximo A-03 prep; manter gates e transportar
+  desvios econômicos para F4. Documentos/evidências atualizados. Sem C#/Unity/arte/merge.
+- Commits e CI deste checkpoint: **pendentes de push/execução**; ampliar o mesmo PR14.

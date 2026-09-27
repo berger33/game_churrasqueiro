@@ -1,13 +1,13 @@
 # 18 — Status Report
 
-**Snapshot:** 2026-09-27 · branch `arena/01a0e03e-game-churrasqueiro` · F1+F2 implementadas; A-01 funcional validado, aceite econômico pendente; merge desta sessão não autorizado
+**Snapshot:** 2026-09-27 · branch `arena/01a0e03e-game-churrasqueiro` · F1+F2 implementadas; A-01/A-02 funcionais validados, aceite econômico global pendente; merge desta sessão não autorizado
 
 **Estado executivo:** 🟡 protótipo técnico sólido, com dados, regras de referência, FTUE,
 automação, arte e protótipo web avançados; ainda não é um jogo Unity publicável. Não existem
 `Packages/`, `ProjectSettings/`, cenas/prefabs Unity, APK ou AAB. A auditoria técnica
 `docs/23-AUDITORIA_TECNICA.md` registra 47 achados originais (9 altos, 19 médios, 19 baixos). A-07/A-08/A-09 foram
 corrigidos na referência TS. A-01 foi corrigido funcionalmente (virada obrigatória), mas a
-economia longa falha em 3 alvos; A-02–A-06 seguem abertos. Não liberar a porta C#.
+economia longa falha em3 alvos. A-02 aplica nível E restaurante; A-03–A-06 seguem abertos. Não liberar a porta C#.
 
 This report states plainly what is **done and verified**, what is **built but
 unverified here**, and what is **not built**. Anything marked ⚠ was not executed
@@ -43,7 +43,35 @@ The owner approved the final round and authorised the complete merge on 2026-09-
 The art lifecycle is closed; the next work is rule remediation and platform implementation,
 not another replacement batch.
 
-## Post-art A-01 — vigente: funcional validado, economia pendente
+## Post-art A-02 — vigente: nível E restaurante, economia global pendente
+
+- `playerLevel` obrigatório no TurnConfig, inteiro positivo, separado do índice da fase;
+  catálogo de início do turno exige nível e restaurante para pedidos/estoque/bancada.
+  Roteirizados também respeitam; unusualOnly sem receita não entra no sorteio, forçado
+  sem menu falha explicitamente. Não há pedido vazio nem bypass com nível omitido.
+- Sim passa p.level, UI meta.level, FTUE1. Curva de skill acumula XP real a partir de1,
+  mantendo skill fixa/sem compras. Fixtures de mecânica usam44 explicitamente; nenhuma
+  receita antecipada nos chamadores reais. Dados/save/schema/tiposC# intactos.
+- **351/351 testes**,18 arquivos:50 regressões originais red +2 wiring red; harness falha
+  com bancada antiga, green com catálogo alinhado. **14/15 gates locais**, C# SKIP.
+- **106+44 vetores**, formato principalv2: playerLevel obrigatório nos20 turnos,
+ 9 expectativas iniciais mudam;11 preservadas, cooking/scoring/economy e44 FTUE intactos.
+  Revisão por caso em `evidence/a02/vector-review.json`. C# continua25 não portados.
+- **19 screenshots/244 sprites**: save nos níveis1/5/6/7, bancada/pedidos coerentes,
+  queijo visível/arrastável a partir de6, sem hitbox fantasma. FTUE16,1/32,9/38,3s e
+  zero erros. Fixtures de UI não provam desbloqueio natural/metaprogressão completa.
+- Longo **15/18, exit1**: rede883 vs950–1450, L50=192.223 vs98.000–152.000,
+  spend0,489 vs0,70–0,99. Renda22.233.557, gasto10.873.220, saldo11.360.337;
+  perfect75,7%, burned0,2%, lost3,5%, média172,5s. Restaurantes42/98/165/259/398/883,
+  grills10/45/89. **Sem tuning/limites alterados**, economia global não estabilizada.
+- Evidências/logs/curva em [`evidence/a02/README.md`](evidence/a02/README.md).
+  npm audit mesmas5 vulnerabilidades, sem force-fix. Longo é evidência local (Nightly
+  dispatch negado403 anteriormente). **CI A-02 pendente de push/execução**.
+- Próximo **A-03 prep/vinagrete**: a receita continua no pool após nível12/rest0, mas
+  falta o fluxo não grelhado na UI. Não remover para esconder o problema. PR14 aberto,
+  sem merge; A-04 ainda exige decisão, F3/F4/C#/Unity não liberados.
+
+## Post-art A-01 — histórico: funcional validado, economia pendente
 
 Dono escolheu **exigir virada**, rejeitando a recomendação de um lado. Ingredients v6:
 costela/cupim permanecem `sides:2`, agora `flipNeeded:true`; validador semântico protege
@@ -259,21 +287,21 @@ Every claim below was produced by a command run in this checkout.
 
 | Area | Check | Result |
 |---|---|---|
-| Unit tests | `npx vitest run` | **299 passed / 0 failed** (16 files; F1 +52, F2 +18, A-01 +27) |
+| Unit tests | `npx vitest run` | **351 passed / 0 failed** (18 files; A-02 adds52) |
 | Type check | `npm run typecheck` | **OK — 0 errors.** `tsconfig.json` was strict (`strict`, `noUncheckedIndexedAccess`) but no script ever ran it: the first run reported **140 errors**, of which **15 were real code defects** (section 4.1) |
 | Localisation | `npm run check-l10n` | **OK** — 380 keys referenced by data, all translated in pt-BR (515 keys total; the six text-heavy `ui.tut.1–6` gave way to the FTUE's short prompts); en-US / es-419 are declared 11.1 % stubs that fall back to pt-BR |
 | Data integrity | `npm run validate` | **OK** — 22 tables (incl. `churrasqueiras`, `tutorial`), 16 ingredients, 11 customers, 7 restaurants, 27 upgrade tracks, 58 achievements, 37 collection entries, 48 analytics events, 6 FTUE steps, 60 authored levels |
 | Data contracts | `npm run check-schema` | **OK** — 22/22 tables valid against `shared/schema`, and every contract rejects a broken copy of itself |
 | Contract drift | `npm run verify-schemas` | **OK** — 22 schemas in step with `shared/data` |
 | Short-horizon economy | `npm run sim` | **all balance targets met** (grill:fornalha skipped — needs long horizon) |
-| Long-horizon economy | `npm run sim:long` (1500 turns) | **15/18; exit 1** — A-01 income/unlock/spend failures; see current checkpoint above |
+| Long-horizon economy | `npm run sim:long` (1500 turns) | **15/18; exit 1** — A-02 income/unlock/spend failures; see current checkpoint above |
 | Economy report | `HORIZON=1500 npm run balance-report` | **Historical pre-A-01, not revalidated:** reaches level 80; income growth L5→L70 **×12.27** vs cost growth **×29.28** → costs outpace income, so purchases stay meaningful |
 | Unity data copy | `npm run verify-data-sync` | **OK — Assets/Data matches shared/data (22 tables)** |
 | Prototype bundle | `npx esbuild --bundle prototype/src/main.ts` | **290 kB unminified (251 kB before the FTUE), 0 errors** — and the source now type-checks, which it never did |
 | Art registry | `npm run check-art-registry` | **OK** — 245 masters/rows/manifest entries, 244 approved runtime sprites, 244 protected baseline IDs; 52 contract tests (46 negative). |
 | Art coverage | `npm run check-art` | **OK** — 16 ingredients × 8 doneness levels + icons = **144 draws**, all painted |
 | Render smoke | `npm run check-render` | **OK, 4 s** — real bundle through the whole FTUE (played by following the hand: 8 events in order, 0 misses), step 6, Home's daily calendar (strip → modal → `RESGATAR` pays once → ✕), an ordinary turn to the result, then a second install that is backgrounded (`tutorial_abandon` once) and skipped (`tutorial_skip` → Home); **~38 M canvas ops, no exceptions** |
-| Shot harness | `npm run check-shots` | **OK — ~6 s.** 17 real PNGs (4 new advanced-page/flip/perfect-window shots via real pointer input), plus the original 13: a fresh install (splash, title, FTUE steps 1 / 2-waiting / 2 / 3 / 4, FTUE result, step 6 on Home), then a relaunch that must open on Home (home, empty grill, cooking, result). Asserts the FTUE funnel from `__churrascoAnalytics` — first PERFEITO 16.1 s, step 6 at 38.3 s (< 60 s), 0 misses. 197 painted frames, 1 806 sim-only ticks, 60 s self-budget. |
+| Shot harness | `npm run check-shots` | **OK — ~6 s.** 19 real PNGs (4 advanced-page/flip/perfect-window and2 level-boundary shots via real pointer input), plus the original13: a fresh install (splash, title, FTUE steps 1 / 2-waiting / 2 / 3 / 4, FTUE result, step 6 on Home), then a relaunch that must open on Home (home, empty grill, cooking, result). Asserts the FTUE funnel from `__churrascoAnalytics` — first PERFEITO 16.1 s, step 6 at 38.3 s (< 60 s), 0 misses. 199 painted frames, 1 913 sim-only ticks, 60 s self-budget. |
 | Prototype server | `node prototype/dev-server.mjs` | **Historical check; no server currently running.** Configured for `0.0.0.0:5173`; `/`, `/bundle.js`, `/healthz`, `/data/*.json` all return **200** |
 | C# core | `npm run check-csharp` | **CI: builds `Assets/Scripts/Core` (netstandard2.1, C# 9, warnings as errors) and 139 parity checks agree** — 13 tables bind losslessly, `GameData.Load` clean, cooking 48/48, scoring 32/32, effective heat, 44 FTUE vectors; 25 economy/turn vectors unported after A-01 (5+20); 139 checks confirmed by A-01 CI run 36285270473. **Here: SKIP** (no .NET SDK); verified during development with an in-process Roslyn compiler |
 | CI | `.github/workflows/ci.yml` + `npm run gates` | **15 gates on ubuntu-latest** (`check-csharp` added, with `actions/setup-dotnet` 8.0). `check-shots` is in the per-PR list (cheap sim catch-up, not 10 800 draws). Node 22 — `node --experimental-strip-types` does not exist on 20 (exit 9). Nightly `sim:long` is `.github/workflows/nightly.yml`. The Unity-side layer is still not compiled — no Unity toolchain. |
@@ -353,7 +381,7 @@ The Unity-side files above are still in that state.
 ## 3. Long-horizon economy — verified
 
 > Historical pre-A-01 projection; current measurements and three failed targets are
-> in the Post-art A-01 checkpoint above and docs/evidence/a01/. Do not treat these
+> in the Post-art A-02 checkpoint above and docs/evidence/a01/. Do not treat these
 > older green targets/gap/income values as the current balance.
 
 
@@ -590,7 +618,7 @@ The prototype proves art *direction*, not the art *budget*.
 ## 7. Historical next-step list — superseded by operational plan §9
 
 **Do not start these ports yet:** remediate TypeScript/data/economy first. The current next
-action is A-02 after the functional A-01 checkpoint; A-01 economic acceptance is still pending. The list below preserves the earlier port backlog.
+action is A-03 after functional A-01/A-02; global economic acceptance is still pending. The list below preserves the earlier port backlog.
 
 1. ~~**Compile the C# core** (`dotnet build` in CI) and add golden-vector parity~~ — **done**:
    `npm run check-csharp` (gate 14), 139 checks agree (see "FTUE follow-ups").

@@ -1,0 +1,532 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/ingredient-unlock.test.ts (50 tests | 50 failed) 152ms
+   × A-02: ingredient unlock requires player level AND restaurant > starts with only linguiça in natural orders and the stock list 11ms
+     → expected [ 'legumes_grelhados', …(7) ] to deeply equal [ 'linguica_toscana' ]
+   × A-02: ingredient unlock requires player level AND restaurant > linguica_toscana is available at and after its exact level and restaurant 8ms
+     → expected [] to include 'linguica_toscana'
+   × A-02: ingredient unlock requires player level AND restaurant > pao_de_alho is absent immediately before level 2, even in restaurant 6 7ms
+     → expected true to be false // Object.is equality
+   × A-02: ingredient unlock requires player level AND restaurant > pao_de_alho is available at and after its exact level and restaurant 3ms
+     → expected [] to include 'pao_de_alho'
+   × A-02: ingredient unlock requires player level AND restaurant > queijo_coalho is absent immediately before level 6, even in restaurant 6 3ms
+     → expected true to be false // Object.is equality
+   × A-02: ingredient unlock requires player level AND restaurant > queijo_coalho is available at and after its exact level and restaurant 3ms
+     → expected [] to include 'queijo_coalho'
+   × A-02: ingredient unlock requires player level AND restaurant > coracao_frango is absent immediately before level 4, even in restaurant 6 3ms
+     → expected true to be false // Object.is equality
+   × A-02: ingredient unlock requires player level AND restaurant > coracao_frango is available at and after its exact level and restaurant 3ms
+     → expected [] to include 'coracao_frango'
+   × A-02: ingredient unlock requires player level AND restaurant > frango_coxa is absent immediately before level 8, even in restaurant 6 8ms
+     → expected true to be false // Object.is equality
+   × A-02: ingredient unlock requires player level AND restaurant > frango_coxa is available at and after its exact level and restaurant 3ms
+     → expected [] to include 'frango_coxa'
+   × A-02: ingredient unlock requires player level AND restaurant > asinha_frango is absent immediately before level 12, even in restaurant 6 2ms
+     → expected true to be false // Object.is equality
+   × A-02: ingredient unlock requires player level AND restaurant > asinha_frango is available at and after its exact level and restaurant 2ms
+     → expected [] to include 'asinha_frango'
+   × A-02: ingredient unlock requires player level AND restaurant > asinha_frango still requires restaurant 1 at level 80 3ms
+     → expected [Function] to throw an error
+   × A-02: ingredient unlock requires player level AND restaurant > espetinho_frango is available at and after its exact level and restaurant 3ms
+     → expected [] to include 'espetinho_frango'
+   × A-02: ingredient unlock requires player level AND restaurant > espetinho_frango still requires restaurant 1 at level 80 4ms
+     → expected [Function] to throw an error
+   × A-02: ingredient unlock requires player level AND restaurant > espetinho_misto is absent immediately before level 5, even in restaurant 6 7ms
+     → expected true to be false // Object.is equality
+   × A-02: ingredient unlock requires player level AND restaurant > espetinho_misto is available at and after its exact level and restaurant 2ms
+     → expected [] to include 'espetinho_misto'
+   × A-02: ingredient unlock requires player level AND restaurant > espetinho_misto still requires restaurant 1 at level 80 2ms
+     → expected [Function] to throw an error
+   × A-02: ingredient unlock requires player level AND restaurant > legumes_grelhados is absent immediately before level 10, even in restaurant 6 2ms
+     → expected true to be false // Object.is equality
+   × A-02: ingredient unlock requires player level AND restaurant > legumes_grelhados is available at and after its exact level and restaurant 3ms
+     → expected [] to include 'legumes_grelhados'
+   × A-02: ingredient unlock requires player level AND restaurant > fraldinha is absent immediately before level 14, even in restaurant 6 2ms
+     → expected true to be false // Object.is equality
+   × A-02: ingredient unlock requires player level AND restaurant > fraldinha is available at and after its exact level and restaurant 4ms
+     → expected [] to include 'fraldinha'
+   × A-02: ingredient unlock requires player level AND restaurant > contra_file is absent immediately before level 22, even in restaurant 6 2ms
+     → expected true to be false // Object.is equality
+   × A-02: ingredient unlock requires player level AND restaurant > contra_file is available at and after its exact level and restaurant 2ms
+     → expected [] to include 'contra_file'
+   × A-02: ingredient unlock requires player level AND restaurant > contra_file still requires restaurant 2 at level 80 2ms
+     → expected [Function] to throw an error
+   × A-02: ingredient unlock requires player level AND restaurant > maminha is absent immediately before level 26, even in restaurant 6 3ms
+     → expected true to be false // Object.is equality
+   × A-02: ingredient unlock requires player level AND restaurant > maminha is available at and after its exact level and restaurant 2ms
+     → expected [] to include 'maminha'
+   × A-02: ingredient unlock requires player level AND restaurant > maminha still requires restaurant 2 at level 80 2ms
+     → expected [Function] to throw an error
+   × A-02: ingredient unlock requires player level AND restaurant > picanha is absent immediately before level 8, even in restaurant 6 2ms
+     → expected true to be false // Object.is equality
+   × A-02: ingredient unlock requires player level AND restaurant > picanha is available at and after its exact level and restaurant 2ms
+     → expected [] to include 'picanha'
+   × A-02: ingredient unlock requires player level AND restaurant > picanha still requires restaurant 1 at level 80 2ms
+     → expected [Function] to throw an error
+   × A-02: ingredient unlock requires player level AND restaurant > costela is absent immediately before level 34, even in restaurant 6 2ms
+     → expected true to be false // Object.is equality
+   × A-02: ingredient unlock requires player level AND restaurant > costela is available at and after its exact level and restaurant 3ms
+     → expected [] to include 'costela'
+   × A-02: ingredient unlock requires player level AND restaurant > costela still requires restaurant 3 at level 80 2ms
+     → expected [Function] to throw an error
+   × A-02: ingredient unlock requires player level AND restaurant > cupim is absent immediately before level 44, even in restaurant 6 2ms
+     → expected true to be false // Object.is equality
+   × A-02: ingredient unlock requires player level AND restaurant > cupim is available at and after its exact level and restaurant 2ms
+     → expected [] to include 'cupim'
+   × A-02: ingredient unlock requires player level AND restaurant > cupim still requires restaurant 4 at level 80 2ms
+     → expected [Function] to throw an error
+   × A-02: ingredient unlock requires player level AND restaurant > vinagrete is absent immediately before level 12, even in restaurant 6 2ms
+     → expected true to be false // Object.is equality
+   × A-02: ingredient unlock requires player level AND restaurant > vinagrete is available at and after its exact level and restaurant 3ms
+     → expected [] to include 'vinagrete'
+   × A-02: ingredient unlock requires player level AND restaurant > does not confuse a campaign level index/id with player progression 2ms
+     → expected [ 'pao_de_alho', …(7) ] to deeply equal [ 'linguica_toscana' ]
+   × A-02: ingredient unlock requires player level AND restaurant > snapshots progression at turn start, then unlocks on the next turn 2ms
+     → expected true to be false // Object.is equality
+   × A-02: ingredient unlock requires player level AND restaurant > rejects invalid player level 0 1ms
+     → expected [Function] to throw an error
+   × A-02: ingredient unlock requires player level AND restaurant > rejects invalid player level -1 0ms
+     → expected [Function] to throw an error
+   × A-02: ingredient unlock requires player level AND restaurant > rejects invalid player level 1.5 0ms
+     → expected [Function] to throw an error
+   × A-02: ingredient unlock requires player level AND restaurant > rejects invalid player level NaN 0ms
+     → expected [Function] to throw an error
+   × A-02: ingredient unlock requires player level AND restaurant > rejects invalid player level Infinity 0ms
+     → expected [Function] to throw an error
+   × A-02: ingredient unlock requires player level AND restaurant > rejects missing playerLevel rather than silently enabling all recipes 1ms
+     → expected [Function] to throw an error
+   × A-02: ingredient unlock requires player level AND restaurant > rejects a configuration with no unlocked recipe instead of admitting an empty order 1ms
+     → expected [Function] to throw an error
+   × A-02: ingredient unlock requires player level AND restaurant > never spawns an unusual-only customer with an empty/locked menu 1ms
+     → expected 14 to be less than or equal to 1
+   × A-02: ingredient unlock requires player level AND restaurant > the real policy only takes and serves unlocked stock at a low player level 21ms
+     → expected [ 'legumes_grelhados', …(4) ] to deeply equal [ 'linguica_toscana' ]
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 50 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > starts with only linguiça in natural orders and the stock list
+AssertionError: expected [ 'legumes_grelhados', …(7) ] to deeply equal [ 'linguica_toscana' ]
+
+- Expected
++ Received
+
+  Array [
++   "legumes_grelhados",
++   "queijo_coalho",
+    "linguica_toscana",
++   "coracao_frango",
++   "fraldinha",
++   "pao_de_alho",
++   "frango_coxa",
++   "vinagrete",
+  ]
+
+ ❯ tools/studio/test/ingredient-unlock.test.ts:28:22
+     26|     const ids = new Set<string>();
+     27|     for (let i = 0; i < 200; i++) for (const l of sim.spawnCustomer().…
+     28|     expect([...ids]).toEqual(['linguica_toscana']);
+       |                      ^
+     29|     expect(sim.bench.map(i => i.id)).toEqual(['linguica_toscana']);
+     30|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > linguica_toscana is available at and after its exact level and restaurant
+AssertionError: expected [] to include 'linguica_toscana'
+ ❯ tools/studio/test/ingredient-unlock.test.ts:44:42
+     42|         const sim = make(restaurantIndex, playerLevel);
+     43|         expect(orders(sim).has(ing.id)).toBe(true);
+     44|         expect(sim.bench.map(i => i.id)).toContain(ing.id);
+       |                                          ^
+     45|         expect(sim.takeFromStock(ing).ingredient.id).toBe(ing.id);
+     46|         expect(sim.spawnScriptedCustomer('comum', [ing.id], 40).lines[…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > pao_de_alho is absent immediately before level 2, even in restaurant 6
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > queijo_coalho is absent immediately before level 6, even in restaurant 6
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > coracao_frango is absent immediately before level 4, even in restaurant 6
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > frango_coxa is absent immediately before level 8, even in restaurant 6
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > asinha_frango is absent immediately before level 12, even in restaurant 6
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > espetinho_misto is absent immediately before level 5, even in restaurant 6
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > legumes_grelhados is absent immediately before level 10, even in restaurant 6
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > fraldinha is absent immediately before level 14, even in restaurant 6
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > contra_file is absent immediately before level 22, even in restaurant 6
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > maminha is absent immediately before level 26, even in restaurant 6
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > picanha is absent immediately before level 8, even in restaurant 6
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > costela is absent immediately before level 34, even in restaurant 6
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > cupim is absent immediately before level 44, even in restaurant 6
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > vinagrete is absent immediately before level 12, even in restaurant 6
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tools/studio/test/ingredient-unlock.test.ts:35:39
+     33|     if (level > 1) it(`${ing.id} is absent immediately before level ${…
+     34|       const sim = make(6, level - 1);
+     35|       expect(orders(sim).has(ing.id)).toBe(false);
+       |                                       ^
+     36|       expect(() => sim.takeFromStock(ing)).toThrow(/locked/);
+     37|       expect(() => sim.spawnScriptedCustomer('comum', [ing.id], 40)).t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > pao_de_alho is available at and after its exact level and restaurant
+AssertionError: expected [] to include 'pao_de_alho'
+ ❯ tools/studio/test/ingredient-unlock.test.ts:44:42
+     42|         const sim = make(restaurantIndex, playerLevel);
+     43|         expect(orders(sim).has(ing.id)).toBe(true);
+     44|         expect(sim.bench.map(i => i.id)).toContain(ing.id);
+       |                                          ^
+     45|         expect(sim.takeFromStock(ing).ingredient.id).toBe(ing.id);
+     46|         expect(sim.spawnScriptedCustomer('comum', [ing.id], 40).lines[…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > queijo_coalho is available at and after its exact level and restaurant
+AssertionError: expected [] to include 'queijo_coalho'
+ ❯ tools/studio/test/ingredient-unlock.test.ts:44:42
+     42|         const sim = make(restaurantIndex, playerLevel);
+     43|         expect(orders(sim).has(ing.id)).toBe(true);
+     44|         expect(sim.bench.map(i => i.id)).toContain(ing.id);
+       |                                          ^
+     45|         expect(sim.takeFromStock(ing).ingredient.id).toBe(ing.id);
+     46|         expect(sim.spawnScriptedCustomer('comum', [ing.id], 40).lines[…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > coracao_frango is available at and after its exact level and restaurant
+AssertionError: expected [] to include 'coracao_frango'
+ ❯ tools/studio/test/ingredient-unlock.test.ts:44:42
+     42|         const sim = make(restaurantIndex, playerLevel);
+     43|         expect(orders(sim).has(ing.id)).toBe(true);
+     44|         expect(sim.bench.map(i => i.id)).toContain(ing.id);
+       |                                          ^
+     45|         expect(sim.takeFromStock(ing).ingredient.id).toBe(ing.id);
+     46|         expect(sim.spawnScriptedCustomer('comum', [ing.id], 40).lines[…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > frango_coxa is available at and after its exact level and restaurant
+AssertionError: expected [] to include 'frango_coxa'
+ ❯ tools/studio/test/ingredient-unlock.test.ts:44:42
+     42|         const sim = make(restaurantIndex, playerLevel);
+     43|         expect(orders(sim).has(ing.id)).toBe(true);
+     44|         expect(sim.bench.map(i => i.id)).toContain(ing.id);
+       |                                          ^
+     45|         expect(sim.takeFromStock(ing).ingredient.id).toBe(ing.id);
+     46|         expect(sim.spawnScriptedCustomer('comum', [ing.id], 40).lines[…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > asinha_frango is available at and after its exact level and restaurant
+AssertionError: expected [] to include 'asinha_frango'
+ ❯ tools/studio/test/ingredient-unlock.test.ts:44:42
+     42|         const sim = make(restaurantIndex, playerLevel);
+     43|         expect(orders(sim).has(ing.id)).toBe(true);
+     44|         expect(sim.bench.map(i => i.id)).toContain(ing.id);
+       |                                          ^
+     45|         expect(sim.takeFromStock(ing).ingredient.id).toBe(ing.id);
+     46|         expect(sim.spawnScriptedCustomer('comum', [ing.id], 40).lines[…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > asinha_frango still requires restaurant 1 at level 80
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > espetinho_frango still requires restaurant 1 at level 80
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > espetinho_misto still requires restaurant 1 at level 80
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > contra_file still requires restaurant 2 at level 80
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > maminha still requires restaurant 2 at level 80
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > picanha still requires restaurant 1 at level 80
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > costela still requires restaurant 3 at level 80
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > cupim still requires restaurant 4 at level 80
+AssertionError: expected [Function] to throw an error
+
+- Expected: 
+null
+
++ Received: 
+undefined
+
+ ❯ tools/studio/test/ingredient-unlock.test.ts:52:44
+     50|       const sim = make(restaurantIndex - 1, 80);
+     51|       expect(orders(sim).has(ing.id)).toBe(false);
+     52|       expect(() => sim.takeFromStock(ing)).toThrow(/locked/);
+       |                                            ^
+     53|     });
+     54|   }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > espetinho_frango is available at and after its exact level and restaurant
+AssertionError: expected [] to include 'espetinho_frango'
+ ❯ tools/studio/test/ingredient-unlock.test.ts:44:42
+     42|         const sim = make(restaurantIndex, playerLevel);
+     43|         expect(orders(sim).has(ing.id)).toBe(true);
+     44|         expect(sim.bench.map(i => i.id)).toContain(ing.id);
+       |                                          ^
+     45|         expect(sim.takeFromStock(ing).ingredient.id).toBe(ing.id);
+     46|         expect(sim.spawnScriptedCustomer('comum', [ing.id], 40).lines[…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > espetinho_misto is available at and after its exact level and restaurant
+AssertionError: expected [] to include 'espetinho_misto'
+ ❯ tools/studio/test/ingredient-unlock.test.ts:44:42
+     42|         const sim = make(restaurantIndex, playerLevel);
+     43|         expect(orders(sim).has(ing.id)).toBe(true);
+     44|         expect(sim.bench.map(i => i.id)).toContain(ing.id);
+       |                                          ^
+     45|         expect(sim.takeFromStock(ing).ingredient.id).toBe(ing.id);
+     46|         expect(sim.spawnScriptedCustomer('comum', [ing.id], 40).lines[…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > legumes_grelhados is available at and after its exact level and restaurant
+AssertionError: expected [] to include 'legumes_grelhados'
+ ❯ tools/studio/test/ingredient-unlock.test.ts:44:42
+     42|         const sim = make(restaurantIndex, playerLevel);
+     43|         expect(orders(sim).has(ing.id)).toBe(true);
+     44|         expect(sim.bench.map(i => i.id)).toContain(ing.id);
+       |                                          ^
+     45|         expect(sim.takeFromStock(ing).ingredient.id).toBe(ing.id);
+     46|         expect(sim.spawnScriptedCustomer('comum', [ing.id], 40).lines[…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > fraldinha is available at and after its exact level and restaurant
+AssertionError: expected [] to include 'fraldinha'
+ ❯ tools/studio/test/ingredient-unlock.test.ts:44:42
+     42|         const sim = make(restaurantIndex, playerLevel);
+     43|         expect(orders(sim).has(ing.id)).toBe(true);
+     44|         expect(sim.bench.map(i => i.id)).toContain(ing.id);
+       |                                          ^
+     45|         expect(sim.takeFromStock(ing).ingredient.id).toBe(ing.id);
+     46|         expect(sim.spawnScriptedCustomer('comum', [ing.id], 40).lines[…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > contra_file is available at and after its exact level and restaurant
+AssertionError: expected [] to include 'contra_file'
+ ❯ tools/studio/test/ingredient-unlock.test.ts:44:42
+     42|         const sim = make(restaurantIndex, playerLevel);
+     43|         expect(orders(sim).has(ing.id)).toBe(true);
+     44|         expect(sim.bench.map(i => i.id)).toContain(ing.id);
+       |                                          ^
+     45|         expect(sim.takeFromStock(ing).ingredient.id).toBe(ing.id);
+     46|         expect(sim.spawnScriptedCustomer('comum', [ing.id], 40).lines[…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > maminha is available at and after its exact level and restaurant
+AssertionError: expected [] to include 'maminha'
+ ❯ tools/studio/test/ingredient-unlock.test.ts:44:42
+     42|         const sim = make(restaurantIndex, playerLevel);
+     43|         expect(orders(sim).has(ing.id)).toBe(true);
+     44|         expect(sim.bench.map(i => i.id)).toContain(ing.id);
+       |                                          ^
+     45|         expect(sim.takeFromStock(ing).ingredient.id).toBe(ing.id);
+     46|         expect(sim.spawnScriptedCustomer('comum', [ing.id], 40).lines[…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > picanha is available at and after its exact level and restaurant
+AssertionError: expected [] to include 'picanha'
+ ❯ tools/studio/test/ingredient-unlock.test.ts:44:42
+     42|         const sim = make(restaurantIndex, playerLevel);
+     43|         expect(orders(sim).has(ing.id)).toBe(true);
+     44|         expect(sim.bench.map(i => i.id)).toContain(ing.id);
+       |                                          ^
+     45|         expect(sim.takeFromStock(ing).ingredient.id).toBe(ing.id);
+     46|         expect(sim.spawnScriptedCustomer('comum', [ing.id], 40).lines[…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > costela is available at and after its exact level and restaurant
+AssertionError: expected [] to include 'costela'
+ ❯ tools/studio/test/ingredient-unlock.test.ts:44:42
+     42|         const sim = make(restaurantIndex, playerLevel);
+     43|         expect(orders(sim).has(ing.id)).toBe(true);
+     44|         expect(sim.bench.map(i => i.id)).toContain(ing.id);
+       |                                          ^
+     45|         expect(sim.takeFromStock(ing).ingredient.id).toBe(ing.id);
+     46|         expect(sim.spawnScriptedCustomer('comum', [ing.id], 40).lines[…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > cupim is available at and after its exact level and restaurant
+AssertionError: expected [] to include 'cupim'
+ ❯ tools/studio/test/ingredient-unlock.test.ts:44:42
+     42|         const sim = make(restaurantIndex, playerLevel);
+     43|         expect(orders(sim).has(ing.id)).toBe(true);
+     44|         expect(sim.bench.map(i => i.id)).toContain(ing.id);
+       |                                          ^
+     45|         expect(sim.takeFromStock(ing).ingredient.id).toBe(ing.id);
+     46|         expect(sim.spawnScriptedCustomer('comum', [ing.id], 40).lines[…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > vinagrete is available at and after its exact level and restaurant
+AssertionError: expected [] to include 'vinagrete'
+ ❯ tools/studio/test/ingredient-unlock.test.ts:44:42
+     42|         const sim = make(restaurantIndex, playerLevel);
+     43|         expect(orders(sim).has(ing.id)).toBe(true);
+     44|         expect(sim.bench.map(i => i.id)).toContain(ing.id);
+       |                                          ^
+     45|         expect(sim.takeFromStock(ing).ingredient.id).toBe(ing.id);
+     46|         expect(sim.spawnScriptedCustomer('comum', [ing.id], 40).lines[…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > does not confuse a campaign level index/id with player progression
+AssertionError: expected [ 'pao_de_alho', …(7) ] to deeply equal [ 'linguica_toscana' ]
+
+- Expected
++ Received
+
+  Array [
++   "pao_de_alho",
++   "legumes_grelhados",
++   "fraldinha",
++   "queijo_coalho",
+    "linguica_toscana",
++   "coracao_frango",
++   "frango_coxa",
++   "vinagrete",
+  ]
+
+ ❯ tools/studio/test/ingredient-unlock.test.ts:57:30
+     55|   it('does not confuse a campaign level index/id with player progressi…
+     56|     const sim = new TurnSimulation(db, { ...config(0, 1), levelId: 'le…
+     57|     expect([...orders(sim)]).toEqual(['linguica_toscana']);
+       |                              ^
+     58|   });
+     59|   it('snapshots progression at turn start, then unlocks on the next tu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > snapshots progression at turn start, then unlocks on the next turn
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tools/studio/test/ingredient-unlock.test.ts:63:46
+     61|     const sim = new TurnSimulation(db, cfg);
+     62|     cfg.playerLevel = 6;
+     63|     expect(orders(sim).has('queijo_coalho')).toBe(false);
+       |                                              ^
+     64|     expect(orders(new TurnSimulation(db, cfg)).has('queijo_coalho')).t…
+     65|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > rejects invalid player level 0
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > rejects invalid player level -1
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > rejects invalid player level 1.5
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > rejects invalid player level NaN
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > rejects invalid player level Infinity
+AssertionError: expected [Function] to throw an error
+
+- Expected: 
+null
+
++ Received: 
+undefined
+
+ ❯ tools/studio/test/ingredient-unlock.test.ts:67:40
+     65|   });
+     66|   for (const playerLevel of [0, -1, 1.5, NaN, Infinity]) it(`rejects i…
+     67|     expect(() => make(0, playerLevel)).toThrow(/playerLevel/);
+       |                                        ^
+     68|   });
+     69|   it('rejects missing playerLevel rather than silently enabling all re…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > rejects missing playerLevel rather than silently enabling all recipes
+AssertionError: expected [Function] to throw an error
+
+- Expected: 
+null
+
++ Received: 
+undefined
+
+ ❯ tools/studio/test/ingredient-unlock.test.ts:71:65
+     69|   it('rejects missing playerLevel rather than silently enabling all re…
+     70|     const { playerLevel: _, ...missing } = config(0, 1);
+     71|     expect(() => new TurnSimulation(db, missing as TurnConfig)).toThro…
+       |                                                                 ^
+     72|   });
+     73|   it('rejects a configuration with no unlocked recipe instead of admit…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > rejects a configuration with no unlocked recipe instead of admitting an empty order
+AssertionError: expected [Function] to throw an error
+
+- Expected: 
+null
+
++ Received: 
+undefined
+
+ ❯ tools/studio/test/ingredient-unlock.test.ts:76:60
+     74|     const broken = structuredClone(db);
+     75|     for (const ing of broken.ingredients.items) ing.unlock.level = 2;
+     76|     expect(() => new TurnSimulation(broken, config(0, 1))).toThrow(/no…
+       |                                                            ^
+     77|   });
+     78|   it('never spawns an unusual-only customer with an empty/locked menu'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > never spawns an unusual-only customer with an empty/locked menu
+AssertionError: expected 14 to be less than or equal to 1
+ ❯ tools/studio/test/ingredient-unlock.test.ts:84:92
+     82|       const c = sim.spawnCustomer(); seen.add(c.def.id);
+     83|       expect(c.lines.length).toBeGreaterThan(0);
+     84|       for (const l of c.lines) expect(db.ingredientById.get(l.ingredie…
+       |                                                                                            ^
+     85|     }
+     86|     expect(seen.has('turista')).toBe(false); // no non-common recipe y…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/50]⎯
+
+ FAIL  tools/studio/test/ingredient-unlock.test.ts > A-02: ingredient unlock requires player level AND restaurant > the real policy only takes and serves unlocked stock at a low player level
+AssertionError: expected [ 'legumes_grelhados', …(4) ] to deeply equal [ 'linguica_toscana' ]
+
+- Expected
++ Received
+
+  Array [
++   "legumes_grelhados",
++   "queijo_coalho",
+    "linguica_toscana",
++   "coracao_frango",
++   "fraldinha",
+  ]
+
+ ❯ tools/studio/test/ingredient-unlock.test.ts:101:23
+     99|       for (const f of a.foods) seen.add(f.ingredient.id);
+    100|     });
+    101|     expect([...seen]).toEqual(['linguica_toscana']);
+       |                       ^
+    102|     expect(sim.counters.customersServed).toBeGreaterThan(0);
+    103|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/50]⎯
+
+ Test Files  1 failed (1)
+      Tests  50 failed (50)
+   Start at  01:31:46
+   Duration  509ms (transform 144ms, setup 0ms, collect 168ms, tests 152ms, environment 0ms, prepare 44ms)
+

@@ -56,7 +56,26 @@ Rules for the port:
   `float` only for rendering.
 - **No allocations in `Tick`.** No LINQ, no closures, no boxing, pre-sized arrays.
 
-### A-01 reference contract (2026-09-26 local / 27 UTC)
+### A-02 reference contract — required player progression
+
+`TurnConfig.playerLevel` is required and validated (integer >=1), distinct from campaign
+`levelId/index`. The turn snapshots a catalog requiring both level and restaurant. Orders,
+stock actions and UI use that catalog; scripted orders also reject locked ingredients.
+Empty catalogs fail explicitly. Natural unusual-only customers are filtered when their
+eligible menu is empty; forcing one without a menu errors, never grants locked content.
+
+Production callers: progression p.level before payout, prototype meta.level, scripted FTUE1.
+Skill benchmarks start at1 and accrue actual XP per skill; isolated mechanics fixtures use44
+explicitly, not as a runtime default. Boundary/wiring regressions are in
+`ingredient-unlock.test.ts` and `unlock-wiring.test.ts` (52 new tests).
+
+`tools/golden/vectors.json` **version2** requires playerLevel in all20 turn inputs:9 early
+expectations changed,11 preserved; cooking/scoring/economy and all44 FTUE cases unchanged.
+No game-data/schema/save version changed. C# still lacks25 cases (5+20); port this contract
+and F2/A-01/A-02 regressions in F8, not just old golden outputs. Global economy still fails
+3 long targets, so C#/Unity remain blocked. See `docs/evidence/a02/README.md`.
+
+### A-01 reference contract — historical checkpoint (2026-09-26 local / 27 UTC)
 
 Costela/cupim are two-sided, `flipNeeded:true` (ingredients v6, owner decision).
 The TS semantic validator rejects multi-side grill recipes with `flipNeeded:false`;

@@ -1,0 +1,64 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/unlock-wiring.test.ts (2 tests | 2 failed) 343ms
+   × A-02: real simulation callers pass player progression, not campaign indices > progression uses pre-payout XP and keeps every order inside the same eligible catalog 274ms
+     → expected 44 to be 1 // Object.is equality
+   × A-02: real simulation callers pass player progression, not campaign indices > fixed-skill benchmark unlocks through earned XP, without an all-recipes fallback 68ms
+     → expected { perfect: 0.64, good: 0.355, …(3) } to deeply equal { perfect: 0.5355191256830601, …(4) }
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/unlock-wiring.test.ts > A-02: real simulation callers pass player progression, not campaign indices > progression uses pre-payout XP and keeps every order inside the same eligible catalog
+AssertionError: expected 44 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 44
+
+ ❯ tools/studio/test/unlock-wiring.test.ts:18:32
+     16|     let totalXp = 0;
+     17|     for (const turn of report.outcomes) {
+     18|       expect(turn.playerLevel).toBe(levelAt(totalXp));
+       |                                ^
+     19|       const expected = db.ingredients.items.filter(i => i.unlock.level…
+     20|       expect(turn.ingredientIds).toEqual(expected);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tools/studio/test/unlock-wiring.test.ts > A-02: real simulation callers pass player progression, not campaign indices > fixed-skill benchmark unlocks through earned XP, without an all-recipes fallback
+AssertionError: expected { perfect: 0.64, good: 0.355, …(3) } to deeply equal { perfect: 0.5355191256830601, …(4) }
+
+- Expected
++ Received
+
+  Object {
+-   "burned": 0,
+-   "coinsPerTurn": 448,
+-   "good": 0.4644808743169399,
+-   "lost": 0,
+-   "perfect": 0.5355191256830601,
++   "burned": 0.005,
++   "coinsPerTurn": 641,
++   "good": 0.355,
++   "lost": 0.005988023952095809,
++   "perfect": 0.64,
+  }
+
+ ❯ tools/studio/test/unlock-wiring.test.ts:52:74
+     50|     }
+     51|     expect(levelAt(totalXp)).toBeGreaterThan(1);
+     52|     expect(measureSkillCurve({ levels, skills: [skill], seed })['0.55'…
+       |                                                                          ^
+     53|       perfect: perfect / Math.max(1, perfect + good + burned), good: g…
+     54|       burned: burned / Math.max(1, perfect + good + burned), lost: los…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  01:36:43
+   Duration  706ms (transform 162ms, setup 0ms, collect 191ms, tests 343ms, environment 0ms, prepare 45ms)
+
