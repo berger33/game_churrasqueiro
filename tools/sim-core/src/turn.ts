@@ -79,6 +79,7 @@ export interface TurnCounters {
   ordersCompleted: number;
   perfectCooks: number;
   goodCooks: number;
+  /** Unique grill burn transitions, whether the plate is later served or discarded. */
   burnedFood: number;
   bestCombo: number;
   flips: number;
@@ -334,7 +335,8 @@ export class TurnSimulation {
       this.breakCombo('burned');
     }
 
-    if (scored.quality === 'burned') this.counters.burnedFood++;
+    // Burned plates were already counted by tickGrill's one-shot onBurn transition.
+    // Serving/discarding that plate must not turn one burned item into two.
     if (this.combo > this.counters.bestCombo) this.counters.bestCombo = this.combo;
     this.checkComboMilestone();
     this.events.push({ type: 'serve', customer, quality: scored.quality, coins: scored.coins, combo: this.combo });

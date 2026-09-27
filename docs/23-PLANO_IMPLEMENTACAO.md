@@ -330,3 +330,11 @@ Depois: 55/55 testes economy/save; suíte completa 262; gates 14/15 (C# SKIP).
 `sim:long` 18/18, saída idêntica; 98+44 vetores sem drift, não regenerados.
 `newPlayerState` inicia em 1; unlock atribui a quantidade; load após CRC repara v1/v2/v3.
 Shape/versionamento v3 mantidos; recompensas já reclamadas e outros contadores preservados.
+
+**Checkpoint A-08 — concluído:** 4 regressões novas, 3 vermelhas antes da correção
+(um item servido contabilizava 2, três itens contabilizavam 5, resultado/save carregavam
+contagem inflada). Fonte única = transição `onBurn` da grelha; não somar no serve.
+Após correção: 23/23 testes de turno, total 266; gates 14/15 e sim longo 18/18 sem diff.
+Vetores 98+44 não mudaram: o bot descarta queimados antes de servir, não exercitando o bug.
+Não regenerados. A regressão de serve queimado exige burn/items=1, não 2. Histórico de
+burns em saves existentes preservado: não é possível reconstruí-lo sem diário por item.

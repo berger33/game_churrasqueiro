@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { loadAndValidate } from '../load-data.ts';
 import { TurnSimulation } from '../../sim-core/src/turn.ts';
 import { SkillPolicy } from '../../sim-core/src/policy.ts';
+import { applyTurnResult } from '../../sim-core/src/economy.ts';
+import { newSave, serializeSave, deserializeSave } from '../../sim-core/src/save.ts';
 import { Rng } from '../../sim-core/src/rng.ts';
 import { createFood, overallDoneness, placeOnGrill } from '../../sim-core/src/cooking.ts';
 
@@ -272,5 +274,84 @@ describe('food lifecycle', () => {
     const skewer = createFood(2, db.ingredientById.get('espetinho_misto')!);
     expect(skewer.sides.length).toBe(4);
     expect(overallDoneness(steak)).toBe(0);
+  });
+});
+
+
+/** Real cooking transitions, no test-written burned flags or preloaded counters. */
+function burnPlates(sim: TurnSimulation, count = 1) {
+  const plates = Array.from({ length: count }, (_, i) => {
+    const food = sim.takeFromStock(db.ingredientById.get('linguica_toscana')!);
+    expect(sim.place(food, i % sim.grill.zones.length)).toBe(true);
+    return food;
+  });
+  for (let ticks = 0; plates.some(f => !f.burned) && ticks < 6000; ticks++) sim.tick(1 / 30);
+  expect(plates.every(f => f.burned)).toBe(true);
+  return plates;
+}
+
+function manualTurn() {
+  return new TurnSimulation(db, {
+    restaurantIndex: 0, levelId: 'regression', upgradeLevels: {}, seed: 42,
+    overrides: { autoSpawn: false, turnLengthSec: 300 }
+  });
+}
+
+describe('A-08: one burnedFood per physical plate', () => {
+  it('counts a burn once, including subsequent ticks, moves and discard', () => {
+    const sim = manualTurn();
+    const [food] = burnPlates(sim);
+    expect(sim.counters.burnedFood).toBe(1);
+    expect(sim.move(food!, 1)).toBe(true);
+    for (let i = 0; i < 40; i++) sim.tick(1 / 30);
+    sim.discard(food!); sim.discard(food!);
+    expect(sim.counters.burnedFood).toBe(1);
+    expect(sim.events.filter(e => e.type === 'burned')).toHaveLength(1);
+    expect(sim.result().counters.flawless).toBe(false);
+  });
+
+  it('does not count a burned plate again when served (nor when serving it twice)', () => {
+    const sim = manualTurn();
+    const customer = sim.spawnScriptedCustomer('comum', ['linguica_toscana'], 500);
+    const [food] = burnPlates(sim);
+    expect(sim.counters.burnedFood).toBe(1);
+    expect(sim.serve(customer, food!)?.quality).toBe('burned');
+    expect(sim.serve(customer, food!)).toBeNull();
+    expect(sim.counters.burnedFood).toBe(1);
+    expect(sim.counters.itemsCooked).toBe(1);
+    expect(sim.counters.burnedFood / sim.counters.itemsCooked).toBe(1); // not the old 200%
+    expect(sim.events.filter(e => e.type === 'burned')).toHaveLength(1);
+  });
+
+  it('counts distinct plates once each when two are served and one discarded', () => {
+    const sim = manualTurn();
+    const customers = Array.from({ length: 2 }, () => sim.spawnScriptedCustomer('comum', ['linguica_toscana'], 500));
+    const plates = burnPlates(sim, 3);
+    expect(sim.counters.burnedFood).toBe(3);
+    customers.forEach((c, i) => expect(sim.serve(c, plates[i]!)?.quality).toBe('burned'));
+    sim.discard(plates[2]!);
+    const result = sim.result();
+    expect(result.counters.burnedFood).toBe(3);
+    const burnedIds = result.events.flatMap(e => e.type === 'burned' ? [e.food.uid] : []);
+    expect(new Set(burnedIds).size).toBe(3);
+    expect(burnedIds).toHaveLength(3);
+  });
+
+  it('preserves the count through result credit and save/load, without inferring historical burns', () => {
+    const sim = manualTurn();
+    const customer = sim.spawnScriptedCustomer('comum', ['linguica_toscana'], 500);
+    const [food] = burnPlates(sim);
+    sim.serve(customer, food!);
+    sim.endAfter(0);
+    const result = sim.result();
+    expect(result.counters.burnedFood).toBe(1);
+    const save = newSave('burn-save', 1234);
+    save.player.counters.burnedFood = 8; // previous history has no per-item journal; never halve it
+    applyTurnResult(db, save.player, result);
+    const restored = deserializeSave(serializeSave(save));
+    expect(restored.ok).toBe(true);
+    if (!restored.ok) throw new Error(restored.reason);
+    expect(restored.save.player.counters.burnedFood).toBe(9);
+    expect(JSON.parse(JSON.stringify(result)).counters.burnedFood).toBe(1);
   });
 });
