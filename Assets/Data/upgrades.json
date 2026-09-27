@@ -1,7 +1,7 @@
 {
   "$schema": "schema/upgrades.schema.json",
-  "_comment": "Upgrade tracks. cost(level) = round(baseCost * growth^(level-1) / 10) * 10. Effects are additive per level unless noted. MVP ships 24 tracks (spec §84). Prestige tracks are the long-tail coin sink: measured total sink capacity must stay >= projected income at day 120+ (docs/06-ECONOMY.md).",
-  "version": 3,
+  "_comment": "Upgrade tracks. cost(level) = round(baseCost * growth^(level-1) / 10) * 10. Effects are additive per level unless noted. MVP declares 27 tracks (spec §84). Prestige tracks are the long-tail coin sink: measured total sink capacity must stay >= projected income at day 120+ (docs/06-ECONOMY.md).",
+  "version": 4,
   "costFormula": {
     "type": "geometric",
     "growth": "perTrack"
@@ -152,7 +152,7 @@
       "maxLevel": 5,
       "currency": "coins",
       "effect": {
-        "stat": "rawStockPerTurn",
+        "stat": "rawStockCapacityPerIngredient",
         "delta": 1
       },
       "icon": "ic_counter"

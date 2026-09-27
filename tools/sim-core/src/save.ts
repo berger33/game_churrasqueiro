@@ -1,3 +1,5 @@
+import {newOfflineState,restoreOfflineState} from './offline.ts';
+import { restoreVipState } from './vip.ts';
 import type { PlayerState } from './economy.ts';
 import { newPlayerState, STARTER_CHURRASQUEIRA_ID } from './economy.ts';
 import type { TutorialState } from './tutorial.ts';
@@ -14,10 +16,12 @@ import type { TutorialState } from './tutorial.ts';
  */
 
 /**
+ * v4 → v5: real offline absence anchor, pending batch and atomic claim state.
  * v1 → v2: the equipped churrasqueira (`player.churrasqueiraId` / `churrasqueiraLevels`).
+ * v3 → v4: persisted VIP quota, reservation, single-use offer and VIP achievements.
  * v2 → v3: the FTUE (`progress.tutorial` / `progress.ftueDone`, docs/05-UX_FLOW.md §4).
  */
-export const SAVE_SCHEMA_VERSION = 3;
+export const SAVE_SCHEMA_VERSION = 5;
 
 export interface DailyState {
   streak: number;
@@ -213,6 +217,8 @@ export function migrate(save: SaveGame, fromVersion: number): SaveGame {
     progress.tutorial = null; // restoreTutorialState() validates what is left
   }
   if (typeof progress.ftueDone !== 'boolean') progress.ftueDone = false;
+  out.player.vip = restoreVipState(out.player.vip === undefined && fromVersion >= 4 ? null : out.player.vip);
+  out.player.offline=fromVersion<5?newOfflineState(0):restoreOfflineState(out.player.offline??null,Math.max(0,out.deviceClockUnixSec||0));
   out.progress = progress;
   out.schemaVersion = SAVE_SCHEMA_VERSION;
   return out;

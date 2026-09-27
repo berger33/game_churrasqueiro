@@ -7,6 +7,7 @@
   "required": [
     "automationCap",
     "roles",
+    "service",
     "version"
   ],
   "additionalProperties": false,
@@ -49,14 +50,41 @@
             "items": {
               "type": "object",
               "properties": {
+                "autoOfflineHours": {
+                  "type": "integer"
+                },
+                "burnWarningSec": {
+                  "type": "integer"
+                },
                 "coverage": {
                   "type": "number"
                 },
                 "effect": {
                   "type": "string"
                 },
+                "extraPrepSlots": {
+                  "type": "integer"
+                },
+                "intervalSec": {
+                  "type": "number"
+                },
                 "level": {
                   "type": "integer"
+                },
+                "offlineRateBonus": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "platesPerTrip": {
+                  "type": "integer"
+                },
+                "tipBonus": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
                 }
               },
               "required": [
@@ -113,6 +141,17 @@
           "unlock"
         ]
       }
+    },
+    "service": {
+      "type": "object",
+      "properties": {
+        "minimumWaitSec": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "minimumWaitSec"
+      ]
     },
     "version": {
       "type": "integer"

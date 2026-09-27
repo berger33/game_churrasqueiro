@@ -1,0 +1,33 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/vip.test.ts (44 tests | 1 failed | 43 skipped) 12ms
+   × A-05 keeps a reservation if a configured unusual-only VIP has no unlocked menu 11ms
+     → expected [Function] to not throw an error but 'Error: spawnCustomer: no unlocked ing…' was thrown
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/vip.test.ts > A-05 keeps a reservation if a configured unusual-only VIP has no unlocked menu
+AssertionError: expected [Function] to not throw an error but 'Error: spawnCustomer: no unlocked ing…' was thrown
+
+- Expected: 
+undefined
+
++ Received: 
+"Error: spawnCustomer: no unlocked ingredients for \"vip\""
+
+ ❯ tools/studio/test/vip.test.ts:239:33
+    237|   const state=call();
+    238|   const sim=new TurnSimulation(d,{playerLevel:1,restaurantIndex:1,leve…
+    239|   expect(()=>sim.tick(1.3)).not.toThrow();expect(sim.counters.vipSpawn…
+       |                                 ^
+    240|   expect(state.pendingCall).toBeTruthy();expect(state.usedToday).toBe(…
+    241|   expect(sim.customers[0]!.lines.length).toBeGreaterThan(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 43 skipped (44)
+   Start at  03:42:09
+   Duration  450ms (transform 189ms, setup 0ms, collect 238ms, tests 12ms, environment 0ms, prepare 57ms)
+

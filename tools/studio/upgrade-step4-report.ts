@@ -1,0 +1,37 @@
+/** A-06.4 economics, reproducible against the recorded A-06.3 natural/no-rewarded/no-offline baseline. */
+import { readFileSync } from 'node:fs';
+import { loadDatabase } from './load-data.ts';
+import { simulateProgression } from './run-sim.ts';
+import { UPGRADE_PHASES, quoteUpgrade } from '../sim-core/src/upgrades.ts';
+import { upgradeCost } from '../sim-core/src/data.ts';
+import { newPlayerState } from '../sim-core/src/economy.ts';
+const db=loadDatabase();
+const baseline=JSON.parse(readFileSync(new URL('../../docs/evidence/a06/step3/economy-comparison.json',import.meta.url),'utf8')).after;
+const r=simulateProgression({maxTurns:1500,stepSec:1/12});
+const starter=newPlayerState();starter.coins=100_000_000;
+const tracks=db.upgrades.tracks.map(t=>{
+  const q=quoteUpgrade(db,starter,t.id),level=r.player.upgradeLevels[t.id]??0;
+  const sum=(n:number)=>Array.from({length:n},(_,i)=>upgradeCost(t.baseCost,t.growth,i+1)).reduce((a,b)=>a+b,0);
+  const spent=r.session.sinks[`upgrade:${t.id}`]??0;
+  if(sum(level)!==spent)throw new Error(`purchase ledger/cost mismatch: ${t.id}`);
+  if(UPGRADE_PHASES[t.id]!=='active'&&spent!==0)throw new Error(`pending sink: ${t.id}`);
+  return {id:t.id,phase:UPGRADE_PHASES[t.id],starterCanBuy:q.canBuy,starterReasons:q.reasons,
+    maxLevel:t.maxLevel,maxCost:sum(t.maxLevel),purchasedLevel:level,spent};
+});
+if((r.player.counters.offlineCoins??0)!==0||r.player.offline.batch)throw Error('offline injected into active campaign');
+const after={income:r.totalCoinsEarned,spent:r.totalCoinsSpent,balance:r.player.coins,
+  spend:r.session.spendRatio(),level:r.player.level,restaurant:r.player.restaurantIndex,
+  unlocks:r.turnsToUnlock,grills:r.turnsToUnlockGrill,dailyIncome:r.dailyCoinIncomeAtLevel,
+  perfect:r.perfectRate,burned:r.burnedRate,lost:r.lostRate,duration:r.avgTurnDurationSec,
+  staff:r.outcomes.reduce((acc,t)=>{
+    const x=t.staffSnapshot;
+    if(x.serve.used>x.serve.limit||x.flip.used>x.flip.limit)throw new Error('coverage exceeded in campaign');
+    acc.served+=x.serve.used;acc.serveEligible+=x.serve.eligible;acc.flipped+=x.flip.used;acc.flipEligible+=x.flip.eligible;acc.prepped+=x.prep.used;return acc;
+  },{served:0,serveEligible:0,flipped:0,flipEligible:0,prepped:0}),
+  faucets:r.session.faucets,sinks:r.session.sinks,vipArrived:r.outcomes.reduce((n,t)=>n+t.vipSnapshot.arrived,0),vipServed:r.player.vip.servedTotal};
+const sum=(items:typeof tracks)=>items.reduce((n,t)=>n+t.maxCost,0);
+console.log(JSON.stringify({checkpoint:'A-06.4, A-06.5 closing review remains',seed:20260917,turns:1500,stepSec:1/12,
+  clock:'UTC 2026-09-21, 12 turns/day; natural VIP only; no rewarded calls; no offline income',
+  note:'No price/reward/target tuning. Blocked capacity is not a refund. Active campaign only; absence ledger is exercised in a separate declared schedule.',
+  baseline,after,delta:{income:after.income-baseline.income,spent:after.spent-baseline.spent,balance:after.balance-baseline.balance},
+  trackCapacity:{all:sum(tracks),integrated:sum(tracks.filter(t=>t.phase==='active')),temporarilyBlocked:sum(tracks.filter(t=>t.phase!=='active'))},tracks},null,2));

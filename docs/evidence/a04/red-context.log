@@ -1,0 +1,33 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/sim-grill.test.ts (3 tests | 1 failed) 1458ms
+   × A-04: real progression passes the restaurant AND equipment expansion context > keeps three zones before Premium and reports four actual zones after unlock 1255ms
+     → expected 3 to be 4 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/sim-grill.test.ts > A-04: real progression passes the restaurant AND equipment expansion context > keeps three zones before Premium and reports four actual zones after unlock
+AssertionError: expected 3 to be 4 // Object.is equality
+
+- Expected
++ Received
+
+- 4
++ 3
+
+ ❯ tools/studio/test/sim-grill.test.ts:48:41
+     46|     for(const t of after) {
+     47|       expect(t.grillSnapshot.id).toBe('fornalha_dragao_manso');
+     48|       expect(t.grillSnapshot.zoneCount).toBe(4);
+       |                                         ^
+     49|       expect(t.grillSnapshot.zoneHeats[3]).toBe(t.grillSnapshot.zoneHe…
+     50|       expect(t.grillSnapshot.occupiedTicksByZone).toHaveLength(4);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  02:54:49
+   Duration  1.88s (transform 189ms, setup 0ms, collect 237ms, tests 1.46s, environment 0ms, prepare 50ms)
+

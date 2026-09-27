@@ -1,0 +1,181 @@
+
+> churrasco-mestre-da-brasa@0.1.0 test
+> vitest run
+
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/turn.test.ts (29 tests | 1 failed) 372ms
+   × A-08: one burnedFood per physical plate > counts a burn once, including subsequent ticks, moves and discard 8ms
+     → expected false to be true // Object.is equality
+ ✓ tools/studio/test/tutorial.test.ts (22 tests) 148ms
+ ✓ tools/studio/test/vip.test.ts (44 tests) 685ms
+   ✓ VIP completed service, economy and analytics > real progression has natural VIP without rewarded and obeys a persisted daily cap 616ms
+ ✓ tools/studio/test/cooking.test.ts (23 tests) 91ms
+ ✓ tools/studio/test/economy.test.ts (27 tests) 16ms
+ ✓ tools/studio/test/monetization.test.ts (27 tests) 8ms
+ ✓ tools/studio/test/save.test.ts (28 tests) 111ms
+ ✓ tools/studio/test/upgrades.test.ts (76 tests) 1583ms
+   ✓ A-06.1 shared quote, limits and persistence > bot spends no coins on pending tracks and actually buys the new direct effects 1494ms
+ ❯ tools/studio/test/golden.test.ts (7 tests | 3 failed) 134ms
+   × golden vectors > declares the data versions it was generated from 11ms
+     → expected { ingredients: 6, grill: 4, …(7) } to match object { ingredients: 6, grill: 5, …(7) }
+   × golden vectors > replays every economy vector 6ms
+     → heat zone0 t=1: expected +0 to be close to 0.341, received difference is 0.341, but expected 5e-9
+   × golden vectors > replays every full-turn vector 34ms
+     → turn.skill0.35.level_011 coins: expected 482 to be 537 // Object.is equality
+ ✓ tools/studio/test/art-registry.test.ts (52 tests) 6691ms
+ ❯ tools/studio/test/fourth-zone.test.ts (41 tests | 1 failed) 79ms
+   × A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > bot really places into extra capacity when all original zones are full 7ms
+     → expected false to be true // Object.is equality
+ ✓ tools/studio/test/churrasqueira.test.ts (25 tests) 1424ms
+   ✓ skill policy plays every churrasqueira > lata_valente: full turns complete, customers are served, skill still separates quality 449ms
+ ✓ tools/studio/test/data.test.ts (12 tests) 22ms
+ ❯ tools/studio/test/prep.test.ts (16 tests | 2 failed) 29ms
+   × A-03: prep is an explicit, bounded station, not a free stock timer > consumes restaurant capacity plus board (restaurant 2) 6ms
+     → expected false to be true // Object.is equality
+   × A-03: prep is an explicit, bounded station, not a free stock timer > consumes restaurant capacity plus board (restaurant 6) 2ms
+     → expected false to be true // Object.is equality
+ ✓ tools/studio/test/policy.test.ts (5 tests) 812ms
+   ✓ skill policy — zone choice > is monotonically more likely to hit the ideal zone as skill rises 383ms
+ ✓ tools/studio/test/ingredient-unlock.test.ts (50 tests) 216ms
+ ✓ tools/studio/test/resources.test.ts (14 tests) 15ms
+ ✓ tools/studio/test/slow-cuts.test.ts (19 tests) 197ms
+ ✓ tools/studio/test/l10n.test.ts (12 tests) 11ms
+ ✓ tools/studio/test/cooking-ui.test.ts (8 tests) 7ms
+ ✓ tools/studio/test/unlock-wiring.test.ts (2 tests) 593ms
+   ✓ A-02: real simulation callers pass player progression, not campaign indices > progression uses pre-payout XP and keeps every order inside the same eligible catalog 490ms
+ ✓ tools/studio/test/sim-grill.test.ts (3 tests) 1683ms
+   ✓ A-04: real progression passes the restaurant AND equipment expansion context > keeps three zones before Premium and reports four actual zones after unlock 1462ms
+ ✓ tools/studio/test/gates.test.ts (1 test) 4ms
+ ✓ tools/studio/test/upgrade-ui.test.ts (2 tests) 6ms
+ ✓ tools/studio/test/prep-ui.test.ts (2 tests) 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > bot really places into extra capacity when all original zones are full
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tools/studio/test/fourth-zone.test.ts:88:83
+     86|     const c=s.spawnScriptedCustomer('comum',['linguica_toscana'],90);
+     87|     const bot=new SkillPolicy(new Rng(4),{skill:1}); s.tick(.1,a=>bot.…
+     88|     expect(s.grill.zones[3]?.items.some(f=>f.ingredient.id==='linguica…
+       |                                                                                   ^
+     89|     for(let i=0;i<600 && c.state==='waiting';i++) s.tick(.1,a=>bot.act…
+     90|     expect(c.state).toBe('served');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  tools/studio/test/golden.test.ts > golden vectors > declares the data versions it was generated from
+AssertionError: expected { ingredients: 6, grill: 4, …(7) } to match object { ingredients: 6, grill: 5, …(7) }
+
+- Expected
++ Received
+
+  Object {
+    "achievements": 3,
+    "ads": 2,
+    "customers": 2,
+    "economy": 12,
+    "events": 2,
+-   "grill": 5,
++   "grill": 4,
+    "ingredients": 6,
+    "restaurants": 6,
+-   "upgrades": 4,
++   "upgrades": 3,
+  }
+
+ ❯ tools/studio/test/golden.test.ts:52:30
+     50| 
+     51|   it('declares the data versions it was generated from', () => {
+     52|     expect(doc.dataVersions).toMatchObject({
+       |                              ^
+     53|       ingredients: db.ingredients.version,
+     54|       grill: db.grill.version,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  tools/studio/test/golden.test.ts > golden vectors > replays every economy vector
+AssertionError: heat zone0 t=1: expected +0 to be close to 0.341, received difference is 0.341, but expected 5e-9
+ ❯ tools/studio/test/golden.test.ts:171:81
+    169|             g.charcoalT = v.input.charcoalT[i];
+    170|             g.charcoalEfficiency = charcoalEff(g.charcoalT);
+    171|             expect(effectiveHeat(g, zi, db), `heat zone${zi} t=${g.cha…
+       |                                                                                 ^
+    172|           });
+    173|         });
+ ❯ tools/studio/test/golden.test.ts:167:15
+ ❯ tools/studio/test/golden.test.ts:166:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  tools/studio/test/golden.test.ts > golden vectors > replays every full-turn vector
+AssertionError: turn.skill0.35.level_011 coins: expected 482 to be 537 // Object.is equality
+
+- Expected
++ Received
+
+- 537
++ 482
+
+ ❯ tools/studio/test/golden.test.ts:253:42
+    251|         expect(res.events.flatMap(e=>e.type==='spawn'&&e.customer.vipS…
+    252|       }
+    253|       expect(res.coins, `${v.id} coins`).toBe(v.expect.coins);
+       |                                          ^
+    254|       expect(res.xp, `${v.id} xp`).toBe(v.expect.xp);
+    255|       expect(res.stars, `${v.id} stars`).toBe(v.expect.stars);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  tools/studio/test/prep.test.ts > A-03: prep is an explicit, bounded station, not a free stock timer > consumes restaurant capacity plus board (restaurant 2)
+ FAIL  tools/studio/test/prep.test.ts > A-03: prep is an explicit, bounded station, not a free stock timer > consumes restaurant capacity plus board (restaurant 6)
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tools/studio/test/prep.test.ts:59:88
+     57|     const capacity = db.restaurants.restaurants[restaurant]!.service.p…
+     58|     expect(s.prepSlots).toHaveLength(capacity);
+     59|     for (let i = 0; i < capacity; i++) expect(s.startPrep(s.takeFromSt…
+       |                                                                                        ^
+     60|     expect(s.startPrep(s.takeFromStock(recipe))).toBe(false);
+     61|     s.tick(1); expect(s.prepSlots.every(f => f?.prepProgress === 0.5))…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  tools/studio/test/turn.test.ts > A-08: one burnedFood per physical plate > counts a burn once, including subsequent ticks, moves and discard
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tools/studio/test/turn.test.ts:312:32
+    310|     const [food] = burnPlates(sim);
+    311|     expect(sim.counters.burnedFood).toBe(1);
+    312|     expect(sim.move(food!, 1)).toBe(true);
+       |                                ^
+    313|     for (let i = 0; i < 40; i++) sim.tick(1 / 30);
+    314|     sim.discard(food!); sim.discard(food!);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ Test Files  4 failed | 21 passed (25)
+      Tests  7 failed | 540 passed (547)
+   Start at  04:57:48
+   Duration  19.70s (transform 402ms, setup 0ms, collect 894ms, tests 14.94s, environment 4ms, prepare 1.14s)
+

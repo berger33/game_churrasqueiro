@@ -233,3 +233,21 @@ Every player action must produce, within one frame: **visual + audio**, and wher
 Every screen has a designed empty state (no missions yet, no ads available, offline) and a
 designed error state. **No screen may show a spinner for more than 400 ms** without a message,
 and no gameplay may be blocked by a network call (§96 offline-first).
+
+## A-05 — functional VIP UI (2026-09-27 UTC)
+
+After FTUE, the Home right-hand teaser card is **CHAMAR VIP · TESTE**, replacing the static
+mission progress teaser (Missions tab unchanged). States: initial restaurant locked,
+ready, reserved, cooldown with configured remaining minutes, daily cap, unavailable.
+Shows used/total, reset00h UTC and lifetime completed VIP orders. All new strings localized.
+
+Tap ready → explicit test modal → CANCELAR or CONCLUIR TESTE. No real ad/payment. The
+modal explains a reservation within the shared daily quota, next eligible turn and quota
+carryover. Completion persists immediately; relaunch keeps reservation. Actual arrivals
+use approved portrait/gold styling and existing vipArrive sound request; pointer cooking,
+flip, serving and normal result payout are unchanged. Whole order counts once, not per plate.
+
+37-shot harness proves cancellation, reservation/reload, called and natural arrivals,
+real mixed-order service, VIP achievement persistence and next-turn cap. Explicit chance1
+and saved level/restaurant are fixtures, not proof of natural campaign navigation. Device
+audio and real ads are not claimed; FTUE timings remain16.1/32.9/38.3s/zero misses.

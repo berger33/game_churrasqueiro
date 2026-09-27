@@ -1,0 +1,637 @@
+{
+  "scope": "Explicit A-06.3: shared public flip cue and staff data versions, tip-only automatic bonus, nine real staff turn cases. Existing no-staff outputs must not drift.",
+  "versions": {
+    "before": {
+      "ingredients": 6,
+      "grill": 5,
+      "economy": 12,
+      "restaurants": 6,
+      "upgrades": 4,
+      "customers": 2,
+      "events": 2,
+      "ads": 2,
+      "achievements": 3
+    },
+    "after": {
+      "ingredients": 6,
+      "grill": 6,
+      "economy": 12,
+      "restaurants": 6,
+      "upgrades": 4,
+      "customers": 2,
+      "events": 2,
+      "ads": 2,
+      "achievements": 3,
+      "employees": 3
+    }
+  },
+  "sections": {
+    "cooking": {
+      "unchanged": 48,
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "scoring": {
+      "unchanged": 32,
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "economy": {
+      "unchanged": 6,
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "turns": {
+      "unchanged": 41,
+      "changed": [],
+      "added": [
+        {
+          "id": "turn.a063_staff_control",
+          "input": {
+            "skill": 0.55,
+            "levelId": "a063_staff_control",
+            "levelIndex": 77,
+            "restaurantIndex": 4,
+            "playerLevel": 44,
+            "seed": 4242,
+            "stepSec": 0.0625,
+            "upgradeLevels": {
+              "counter": 5
+            },
+            "churrasqueiraId": "fornalha_dragao_manso",
+            "churrasqueiraLevel": 3,
+            "staffPrepCustomers": 0,
+            "staffPolicy": true,
+            "overrides": {
+              "turnLengthSec": 250,
+              "spawnIntervalSec": 1.5,
+              "patienceScalar": 2,
+              "vipChance": 0,
+              "maxOrdersOnScreen": 6,
+              "autoSpawn": true
+            }
+          },
+          "expect": {
+            "coins": 11593,
+            "xp": 1271,
+            "stars": 2,
+            "failed": false,
+            "finalTimeSec": 250,
+            "counters": {
+              "customersSpawned": 87,
+              "vipSpawned": 0,
+              "vipServed": 0,
+              "customersServed": 77,
+              "customersLost": 4,
+              "ordersCompleted": 77,
+              "perfectCooks": 62,
+              "goodCooks": 70,
+              "burnedFood": 0,
+              "bestCombo": 62,
+              "flips": 158,
+              "itemsCooked": 134,
+              "charcoalRefills": 1,
+              "peakSimultaneousOrders": 6,
+              "flawless": false
+            },
+            "staff": {
+              "serveUsed": 0,
+              "serveEligible": 0,
+              "serveLimit": 0,
+              "flipUsed": 0,
+              "flipEligible": 0,
+              "flipLimit": 0,
+              "prepped": 0,
+              "prepAttempts": 0,
+              "prepCapacity": 3,
+              "tripInterval": 1.5
+            }
+          }
+        },
+        {
+          "id": "turn.a063_staff_waiter1",
+          "input": {
+            "skill": 0.55,
+            "levelId": "a063_staff_waiter1",
+            "levelIndex": 77,
+            "restaurantIndex": 4,
+            "playerLevel": 44,
+            "seed": 4242,
+            "stepSec": 0.0625,
+            "upgradeLevels": {
+              "counter": 5,
+              "garcom": 1
+            },
+            "churrasqueiraId": "fornalha_dragao_manso",
+            "churrasqueiraLevel": 3,
+            "staffPrepCustomers": 0,
+            "staffPolicy": true,
+            "overrides": {
+              "turnLengthSec": 250,
+              "spawnIntervalSec": 1.5,
+              "patienceScalar": 2,
+              "vipChance": 0,
+              "maxOrdersOnScreen": 6,
+              "autoSpawn": true
+            }
+          },
+          "expect": {
+            "coins": 12059,
+            "xp": 1310,
+            "stars": 2,
+            "failed": false,
+            "finalTimeSec": 250,
+            "counters": {
+              "customersSpawned": 93,
+              "vipSpawned": 0,
+              "vipServed": 0,
+              "customersServed": 83,
+              "customersLost": 4,
+              "ordersCompleted": 83,
+              "perfectCooks": 54,
+              "goodCooks": 88,
+              "burnedFood": 0,
+              "bestCombo": 48,
+              "flips": 167,
+              "itemsCooked": 145,
+              "charcoalRefills": 1,
+              "peakSimultaneousOrders": 6,
+              "flawless": false
+            },
+            "staff": {
+              "serveUsed": 28,
+              "serveEligible": 143,
+              "serveLimit": 28,
+              "flipUsed": 0,
+              "flipEligible": 0,
+              "flipLimit": 0,
+              "prepped": 0,
+              "prepAttempts": 0,
+              "prepCapacity": 3,
+              "tripInterval": 1.5
+            }
+          }
+        },
+        {
+          "id": "turn.a063_staff_waiter3",
+          "input": {
+            "skill": 0.55,
+            "levelId": "a063_staff_waiter3",
+            "levelIndex": 77,
+            "restaurantIndex": 4,
+            "playerLevel": 44,
+            "seed": 4242,
+            "stepSec": 0.0625,
+            "upgradeLevels": {
+              "counter": 5,
+              "garcom": 3
+            },
+            "churrasqueiraId": "fornalha_dragao_manso",
+            "churrasqueiraLevel": 3,
+            "staffPrepCustomers": 0,
+            "staffPolicy": true,
+            "overrides": {
+              "turnLengthSec": 250,
+              "spawnIntervalSec": 1.5,
+              "patienceScalar": 2,
+              "vipChance": 0,
+              "maxOrdersOnScreen": 6,
+              "autoSpawn": true
+            }
+          },
+          "expect": {
+            "coins": 11329,
+            "xp": 1208,
+            "stars": 2,
+            "failed": false,
+            "finalTimeSec": 250,
+            "counters": {
+              "customersSpawned": 91,
+              "vipSpawned": 0,
+              "vipServed": 0,
+              "customersServed": 81,
+              "customersLost": 4,
+              "ordersCompleted": 81,
+              "perfectCooks": 36,
+              "goodCooks": 100,
+              "burnedFood": 0,
+              "bestCombo": 46,
+              "flips": 162,
+              "itemsCooked": 139,
+              "charcoalRefills": 1,
+              "peakSimultaneousOrders": 6,
+              "flawless": false
+            },
+            "staff": {
+              "serveUsed": 68,
+              "serveEligible": 137,
+              "serveLimit": 68,
+              "flipUsed": 0,
+              "flipEligible": 0,
+              "flipLimit": 0,
+              "prepped": 0,
+              "prepAttempts": 0,
+              "prepCapacity": 3,
+              "tripInterval": 1.5
+            }
+          }
+        },
+        {
+          "id": "turn.a063_staff_waiter5",
+          "input": {
+            "skill": 0.55,
+            "levelId": "a063_staff_waiter5",
+            "levelIndex": 77,
+            "restaurantIndex": 4,
+            "playerLevel": 44,
+            "seed": 4242,
+            "stepSec": 0.0625,
+            "upgradeLevels": {
+              "counter": 5,
+              "garcom": 5
+            },
+            "churrasqueiraId": "fornalha_dragao_manso",
+            "churrasqueiraLevel": 3,
+            "staffPrepCustomers": 0,
+            "staffPolicy": true,
+            "overrides": {
+              "turnLengthSec": 250,
+              "spawnIntervalSec": 1.5,
+              "patienceScalar": 2,
+              "vipChance": 0,
+              "maxOrdersOnScreen": 6,
+              "autoSpawn": true
+            }
+          },
+          "expect": {
+            "coins": 11409,
+            "xp": 1208,
+            "stars": 2,
+            "failed": false,
+            "finalTimeSec": 250,
+            "counters": {
+              "customersSpawned": 91,
+              "vipSpawned": 0,
+              "vipServed": 0,
+              "customersServed": 81,
+              "customersLost": 4,
+              "ordersCompleted": 81,
+              "perfectCooks": 36,
+              "goodCooks": 100,
+              "burnedFood": 0,
+              "bestCombo": 46,
+              "flips": 162,
+              "itemsCooked": 139,
+              "charcoalRefills": 1,
+              "peakSimultaneousOrders": 6,
+              "flawless": false
+            },
+            "staff": {
+              "serveUsed": 68,
+              "serveEligible": 137,
+              "serveLimit": 68,
+              "flipUsed": 0,
+              "flipEligible": 0,
+              "flipLimit": 0,
+              "prepped": 0,
+              "prepAttempts": 0,
+              "prepCapacity": 3,
+              "tripInterval": 1.5
+            }
+          }
+        },
+        {
+          "id": "turn.a063_staff_tray",
+          "input": {
+            "skill": 0.55,
+            "levelId": "a063_staff_tray",
+            "levelIndex": 77,
+            "restaurantIndex": 4,
+            "playerLevel": 44,
+            "seed": 4242,
+            "stepSec": 0.0625,
+            "upgradeLevels": {
+              "counter": 5,
+              "garcom": 3,
+              "tray": 5
+            },
+            "churrasqueiraId": "fornalha_dragao_manso",
+            "churrasqueiraLevel": 3,
+            "staffPrepCustomers": 0,
+            "staffPolicy": true,
+            "overrides": {
+              "turnLengthSec": 250,
+              "spawnIntervalSec": 1.5,
+              "patienceScalar": 2,
+              "vipChance": 0,
+              "maxOrdersOnScreen": 6,
+              "autoSpawn": true
+            }
+          },
+          "expect": {
+            "coins": 11794,
+            "xp": 1237,
+            "stars": 3,
+            "failed": false,
+            "finalTimeSec": 250,
+            "counters": {
+              "customersSpawned": 87,
+              "vipSpawned": 0,
+              "vipServed": 0,
+              "customersServed": 80,
+              "customersLost": 2,
+              "ordersCompleted": 80,
+              "perfectCooks": 38,
+              "goodCooks": 98,
+              "burnedFood": 0,
+              "bestCombo": 46,
+              "flips": 159,
+              "itemsCooked": 137,
+              "charcoalRefills": 1,
+              "peakSimultaneousOrders": 6,
+              "flawless": false
+            },
+            "staff": {
+              "serveUsed": 68,
+              "serveEligible": 136,
+              "serveLimit": 68,
+              "flipUsed": 0,
+              "flipEligible": 0,
+              "flipLimit": 0,
+              "prepped": 0,
+              "prepAttempts": 0,
+              "prepCapacity": 3,
+              "tripInterval": 1
+            }
+          }
+        },
+        {
+          "id": "turn.a063_staff_helper",
+          "input": {
+            "skill": 0.55,
+            "levelId": "a063_staff_helper",
+            "levelIndex": 77,
+            "restaurantIndex": 4,
+            "playerLevel": 44,
+            "seed": 4242,
+            "stepSec": 0.0625,
+            "upgradeLevels": {
+              "counter": 5,
+              "auxiliar": 5
+            },
+            "churrasqueiraId": "fornalha_dragao_manso",
+            "churrasqueiraLevel": 3,
+            "staffPrepCustomers": 6,
+            "staffPolicy": false,
+            "overrides": {
+              "turnLengthSec": 60,
+              "spawnIntervalSec": 1.5,
+              "patienceScalar": 2,
+              "vipChance": 0,
+              "maxOrdersOnScreen": 6,
+              "autoSpawn": false
+            }
+          },
+          "expect": {
+            "coins": 25,
+            "xp": 0,
+            "stars": 0,
+            "failed": false,
+            "finalTimeSec": 60,
+            "counters": {
+              "customersSpawned": 6,
+              "vipSpawned": 0,
+              "vipServed": 0,
+              "customersServed": 0,
+              "customersLost": 0,
+              "ordersCompleted": 0,
+              "perfectCooks": 0,
+              "goodCooks": 0,
+              "burnedFood": 0,
+              "bestCombo": 0,
+              "flips": 0,
+              "itemsCooked": 0,
+              "charcoalRefills": 0,
+              "peakSimultaneousOrders": 6,
+              "flawless": true
+            },
+            "staff": {
+              "serveUsed": 0,
+              "serveEligible": 0,
+              "serveLimit": 0,
+              "flipUsed": 0,
+              "flipEligible": 0,
+              "flipLimit": 0,
+              "prepped": 4,
+              "prepAttempts": 4,
+              "prepCapacity": 4,
+              "tripInterval": 1.5
+            }
+          }
+        },
+        {
+          "id": "turn.a063_staff_cook",
+          "input": {
+            "skill": 0.55,
+            "levelId": "a063_staff_cook",
+            "levelIndex": 77,
+            "restaurantIndex": 4,
+            "playerLevel": 44,
+            "seed": 4242,
+            "stepSec": 0.0625,
+            "upgradeLevels": {
+              "counter": 5,
+              "churrasqueiro": 5
+            },
+            "churrasqueiraId": "fornalha_dragao_manso",
+            "churrasqueiraLevel": 3,
+            "staffPrepCustomers": 0,
+            "staffPolicy": true,
+            "overrides": {
+              "turnLengthSec": 250,
+              "spawnIntervalSec": 1.5,
+              "patienceScalar": 2,
+              "vipChance": 0,
+              "maxOrdersOnScreen": 6,
+              "autoSpawn": true
+            }
+          },
+          "expect": {
+            "coins": 11593,
+            "xp": 1271,
+            "stars": 2,
+            "failed": false,
+            "finalTimeSec": 250,
+            "counters": {
+              "customersSpawned": 87,
+              "vipSpawned": 0,
+              "vipServed": 0,
+              "customersServed": 77,
+              "customersLost": 4,
+              "ordersCompleted": 77,
+              "perfectCooks": 62,
+              "goodCooks": 70,
+              "burnedFood": 0,
+              "bestCombo": 62,
+              "flips": 158,
+              "itemsCooked": 134,
+              "charcoalRefills": 1,
+              "peakSimultaneousOrders": 6,
+              "flawless": false
+            },
+            "staff": {
+              "serveUsed": 0,
+              "serveEligible": 0,
+              "serveLimit": 0,
+              "flipUsed": 29,
+              "flipEligible": 128,
+              "flipLimit": 76,
+              "prepped": 0,
+              "prepAttempts": 0,
+              "prepCapacity": 3,
+              "tripInterval": 1.5
+            }
+          }
+        },
+        {
+          "id": "turn.a063_staff_combined",
+          "input": {
+            "skill": 0.55,
+            "levelId": "a063_staff_combined",
+            "levelIndex": 77,
+            "restaurantIndex": 4,
+            "playerLevel": 44,
+            "seed": 4242,
+            "stepSec": 0.0625,
+            "upgradeLevels": {
+              "counter": 5,
+              "garcom": 5,
+              "auxiliar": 5,
+              "churrasqueiro": 5,
+              "tray": 5
+            },
+            "churrasqueiraId": "fornalha_dragao_manso",
+            "churrasqueiraLevel": 3,
+            "staffPrepCustomers": 0,
+            "staffPolicy": true,
+            "overrides": {
+              "turnLengthSec": 250,
+              "spawnIntervalSec": 1.5,
+              "patienceScalar": 2,
+              "vipChance": 0,
+              "maxOrdersOnScreen": 6,
+              "autoSpawn": true
+            }
+          },
+          "expect": {
+            "coins": 11871,
+            "xp": 1237,
+            "stars": 3,
+            "failed": false,
+            "finalTimeSec": 250,
+            "counters": {
+              "customersSpawned": 87,
+              "vipSpawned": 0,
+              "vipServed": 0,
+              "customersServed": 80,
+              "customersLost": 2,
+              "ordersCompleted": 80,
+              "perfectCooks": 38,
+              "goodCooks": 98,
+              "burnedFood": 0,
+              "bestCombo": 46,
+              "flips": 159,
+              "itemsCooked": 137,
+              "charcoalRefills": 1,
+              "peakSimultaneousOrders": 6,
+              "flawless": false
+            },
+            "staff": {
+              "serveUsed": 68,
+              "serveEligible": 136,
+              "serveLimit": 68,
+              "flipUsed": 36,
+              "flipEligible": 128,
+              "flipLimit": 76,
+              "prepped": 0,
+              "prepAttempts": 0,
+              "prepCapacity": 4,
+              "tripInterval": 1
+            }
+          }
+        },
+        {
+          "id": "turn.a063_staff_prep_service",
+          "input": {
+            "skill": 0.55,
+            "levelId": "a063_staff_prep_service",
+            "levelIndex": 77,
+            "restaurantIndex": 4,
+            "playerLevel": 44,
+            "seed": 4242,
+            "stepSec": 0.0625,
+            "upgradeLevels": {
+              "counter": 5,
+              "garcom": 5,
+              "auxiliar": 5,
+              "tray": 5
+            },
+            "churrasqueiraId": "fornalha_dragao_manso",
+            "churrasqueiraLevel": 3,
+            "staffPrepCustomers": 6,
+            "staffPolicy": false,
+            "overrides": {
+              "turnLengthSec": 60,
+              "spawnIntervalSec": 1.5,
+              "patienceScalar": 2,
+              "vipChance": 0,
+              "maxOrdersOnScreen": 6,
+              "autoSpawn": false
+            }
+          },
+          "expect": {
+            "coins": 74,
+            "xp": 9,
+            "stars": 1,
+            "failed": false,
+            "finalTimeSec": 60,
+            "counters": {
+              "customersSpawned": 6,
+              "vipSpawned": 0,
+              "vipServed": 0,
+              "customersServed": 3,
+              "customersLost": 0,
+              "ordersCompleted": 3,
+              "perfectCooks": 3,
+              "goodCooks": 0,
+              "burnedFood": 0,
+              "bestCombo": 3,
+              "flips": 0,
+              "itemsCooked": 3,
+              "charcoalRefills": 0,
+              "peakSimultaneousOrders": 6,
+              "flawless": true
+            },
+            "staff": {
+              "serveUsed": 3,
+              "serveEligible": 6,
+              "serveLimit": 3,
+              "flipUsed": 0,
+              "flipEligible": 0,
+              "flipLimit": 0,
+              "prepped": 6,
+              "prepAttempts": 6,
+              "prepCapacity": 4,
+              "tripInterval": 1
+            }
+          }
+        }
+      ],
+      "removed": []
+    }
+  },
+  "tutorialByteIdentical": true
+}

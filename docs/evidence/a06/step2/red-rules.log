@@ -1,0 +1,200 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/resources.test.ts (14 tests | 14 failed) 24ms
+   × A-06.2 real fuel and bounded stock > stability1 recovers losses in effective heat and actual cooking 7ms
+     → expected 0.788471879286694 to be close to 0.7969330041152263, received difference is 0.00846112482853223, but expected 0.005
+   × A-06.2 real fuel and bounded stock > stability3 recovers losses in effective heat and actual cooking 1ms
+     → expected 0.788471879286694 to be close to 0.8138552537722907, received difference is 0.025383374485596688, but expected 0.005
+   × A-06.2 real fuel and bounded stock > stability6 recovers losses in effective heat and actual cooking 1ms
+     → expected 0.788471879286694 to be close to 0.8392386282578874, received difference is 0.050766748971193376, but expected 0.005
+   × A-06.2 real fuel and bounded stock > quality1 increases the late-sack efficiency floor 1ms
+     → expected 0.6208027434842249 to be close to 0.67, received difference is 0.04919725651577511, but expected 0.005
+   × A-06.2 real fuel and bounded stock > quality3 increases the late-sack efficiency floor 1ms
+     → expected 0.6208027434842249 to be close to 0.77, received difference is 0.1491972565157751, but expected 0.005
+   × A-06.2 real fuel and bounded stock > quality6 increases the late-sack efficiency floor 1ms
+     → expected 0.6208027434842249 to be close to 0.92, received difference is 0.2991972565157751, but expected 0.005
+   × A-06.2 real fuel and bounded stock > combines quality/stability without changing duration or generating heat while empty/refilling 1ms
+     → expected 0.6208027434842249 to be close to 0.9392, received difference is 0.3183972565157751, but expected 0.005
+   × A-06.2 real fuel and bounded stock > automatically attempts a low sack and does not double-start a manual refill 2ms
+     → expected 0 to be greater than 0
+   × A-06.2 real fuel and bounded stock > a raw item is charged only at legal admission, and move/flip/cancel never charges twice 1ms
+     → s.stockRemaining is not a function
+   × A-06.2 real fuel and bounded stock > counter0 supplies per-ingredient units, then denies until a real3s refill 3ms
+     → expected true to be false // Object.is equality
+   × A-06.2 real fuel and bounded stock > counter1 supplies per-ingredient units, then denies until a real3s refill 1ms
+     → expected true to be false // Object.is equality
+   × A-06.2 real fuel and bounded stock > counter5 supplies per-ingredient units, then denies until a real3s refill 1ms
+     → expected true to be false // Object.is equality
+   × A-06.2 real fuel and bounded stock > prep requires both a slot and stock; cancelled or full attempts preserve stock 1ms
+     → s.stockRemaining is not a function
+   × A-06.2 real fuel and bounded stock > the policy does not create an orphan raw food each tick when every grill zone is full 5ms
+     → expected [ { uid: 17, …(11) }, …(39) ] to have a length of +0 but got 40
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 14 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 real fuel and bounded stock > stability1 recovers losses in effective heat and actual cooking
+AssertionError: expected 0.788471879286694 to be close to 0.7969330041152263, received difference is 0.00846112482853223, but expected 0.005
+ ❯ tools/studio/test/resources.test.ts:18:40
+     16|     a.tick(.1);b.tick(.1);
+     17|     const e=sampleCurve(db.grill.charcoal.efficiencyCurve,a.grill.char…
+     18|     expect(b.grill.charcoalEfficiency).toBeCloseTo(e+.04*level*(1-e));
+       |                                        ^
+     19|     expect(fb.sides[0]).toBeGreaterThan(fa.sides[0]!);
+     20|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/14]⎯
+
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 real fuel and bounded stock > stability3 recovers losses in effective heat and actual cooking
+AssertionError: expected 0.788471879286694 to be close to 0.8138552537722907, received difference is 0.025383374485596688, but expected 0.005
+ ❯ tools/studio/test/resources.test.ts:18:40
+     16|     a.tick(.1);b.tick(.1);
+     17|     const e=sampleCurve(db.grill.charcoal.efficiencyCurve,a.grill.char…
+     18|     expect(b.grill.charcoalEfficiency).toBeCloseTo(e+.04*level*(1-e));
+       |                                        ^
+     19|     expect(fb.sides[0]).toBeGreaterThan(fa.sides[0]!);
+     20|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/14]⎯
+
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 real fuel and bounded stock > stability6 recovers losses in effective heat and actual cooking
+AssertionError: expected 0.788471879286694 to be close to 0.8392386282578874, received difference is 0.050766748971193376, but expected 0.005
+ ❯ tools/studio/test/resources.test.ts:18:40
+     16|     a.tick(.1);b.tick(.1);
+     17|     const e=sampleCurve(db.grill.charcoal.efficiencyCurve,a.grill.char…
+     18|     expect(b.grill.charcoalEfficiency).toBeCloseTo(e+.04*level*(1-e));
+       |                                        ^
+     19|     expect(fb.sides[0]).toBeGreaterThan(fa.sides[0]!);
+     20|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/14]⎯
+
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 real fuel and bounded stock > quality1 increases the late-sack efficiency floor
+AssertionError: expected 0.6208027434842249 to be close to 0.67, received difference is 0.04919725651577511, but expected 0.005
+ ❯ tools/studio/test/resources.test.ts:23:40
+     21|   it.each([1,3,6])('quality%i increases the late-sack efficiency floor…
+     22|     const s=turn({charcoal_quality:level});s.grill.charcoalT=.999;s.ti…
+     23|     expect(s.grill.charcoalEfficiency).toBeCloseTo(.62+.05*level);
+       |                                        ^
+     24|   });
+     25|   it('combines quality/stability without changing duration or generati…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/14]⎯
+
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 real fuel and bounded stock > quality3 increases the late-sack efficiency floor
+AssertionError: expected 0.6208027434842249 to be close to 0.77, received difference is 0.1491972565157751, but expected 0.005
+ ❯ tools/studio/test/resources.test.ts:23:40
+     21|   it.each([1,3,6])('quality%i increases the late-sack efficiency floor…
+     22|     const s=turn({charcoal_quality:level});s.grill.charcoalT=.999;s.ti…
+     23|     expect(s.grill.charcoalEfficiency).toBeCloseTo(.62+.05*level);
+       |                                        ^
+     24|   });
+     25|   it('combines quality/stability without changing duration or generati…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/14]⎯
+
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 real fuel and bounded stock > quality6 increases the late-sack efficiency floor
+AssertionError: expected 0.6208027434842249 to be close to 0.92, received difference is 0.2991972565157751, but expected 0.005
+ ❯ tools/studio/test/resources.test.ts:23:40
+     21|   it.each([1,3,6])('quality%i increases the late-sack efficiency floor…
+     22|     const s=turn({charcoal_quality:level});s.grill.charcoalT=.999;s.ti…
+     23|     expect(s.grill.charcoalEfficiency).toBeCloseTo(.62+.05*level);
+       |                                        ^
+     24|   });
+     25|   it('combines quality/stability without changing duration or generati…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/14]⎯
+
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 real fuel and bounded stock > combines quality/stability without changing duration or generating heat while empty/refilling
+AssertionError: expected 0.6208027434842249 to be close to 0.9392, received difference is 0.3183972565157751, but expected 0.005
+ ❯ tools/studio/test/resources.test.ts:27:40
+     25|   it('combines quality/stability without changing duration or generati…
+     26|     const s=turn({grill_stability:6,charcoal_quality:6});s.grill.charc…
+     27|     expect(s.grill.charcoalEfficiency).toBeCloseTo(.9392);
+       |                                        ^
+     28|     expect(s.stats.charcoalDurationSec).toBe(turn().stats.charcoalDura…
+     29|     const f=s.takeFromStock(meat);s.place(f,0);s.grill.charcoalT=1;s.t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/14]⎯
+
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 real fuel and bounded stock > automatically attempts a low sack and does not double-start a manual refill
+AssertionError: expected 0 to be greater than 0
+ ❯ tools/studio/test/resources.test.ts:38:31
+     36|   it('automatically attempts a low sack and does not double-start a ma…
+     37|     const s=turn({charcoal_auto:3},42);s.grill.charcoalT=.8;s.tick(.01…
+     38|     expect(s.grill.refilling).toBeGreaterThan(0);
+       |                               ^
+     39|     expect(s.refillCharcoal()).toBe(false);
+     40|     s.tick(3);expect(s.counters.charcoalRefills).toBe(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/14]⎯
+
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 real fuel and bounded stock > a raw item is charged only at legal admission, and move/flip/cancel never charges twice
+TypeError: s.stockRemaining is not a function
+ ❯ tools/studio/test/resources.test.ts:45:14
+     43|   it('a raw item is charged only at legal admission, and move/flip/can…
+     44|     const s=turn(),f=s.takeFromStock(meat);
+     45|     expect(s.stockRemaining(meat.id)).toBe(6);
+       |              ^
+     46|     expect(s.place(f,-1)).toBe(false);expect(s.stockRemaining(meat.id)…
+     47|     expect(s.place(f,0)).toBe(true);expect(s.stockRemaining(meat.id)).…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/14]⎯
+
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 real fuel and bounded stock > counter0 supplies per-ingredient units, then denies until a real3s refill
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 real fuel and bounded stock > counter1 supplies per-ingredient units, then denies until a real3s refill
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 real fuel and bounded stock > counter5 supplies per-ingredient units, then denies until a real3s refill
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tools/studio/test/resources.test.ts:55:66
+     53|     const s=turn({counter:level});
+     54|     for(let i=0;i<6+level;i++){const f=s.takeFromStock(meat);expect(s.…
+     55|     const denied=s.takeFromStock(meat);expect(s.place(denied,0)).toBe(…
+       |                                                                  ^
+     56|     expect(s.stockRemaining(meat.id)).toBe(0);expect(s.stockRemaining(…
+     57|     expect(s.refillStock()).toBe(true);s.tick(2.9);expect(s.stockRemai…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/14]⎯
+
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 real fuel and bounded stock > prep requires both a slot and stock; cancelled or full attempts preserve stock
+TypeError: s.stockRemaining is not a function
+ ❯ tools/studio/test/resources.test.ts:63:14
+     61|   it('prep requires both a slot and stock; cancelled or full attempts …
+     62|     const s=turn(),f=s.takeFromStock(prep);expect(s.startPrep(f,-1)).t…
+     63|     expect(s.stockRemaining(prep.id)).toBe(6);expect(s.startPrep(f)).t…
+       |              ^
+     64|     expect(s.stockRemaining(prep.id)).toBe(5);expect(s.startPrep(f)).t…
+     65|     for(let i=1;i<6;i++){s.discard(f);const other=s.takeFromStock(prep…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/14]⎯
+
+ FAIL  tools/studio/test/resources.test.ts > A-06.2 real fuel and bounded stock > the policy does not create an orphan raw food each tick when every grill zone is full
+AssertionError: expected [ { uid: 17, …(11) }, …(39) ] to have a length of +0 but got 40
+
+- Expected
++ Received
+
+- 0
++ 40
+
+ ❯ tools/studio/test/resources.test.ts:74:89
+     72|     const bot=new SkillPolicy(new Rng(55),{skill:.55});
+     73|     for(let i=0;i<40;i++)s.tick(.001,a=>bot.act(a));
+     74|     expect(s.foods.filter(f=>!f.served&&!f.onGrill&&f.ingredient.cookM…
+       |                                                                                         ^
+     75|   });
+     76| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/14]⎯
+
+ Test Files  1 failed (1)
+      Tests  14 failed (14)
+   Start at  04:54:35
+   Duration  424ms (transform 182ms, setup 0ms, collect 210ms, tests 24ms, environment 0ms, prepare 52ms)
+

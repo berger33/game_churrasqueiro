@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ✓ tools/studio/test/resources.test.ts (35 tests) 26ms
+
+ Test Files  1 passed (1)
+      Tests  35 passed (35)
+   Start at  05:09:40
+   Duration  591ms (transform 290ms, setup 0ms, collect 322ms, tests 26ms, environment 0ms, prepare 82ms)
+

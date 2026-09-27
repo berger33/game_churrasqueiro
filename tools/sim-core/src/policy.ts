@@ -60,6 +60,7 @@ export class SkillPolicy {
     const customers = a.customers;
     const zones = a.grill.zones;
     const slotsPerZone = a.grill.stats.slotsPerZone;
+    let prepFree = a.prepSlotsFree;
 
     // 1. Keep the fire alive.
     if (a.grill.charcoalT > 0.9 && a.grill.refilling <= 0 && a.timeLeft > 12) a.refillCharcoal();
@@ -93,10 +94,19 @@ export class SkillPolicy {
         if (alreadyCooking) continue;
         const ing = db.ingredientById.get(line.ingredientId);
         if (!ing) continue;
-        const f = a.spawn(ing as Ingredient);
-        if (ing.cookMethod === 'prep') continue; // prepped off-grill
+        if (a.stockRemaining(ing.id) <= 0) { a.refillStock(); continue; }
+        if (ing.cookMethod === 'prep') {
+          if (prepFree <= 0) continue;
+          const f = a.spawn(ing);
+          if (a.startPrep(f)) prepFree--;
+          else a.discard(f);
+          continue;
+        }
         const zone = this.pickZoneFast(zones, slotsPerZone, this.zoneIndex(a, ing.idealZone));
-        if (zone >= 0) a.place(f, zone);
+        if (zone >= 0) {
+          const f = a.spawn(ing as Ingredient);
+          if (!a.place(f, zone)) a.discard(f);
+        }
       }
     }
 

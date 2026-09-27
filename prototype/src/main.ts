@@ -1,3 +1,9 @@
+import {beginOfflineAbsence,returnFromOffline,claimOffline,offlineView,newOfflineState,restoreOfflineState,type OfflineState,type OfflineOwner,type OfflineTransaction} from '../../tools/sim-core/src/offline.ts';
+import {OFFLINE_UI,commitOfflineMeta} from './offline-ui.ts';
+import { buyUpgrade as purchaseUpgrade } from '../../tools/sim-core/src/economy.ts';
+import { quoteUpgrade, type UpgradeBuyer, type UpgradeQuote } from '../../tools/sim-core/src/upgrades.ts';
+import { upgradeCards, upgradePages, UPGRADE_PREV, UPGRADE_NEXT, orderPages, orderPageSize, ORDER_PREV, ORDER_NEXT } from './upgrade-ui.ts';
+import { newVipState, restoreVipState, vipCallStatus, beginVipCall, finishVipCall, applyVipProgress, type VipState } from '../../tools/sim-core/src/vip.ts';
 /**
  * CHURRASCO! O Mestre da Brasa — commercial prototype v2
  *
@@ -26,7 +32,7 @@
  */
 
 import { createDatabase, validateDatabase } from '../../tools/sim-core/src/data.ts';
-import { overallDoneness, evenness, stageOf, effectiveHeat, type FoodRuntime } from '../../tools/sim-core/src/cooking.ts';
+import { activeCoinMultiplier, churrasqueiraZoneCount, churrasqueiraZoneHeat, runtimeZoneDefinition, overallDoneness, evenness, stageOf, effectiveHeat, type FoodRuntime } from '../../tools/sim-core/src/cooking.ts';
 import { TurnSimulation, type CustomerRuntime } from '../../tools/sim-core/src/turn.ts';
 import type { GameDatabase, Ingredient, RawDataBundle } from '../../tools/sim-core/src/types.ts';
 import { createL10n, type L10n, type L10nTable } from '../../tools/sim-core/src/l10n.ts';
@@ -50,7 +56,7 @@ import {
   backgroundSprite, propSprite, fxSprite, drawIconSprite, quadPoint, quadInverse, quadPath, type Quad
 } from './sprites.ts';
 import { audio } from './audio.ts';
-import { BENCH_PAGER, grilledFoodHit, benchPage, benchPageCount, cookingFlipHint } from './cooking-ui.ts';
+import { STOCK_REFILL, CHARCOAL_REFILL, PREP_AREA, PREP_PAGER, prepPageCount, prepSlotRects, BENCH_PAGER, grilledFoodHit, benchPage, benchPageCount, cookingFlipHint } from './cooking-ui.ts';
 
 const W = 420;
 const H = 780;
@@ -135,6 +141,9 @@ interface ChurrasqueiraSpec {
 
 // ── Meta persistence (localStorage, offline-first) ───────────────────────────
 interface Meta {
+  offline: OfflineState;
+  offlineCounters: Record<string,number>;
+  vip: VipState;
   coins: number;
   embers: number;
   xp: number;
@@ -162,6 +171,7 @@ interface Meta {
   wheelSpins: number;
   lastWheelSpinISO: string;
   upgrades: Record<string, number>;
+  purchaseCounters?: Record<string, number>;
   graceUsed: boolean;
   churrasqueiraId: string;
   churrasqueiraLv: Record<string, number>; // 1..3 per churrasqueira id
@@ -177,6 +187,8 @@ function loadMeta(): Meta {
   // whether the FTUE could pay for its own step-6 upgrade. It can: see
   // `tutorial.json` and the "step 6 unreachable" rule in validate-data.ts.)
   const fallback: Meta = {
+    offline:newOfflineState(Date.now()/1000),offlineCounters:{},
+    vip: newVipState(),
     coins: 0, embers: 0, xp: 0, level: 1, streak: 1, longestStreak: 1,
     lastLoginISO: todayISO(), lastClaimDay: 0, lastClaimISO: '', turnsPlayed: 0, bestCombo: 0,
     totalPerfect: 0, collection: [], ftueDone: false,
@@ -190,7 +202,8 @@ function loadMeta(): Meta {
     if (!raw) return fallback;
     const j = JSON.parse(raw) as Partial<Meta>;
     const merged: Meta = {
-      ...fallback, ...j,
+      ...fallback, ...j, vip:restoreVipState(j.vip), offline:restoreOfflineState(j.offline,Date.now()/1000),
+      offlineCounters:j.offlineCounters??{},
       upgrades: { ...fallback.upgrades, ...(j.upgrades ?? {}) },
       churrasqueiraLv: { ...fallback.churrasqueiraLv, ...(j.churrasqueiraLv ?? {}) },
       clearedLevels: Array.isArray(j.clearedLevels) ? j.clearedLevels.filter((x): x is string => typeof x === 'string') : []
@@ -200,8 +213,8 @@ function loadMeta(): Meta {
     return merged;
   } catch { return fallback; }
 }
-function saveMeta(m: Meta): void {
-  try { if (typeof localStorage !== 'undefined') localStorage.setItem('churrasco_meta_v2', JSON.stringify(m)); } catch {}
+function saveMeta(m: Meta): boolean {
+  try { if (typeof localStorage === 'undefined') return false; localStorage.setItem('churrasco_meta_v2', JSON.stringify(m));return true; } catch {return false;}
 }
 function xpForLevel(level: number): number {
   return Math.max(40, Math.round(55 * Math.pow(level, 1.42)));
@@ -243,7 +256,7 @@ class Game {
   private levelIndex = 0;
   private levels: {
     id: string; restaurantIndex: number; turnLengthSec: number; spawnIntervalSec: number; patienceScalar: number;
-    difficultyScalar: number; maxOrdersOnScreen: number; rewards: { coins: number; firstClearBonus: { coins: number } };
+    difficultyScalar: number; maxOrdersOnScreen: number; vipChance?: number; rewards: { coins: number; firstClearBonus: { coins: number } };
   }[] = [];
 
   private meta: Meta = loadMeta();
@@ -256,6 +269,7 @@ class Game {
     coins: number; xp: number; stars: number; perfect: number; burned: number; combo: number;
     /** levels.json reward (+ first-clear bonus) credited on top of the turn's own coins. */
     levelCoins: number;
+    vipReward: {coins:number;embers:number};
     /** The FTUE's scripted turn: a simplified card — no ads, no bonus, no share (docs/05 §4). */
     ftue: boolean;
   } | null = null;
@@ -267,6 +281,7 @@ class Game {
 
   private unlocked: Ingredient[] = [];
   private benchPageIndex = 0;
+  private prepPageIndex = 0;
   private bgCache: HTMLCanvasElement | null = null;
   /** What bgCache holds: 'proc' or 'art:<restaurant>' — the painted scene arrives after load. */
   private bgCacheKey = '';
@@ -286,7 +301,12 @@ class Game {
   private wheelSpinT = 0;
   private wheelTarget = 0;
   private bonusOfferT = 0; // countdown window on result screen
-  private offlinePopup: { coins: number; minutes: number } | null = null;
+  private offlinePopup = false;
+  private offlineHidden = false;
+  private offlineReturnAt: number | null = null;
+  private offlineRetryAt = 0;
+  private offlineStorageError = false;
+  private skipResumeFrame = false;
   private dailyModalOpen = false;
 
   // FTUE (docs/05-UX_FLOW.md §4) — rules live in tools/sim-core/src/tutorial.ts
@@ -308,6 +328,9 @@ class Game {
 
   // Home scroll (for shop overflow etc)
   private homeScrollY = 0;
+  private upgradePage = 0;
+  private orderPage = 0;
+  private orderSnapshot: CustomerRuntime[] | null = null;
 
   // Churrasqueiras (data-driven)
   private churrasqueiras: ChurrasqueiraSpec[] = [];
@@ -390,16 +413,13 @@ class Game {
       if (this.meta.lastClaimDay >= 7) this.meta.lastClaimDay = 0;
       this.meta.lastLoginISO = today;
       saveMeta(this.meta);
-      // Offline earnings simulation: fake 45-180 min away
-      const mins = 35 + Math.floor(Math.random()*60);
-      if (mins > 30) {
-        this.offlinePopup = { coins: Math.round(mins * (6 + this.meta.level * 2.2)), minutes: mins };
-      }
       this.dailyModalOpen = true;
     }
+    this.resumeOffline();
+    if(document.visibilityState==='hidden')this.hideOffline();
     // Nothing pops over the FTUE (docs/05 §4: no more than one panel deep).
     if (!this.tutorial.done) {
-      this.offlinePopup = null;
+      this.offlinePopup = false;
       this.dailyModalOpen = false;
     }
 
@@ -423,7 +443,9 @@ class Game {
     const frame = (now: number): void => {
       const dt = Math.min(0.1, (now - last) / 1000);
       last = now;
-      acc += dt;
+      if(this.offlineReturnAt!==null&&!this.offlineHidden&&now>=this.offlineRetryAt){this.offlineRetryAt=now+1000;this.resumeOffline();}
+      if(this.offlineHidden||this.offlineReturnAt!==null||this.offlinePopup||this.skipResumeFrame){acc=0;this.skipResumeFrame=false;}
+      else acc += dt;
       while (acc >= step) {
         this.update(step);
         acc -= step;
@@ -452,12 +474,14 @@ class Game {
   private async loadData(): Promise<RawDataBundle> {
     const get = async <T,>(f: string): Promise<T> => (await fetch(`/data/${f}`)).json() as Promise<T>;
     return {
+      employees: await get('employees.json'),
       ingredients: await get('ingredients.json'),
       grill: await get('grill.json'),
       customers: await get('customers.json'),
       restaurants: await get('restaurants.json'),
       upgrades: await get('upgrades.json'),
-      economy: await get('economy.json')
+      economy: await get('economy.json'),
+      events: await get('events.json'), ads: await get('ads.json'), achievements: await get('achievements.json')
     };
   }
 
@@ -474,6 +498,17 @@ class Game {
     if (!ch) return undefined;
     const lv = this.meta.churrasqueiraLv[ch.id] ?? 1;
     return ch.evolutions.find((e) => e.level === lv) ?? ch.evolutions[0];
+  }
+  /** Home previews the selected restaurant; gameplay reads the actual turn snapshot. */
+  private equippedZoneCount(): number {
+    const ch = this.db.churrasqueiraById.get(this.activeChurr()?.id ?? '');
+    const evo = ch?.evolutions.find(e => e.level === this.activeEvo()?.level) ?? ch?.evolutions[0];
+    const restaurant = this.db.restaurantByIndex.get(this.levels[this.levelIndex]?.restaurantIndex ?? 0);
+    return ch && evo ? churrasqueiraZoneCount(ch, evo, restaurant) : 1;
+  }
+  private zoneLabel(zoneIndex: number, count = this.zoneCount()): string {
+    const definition = runtimeZoneDefinition(this.db, count, zoneIndex);
+    return definition ? this.l10n.t(definition.nameKey).toUpperCase() : '';
   }
   private isChurrUnlocked(id: string): boolean {
     const ch = this.churrasqueiraById(id);
@@ -503,6 +538,7 @@ class Game {
     return [...this.churrasqueiras].sort((a,b)=>a.index-b.index).find((c)=> c.index > ownedIdx);
   }
   private requestNextLevel(): void {
+    this.orderPage = 0; this.orderSnapshot = null;
     const lvl = this.levels[this.levelIndex] ?? this.levels[this.levels.length - 1]!;
     const actForTurn = this.activeChurr();
     const actEvoLv = actForTurn ? (this.meta.churrasqueiraLv[actForTurn.id] ?? 1) : 1;
@@ -510,6 +546,8 @@ class Game {
       this.db,
       {
         restaurantIndex: lvl.restaurantIndex,
+        vip: {state:this.meta.vip,startUnixSec:Date.now()/1000,clock:()=>Date.now()/1000,
+          onChange:()=>saveMeta(this.meta),analytics:e=>this.track(e)},
         playerLevel: this.meta.level,
         levelId: lvl.id,
         upgradeLevels: this.meta.upgrades,
@@ -519,6 +557,7 @@ class Game {
           spawnIntervalSec: lvl.spawnIntervalSec,
           patienceScalar: lvl.patienceScalar,
           difficultyScalar: lvl.difficultyScalar,
+          vipChance: lvl.vipChance,
           maxOrdersOnScreen: lvl.maxOrdersOnScreen
         },
         churrasqueiraId: actForTurn?.id,
@@ -532,8 +571,8 @@ class Game {
     const chName = this.activeChurr() ? this.l10n.t(this.activeChurr()!.nameKey) : '';
     const evoData = this.activeEvo();
     const evoShort = evoData ? this.l10n.t(evoData.nameKey) : '';
-    // Same progression snapshot as order generation; prep UI is tracked in A-03.
-    this.unlocked = this.sim.availableIngredients.filter(i => i.cookMethod === 'grill');
+    // Stock, orders and prep all share the progression snapshot.
+    this.unlocked = [...this.sim.availableIngredients];
     this.ftue = null;
     this.beginTurnScreen();
     this.banner(`${chName ? chName.toUpperCase() + ' · ' : ''}${lvl.id}${evoShort ? ' · ' + evoShort : ''}`);
@@ -541,6 +580,7 @@ class Game {
 
   private beginTurnScreen(): void {
     this.benchPageIndex = 0;
+    this.prepPageIndex = 0;
     this.screen = 'play';
     this.bgCache = null;
     this.coinFlights = [];
@@ -630,17 +670,38 @@ class Game {
     audio.play('uiTap');
   }
 
-  /** `tutorial_abandon` when the app is backgrounded or closed mid-FTUE (docs/05 §4). */
-  private bindLifecycle(): void {
-    const onHide = (): void => {
-      if (this.tutorial && !this.tutorial.done && this.tutorial.abandon()) this.saveTutorial();
-    };
-    const doc = globalThis.document as (Document & { visibilityState?: string }) | undefined;
-    if (doc && typeof doc.addEventListener === 'function') {
-      doc.addEventListener('visibilitychange', () => { if (doc.visibilityState === 'hidden') onHide(); });
+  private offlineOwner():OfflineOwner {return {coins:this.meta.coins,embers:this.meta.embers,xp:this.meta.xp,level:this.meta.level,
+    counters:this.meta.offlineCounters,restaurantIndex:this.vipRestaurant(),upgradeLevels:this.meta.upgrades,offline:this.meta.offline};}
+  private commitOffline(tx:OfflineTransaction<OfflineOwner>):boolean {
+    const next=commitOfflineMeta(this.meta,tx,saveMeta);
+    this.offlineStorageError=!next;
+    if(!next){this.offlinePopup=this.tutorial.done;return false;}
+    this.meta=next;return true;
+  }
+  private hideOffline():void {
+    this.offlineHidden=true;this.skipResumeFrame=true;
+    if(this.tutorial&&!this.tutorial.done&&this.tutorial.abandon())this.saveTutorial();
+    if(this.offlineReturnAt===null)this.commitOffline(beginOfflineAbsence(this.db,this.offlineOwner(),Date.now()/1000));
+  }
+  private resumeOffline():void {
+    this.offlineHidden=false;this.skipResumeFrame=true;
+    this.offlineReturnAt??=Date.now()/1000;
+    const tx=returnFromOffline(this.db,this.offlineOwner(),this.offlineReturnAt);
+    if(this.commitOffline(tx)){
+      this.offlineReturnAt=null;
+      if(this.tutorial.done&&(tx.receipt||this.meta.offline.batch))this.offlinePopup=true;
+    }else if(!this.meta.offline.anchor&&!this.meta.offline.batch&&!tx.receipt){
+      // No payable ledger exists: unavailable storage must not lock a fresh FTUE.
+      // An outstanding absence/credit still pauses until its atomic write succeeds.
+      this.offlineReturnAt=null;
     }
-    const win = globalThis as unknown as { addEventListener?: (t: string, f: () => void) => void };
-    if (typeof win.addEventListener === 'function') win.addEventListener('pagehide', onHide);
+  }
+  /** Real visibility/page lifecycle; RAF time while hidden is never cooked or earned online. */
+  private bindLifecycle(): void {
+    const doc=globalThis.document;
+    doc?.addEventListener?.('visibilitychange',()=>{if(doc.visibilityState==='hidden')this.hideOffline();else this.resumeOffline();});
+    globalThis.addEventListener?.('pagehide',()=>this.hideOffline());
+    globalThis.addEventListener?.('pageshow',()=>this.resumeOffline());
   }
 
   /**
@@ -750,17 +811,35 @@ class Game {
   private update(dt: number): void {
     this.now += dt;
     // Read-only views for the Node harnesses (shoot.mjs / render-smoke.mjs).
-    const dbg = globalThis as unknown as { __churrascoScreen?: Screen; __churrascoFtue?: unknown; __churrascoHome?: unknown; __churrascoCooking?: unknown };
+    const dbg = globalThis as unknown as { __churrascoScreen?: Screen; __churrascoFtue?: unknown; __churrascoHome?: unknown; __churrascoCooking?: unknown; __churrascoResult?: unknown };
+    dbg.__churrascoResult = this.screen==='result' && this.lastResult ? {vipReward:{...this.lastResult.vipReward}} : null;
     dbg.__churrascoScreen = this.screen;
     dbg.__churrascoCooking = this.screen === 'play' ? {
+      activeCoinMultiplier:activeCoinMultiplier(this.db,this.sim.restaurant.index),
+      staff: this.sim.staff.snapshot,
       playerLevel: this.sim.config.playerLevel, restaurantIndex: this.sim.restaurant.index,
-      orders: this.sim.customers.map(c => ({ id: c.def.id, ingredients: c.lines.map(l => l.ingredientId) })),
+      orderPager: this.orderPager(),
+      orders: this.sim.customers.map(c => ({ visible: this.visibleIndexOf(c) >= 0, id: c.def.id, uid: c.uid, state: c.state,
+        ingredients: c.lines.map(l => l.ingredientId), fulfilled: c.lines.map(l => l.fulfilledBy.length),
+        ...this.orderCardRect(this.visibleIndexOf(c)) })),
+      coins: this.sim.coins, xp: this.sim.xp, counters: { ...this.sim.counters },
+      prep: this.hasPrep() ? this.prepRects().map(r => {
+        const f = this.sim.prepSlots[r.slot];
+        return { ...r, uid: f?.uid ?? null, progress: f?.prepProgress ?? 0 };
+      }) : [],
+      prepPager: this.hasPrep() && prepPageCount(this.sim.prepSlots.length) > 1 ? { ...PREP_PAGER } : null,
+      activeFoods: this.sim.foods.filter(f => !f.served).length,
       page: this.benchPageIndex, pages: benchPageCount(this.unlocked),
       pager: !this.ftue && benchPageCount(this.unlocked) > 1 ? { ...BENCH_PAGER } : null,
-      zones: this.sim.grill.zones.map(z => this.toGrillScreen(W / 2, this.zoneY(z.index))),
-      bench: benchPage(this.unlocked, this.benchPageIndex).map((ing, i) => ({ id: ing.id, ...this.benchItemRect(i) })),
+      zones: this.sim.grill.zones.map(z => ({ ...this.toGrillScreen(W / 2, this.zoneY(z.index)),
+        index: z.index, label: this.zoneLabel(z.index), heat: z.heat, effectiveHeat: effectiveHeat(this.sim.grill,z.index,this.db) })),
+      zoneCountBadge: this.zoneCount(),
+      bench: benchPage(this.unlocked, this.benchPageIndex).map((ing, i) => ({ id: ing.id, remaining: this.sim.stockRemaining(ing.id), ...this.benchItemRect(i) })),
+      resources: { feedback: this.bannerLife>0?this.bannerText:null, stockRefill: STOCK_REFILL, charcoalRefill: CHARCOAL_REFILL,
+        stockRefillRemaining: this.sim.stockRefillRemaining, stockCapacity: this.sim.stats.rawStockCapacityPerIngredient,
+        charcoalRefillRemaining: this.sim.grill.refilling, autoAttempts: this.sim.autoRefillAttempts, autoSuccesses: this.sim.autoRefillSuccesses },
       foods: this.sim.foods.filter(f => f.onGrill).map(f => ({
-        id: f.ingredient.id, uid: f.uid, ...this.foodScreenPos(f), flips: f.flips, burned: f.burned,
+        id: f.ingredient.id, uid: f.uid, zoneIndex: f.zoneIndex, ...this.foodScreenPos(f), flips: f.flips, burned: f.burned,
         flipHint: cookingFlipHint(this.db, this.tutorialTable, f),
         perfect: !f.burned && overallDoneness(f) >= f.ingredient.perfectWindow[0]
           && overallDoneness(f) <= f.ingredient.perfectWindow[1] && evenness(f) >= this.db.ingredients.shared.minEvennessForPerfect
@@ -768,6 +847,10 @@ class Game {
     } : null;
     if (!this.ftue && !this.homeFtueActive() && !this.ftueResultActive()) dbg.__churrascoFtue = null;
     dbg.__churrascoHome = this.screen === 'home' ? {
+      activeCoinMultiplier:activeCoinMultiplier(this.db,this.vipRestaurant()),
+      catalog: this.homeTab === 'shop' ? this.upgradeCatalog() : null,
+      vip: { status:this.vipStatus(), state:structuredClone(this.meta.vip), card:this.vipCard(), modal:this.meta.vip.offer ? this.vipModal() : null },
+      equippedZoneCount: this.equippedZoneCount(),
       coins: this.meta.coins, embers: this.meta.embers, lastClaimDay: this.meta.lastClaimDay,
       claimable: this.dailyClaimable(), dailyOpen: this.dailyModalOpen,
       strip: this.dailyStripLayout().panel, modal: this.dailyModalOpen ? this.dailyModalLayout() : null
@@ -899,7 +982,15 @@ class Game {
         this.shake = 0.5;
         this.confettiBurst(W / 2, 340, 24);
         audio.play('combo', { combo: ev.combo });
-      } else if (ev.type === 'charcoal_low') {
+      } else if (ev.type === 'staff_action') {
+        this.banner(this.l10n.t(`ui.staff.action.${ev.role}`));
+        if(ev.role==='churrasqueiro')audio.play('flip');
+        if(this.drag?.food.served){this.drag=null;this.pointer.down=false;}
+      } else if (ev.type === 'staff_burn_risk') {
+        this.banner(this.l10n.t('ui.staff.burnRisk'));
+      } else if (ev.type === 'charcoal_auto_attempt' && ev.success) {
+        this.banner(this.l10n.t('ui.hud.charcoal.auto'));
+      } else if (ev.type === 'charcoal_low' && this.sim.grill.refilling <= 0) {
         this.banner(this.l10n.t('ui.hud.charcoal.low'));
         audio.play('charcoalLow');
       }
@@ -961,6 +1052,13 @@ class Game {
         this.meta.clearedLevels.push(lvl.id);
       }
     }
+    const vipReward=applyVipProgress(this.db,this.meta.vip,r.counters.vipServed);
+    this.meta.coins += vipReward.coins;
+    this.meta.embers += vipReward.embers;
+    if(vipReward.unlocked.length) {
+      this.track({name:'currency_earned',params:{currency:'coins',amount:vipReward.coins,source:'vip_achievement',balance:this.meta.coins}});
+      this.track({name:'currency_earned',params:{currency:'embers',amount:vipReward.embers,source:'vip_achievement',balance:this.meta.embers}});
+    }
     this.meta.coins += r.coins + levelCoins;
     this.meta.xp += r.xp;
     this.meta.bestCombo = Math.max(this.meta.bestCombo, r.counters.bestCombo);
@@ -997,7 +1095,7 @@ class Game {
     this.lastResult = {
       coins: r.coins, xp: r.xp, stars: r.stars,
       perfect: r.counters.perfectCooks, burned: r.counters.burnedFood, combo: r.counters.bestCombo,
-      levelCoins, ftue: wasFtue
+      levelCoins, vipReward, ftue: wasFtue
     };
     this.coinFlights = [];
     this.hudCoinsLanded = 0;
@@ -1027,7 +1125,7 @@ class Game {
     this.meta.coins += bonus;
     this.meta.xp += 40;
     saveMeta(this.meta);
-    this.lastResult = { coins: bonus, xp: 40, stars: 3, perfect: this.frenzyScore, burned: 0, combo: Math.min(20, this.frenzyScore), levelCoins: 0, ftue: false };
+    this.lastResult = { coins: bonus, xp: 40, stars: 3, perfect: this.frenzyScore, burned: 0, combo: Math.min(20, this.frenzyScore), levelCoins: 0, vipReward:{coins:0,embers:0}, ftue: false };
     this.screen = 'result';
     this.resultT = 0;
     this.banner(`Frenesi: +${bonus} moedas!`);
@@ -1138,7 +1236,11 @@ class Game {
     return 55 + step * (slot + 0.5);
   }
   private foodScreenPos(f: FoodRuntime): { x: number; y: number } {
-    if (!f.onGrill) return { x: W / 2, y: BENCH_TOP - 30 };
+    if (!f.onGrill) {
+      const slot = this.sim.prepSlots.indexOf(f);
+      const r = this.prepRects().find(r => r.slot === slot);
+      return r ? { x: r.x + r.w / 2, y: r.y + r.h / 2 } : { x: W / 2, y: BENCH_TOP - 30 };
+    }
     const zone = this.sim.grill.zones[f.zoneIndex];
     const idx = zone ? zone.items.indexOf(f) : 0;
     return this.toGrillScreen(this.slotX(f.zoneIndex, Math.max(0, idx)), this.zoneY(f.zoneIndex));
@@ -1240,12 +1342,10 @@ class Game {
   }
   private drawGrillArt(ctx: CanvasRenderingContext2D, art: GrillArt): void {
     const n = this.zoneCount();
-    const eff = this.sim.grill.charcoalEfficiency;
-    const heats = Array.from({ length: n }, (_, z) => ((this.sim.grill.zones[z] as { heat?: number } | undefined)?.heat ?? 1) * eff);
+    const heats = Array.from({ length: n }, (_, z) => effectiveHeat(this.sim.grill, z, this.db));
     this.drawGrillSprite(ctx, art, heats);
-    const labels = n === 1 ? ['FOGO BAIXO'] : n === 2 ? ['BRASA BAIXA', 'BRASA ALTA'] : ['BAIXA', 'MÉDIA', 'ALTA'];
     for (let z = 0; z < n; z++) {
-      const heat = heats[z] ?? 1, lab = labels[z] ?? `F${z + 1}`, labW = lab.length * 6 + 14;
+      const heat = heats[z] ?? 1, lab = this.zoneLabel(z), labW = lab.length * 6 + 14;
       const p = quadPoint(art.quad, 0.04, (z + 0.2) / n);
       ctx.save();
       glass(ctx, p.x, p.y - 7, labW, 14, { alpha: 0.3, border: heat > 1.1 ? C.chama : heat > 0.85 ? C.ambar : 'rgba(255,220,160,0.28)' });
@@ -1261,11 +1361,15 @@ class Game {
     }
     this.drawCharcoalGauge(ctx, W / 2 - GRILL_ART_BED_W / 2, GRILL_BOTTOM + 8, GRILL_ART_BED_W);
   }
+  private hasPrep(): boolean { return !this.ftue && this.unlocked.some(i => i.cookMethod === 'prep'); }
+  private prepRects(): ReturnType<typeof prepSlotRects> { return prepSlotRects(this.sim.prepSlots.length, this.prepPageIndex); }
+
   private benchItemRect(i: number): { x: number; y: number; w: number; h: number } {
     const w = 74; const gap = 8;
     return { x: 14 + (i % 5) * (w + gap), y: BENCH_TOP + 22 + Math.floor(i / 5) * 74, w, h: 66 };
   }
   private orderCardRect(i: number): { x: number; y: number; w: number; h: number } {
+    if (i < 0) return {x:-1000,y:-1000,w:0,h:0}; // no off-page input target
     const w = 128; const gap = 8;
     const drop = this.ftue ? FTUE_ORDER_DROP : 0;
     return { x: 10 + (i % 3) * (w + gap), y: 70 + drop + Math.floor(i / 3) * 64, w, h: 58 };
@@ -1351,6 +1455,28 @@ class Game {
       audio.unlock();
       if (!this.sizzleBed && this.screen === 'play') this.sizzleBed = audio.startSizzleBed();
 
+      if(this.offlineHidden||this.offlineReturnAt!==null)return;
+      if(this.offlinePopup){
+        const v=offlineView(this.db,this.offlineOwner(),Date.now()/1000);
+        if(contains(OFFLINE_UI.claim,p)&&v.canClaim&&v.id!==null){
+          const tx=claimOffline(this.db,this.offlineOwner(),v.id,Date.now()/1000);
+          if(this.commitOffline(tx)&&tx.receipt){this.burst(W/2,H/2,18,C.ouroLight,'coin');audio.play('coin');}
+        }else if(contains(OFFLINE_UI.close,p)||!contains(OFFLINE_UI.panel,p))this.offlinePopup=false;
+        return;
+      }
+
+      if(this.screen==='home' && !this.homeFtueActive() && this.meta.vip.offer) {
+        const layout=this.vipModal(), token=this.meta.vip.offer.token;
+        const completed=contains(layout.confirm,p);
+        if(completed || contains(layout.cancel,p)) {
+          const granted=finishVipCall(this.db,this.meta.vip,this.vipRestaurant(),Date.now()/1000,token,completed);
+          saveMeta(this.meta);
+          this.track(granted ? {name:'rewarded_complete',params:{placement:'call_vip',network:'prototype_test',reward_id:token,ecpm_micros:0}}
+            : {name:'rewarded_fail',params:{placement:'call_vip',error:completed?'not_granted':'test_cancelled'}});
+          audio.play('uiTap');
+        }
+        return;
+      }
       // Global close for modals
       if (this.dailyModalOpen) {
         const L = this.dailyModalLayout();
@@ -1364,18 +1490,6 @@ class Game {
         if (onNextCard || contains(L.claim, p, 4)) { this.claimDaily(p); return; }
         // tap outside to close
         if (!contains(L.panel, p)) this.dailyModalOpen = false;
-        return;
-      }
-      if (this.offlinePopup) {
-        if (p.y > H*0.5 + 60 && p.y < H*0.5+120 && Math.abs(p.x - W/2) < 100) {
-          this.meta.coins += this.offlinePopup.coins;
-          saveMeta(this.meta);
-          this.offlinePopup = null;
-          this.burst(W/2, H/2, 18, C.ouroLight, 'coin');
-          audio.play('coin');
-        } else if (Math.hypot(p.x - W/2, p.y - (H*0.5-80)) > 140) {
-          this.offlinePopup = null;
-        }
         return;
       }
 
@@ -1406,6 +1520,17 @@ class Game {
         return;
       }
       if (this.screen === 'home') {
+        if(contains(OFFLINE_UI.entry,p)){this.offlinePopup=true;return;}
+        if(this.homeTab==='home' && contains(this.vipCard(),p)) {
+          const token=beginVipCall(this.db,this.meta.vip,this.vipRestaurant(),Date.now()/1000);
+          saveMeta(this.meta);
+          if(token) {
+            this.track({name:'rewarded_offer',params:{placement:'call_vip',context:'home'}});
+            this.track({name:'rewarded_start',params:{placement:'call_vip',network:'prototype_test'}});
+            audio.play('uiTap');
+          } else audio.play('uiError');
+          return;
+        }
         // Bottom nav
         const navHit = this.hitBottomNav(p);
         if (navHit) {
@@ -1416,6 +1541,14 @@ class Game {
           }
           return;
         }
+        if (this.homeTab === 'shop') {
+          const catalog=this.upgradeCatalog();
+          if(contains(UPGRADE_PREV,p))this.upgradePage=(this.upgradePage+catalog.pages-1)%catalog.pages;
+          else if(contains(UPGRADE_NEXT,p))this.upgradePage=(this.upgradePage+1)%catalog.pages;
+          else { const card=catalog.cards.find(c=>contains(c.buy,p)); if(card)this.buyUpgrade(card.id,p); }
+          return; // never fall through to the hidden Home CTAs
+        }
+        if (this.homeTab !== 'home') return;
         // Play button — hero card
         if (this.hitHomePlay(p)) {
           audio.play('uiTap');
@@ -1583,6 +1716,18 @@ class Game {
       }
 
       // PLAY screen interactions below
+      if (this.drag) return;
+      if (this.stockControlVisible() && contains(STOCK_REFILL,p)) {
+        if (this.sim.refillStock()) { audio.play('uiTap'); this.banner(this.l10n.t('ui.stock.refilling')); }
+        return;
+      }
+      const pager=this.orderPager();
+      if(pager && (contains(pager.prev,p)||contains(pager.next,p))) {
+        const step=contains(pager.next,p)?1:-1;
+        this.orderPage=(this.orderPage+step+pager.pages)%pager.pages;
+        audio.play('uiTap'); return;
+      }
+      this.orderSnapshot=this.visibleOrders();
       const ftue = this.ftue;
       if (ftue) {
         // PULAR — 48 px, after skip.showAfterSec (docs/21: 2 s), where the pause button lives otherwise.
@@ -1594,11 +1739,27 @@ class Game {
         audio.play('uiTap');
         return;
       }
+      if (this.hasPrep()) {
+        if (prepPageCount(this.sim.prepSlots.length) > 1 && contains(PREP_PAGER, p)) {
+          this.prepPageIndex = (this.prepPageIndex + 1) % prepPageCount(this.sim.prepSlots.length);
+          audio.play('uiTap'); return;
+        }
+        const slot = this.prepRects().find(r => contains(r, p));
+        const food = slot ? this.sim.prepSlots[slot.slot] : null;
+        if (food) {
+          this.drag = { food, fromBench: false, x: p.x, y: p.y, startX: p.x, startY: p.y, moved: false, startTime: performance.now() };
+          return;
+        }
+      }
       const visibleBench = benchPage(this.unlocked, this.benchPageIndex);
       for (let i = 0; i < visibleBench.length; i++) {
         const r = this.benchItemRect(i);
         if (p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h) {
-          const food = ftue ? ftue.take() : this.sim.takeFromStock(visibleBench[i]!);
+          const ing = visibleBench[i]!;
+          if (this.sim.stockRemaining(ing.id) <= 0) {
+            this.banner(this.l10n.t('ui.stock.empty')); audio.play('uiError'); return;
+          }
+          const food = ftue ? ftue.take() : this.sim.takeFromStock(ing);
           if (!food) { this.ftueBlocked(); return; } // masked: the bench is not part of this step
           this.drag = { food, fromBench: true, x: p.x, y: p.y, startX: p.x, startY: p.y, moved: false, startTime: performance.now() };
           audio.play('uiTap');
@@ -1616,7 +1777,7 @@ class Game {
         return;
       }
 
-      if (p.y > GRILL_BOTTOM + 4 && p.y < GRILL_BOTTOM + 48) {
+      if (contains(CHARCOAL_REFILL,p)) {
         if (ftue && !ftue.allows('refill')) return;
         if (this.sim.refillCharcoal()) {
           this.banner(this.l10n.t('ui.hud.charcoal'));
@@ -1644,80 +1805,120 @@ class Game {
       const d = this.drag;
       this.pointer.down = false;
       if (!d) return;
+      const dropOrders = this.visibleOrders();
       this.drag = null;
-      const held = (performance.now() - d.startTime) / 1000;
+      try {
+        const held = (performance.now() - d.startTime) / 1000;
 
-      const ftue = this.ftue;
-      // P0: flip só em tap rápido (<0.35s) sem arrasto — evita confundir com drag
-      if (!d.moved && !d.fromBench && d.food.onGrill && held < 0.35) {
-        const flipped = ftue ? ftue.flip(d.food) : this.sim.flip(d.food);
-        if (flipped) {
-          const pos = this.foodScreenPos(d.food);
-          this.burst(pos.x, pos.y + 10, 10, C.chama, 'spark');
-          this.float(pos.x, pos.y - 22, this.l10n.t('ui.feedback.flip'), C.creme, 15);
-          audio.play('flip');
-          if (ftue) this.saveTutorial();
-        } else if (ftue && ftue.guided) {
-          this.ftueBlocked(); // too early — the ring is still filling
+        const ftue = this.ftue;
+        // P0: flip só em tap rápido (<0.35s) sem arrasto — evita confundir com drag
+        if (!d.moved && !d.fromBench && d.food.onGrill && held < 0.35) {
+          const flipped = ftue ? ftue.flip(d.food) : this.sim.flip(d.food);
+          if (flipped) {
+            const pos = this.foodScreenPos(d.food);
+            this.burst(pos.x, pos.y + 10, 10, C.chama, 'spark');
+            this.float(pos.x, pos.y - 22, this.l10n.t('ui.feedback.flip'), C.creme, 15);
+            audio.play('flip');
+            if (ftue) this.saveTutorial();
+          } else if (ftue && ftue.guided) {
+            this.ftueBlocked(); // too early — the ring is still filling
+          }
+          return;
         }
-        return;
-      }
-      if (d.locked) {
-        // Dragging a plate the step does not let go of: it stays put.
-        if (d.moved) { this.tutorial.miss(); this.ftueBlocked(); }
-        return;
-      }
-      // long-press serve removido (P0: 4 gestos → 3) — só drag-to-customer serve agora
-
-      if (!(ftue && d.fromBench)) {
-        for (let i = 0; i < this.sim.customers.length; i++) {
-          const c = this.sim.customers[i]!;
-          if (c.state !== 'waiting') continue;
-          const r = this.orderCardRect(this.visibleIndexOf(c));
-          if (d.x >= r.x - 8 && d.x <= r.x + r.w + 8 && d.y >= r.y - 8 && d.y <= r.y + r.h + 8) {
+        if (d.locked) {
+          // Dragging a plate the step does not let go of: it stays put.
+          if (d.moved) { this.tutorial.miss(); this.ftueBlocked(); }
+          return;
+        }
+        // Prep never touches the coals. Invalid drops keep an admitted portion in its slot;
+        // unadmitted stock is returned (discarded) so no hidden timer/food can leak.
+        if (d.food.ingredient.cookMethod === 'prep') {
+          const reject = (key: string): void => {
+            this.float(d.x, d.y - 20, this.l10n.t(key), C.telha, 12);
+            audio.play('uiError');
+            if (d.fromBench) this.sim.discard(d.food);
+          };
+          const slot = this.prepRects().find(r => contains(r, d));
+          if (d.fromBench) {
+            if (!d.moved || slot) {
+              if (this.sim.startPrep(d.food, slot?.slot)) {
+                const index = this.sim.prepSlots.indexOf(d.food);
+                this.prepPageIndex = Math.floor(index / 5);
+                audio.play('place');
+              } else reject('ui.prep.full');
+            } else reject('ui.prep.hint');
+            return;
+          }
+          if (!d.moved || contains(PREP_AREA, d)) return;
+          for (const c of dropOrders) {
+            if (c.state !== 'waiting' || !contains(this.orderCardRect(dropOrders.indexOf(c)), d, 8)) continue;
+            if (d.food.prepProgress < 1) { reject('ui.prep.wait'); return; }
             this.lastServePos = { x: d.x, y: d.y };
             this.tryServe(d.food, c);
             return;
           }
-        }
-      }
-
-      {
-        const z = this.grillZoneAt(d.x, d.y);
-        if (z >= 0) {
-          if (ftue && !d.fromBench && !ftue.allows('move', d.food)) {
-            this.tutorial.miss(); // step 3: the plate goes to the customer, not back on the coals
-            this.ftueBlocked();
-            return;
-          }
-          const ok = d.fromBench
-            ? (ftue ? ftue.place(d.food, z) : this.sim.place(d.food, z))
-            : (ftue ? ftue.move(d.food, z) : this.sim.move(d.food, z));
-          if (ok) {
-            audio.play('place');
-            if (ftue) this.saveTutorial();
-          } else {
-            this.float(d.x, d.y, this.l10n.t('ui.quality.grillFull'), C.telha, 14);
-            audio.play('uiError');
-            // TutorialTurn already counted the miss; just put the item back.
-            if (ftue && d.fromBench) this.sim.discard(d.food);
-          }
+          if (d.y > BENCH_TOP - 20) { this.sim.discard(d.food); audio.play('uiBack'); }
+          else reject('ui.prep.hint');
           return;
         }
-      }
+        // long-press serve removido (P0: 4 gestos → 3) — só drag-to-customer serve agora
 
-      if (ftue) {
-        // A bench item that missed the grill goes back to the bench; a plate dropped on it is binned.
-        if (d.fromBench || d.y > BENCH_TOP - 20) ftue.discard(d.food);
-        return;
-      }
-      if (d.y > BENCH_TOP - 20) {
-        this.sim.discard(d.food);
+        if (!(ftue && d.fromBench)) {
+          for (let i = 0; i < dropOrders.length; i++) {
+            const c = dropOrders[i]!;
+            if (c.state !== 'waiting') continue;
+            const r = this.orderCardRect(i);
+            if (d.x >= r.x - 8 && d.x <= r.x + r.w + 8 && d.y >= r.y - 8 && d.y <= r.y + r.h + 8) {
+              this.lastServePos = { x: d.x, y: d.y };
+              this.tryServe(d.food, c);
+              return;
+            }
+          }
+        }
+
+        {
+          const z = this.grillZoneAt(d.x, d.y);
+          if (z >= 0) {
+            if (ftue && !d.fromBench && !ftue.allows('move', d.food)) {
+              this.tutorial.miss(); // step 3: the plate goes to the customer, not back on the coals
+              this.ftueBlocked();
+              return;
+            }
+            const ok = d.fromBench
+              ? (ftue ? ftue.place(d.food, z) : this.sim.place(d.food, z))
+              : (ftue ? ftue.move(d.food, z) : this.sim.move(d.food, z));
+            if (ok) {
+              audio.play('place');
+              if (ftue) this.saveTutorial();
+            } else {
+              this.float(d.x, d.y, this.l10n.t(d.fromBench && this.sim.stockRemaining(d.food.ingredient.id) <= 0 ? 'ui.stock.empty' : 'ui.quality.grillFull'), C.telha, 14);
+              audio.play('uiError');
+              // TutorialTurn already counted the miss; just put the item back.
+              if (ftue && d.fromBench) this.sim.discard(d.food);
+            }
+            return;
+          }
+        }
+
+        if (ftue) {
+          // A bench item that missed the grill goes back to the bench; a plate dropped on it is binned.
+          if (d.fromBench || d.y > BENCH_TOP - 20) ftue.discard(d.food);
+          return;
+        }
+        if (d.y > BENCH_TOP - 20) {
+          this.sim.discard(d.food);
+        }
+      } finally {
+        if (d.fromBench && !d.food.onGrill && !d.food.served && !this.sim.prepSlots.includes(d.food)) this.sim.discard(d.food);
       }
     };
 
     canvas.addEventListener('pointerup', release);
-    canvas.addEventListener('pointercancel', release);
+    canvas.addEventListener('pointercancel', () => {
+      if (this.drag?.fromBench) this.sim.discard(this.drag.food);
+      this.drag = null;
+      this.pointer.down = false;
+    });
   }
 
   private hitBottomNav(p: {x:number;y:number}): HomeTab | null {
@@ -1766,37 +1967,51 @@ class Game {
     return null;
   }
 
-  /** Home quick-buy. Logs `upgrade_purchase` — the funnel's first_upgrade (analytics.json). */
+  /** Adapt the browser wallet; all eligibility, prices and debits live in sim-core. */
+  private upgradeBuyer(): UpgradeBuyer {
+    return {coins:this.meta.coins,embers:this.meta.embers,level:this.meta.level,
+      restaurantIndex:this.levels[this.levelIndex]?.restaurantIndex??0,
+      upgradeLevels:this.meta.upgrades,counters:this.meta.purchaseCounters??{}};
+  }
+  private upgradeCatalog() {
+    const buyer=this.upgradeBuyer();
+    return {page:this.upgradePage,pages:upgradePages(this.db.upgrades.tracks.length),prev:UPGRADE_PREV,next:UPGRADE_NEXT,
+      cards:upgradeCards(this.db.upgrades.tracks.length,this.upgradePage).map(r=>({
+        ...quoteUpgrade(this.db,buyer,this.db.upgrades.tracks[r.index]!.id),...r.rect,buy:r.buy
+      }))};
+  }
+  private upgradeStatus(q:UpgradeQuote):string {
+    const key=q.reasons.includes('feature_pending')?'feature_pending':q.reasons[0]??'ready';
+    return this.l10n.t(`ui.upgrades.${key}`,{restaurant:(q.requiredRestaurant??0)+1});
+  }
   private buyUpgrade(id: string, p: Pt): boolean {
-    const cost = this.upgradeCost(id);
-    if (!Number.isFinite(cost) || this.meta.coins < cost) {
-      audio.play('uiError');
-      this.float(p.x, p.y - 20, 'Moedas insuficientes', C.telha, 14);
-      return false;
-    }
-    this.meta.coins -= cost;
-    const level = (this.meta.upgrades[id] ?? 0) + 1;
-    this.meta.upgrades[id] = level;
+    const buyer=this.upgradeBuyer();
+    const q=quoteUpgrade(this.db,buyer,id);
+    const entry=purchaseUpgrade(this.db,buyer,id);
+    if(!entry) {audio.play('uiError');this.float(p.x,p.y-20,this.upgradeStatus(q),C.telha,12);return false;}
+    this.meta.coins=buyer.coins;this.meta.embers=buyer.embers;this.meta.purchaseCounters=buyer.counters;
     saveMeta(this.meta);
-    this.track({ name: 'upgrade_purchase', params: { track_id: id, level, cost_coins: cost } });
-    this.burst(p.x, p.y, 12, C.ouroLight, 'spark');
-    audio.play('levelUp');
-    return true;
+    this.track({name:'upgrade_purchase',params:{track_id:id,level:buyer.upgradeLevels[id]!,cost_coins:q.currency==='coins'?q.cost:0}});
+    this.burst(p.x,p.y,12,C.ouroLight,'spark');audio.play('levelUp');return true;
   }
+  private upgradeCost(id:string):number { return quoteUpgrade(this.db,this.upgradeBuyer(),id).cost; }
 
-  private upgradeCost(id: string): number {
-    const t = this.db.upgradeById.get(id);
-    if (!t) return 999999;
-    const lvl = this.meta.upgrades[id] ?? 0;
-    if (lvl >= t.maxLevel) return Infinity;
-    return Math.round(t.baseCost * Math.pow(t.growth, lvl) / 10) * 10;
+  private visibleOrders(): CustomerRuntime[] {
+    if(this.drag&&this.orderSnapshot)return this.orderSnapshot;
+    const waiting=this.sim.customers.filter(c=>c.state==='waiting');
+    const size=this.ftue?6:orderPageSize(this.sim.stats.maxOrdersOnScreen);
+    // Snapshot above freezes cards during a drag; clamp only once that gesture is over.
+    this.orderPage=Math.min(this.orderPage,Math.max(0,Math.ceil(waiting.length/size)-1));
+    return waiting.slice(this.orderPage*size,(this.orderPage+1)*size);
   }
-
-  private visibleIndexOf(c: CustomerRuntime): number {
-    const waiting = this.sim.customers.filter((x) => x.state === 'waiting');
-    const i = waiting.indexOf(c);
-    return i < 0 ? 0 : i;
+  private orderPager() {
+    if(this.ftue||this.sim.stats.maxOrdersOnScreen<=6)return null;
+    const waiting=this.sim.customers.filter(c=>c.state==='waiting');
+    const visible=this.visibleOrders();
+    return {prev:ORDER_PREV,next:ORDER_NEXT,page:this.orderPage,pages:Math.max(this.orderPage+1,orderPages(waiting.length,this.sim.stats.maxOrdersOnScreen)),
+      total:waiting.length,urgent:waiting.filter(c=>!visible.includes(c)&&c.patienceLeft/c.patienceTotal<.25).length};
   }
+  private visibleIndexOf(c: CustomerRuntime): number { return this.visibleOrders().indexOf(c); }
   private bestCustomerFor(food: FoodRuntime): CustomerRuntime | null {
     const waiting = this.sim.customers.filter((c) => c.state === 'waiting');
     return waiting.find((c) => c.lines.some((l) => l.ingredientId === food.ingredient.id && l.fulfilledBy.length < 1)) ?? null;
@@ -2027,8 +2242,9 @@ class Game {
     else if (this.screen==='bonus_wheel') this.drawWheel(ctx);
     else this.drawPlay(ctx);
     // global overlays
+    if(this.screen==='home' && !this.homeFtueActive() && this.meta.vip.offer) this.drawVipModal(ctx);
     if (this.dailyModalOpen) this.drawDailyModal(ctx);
-    if (this.offlinePopup) this.drawOfflinePopup(ctx);
+    this.drawOfflinePopup(ctx);
     ctx.restore();
   }
 
@@ -2068,7 +2284,16 @@ class Game {
   private drawPlay(ctx: CanvasRenderingContext2D): void {
     this.drawGrill(ctx);
     this.drawBench(ctx);
+    this.drawResourceControls(ctx);
+    this.drawPrep(ctx);
     this.drawOrders(ctx);
+    const staff=this.sim.staff.snapshot;
+    if(!this.ftue&&(staff.serve.level||staff.prep.level||staff.flip.level)){
+      panel(ctx,12,224,W-24,26,{r:8,top:'rgba(30,20,12,.9)',bottom:'rgba(30,20,12,.9)'});
+      ctx.font=font(10,800,UI);ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=C.creme;
+      ctx.fillText(this.l10n.t('ui.staff.status',{served:staff.serve.used,serveTotal:staff.serve.eligible,
+        flipped:staff.flip.used,flipTotal:staff.flip.eligible,prepped:staff.prep.used}),W/2,237,W-30);
+    }
     this.drawParticles(ctx);
     this.drawFloats(ctx);
     if (this.drag && !this.drag.locked) this.drawDragged(ctx);
@@ -2152,10 +2377,47 @@ class Game {
     ctx.restore();
   }
 
+  private vipRestaurant(): number { return (this.levels[this.levelIndex] ?? this.levels[this.levels.length-1])?.restaurantIndex ?? 0; }
+  private vipStatus(): string { return vipCallStatus(this.db,this.meta.vip,this.vipRestaurant(),Date.now()/1000); }
+  private vipCard(): Rect { return {x:W/2+6,y:528,w:(W-36)/2,h:70}; }
+  private vipModal() { return {confirm:{x:220,y:454,w:154,h:50},cancel:{x:46,y:454,w:154,h:50}}; }
+  private drawVipCard(ctx:CanvasRenderingContext2D): void {
+    const r=this.vipCard(),status=this.vipStatus(),s=this.meta.vip;
+    panel(ctx,r.x,r.y,r.w,r.h,{r:18,top:'rgba(65,47,20,0.98)',bottom:'rgba(28,20,12,0.98)',border:C.ouro,shadow:10});
+    ctx.textAlign='left';ctx.fillStyle=C.ouroLight;ctx.font=font(11,800,UI);
+    ctx.fillText(this.l10n.t('ui.vip.title'),r.x+12,r.y+16);
+    ctx.fillStyle=C.perola;ctx.font=font(10,700,UI);
+    const minutes=Math.max(0,Math.ceil(((this.db.ads!.rewardedPlacements.find(p=>p.id==='call_vip')!.cooldownMin*60)-(s.lastClockUnixSec-s.lastCallUnixSec))/60));
+    ctx.fillText(this.l10n.t(`ui.vip.status.${status}`,{minutes}),r.x+12,r.y+32);
+    ctx.font=font(9,600,UI);ctx.fillStyle=C.madeiraPinho;
+    ctx.fillText(this.l10n.t('ui.vip.quota',{used:s.usedToday,cap:this.db.events!.defaults.vipMaxPerDay}),r.x+12,r.y+47);
+    ctx.fillText(this.l10n.t('ui.vip.progress',{n:s.servedTotal}),r.x+12,r.y+61);
+  }
+  private drawVipModal(ctx:CanvasRenderingContext2D): void {
+    ctx.fillStyle='rgba(0,0,0,.78)';ctx.fillRect(0,0,W,H);
+    panel(ctx,28,228,W-56,300,{r:24,top:'rgba(63,44,20,.99)',bottom:'rgba(23,16,10,.99)',border:C.ouro,borderWidth:2,shadow:20});
+    ctx.textAlign='center';ctx.fillStyle=C.ouroLight;ctx.font=font(22,900,DISPLAY);
+    ctx.fillText(this.l10n.t('ui.vip.modal.title'),W/2,264);
+    ctx.fillStyle=C.perola;ctx.font=font(12,600,UI);
+    for(const [i,key] of ['test','reward','arrival','reservation','free'].entries())
+      ctx.fillText(this.l10n.t(`ui.vip.modal.${key}`,{cap:this.db.events!.defaults.vipMaxPerDay}),W/2,302+i*26);
+    const layout=this.vipModal();
+    for(const [key,r] of Object.entries(layout)) {
+      premiumButton(ctx,r.x,r.y,r.w,r.h,{variant:key==='confirm'?'gold':'ghost'});
+      ctx.font=font(12,800,UI);ctx.fillStyle=C.perola;ctx.textAlign='center';
+      ctx.fillText(this.l10n.t(`ui.vip.modal.${key}`),r.x+r.w/2,r.y+r.h/2+4);
+    }
+  }
+
   private drawHome(ctx: CanvasRenderingContext2D): void {
     this.drawParticles(ctx);
     // Header (frosted, with XP)
     this.drawHomeHeader(ctx);
+    if(this.tutorial.done){const r=OFFLINE_UI.entry;glass(ctx,r.x,r.y,r.w,r.h,{alpha:.18,border:C.ouro});
+      ctx.font=font(10,800,UI);ctx.fillStyle=C.ouroLight;ctx.textAlign='center';
+      ctx.fillText(this.l10n.t('ui.meta.offline.entry'),r.x+r.w/2,r.y+19);
+      ctx.font=font(9,600,UI);ctx.fillText(this.l10n.t(this.meta.offline.batch?'ui.meta.offline.pending':'ui.meta.offline.receipts'),r.x+r.w/2,r.y+36);}
+
 
     // Daily streak strip
     this.drawDailyStrip(ctx);
@@ -2167,6 +2429,12 @@ class Game {
       return;
     }
 
+    if(this.vipRestaurant()>=4){
+      panel(ctx,12,210,W-24,46,{r:12,top:'rgba(45,31,20,.96)',bottom:'rgba(25,17,10,.96)',border:C.ouro});
+      ctx.textAlign='center';ctx.fillStyle=C.ouroLight;ctx.font=font(12,800,UI);
+      ctx.fillText(this.l10n.t('ui.income.activeRate',{percent:Math.round(100*activeCoinMultiplier(this.db,this.vipRestaurant()))}),W/2,228);
+      ctx.font=font(10,600,UI);ctx.fillStyle=C.perola;ctx.fillText(this.l10n.t('ui.income.unchanged'),W/2,246);
+    }
     // CTA Play card — hero (only on Início) — now shows churrasqueira atual
     const cardY=272;
     const cardH=76;
@@ -2182,7 +2450,7 @@ class Game {
     ctx.textAlign='left'; ctx.textBaseline='middle';
     if (actCh && actEvo) {
       ctx.font=font(9,800,UI); ctx.fillStyle='rgba(244,231,211,0.62)';
-      ctx.fillText(`${this.l10n.t(actCh.nameKey).toUpperCase()} · ${actEvo.zoneCount} ${actEvo.zoneCount>1?'FILEIRAS':'FILEIRA'} · ${actEvo.slotsPerZone} cortes/fila`, 28, cardY+28);
+      ctx.fillText(`${this.l10n.t(actCh.nameKey).toUpperCase()} · ${this.equippedZoneCount()} ${this.equippedZoneCount()>1?'FILEIRAS':'FILEIRA'} · ${actEvo.slotsPerZone} cortes/fila`, 28, cardY+28);
       outlinedText(ctx, `${lvl.id.toUpperCase()} · ${this.l10n.t(actCh.subtitleKey).toUpperCase()}`, 28, cardY+46, C.perola, 14, { outline:2, weight:900, align:'left' });
       ctx.font=font(10,600,UI); ctx.fillStyle='rgba(244,231,211,0.55)';
       ctx.fillText(this.l10n.t(actEvo.nameKey) + ' · Toque para cozinhar — 90s',28, cardY+62);
@@ -2234,7 +2502,7 @@ class Game {
       const k = Math.min((thumbW - 4) / thumbGrill.w, (thumbH - 4) / thumbGrill.h);
       const gx = thumbX + (thumbW - thumbGrill.w * k) / 2, gy = thumbY + (thumbH - thumbGrill.h * k) / 2;
       this.drawGrillSprite(ctx, { img: thumbGrill.img, x: gx, y: gy, w: thumbGrill.w * k, h: thumbGrill.h * k,
-        quad: thumbGrill.hole.quad.map(([x, y]) => [gx + x * k, gy + y * k]) as Quad }, [1]);
+        quad: thumbGrill.hole.quad.map(([x, y]) => [gx + x * k, gy + y * k]) as Quad }, Array.from({ length: this.equippedZoneCount() }, (_, z) => churrasqueiraZoneHeat({ zoneCount: this.equippedZoneCount(), heatBase: showcaseActEvo?.heatBase ?? 1 }, z, this.db)));
     } else {
       // draw miniature grill based on style
       const style = showcaseActCh?.visual.style ?? 'lata';
@@ -2248,7 +2516,7 @@ class Game {
       // fileiras lines inside thumb
       const evoForThumb = showcaseActEvo;
       if (evoForThumb) {
-        const fCount = evoForThumb.zoneCount;
+        const fCount = this.equippedZoneCount();
         for(let i=0;i<fCount;i++){
           const y = thumbY + 10 + (thumbH-20) * (i / Math.max(1,fCount-1)) * (fCount>1?1:0) + (fCount===1? (thumbH/2-4):0);
           const hh = fCount===1? 26 : (thumbH-20)/fCount - 4;
@@ -2262,7 +2530,7 @@ class Game {
           // label zone
           if (fCount>1){
             ctx.font=font(7,800,UI); ctx.fillStyle='rgba(0,0,0,0.55)'; ctx.textAlign='center';
-            const labels=['BAIXA','MÉDIA','ALTA']; ctx.fillText(labels[i] ?? `F${i+1}`, thumbX+thumbW/2, gyThumb+hh/2+2);
+            ctx.fillText(this.zoneLabel(i, fCount), thumbX+thumbW/2, gyThumb+hh/2+2);
           }
         }
       }
@@ -2295,7 +2563,7 @@ class Game {
       const name = this.l10n.t(showcaseActCh.nameKey);
       ctx.fillText(`${name} — ${short}`, tx, showcaseY+42);
       ctx.font=font(10,600,UI); ctx.fillStyle='rgba(244,231,211,0.58)';
-      const fileiraTxt = showcaseActEvo.zoneCount===1 ? '1 fileira só' : `${showcaseActEvo.zoneCount} fileiras`;
+      const fileiraTxt = this.equippedZoneCount()===1 ? '1 fileira só' : `${this.equippedZoneCount()} fileiras`;
       ctx.fillText(`${fileiraTxt} · ${showcaseActEvo.slotsPerZone}/fila · ${this.l10n.t(this.activeChurr()!.descKey).slice(0,32)}`, tx, showcaseY+56);
       // evolution dots + progress
       const evoIdx = (this.meta.churrasqueiraLv[showcaseActCh.id] ?? 1) - 1;
@@ -2385,7 +2653,7 @@ class Game {
       const track=this.db.upgradeById.get(id);
       const lvlU=this.meta.upgrades[id] ?? 0;
       const cost=this.upgradeCost(id);
-      const canAfford=this.meta.coins>=cost && lvlU < (track?.maxLevel ?? 99);
+      const canAfford=quoteUpgrade(this.db,this.upgradeBuyer(),id).canBuy;
       panel(ctx,x,uy,cardW,52,{r:16, top: canAfford? 'rgba(70,52,28,0.98)':'rgba(44,32,24,0.92)', bottom: canAfford? 'rgba(38,26,14,0.98)':'rgba(22,15,10,0.92)', border: canAfford? C.ouro : 'rgba(255,214,160,0.16)', borderWidth: canAfford?1.5:1, shadow:10, innerGlow:true});
       if (canAfford) {
         ctx.fillStyle='rgba(231,194,74,0.12)';
@@ -2439,6 +2707,9 @@ class Game {
       ctx.beginPath(); ctx.arc(cx,cy,6,0,Math.PI*2); ctx.fill();
       if (done) { ctx.fillStyle=C.perola; ctx.font=font(7,900,UI); ctx.textAlign='center'; ctx.fillText('✓',cx,cy+2); ctx.textAlign='left'; }
     }
+    // During FTUE preserve the legacy tile. Afterwards this is a functional VIP card.
+    if(!this.homeFtueActive()) this.drawVipCard(ctx);
+    else {
     // missions
     panel(ctx,W/2+6,gy,(W-36)/2,70,{r:18, top:'rgba(44,32,24,0.96)', bottom:'rgba(22,15,10,0.96)', border:'rgba(255,214,160,0.18)', shadow:10, innerGlow:true});
     ctx.textAlign='left';
@@ -2453,6 +2724,8 @@ class Game {
       const g=ctx.createLinearGradient(W/2+18,0,W/2+18+barW,0);
       g.addColorStop(0,C.brasaHot); g.addColorStop(1,C.verdeClaro);
       ctx.fillStyle=g; ctx.fill();
+    }
+
     }
 
     // Event banner (weekly) — shifted down due to churrasqueira showcase; bonus takes priority
@@ -2533,7 +2806,7 @@ class Game {
     // coins
     let cx=W-160, cy=30;
     glass(ctx,cx-8,cy-14,74,28,{alpha:0.18, border:'rgba(231,194,74,0.4)'});
-    coinIcon(ctx,cx+6,cy,9); ctx.font=font(13,900,DISPLAY); ctx.textAlign='left'; ctx.fillStyle=C.ouroLight; ctx.fillText(this.meta.coins.toLocaleString(this.l10n.locale),cx+18,cy+1);
+    coinIcon(ctx,cx+6,cy,9); ctx.font=font(13,900,DISPLAY); ctx.textAlign='left'; ctx.fillStyle=C.ouroLight; ctx.fillText(this.meta.coins.toLocaleString(this.l10n.locale),cx+18,cy+1,56);
     // embers
     cx=W-80;
     glass(ctx,cx-4,cy-14,62,28,{alpha:0.18, border:'rgba(224,86,31,0.4)'});
@@ -2647,27 +2920,42 @@ class Game {
   private drawHomeTabContent(ctx: CanvasRenderingContext2D): void {
     const y0 = 272;
     if (this.homeTab === 'shop') {
-      outlinedText(ctx,'LOJA',W/2, y0+10, C.perola, 18, {outline:3, weight:900});
-      ctx.font=font(10,600,UI); ctx.textAlign='center'; ctx.fillStyle='rgba(244,231,211,0.55)';
-      ctx.fillText('Ofertas semanais · Brasas nunca compram poder',W/2, y0+26);
-      // Fix #3 5s test 40% erro “vitalício” → texto claro LGPD (sem jargão técnico)
-      const offers = [
-        {title:'Pacote Inicial', price:'R$ 9,90', desc:'100 Brasas + 5k moedas + avental', badge:'ÚNICO', color:C.ouro},
-        {title:'Brasa Cheia', price:'R$ 14,90', desc:'400 Brasas + bônus 20', badge:'POPULAR', color:C.brasaHot},
-        {title:'Sem Anúncios', price:'R$ 19,90', desc:'Para sempre · Recompensa continua se quiser', badge:'', color:C.verde},
-      ];
-      offers.forEach((o,i)=>{
-        const y=y0+44 + i*86;
-        panel(ctx,14,y,W-28,74,{r:18, top:'rgba(58,42,30,0.98)', bottom:'rgba(28,18,12,0.98)', border:o.color, borderWidth:1.5, shadow:12});
-        if(o.badge){ glass(ctx,W-78,y+10,62,18,{alpha:0.22, border:o.color}); ctx.font=font(8,800,UI); ctx.textAlign='center'; ctx.fillStyle=o.color; ctx.fillText(o.badge,W-47,y+19); }
-        ctx.textAlign='left'; ctx.font=font(13,900,UI); ctx.fillStyle=C.perola; ctx.fillText(o.title,26,y+22);
-        ctx.font=font(10,600,UI); ctx.fillStyle='rgba(244,231,211,0.6)'; ctx.fillText(o.desc,26,y+38);
-        premiumButton(ctx,26,y+48, W-52, 22, {variant: o.title.includes('Inicial')?'gold':'primary'});
-        ctx.font=font(11,900,UI); ctx.textAlign='center'; ctx.fillStyle= C.perola; ctx.fillText(o.price, W/2, y+60);
-      });
-      // bottom hint
-      ctx.font=font(9,600,UI); ctx.fillStyle='rgba(244,231,211,0.4)'; ctx.textAlign='center';
-      ctx.fillText('Toque em INÍCIO para voltar · Restaura compras em Ajustes',W/2, y0+320);
+      const catalog=this.upgradeCatalog();
+      outlinedText(ctx,this.l10n.t('ui.upgrades.title'),W/2,y0+10,C.perola,18,{outline:3,weight:900});
+      ctx.font=font(10,600,UI);ctx.textAlign='center';ctx.fillStyle=C.madeiraPinho;
+      ctx.fillText(this.l10n.t('ui.upgrades.subtitle'),W/2,y0+28);
+      for(const card of catalog.cards) {
+        const track=this.db.upgradeById.get(card.id)!;
+        panel(ctx,card.x,card.y,card.w,card.h,{r:14,top:'rgba(44,32,24,.98)',bottom:'rgba(22,15,10,.98)',border:card.canBuy?C.ouro:C.madeiraPinho,shadow:8});
+        ctx.textAlign='left';ctx.fillStyle=C.perola;ctx.font=font(13,800,UI);
+        ctx.fillText(this.l10n.t(track.nameKey),card.x+12,card.y+19,270);
+        ctx.textAlign='right';ctx.font=font(10,700,UI);
+        ctx.fillText(this.l10n.t('ui.upgrades.level',{level:card.recordedLevel,max:card.maxLevel}),card.x+card.w-12,card.y+19);
+        ctx.textAlign='left';ctx.font=font(10,600,UI);ctx.fillStyle=C.madeiraPinho;
+        const desc=card.phase==='active'?this.l10n.t(track.descKey):this.l10n.t('ui.upgrades.pending_desc');
+        const lines:string[]=[];let line='';
+        for(const word of desc.split(' ')){const next=line?line+' '+word:word;if(ctx.measureText(next).width>270&&line){lines.push(line);line=word;}else line=next;}
+        if(line)lines.push(line);
+        lines.slice(0,2).forEach((text,i)=>ctx.fillText(text,card.x+12,card.y+37+i*12));
+        if(card.phase==='active'&&!card.reasons.includes('maxed')) {
+          const stat=card.id==='brasa_mastery'?'prestigeTip':card.effectStat;
+          const value=['slotsPerZone','prepSlots','tables','maxOrdersOnScreen','rawStockCapacityPerIngredient','autoServeLevel','autoPrepLevel','autoFlipLevel','autoCollectLevel'].includes(stat)?String(card.effectDelta):`${(card.effectDelta*100).toLocaleString(this.l10n.locale,{maximumFractionDigits:2})}%`;
+          ctx.fillStyle=C.ouroLight;
+          ctx.fillText(this.l10n.t('ui.upgrades.effect',{value,stat:this.l10n.t(`ui.upgrades.stat.${stat}`)}),card.x+12,card.y+65);
+        }
+        ctx.fillStyle=card.canBuy?C.verdeClaro:C.ambar;ctx.font=font(10,700,UI);
+        ctx.fillText(this.upgradeStatus(card),card.x+12,card.y+80,272);
+        const gate=card.reasons.find(r=>r==='restaurant_locked'||r==='recipe_locked'||r==='dependency_locked');
+        if(gate&&card.reasons.includes('feature_pending')){ctx.font=font(9,600,UI);ctx.fillText(this.l10n.t(`ui.upgrades.${gate}`,{restaurant:(card.requiredRestaurant??0)+1}),card.x+12,card.y+93,272);}
+        if(card.canBuy)premiumButton(ctx,card.buy.x,card.buy.y,card.buy.w,card.buy.h,{variant:'gold'});
+        else panel(ctx,card.buy.x,card.buy.y,card.buy.w,card.buy.h,{r:14,top:'#35291f',bottom:'#22180f',border:'rgba(255,214,160,.2)'});
+        ctx.textAlign='center';ctx.font=font(11,800,UI);ctx.fillStyle=card.canBuy?C.perola:C.madeiraPinho;
+        ctx.fillText(Number.isFinite(card.cost)?card.cost.toLocaleString(this.l10n.locale):this.l10n.t('ui.upgrades.maxed'),card.buy.x+card.buy.w/2,card.buy.y+20,78);
+        ctx.font=font(9,600,UI);ctx.fillText(this.l10n.t(this.db.economy.currencies[card.currency]!.nameKey),card.buy.x+card.buy.w/2,card.buy.y+35,78);
+      }
+      for(const [rect,key] of [[UPGRADE_PREV,'prev'],[UPGRADE_NEXT,'next']] as const){premiumButton(ctx,rect.x,rect.y,rect.w,rect.h,{variant:'ghost'});ctx.textAlign='center';ctx.fillStyle=C.perola;ctx.font=font(11,700,UI);ctx.fillText(this.l10n.t(`ui.upgrades.${key}`),rect.x+rect.w/2,rect.y+25);}
+      ctx.textAlign='center';ctx.fillStyle=C.madeiraPinho;ctx.font=font(11,700,UI);
+      ctx.fillText(this.l10n.t('ui.upgrades.page',{page:catalog.page+1,pages:catalog.pages}),W/2,674);
     } else if (this.homeTab === 'missions') {
       outlinedText(ctx,'MISSÕES',W/2, y0+10, C.perola, 18, {outline:3, weight:900});
       ctx.font=font(10,600,UI); ctx.fillStyle='rgba(244,231,211,0.55)'; ctx.textAlign='center';
@@ -2787,7 +3075,7 @@ class Game {
     const evoHud = this.activeEvo();
     if (chHud && evoHud) {
       const tierLbl = { lata:'LATA', chapa:'CHAPA', inox:'INOX', fornalha:'FORNALHA', brick:'TIJOLO' }[chHud.visual.style] ?? chHud.tier.slice(0,5).toUpperCase();
-      const txt = `${tierLbl} · ${evoHud.zoneCount}F ${evoHud.slotsPerZone}/fila`;
+      const txt = `${tierLbl} · ${this.zoneCount()}F ${evoHud.slotsPerZone}/fila`;
       const tw = txt.length*5.2 + 14;
       glass(ctx, W/2 - tw/2, 36, tw, 14, { alpha:0.18, border: chHud.visual.color });
       ctx.font=font(7,800,UI); ctx.textAlign='center'; ctx.fillStyle= chHud.visual.color;
@@ -2821,8 +3109,9 @@ class Game {
   }
 
   private drawOrders(ctx: CanvasRenderingContext2D): void {
-    const waiting=this.sim.customers.filter(c=>c.state==='waiting');
+    const waiting=this.visibleOrders();
     waiting.forEach((c,i)=>{
+      if(c.state!=='waiting')return;
       const r=this.orderCardRect(i);
       const pct=clamp01(c.patienceLeft/c.patienceTotal);
       const barColor=pct>0.5? C.verdeClaro : pct>0.25? C.ambar : C.telha;
@@ -2865,6 +3154,14 @@ class Game {
         roundRectPath(ctx,r.x,r.y,r.w,r.h,14); ctx.strokeStyle=`rgba(192,68,46,${a+0.25})`; ctx.lineWidth=2; ctx.stroke();
       }
     });
+    const pager=this.orderPager();
+    if(pager){
+      for(const [rect,label] of [[pager.prev,'‹'],[pager.next,'›']] as const){premiumButton(ctx,rect.x,rect.y,rect.w,rect.h,{variant:'ghost'});ctx.textAlign='center';ctx.font=font(22,800,UI);ctx.fillStyle=C.perola;ctx.fillText(label,rect.x+rect.w/2,rect.y+26);}
+      ctx.textAlign='center';ctx.font=font(11,700,UI);ctx.fillStyle=C.perola;
+      ctx.fillText(this.l10n.t('ui.upgrades.orders',{total:pager.total,page:pager.page+1,pages:pager.pages}),W/2,155);
+      ctx.fillStyle=pager.urgent?C.telha:C.madeiraPinho;ctx.font=font(10,700,UI);
+      ctx.fillText(this.l10n.t('ui.upgrades.urgent',{count:pager.urgent}),W/2,176);
+    }
   }
 
   private drawChurrasqueira(ctx: CanvasRenderingContext2D, heroMode=false): void {
@@ -3063,12 +3360,10 @@ class Game {
     const counterY=GRILL_TOP-14;
     const fx=overallX+16; const fy=counterY+14; const fw=overallW-32; const fh=GRILL_BOTTOM-fy;
     this.drawChurrasqueira(ctx,false);
-    const efficiency=this.sim.grill.charcoalEfficiency;
     const zoneH=fh/n;
     for(let z=0;z<n;z++){
       const y=fy+zoneH*z;
-      const simZone = (this.sim.grill.zones[z] ?? this.db.grill.zones[z]) as any;
-      const heat = (simZone?.heat ?? 1) * efficiency;
+      const heat = effectiveHeat(this.sim.grill, z, this.db);
       // label for each fileira — crucial for 1 vs 3 progression
       const zx=fx+6, zw=fw-12;
       // warm base fill so coals glow even when clipped
@@ -3125,8 +3420,7 @@ class Game {
       ctx.restore();
       roundRectPath(ctx,zx,y+2,zw,zoneH-4,6); ctx.strokeStyle='rgba(0,0,0,0.6)'; ctx.lineWidth=2; ctx.stroke();
       // zone label chips (1 fileira shows big “FOGO BAIXO”, 3 shows BAIXA/MÉDIA/ALTA)
-      const labels = n===1? ['FOGO BAIXO'] : n===2? ['BRASA BAIXA','BRASA ALTA'] : ['BAIXA','MÉDIA','ALTA'];
-      const lab = labels[z] ?? `F${z+1}`;
+      const lab = this.zoneLabel(z);
       const labW = lab.length*6 + 14;
       ctx.save();
       glass(ctx, zx+8, y+6, labW, 14, { alpha:0.22, border: heat>1.1? C.chama : heat>0.85? C.ambar : 'rgba(255,220,160,0.28)' });
@@ -3135,7 +3429,7 @@ class Game {
       ctx.fillText(lab, zx+8+labW/2, y+13);
       ctx.restore();
       // small fire icons left
-      const dbZone = this.db.grill.zones[z] as any;
+      const dbZone = runtimeZoneDefinition(this.db, n, z);
       for(let e=0; e<(dbZone?.embers ?? 0); e++) flameIcon(ctx,overallX+8+e*12,y+zoneH-12,5,heat>0.9);
     }
     for(const f of this.sim.foods){
@@ -3194,7 +3488,9 @@ class Game {
     const flipHint = this.ftue
       ? !this.ftue.guided && flipReady(this.db, this.tutorialTable, f)
       : cookingFlipHint(this.db, this.tutorialTable, f);
-    if(flipHint){
+    if(this.sim.staff.snapshot.riskFoodIds.includes(f.uid)){
+      outlinedText(ctx,this.l10n.t('ui.staff.burnRisk'),x,y+hh/2+25,C.telha,10,{weight:800,family:UI,outline:2.5});
+    } else if(flipHint){
       outlinedText(ctx,this.l10n.t('ui.feedback.flipHint'),x,y+hh/2+25,C.ambar,9,{weight:700, family:UI, outline:2.5});
     }
   }
@@ -3218,7 +3514,7 @@ class Game {
       const lip=ctx.createLinearGradient(0,by,0,by+8); lip.addColorStop(0,'rgba(255,230,185,0.4)'); lip.addColorStop(1,'rgba(255,230,185,0)'); ctx.fillStyle=lip; ctx.fillRect(6,by,W-12,8); ctx.restore();
       ctx.strokeStyle='rgba(255,214,160,0.22)'; ctx.lineWidth=1.5; roundRectPath(ctx,6+0.75,by+0.75,W-12-1.5,bh-1.5,16-0.75); ctx.stroke();
     }
-    outlinedText(ctx,this.l10n.t('ui.hud.bench'),20,by+12,'rgba(255,235,205,0.75)',11,{weight:800, family:UI, align:'left', outline:2});
+    outlinedText(ctx,this.l10n.t(this.hasPrep() ? 'ui.prep.bench' : 'ui.hud.bench'),20,by+12,'rgba(255,235,205,0.75)',11,{weight:800, family:UI, align:'left', outline:2});
     benchPage(this.unlocked, this.benchPageIndex).forEach((ing,i)=>{
       const r=this.benchItemRect(i);
       if(r.y+r.h>H) return;
@@ -3230,8 +3526,9 @@ class Game {
       const label=this.l10n.t(ing.nameKey);
       outlinedText(ctx,label.length>13?label.slice(0,12)+'…':label,r.x+r.w/2,r.y+48,C.perola,10,{weight:800, family:UI, outline:2});
       ctx.save(); glass(ctx,r.x+r.w/2-22,r.y+r.h-17,44,14,{r:7, alpha:0.18, border:'rgba(231,194,74,0.4)'});
-      coinIcon(ctx,r.x+r.w/2-11,r.y+r.h-10,5.5);
-      ctx.font=font(11,900,UI); ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillStyle=C.ouroLight; ctx.fillText(String(ing.value),r.x+r.w/2-3,r.y+r.h-10); ctx.restore();
+      const remaining=this.sim.stockRemaining(ing.id);
+      ctx.font=font(11,900,UI); ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillStyle=remaining>0?C.ouroLight:C.telha;
+      ctx.fillText(this.l10n.t('ui.stock.count',{left:remaining,max:this.sim.stats.rawStockCapacityPerIngredient}),r.x+r.w/2,r.y+r.h-10); ctx.restore();
     });
     const pages = benchPageCount(this.unlocked);
     if (!this.ftue && pages > 1) {
@@ -3242,8 +3539,51 @@ class Game {
     }
   }
 
+  private stockControlVisible(): boolean {
+    return !this.ftue || this.unlocked.some(i=>this.sim.stockRemaining(i.id)===0) || this.sim.stockRefillRemaining>0;
+  }
+
+  private drawResourceControls(ctx: CanvasRenderingContext2D): void {
+    const draw=(r:Rect,label:string,remaining:number,duration:number):void=>{
+      panel(ctx,r.x,r.y,r.w,r.h,{r:10,top:remaining>0?'#493c2e':'#573921',bottom:'#24190f',border:remaining>0?C.creme:C.ouroLight});
+      outlinedText(ctx,this.l10n.t(label),r.x+r.w/2,r.y+16,C.perola,12,{weight:800,family:UI});
+      outlinedText(ctx,this.l10n.t(remaining>0?'ui.stock.wait':'ui.stock.free',{seconds:(remaining>0?remaining:duration).toLocaleString(this.l10n.locale,{minimumFractionDigits:1,maximumFractionDigits:1})}),r.x+r.w/2,r.y+34,C.ouroLight,10,{family:UI});
+    };
+    if (!this.ftue) draw(CHARCOAL_REFILL,'ui.hud.charcoal.refillAction',this.sim.grill.refilling,this.db.grill.charcoal.refillTimeSec);
+    if (this.stockControlVisible()) draw(STOCK_REFILL,'ui.stock.refill',this.sim.stockRefillRemaining,this.db.grill.stock.refillTimeSec);
+  }
+
+  private drawPrep(ctx: CanvasRenderingContext2D): void {
+    if (!this.hasPrep()) return;
+    outlinedText(ctx, this.l10n.t('ui.prep.hint'), W/2, 722, C.perola, 10, { weight: 800, family: UI });
+    for (const r of this.prepRects()) {
+      const f = this.sim.prepSlots[r.slot];
+      panel(ctx, r.x, r.y, r.w, r.h, { r: 9, top: '#473225', bottom: '#24190f', border: f?.prepProgress === 1 ? C.ouroLight : C.creme });
+      if (!f) {
+        outlinedText(ctx, this.l10n.t('ui.prep.slot', { n: r.slot + 1 }), r.x+r.w/2, r.y+25, C.creme, 10, { family: UI });
+        continue;
+      }
+      if (this.drag?.food !== f) {
+        if (!drawFoodIconSprite(ctx, f.ingredient.id, r.x+r.w/2, r.y+17, 26, f.prepProgress === 1 ? 'served' : 'raw'))
+          drawFoodIcon(ctx, f.ingredient, r.x+r.w/2, r.y+17, 26);
+      }
+      ctx.fillStyle = C.ouroLight; ctx.fillRect(r.x+4, r.y+r.h-4, (r.w-8)*f.prepProgress, 3);
+      outlinedText(ctx, f.prepProgress === 1 ? this.l10n.t('ui.prep.ready') : `${Math.floor(f.prepProgress*100)}%`, r.x+r.w/2, r.y+37, C.perola, 10, { family: UI });
+    }
+    if (prepPageCount(this.sim.prepSlots.length) > 1) {
+      const r = PREP_PAGER;
+      panel(ctx, r.x, r.y, r.w, r.h, { r: 9 });
+      outlinedText(ctx, `${this.prepPageIndex+1}/${prepPageCount(this.sim.prepSlots.length)} →`, r.x+r.w/2, r.y+26, C.perola, 12, { family: UI });
+    }
+  }
+
   private drawDragged(ctx: CanvasRenderingContext2D): void {
     const d=this.drag!;
+    if (d.food.ingredient.cookMethod === 'prep') {
+      if (!drawFoodIconSprite(ctx, d.food.ingredient.id, d.x, d.y, 44, d.food.prepProgress === 1 ? 'served' : 'raw'))
+        drawFoodIcon(ctx, d.food.ingredient, d.x, d.y, 44);
+      return;
+    }
     const art = this.grillArtView(false);
     const artZone = art ? this.grillZoneAt(d.x, d.y) : -1;
     if (art && artZone >= 0) {
@@ -3434,6 +3774,11 @@ class Game {
     const L=this.resultLayout();
     this.drawParticles(ctx);
     ctx.fillStyle='rgba(6,3,2,0.82)'; ctx.fillRect(0,0,W,H);
+    if(r.vipReward.coins || r.vipReward.embers) {
+      panel(ctx,16,24,W-32,44,{r:14,top:'rgba(65,47,20,.98)',bottom:'rgba(28,20,12,.98)',border:C.ouro});
+      ctx.textAlign='center';ctx.fillStyle=C.ouroLight;ctx.font=font(12,800,UI);
+      ctx.fillText(this.l10n.t('ui.vip.achievement',r.vipReward),W/2,49);
+    }
     if(r.stars>=2){
       ctx.save(); ctx.translate(W/2,230); ctx.rotate(this.now*0.15);
       for(let i=0;i<12;i++){
@@ -3748,25 +4093,32 @@ class Game {
   }
 
   private drawOfflinePopup(ctx: CanvasRenderingContext2D): void {
-    if(!this.offlinePopup) return;
-    ctx.fillStyle='rgba(6,3,2,0.72)'; ctx.fillRect(0,0,W,H);
-    const cw=340,cx=W/2-cw/2, cy=H/2-120, ch=200;
-    panel(ctx,cx,cy,cw,ch,{r:22, top:'rgba(58,42,30,0.98)', bottom:'rgba(24,16,10,0.98)', border:C.brasa, borderWidth:1.5, shadow:28, glowTop:'rgba(255,220,160,0.22)'});
-    outlinedText(ctx,'Enquanto você estava fora',W/2,cy+32,C.perola,16,{outline:2, weight:900});
-    ctx.font=font(11,600,UI); ctx.textAlign='center'; ctx.fillStyle='rgba(244,231,211,0.6)';
-    ctx.fillText(`Sua equipe rendeu em ${this.offlinePopup.minutes} min`,W/2,cy+52);
-    // coins
-    glass(ctx,W/2-74,cy+68,148,44,{alpha:0.18, border:C.ouro});
-    coinIcon(ctx,W/2-42,cy+90,12); ctx.font=font(22,900,DISPLAY); ctx.fillStyle=C.ouroLight; ctx.textAlign='left';
-    ctx.fillText(`+${this.offlinePopup.coins}`,W/2-22,cy+92);
-    ctx.font=font(11,700,UI); ctx.textAlign='center'; ctx.fillStyle='rgba(244,231,211,0.6)';
-    ctx.fillText(`Cap de ${this.meta.level>=3?8:4}h · Volte em 30min para dobrar`,W/2,cy+128);
-    // CTA
-    premiumButton(ctx,W/2-90,cy+142,180,44,{variant:'primary'});
-    outlinedText(ctx,'COLETAR',W/2,cy+164,C.perola,16,{outline:2, weight:900});
-    ctx.font=font(10,700,UI); ctx.fillStyle='rgba(244,231,211,0.55)'; ctx.textAlign='center';
-    ctx.fillText('ou 📺 Dobrar com anúncio (2×)',W/2,cy+202);
+    const v=offlineView(this.db,this.offlineOwner(),Date.now()/1000);
+    (globalThis as unknown as {__churrascoOffline?:unknown}).__churrascoOffline={...v,open:this.offlinePopup,storageError:this.offlineStorageError,hidden:this.offlineHidden,layout:OFFLINE_UI,simulationTime:this.sim?.time??null};
+    if(!this.offlinePopup)return;
+    ctx.fillStyle='rgba(6,3,2,.82)';ctx.fillRect(0,0,W,H);
+    const {panel:r,claim,close}=OFFLINE_UI;
+    panel(ctx,r.x,r.y,r.w,r.h,{r:22,top:'rgba(58,42,30,.99)',bottom:'rgba(24,16,10,.99)',border:C.brasa,borderWidth:1.5,shadow:28});
+    outlinedText(ctx,this.l10n.t('ui.meta.offline.title'),W/2,r.y+30,C.perola,17,{outline:2,weight:900});
+    const line=(key:string,y:number,args:Record<string,number|string>={})=>{ctx.font=font(11,700,UI);ctx.fillStyle=C.perola;ctx.textAlign='center';ctx.fillText(this.l10n.t(key,args),W/2,y,r.w-26);};
+    line('ui.meta.offline.cap',r.y+56);
+    if(this.offlineStorageError)line('ui.meta.offline.storage',r.y+84);
+    else if(v.disabled)line('ui.meta.offline.invalid',r.y+84);
+    else if(!v.unlocked&&!v.id)line('ui.meta.offline.locked',r.y+84);
+    else line(v.id?'ui.meta.offline.body':'ui.meta.offline.empty',r.y+84,{minutes:Math.floor(v.minutes),coins:v.coins,xp:v.xp});
+    if(v.id){line('ui.meta.offline.balance',r.y+112,{coins:v.coins,xp:v.xp});
+      if(v.waitSec>0)line('ui.meta.offline.wait',r.y+138,{minutes:Math.ceil(v.waitSec/60)});}
+    const receipt=v.lastReceipt;
+    if(receipt){line(receipt.part==='auto'?'ui.meta.offline.autoReceipt':'ui.meta.offline.manualReceipt',r.y+164,{id:receipt.id});
+      line('ui.meta.offline.received',r.y+186,{coins:receipt.offlineCoins,xp:receipt.offlineXp});
+      line('ui.meta.offline.levelReward',r.y+208,{coins:receipt.levelCoins,embers:receipt.levelEmbers,levels:receipt.levelsGained});}
+    line('ui.meta.offline.double',r.y+244);
+    premiumButton(ctx,claim.x,claim.y,claim.w,claim.h,{variant:v.canClaim?'primary':'ghost'});
+    line(v.canClaim?'ui.action.offlineCollect':'ui.meta.offline.notReady',claim.y+28);
+    premiumButton(ctx,close.x,close.y,close.w,close.h,{variant:'ghost'});
+    line('ui.meta.offline.close',close.y+28);
   }
+
 }
 
 // ── Bootstrap ───────────────────────────────────────────────────────────────

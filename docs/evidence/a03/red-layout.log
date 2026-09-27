@@ -1,0 +1,40 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/prep-ui.test.ts (2 tests | 2 failed) 5ms
+   × A-03: every prep slot is reachable at >=48px without overlapping stock or either pager 4ms
+     → prepPageCount is not a function
+   × A-03: a small/absent station has no phantom slots, paging wraps 0ms
+     → prepSlotRects is not a function
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/prep-ui.test.ts > A-03: every prep slot is reachable at >=48px without overlapping stock or either pager
+TypeError: prepPageCount is not a function
+ ❯ tools/studio/test/prep-ui.test.ts:5:38
+      3| it('A-03: every prep slot is reachable at >=48px without overlapping s…
+      4|   for (const count of [1, 2, 5, 6, 10]) {
+      5|     const all = Array.from({ length: prepPageCount(count) }, (_, page)…
+       |                                      ^
+      6|     expect(all.map(r => r.slot)).toEqual(Array.from({ length: count },…
+      7|     for (const r of all) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tools/studio/test/prep-ui.test.ts > A-03: a small/absent station has no phantom slots, paging wraps
+TypeError: prepSlotRects is not a function
+ ❯ tools/studio/test/prep-ui.test.ts:16:10
+     14| });
+     15| it('A-03: a small/absent station has no phantom slots, paging wraps', …
+     16|   expect(prepSlotRects(0, 0)).toEqual([]);
+       |          ^
+     17|   expect(prepSlotRects(1, 0)).toHaveLength(1);
+     18|   expect(prepSlotRects(6, 2)).toEqual(prepSlotRects(6, 0));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  02:06:51
+   Duration  346ms (transform 140ms, setup 0ms, collect 162ms, tests 5ms, environment 0ms, prepare 56ms)
+

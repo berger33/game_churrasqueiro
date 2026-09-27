@@ -1,0 +1,38 @@
+{
+  "branch": "arena/01a0e099-game-churrasqueiro",
+  "base": "e50ce1523fa3d04119dc454e3edb050070641c10",
+  "all27TracksPurchasedToMaximum": true,
+  "income": 22748950,
+  "spent": 10873220,
+  "currentRatio": 0.47796579622356195,
+  "minimumSpendRatio": 0.7,
+  "neededSpendingAtUnchangedIncome": 15924265,
+  "spendingGapAtUnchangedIncome": 5051045,
+  "maximumIncomeAtUnchangedSpending": 15533171,
+  "incomeReductionAtUnchangedSpending": 7215779,
+  "incomeReductionFraction": 0.31719171968062576,
+  "failures": {
+    "rede": {
+      "actual": 881,
+      "target": [
+        950,
+        1450
+      ]
+    },
+    "incomeL50": {
+      "actual": 183646,
+      "target": [
+        98000,
+        152000
+      ]
+    },
+    "spend": {
+      "actual": 0.47796579622356195,
+      "target": [
+        0.7,
+        0.99
+      ]
+    }
+  },
+  "interpretation": "All existing upgrades already purchased to maximum. A different purchasing order alone cannot remove this terminal stock of unspent coins at unchanged income and finite spending capacity. Do not fabricate sinks, add offline to the active campaign, or weaken targets. Any change to income curves or additional sinks is an explicit economic contract decision, not an offline ledger bug fix."
+}

@@ -1,0 +1,106 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/offline.test.ts (34 tests | 9 failed) 39ms
+   × A-06.4 persistence, XP and integration contracts > v4 migration preserves wallet/history but ignores any untrusted historical offline field 8ms
+     → expected { at: 1, snapshot: { …(9) } } to be null
+   × A-06.4 persistence, XP and integration contracts > caixa becomes purchasable only now with a tested offline consumer 2ms
+     → expected false to be true // Object.is equality
+   × A-06.4 persistence, XP and integration contracts > gerente becomes purchasable only now with a tested offline consumer 1ms
+     → expected false to be true // Object.is equality
+   × A-06.4 persistence, XP and integration contracts > imperio_logistica becomes purchasable only now with a tested offline consumer 0ms
+     → expected false to be true // Object.is equality
+   × A-06.4 persistence, XP and integration contracts > rejects malformed approved offline data: unlock 3ms
+     → expected false to be true // Object.is equality
+   × A-06.4 persistence, XP and integration contracts > rejects malformed approved offline data: cap 1ms
+     → expected false to be true // Object.is equality
+   × A-06.4 persistence, XP and integration contracts > rejects malformed approved offline data: ramp 3ms
+     → expected false to be true // Object.is equality
+   × A-06.4 persistence, XP and integration contracts > rejects malformed approved offline data: cashier 1ms
+     → expected false to be true // Object.is equality
+   × A-06.4 persistence, XP and integration contracts > rejects malformed approved offline data: bonus 1ms
+     → expected false to be true // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 persistence, XP and integration contracts > v4 migration preserves wallet/history but ignores any untrusted historical offline field
+AssertionError: expected { at: 1, snapshot: { …(9) } } to be null
+
+- Expected: 
+null
+
++ Received: 
+Object {
+  "at": 1,
+  "snapshot": Object {
+    "autoMinutes": 480,
+    "coinsPerMinute": 42,
+    "cooldownSec": 1800,
+    "eligible": true,
+    "maxMinutes": 480,
+    "multiplier": 2.18,
+    "rampMinutes": 20,
+    "restaurantIndex": 3,
+    "xpPerMinute": 2.4,
+  },
+}
+
+ ❯ tools/studio/test/offline.test.ts:105:121
+    103|   const result=deserializeSave(serializeSave(save));expect(result.ok).…
+    104|   expect(result.save.schemaVersion).toBe(5);expect(result.save.player.…
+    105|   expect(result.save.player.upgradeLevels).toEqual(save.player.upgrade…
+       |                                                                                                                         ^
+    106|   expect(api.returnFromOffline(db,result.save.player,T).receipt).toBeN…
+    107|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 persistence, XP and integration contracts > caixa becomes purchasable only now with a tested offline consumer
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 persistence, XP and integration contracts > gerente becomes purchasable only now with a tested offline consumer
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 persistence, XP and integration contracts > imperio_logistica becomes purchasable only now with a tested offline consumer
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tools/studio/test/offline.test.ts:141:70
+    139|  });
+    140|  it.each(['caixa','gerente','imperio_logistica'])('%s becomes purchasa…
+    141|   const p=player(4);p.coins=1e9;expect(quoteUpgrade(db,p,id).canBuy).t…
+       |                                                                      ^
+    142|   if(id==='caixa')expect(offlineSnapshot(db,p).autoMinutes).toBe(120);
+    143|   else expect(offlineSnapshot(db,p).multiplier).toBeGreaterThan(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 persistence, XP and integration contracts > rejects malformed approved offline data: unlock
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 persistence, XP and integration contracts > rejects malformed approved offline data: cap
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 persistence, XP and integration contracts > rejects malformed approved offline data: ramp
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 persistence, XP and integration contracts > rejects malformed approved offline data: cashier
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 persistence, XP and integration contracts > rejects malformed approved offline data: bonus
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tools/studio/test/offline.test.ts:152:64
+    150|   if(kind==='cashier')bad.employees!.roles.find(r=>r.id==='caixa')!.ab…
+    151|   if(kind==='bonus')bad.employees!.roles.find(r=>r.id==='caixa')!.abil…
+    152|   expect(validateDatabase(bad).some(p=>p.includes('offline'))).toBe(tr…
+       |                                                                ^
+    153|  });
+    154| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ Test Files  1 failed (1)
+      Tests  9 failed | 25 passed (34)
+   Start at  06:03:16
+   Duration  432ms (transform 159ms, setup 0ms, collect 184ms, tests 39ms, environment 0ms, prepare 51ms)
+

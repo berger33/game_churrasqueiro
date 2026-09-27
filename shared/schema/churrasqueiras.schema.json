@@ -108,6 +108,21 @@
               "grill.ze_esquina.name"
             ]
           },
+          "restaurantExpansion": {
+            "type": "object",
+            "properties": {
+              "restaurantIndex": {
+                "type": "integer"
+              },
+              "zoneCount": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "restaurantIndex",
+              "zoneCount"
+            ]
+          },
           "subtitleKey": {
             "enum": [
               "grill.chef_cisma.subtitle",

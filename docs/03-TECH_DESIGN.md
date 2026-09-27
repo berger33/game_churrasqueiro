@@ -169,17 +169,18 @@ so cold start after the first run is faster still.
 - Cloud save seam exists (`ICloudSave`) but is not implemented — see
   [00-SPEC_AUDIT.md](00-SPEC_AUDIT.md#5-scope-decisions-for-the-commercial-mvp-84).
 
-Schema history (`SAVE_SCHEMA_VERSION` = 3):
+Schema history (`SAVE_SCHEMA_VERSION` = 4 in the TS reference):
 
 | Version | Adds | Migration from the previous version |
 |---|---|---|
 | v2 | `player.churrasqueiraId`, `player.churrasqueiraLevels` | grants the starter `lata_valente` at level 1 |
 | v3 | `progress.tutorial` (`TutorialState \| null`), `progress.ftueDone` | the FTUE counts as done — a pre-v3 save belongs to someone who already played (05-UX_FLOW §4.3) |
+| v4 | `player.vip` ledger/quota/reservation/claims | initialize missing v3 ledger; preserve wallet/FTUE/CRC; malformed current-v4 ledger blocks VIP |
 
 **F2 reference contract (A-07):** after checking the original CRC, load/migrate recomputes
 `player.counters.restaurantsUnlocked = player.restaurantIndex + 1` on v1/v2/v3 saves,
 including saves written by the faulty v3 build. This is derived-state normalization, not a
-schema-shape change: version stays 3; other counters and already-claimed rewards are preserved.
+schema-shape change: version stayed3 at F2 (A-05 later adds v4); other counters and already-claimed rewards are preserved.
 Historical `burnedFood` cannot be repaired without a per-item journal and is not rewritten.
 SaveGame persists player/progress, **not** an in-flight TurnSimulation.
 
@@ -223,3 +224,65 @@ offline behaviour, clock changes, ad failures and purchase failures without a de
 | Low-end thermal throttling during long turns | cap turn length at 180 s; quality auto-step down on sustained < 25 FPS |
 | APK size growth per SDK | size gate in CI; each SDK added one at a time with a measured delta recorded in [12-BUILD.md](12-BUILD.md) |
 | UI layout on 18:9 → 21:9 and tablets | safe-area driven layout, anchored HUD, no absolute positioning; tablet layout is a v1.1 stretch |
+
+
+## 11. Implemented TS prep contract (A-03, 2026-09-27)
+
+`TurnSimulation.takeFromStock` creates an inert portion. `startPrep(food, slotIndex?)`
+validates turn ownership, recipe and a free slot, then admits it once. `prepSlots` retain
+preparing/ready portions until a successful serve or discard; no implicit queue.
+Only admitted slots tick at `dt * prepSpeedMult / prepSec`, clamped to1. `TurnActions`
+exposes admission and free capacity to the policy; normal public place actions reject prep.
+`serve` requires station membership and progress1 before shared scoring/payout.
+
+The web UI uses shared prep rectangles for drawing/pointer input and read-only harness
+snapshots; stock cancellation removes unadmitted food, ready cancellation keeps its slot.
+This is a **TS/web contract**, not a Unity implementation or save-of-active-turn feature.
+Low-level generic cooking primitives/C# vectors are unchanged; port station semantics with
+TurnSimulation in F8 after global TS/economic stabilization. Evidence: `evidence/a03/`.
+
+
+## 12. Implemented TS fourth-zone contract (A-04, 2026-09-27)
+
+`GrillZone.auxiliaryOf` identifies appended capacity without changing the primary thermal
+profile. `ChurrasqueiraDef.restaurantExpansion` declares the joint hardware/restaurant
+requirement. `churrasqueiraZoneCount` resolves it before grill creation; heat patching must
+retain the resolved count. `runtimeZoneDefinition` is shared by heat/bonus/UI labels;
+`runtimeZoneIndex` remaps primary IDs on1/2/3, returns-1 for locked auxiliary IDs.
+
+`createGrill` rejects unsupported counts; the generic2-zone constructor now consistently
+uses low/high (equipped2-zone gameplay already did). Auxiliary heat/upgrade weight comes
+from the primary source, not from being the last row. No silent clamping/stretching.
+Validators and negative fixtures protect both new contracts. Generated schemas/DTOs/data
+copies are synchronized, but **C# rule consumption is deferred** along with full-turn parity.
+
+`LevelOutcome.grillSnapshot` exposes actual equipment/evolution/count/heat/capacity and
+post-policy occupied ticks by zone. This revealed why the unchanged long report does not
+measure use of the extra row. Browser harness hooks remain read-only snapshots; actual
+pointer events drive placement/move/flip/serve. No Unity scenes or active-turn save added.
+
+## 13. VIP reference contract (A-05, 2026-09-27 UTC)
+
+`vip.ts` is a narrow consumer of events/ads/achievements, not full services for those systems.
+Production callers pass a shared `player.vip`/`Meta.vip` ledger and injected Unix clock in
+`TurnConfig.vip`; standalone fixtures default to epoch0/new ledger. RNG uses separate salt
+0x71f5. No draw when blocked/full/capped/zero or consuming a reservation. Default campaign
+clock starts2026-09-21 UTC,12 turns/day; caller snapshots expose actual visits/quota/sources.
+
+Save reference **v4** adds VIP day/used/calls/cooldown/clock high-water mark/sequence/offer/
+reservation/served/claimed achievements. V3 absence migrates empty without changing wallet,
+FTUE or progress; invalid/missing current-v4 ledger fails closed. CRC/envelope and slot logic
+remain. Browser retains its separate Meta/localStorage save, not the CRC format. Callback
+matches a single persisted offer token, expires in1h and grants at most once. Reservation
+is already earned, so has no TTL; carries quota forward until admitted. Quota is charged
+before turn result, including lost/abandoned visits. Complete-turn payout handles achievements.
+
+Only `vipServed` achievements have a consumer now; future general achievement service must
+consult/migrate `vip.claimedAchievements`. No blanket achievement implementation. Clock
+rollback is bounded, but local state/clock are not trusted server proofs. No ad SDK/SSV,
+network analytics or anti-fraud guarantees. C# SaveSerializer remains unported to v4.
+
+Golden114+44:8 extra full-turn contracts,20 old outcomes unchanged+zero VIP counters;
+44 FTUE payloads unchanged, analytics version metadata6. Current C# runner will enumerate
+33 unported cases (5 economy+28 turns); not run without .NET. DTO generation alone is not
+VIP or save parity. Price/recipe/heat/level generator behavior did not change.

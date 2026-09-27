@@ -132,6 +132,9 @@
               "currency_code": {
                 "type": "string"
               },
+              "customer_id": {
+                "type": "string"
+              },
               "customer_type": {
                 "type": "string"
               },
@@ -276,7 +279,9 @@
                 "type": "string"
               },
               "restaurant_index": {
-                "type": "string"
+                "enum": [
+                  "long"
+                ]
               },
               "restored_count": {
                 "type": "string"
@@ -303,7 +308,9 @@
                 "type": "string"
               },
               "source": {
-                "type": "string"
+                "enum": [
+                  "string"
+                ]
               },
               "step": {
                 "type": "string"

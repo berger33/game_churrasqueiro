@@ -89,7 +89,7 @@ npm run proto             # design-verification prototype on http://0.0.0.0:5173
 | [22-ARTE_2D_PLANO.md](docs/22-ARTE_2D_PLANO.md) | Professional 2D art plan: AI generation in batches of 10, cut-out pipeline, approval, integration (pt-BR) |
 | [23-PLANO_IMPLEMENTACAO.md](docs/23-PLANO_IMPLEMENTACAO.md) | Step-by-step implementation and improvement plan: phases, gates, progress log (pt-BR) |
 | [23-AUDITORIA_TECNICA.md](docs/23-AUDITORIA_TECNICA.md) | Technical audit: bugs, errors and data/code/doc inconsistencies, with evidence and repro scripts (pt-BR) |
-| [24-PROMPT_PROXIMA_SESSAO.md](docs/24-PROMPT_PROXIMA_SESSAO.md) | Complete resumption prompt for the PR #14 handoff: A-03 next, contracts, evidence and remaining release plan (pt-BR) |
+| [24-PROMPT_PROXIMA_SESSAO.md](docs/24-PROMPT_PROXIMA_SESSAO.md) | Resumption prompt after A-06.4: final27-track review A-06.5 next, contracts, evidence and remaining release plan (pt-BR) |
 
 ## Current status
 
@@ -97,17 +97,25 @@ See [docs/18-STATUS.md](docs/18-STATUS.md) for an honest, itemised account of wh
 implemented and verified versus what is still open. Short version:
 
 - **Implemented and verified here:** 22 data tables and schemas, the TypeScript reference
-  rules, level/save/balance tooling, a playable browser prototype, 351 tests and per-PR CI gates.
+  rules, level/save/balance tooling, a playable browser prototype, 533 tests and per-PR CI gates.
 - **Approved 2D art:** 244 sprites / 3.98 MB WebP, covering all 16 foods and 7 restaurant
   backgrounds; registry state is 244 approved, 0 pending and 1 superseded.
 - **Compiled and partially parity-checked in CI:** the engine-free C# core
-  (`Assets/Scripts/Core`). Economy and 20 complete-turn vectors still await their C# ports.
+  (`Assets/Scripts/Core`). Economy and the now50 complete-turn vectors still await their C# ports.
 - **Known technical debt:** `docs/23-AUDITORIA_TECNICA.md` records 47 findings, including
   9 original high-severity findings: A-07/A-08/A-09 are fixed in TypeScript. A-01 now requires flipping both slow cuts
-  (owner decision), with functional tests/UI passed but **economic acceptance pending**:
-  long sim fails 3/18 targets (late-game income, unlock timing and spend ratio). A-02 now
-  applies player-level AND restaurant unlocks to orders/stock/UI; A-03–A-06 remain open.
-  Current evidence: [A-02 report](docs/evidence/a02/README.md). Green gates do not prove those remaining design defects are fixed.
+  (owner decision), with functional tests/UI passed; the authorized A-06.4 late-income rebalance now passes
+  **all18 original long-run targets locally**, with a1500-turn regression inside the gates. A-02 now
+  applies player-level AND restaurant unlocks to orders/stock/UI; A-03 adds explicit prep
+  slots and a playable vinagrete flow. A-04 adds a fourth medium zone for Fornalha at Premium;
+  A-05 adds natural VIP and an explicitly simulated optional call with a shared persisted daily cap.
+  A-06.1 adds shared upgrade gating/purchases, the27-track catalog, real capacity/table slots,
+  and tip/patience prestige. A-06.2 adds real fuel quality/stability/automatic refill and finite
+  per-ingredient stock with explicit replenishment. A-06.3 adds bounded real staff actions,
+  tip-only auto-service bonuses, burn warnings and tray trip speed. A-06.4 adds a real absence
+  ledger, frozen snapshots, cashier partial collection and atomic wallet/claim persistence.
+  All27 tracks have integrated consumers; purchased levels are preserved. Exhausted-fuel C# parity is also pending. A-06.5 and global economic review remain separate from this local18/18 acceptance.
+  Current evidence: [A-06.4 economic closure](docs/evidence/a06/step4/reopened/README.md). Green gates do not prove those remaining design defects are fixed.
 - **Not yet a Unity game:** there are no `Packages/`, `ProjectSettings/`, scenes, prefabs,
   APK or AAB. Unity services are stubs and have not been compiled against real SDKs.
 - **Audio and store material exist**, but still need Unity integration, device validation,

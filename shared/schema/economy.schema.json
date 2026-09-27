@@ -166,6 +166,9 @@
         "rampInMinutes": {
           "type": "integer"
         },
+        "unlockRestaurantIndex": {
+          "type": "integer"
+        },
         "xpPerMinuteByRestaurant": {
           "type": "array",
           "items": {
@@ -179,6 +182,7 @@
         "maxOfflineHours",
         "minCollectIntervalMin",
         "rampInMinutes",
+        "unlockRestaurantIndex",
         "xpPerMinuteByRestaurant"
       ]
     },
@@ -190,6 +194,15 @@
         },
         "_note": {
           "type": "string"
+        },
+        "activeCoinMultiplierByRestaurant": {
+          "type": "array",
+          "items": {
+            "type": [
+              "integer",
+              "number"
+            ]
+          }
         },
         "comboCap": {
           "type": "number"
@@ -275,6 +288,7 @@
       "required": [
         "_curvesNote",
         "_note",
+        "activeCoinMultiplierByRestaurant",
         "comboCap",
         "comboStep",
         "customerTipWeight",

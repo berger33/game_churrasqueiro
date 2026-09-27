@@ -1,0 +1,11 @@
+{
+  "base": "e50ce1523fa3d04119dc454e3edb050070641c10",
+  "all27UpgradePricesCurrenciesGrowthMaxDeltaUnchanged": true,
+  "allEmployeeUnlocksLevelsCoverageUnchanged": true,
+  "employeesVersion": 3,
+  "grillVersion": 6,
+  "publicFlipCue": 0.55,
+  "newNumericParameters": "existing approved intervals, single extra prep slot, per-trip limit, tip-only bonus and one-second warning now machine-readable; waiter interval1.5 explicitly approved as new cadence",
+  "save": "v4/CRC and browser meta v2 unchanged; staff budgets, timers, helper RNG and eligibility sets are per-turn runtime, not persisted",
+  "rulesPortedToCSharp": false
+}

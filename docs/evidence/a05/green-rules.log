@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ✓ tools/studio/test/vip.test.ts (44 tests) 604ms
+   ✓ VIP completed service, economy and analytics > real progression has natural VIP without rewarded and obeys a persisted daily cap 552ms
+
+ Test Files  1 passed (1)
+      Tests  44 passed (44)
+   Start at  03:44:31
+   Duration  1.01s (transform 199ms, setup 0ms, collect 232ms, tests 604ms, environment 0ms, prepare 46ms)
+

@@ -1,0 +1,41 @@
+{
+  "method": "Extra seed sensitivity, same curve/dt/1500 turns and original targets. Does not replace the declared baseline seed20260917 or retune any target.",
+  "rows": [
+    {
+      "seed": 20260918,
+      "income": 14674338,
+      "spent": 10873220,
+      "spend": 0.7409683489640214,
+      "unlocks": {
+        "espetinho_rua": 42,
+        "trailer": 97,
+        "churrascaria_bairro": 169,
+        "churrascaria_premium": 278,
+        "festival": 437,
+        "rede_nacional": 1130
+      },
+      "incomeL50": 122775,
+      "passed": 18,
+      "total": 18,
+      "failures": []
+    },
+    {
+      "seed": 20260919,
+      "income": 14669761,
+      "spent": 10873220,
+      "spend": 0.7411995328349249,
+      "unlocks": {
+        "espetinho_rua": 42,
+        "trailer": 95,
+        "churrascaria_bairro": 168,
+        "churrascaria_premium": 277,
+        "festival": 422,
+        "rede_nacional": 1129
+      },
+      "incomeL50": 122449,
+      "passed": 18,
+      "total": 18,
+      "failures": []
+    }
+  ]
+}

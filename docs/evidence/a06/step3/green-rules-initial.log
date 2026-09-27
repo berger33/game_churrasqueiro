@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ✓ tools/studio/test/staff.test.ts (20 tests) 20ms
+
+ Test Files  1 passed (1)
+      Tests  20 passed (20)
+   Start at  05:26:26
+   Duration  378ms (transform 155ms, setup 0ms, collect 182ms, tests 20ms, environment 0ms, prepare 47ms)
+

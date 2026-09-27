@@ -1,0 +1,83 @@
+
+> churrasco-mestre-da-brasa@0.1.0 test
+> vitest run
+
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ✓ tools/studio/test/turn.test.ts (29 tests) 381ms
+ ✓ tools/studio/test/tutorial.test.ts (22 tests) 168ms
+ ✓ tools/studio/test/vip.test.ts (44 tests) 1018ms
+   ✓ VIP completed service, economy and analytics > real progression has natural VIP without rewarded and obeys a persisted daily cap 943ms
+ ✓ tools/studio/test/cooking.test.ts (23 tests) 112ms
+ ✓ tools/studio/test/economy.test.ts (27 tests) 19ms
+ ❯ tools/studio/test/golden.test.ts (7 tests | 1 failed) 1747ms
+   × golden vectors > declares the data versions it was generated from 14ms
+     → expected { ingredients: 6, grill: 6, …(8) } to match object { ingredients: 6, grill: 6, …(8) }
+   ✓ golden vectors > replays every full-turn vector 1626ms
+ ✓ tools/studio/test/staff.test.ts (54 tests) 135ms
+ ✓ tools/studio/test/monetization.test.ts (27 tests) 8ms
+ ✓ tools/studio/test/resources.test.ts (36 tests) 46ms
+ ✓ tools/studio/test/save.test.ts (28 tests) 128ms
+ ✓ tools/studio/test/upgrades.test.ts (68 tests) 2703ms
+   ✓ A-06.1 shared quote, limits and persistence > bot spends no coins on pending tracks and actually buys the new direct effects 2630ms
+ ✓ tools/studio/test/art-registry.test.ts (52 tests) 8026ms
+ ✓ tools/studio/test/fourth-zone.test.ts (41 tests) 100ms
+ ✓ tools/studio/test/churrasqueira.test.ts (25 tests) 1791ms
+   ✓ skill policy plays every churrasqueira > lata_valente: full turns complete, customers are served, skill still separates quality 633ms
+   ✓ skill policy plays every churrasqueira > the top evolution of every grill is playable too 327ms
+ ✓ tools/studio/test/prep.test.ts (16 tests) 30ms
+ ✓ tools/studio/test/data.test.ts (12 tests) 25ms
+ ✓ tools/studio/test/policy.test.ts (5 tests) 926ms
+   ✓ skill policy — zone choice > is monotonically more likely to hit the ideal zone as skill rises 453ms
+ ✓ tools/studio/test/ingredient-unlock.test.ts (50 tests) 241ms
+ ✓ tools/studio/test/offline.test.ts (18 tests) 10ms
+ ✓ tools/studio/test/slow-cuts.test.ts (19 tests) 228ms
+ ✓ tools/studio/test/l10n.test.ts (12 tests) 10ms
+ ✓ tools/studio/test/cooking-ui.test.ts (8 tests) 7ms
+ ✓ tools/studio/test/unlock-wiring.test.ts (2 tests) 704ms
+   ✓ A-02: real simulation callers pass player progression, not campaign indices > progression uses pre-payout XP and keeps every order inside the same eligible catalog 561ms
+ ✓ tools/studio/test/sim-grill.test.ts (3 tests) 2628ms
+   ✓ A-04: real progression passes the restaurant AND equipment expansion context > keeps three zones before Premium and reports four actual zones after unlock 2325ms
+ ✓ tools/studio/test/gates.test.ts (1 test) 4ms
+ ✓ tools/studio/test/upgrade-ui.test.ts (2 tests) 5ms
+ ✓ tools/studio/test/prep-ui.test.ts (2 tests) 9ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/golden.test.ts > golden vectors > declares the data versions it was generated from
+AssertionError: expected { ingredients: 6, grill: 6, …(8) } to match object { ingredients: 6, grill: 6, …(8) }
+
+- Expected
++ Received
+
+  Object {
+    "achievements": 3,
+    "ads": 2,
+    "customers": 2,
+-   "economy": 13,
+-   "employees": 4,
++   "economy": 12,
++   "employees": 3,
+    "events": 2,
+    "grill": 6,
+    "ingredients": 6,
+    "restaurants": 6,
+    "upgrades": 4,
+  }
+
+ ❯ tools/studio/test/golden.test.ts:52:30
+     50| 
+     51|   it('declares the data versions it was generated from', () => {
+     52|     expect(doc.dataVersions).toMatchObject({
+       |                              ^
+     53|       ingredients: db.ingredients.version,
+     54|       grill: db.grill.version,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 26 passed (27)
+      Tests  1 failed | 632 passed (633)
+   Start at  05:59:12
+   Duration  27.31s (transform 526ms, setup 0ms, collect 1.18s, tests 21.21s, environment 5ms, prepare 1.46s)
+

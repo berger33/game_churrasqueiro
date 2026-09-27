@@ -1,0 +1,369 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/upgrades.test.ts (31 tests | 29 failed) 33ms
+   × A-06.1: no purchase without an integrated consumer > grill_stability is temporarily blocked without changing any player data 6ms
+     → expected true to be false // Object.is equality
+   × A-06.1: no purchase without an integrated consumer > charcoal_quality is temporarily blocked without changing any player data 1ms
+     → expected true to be false // Object.is equality
+   × A-06.1: no purchase without an integrated consumer > charcoal_auto is temporarily blocked without changing any player data 1ms
+     → expected true to be false // Object.is equality
+   × A-06.1: no purchase without an integrated consumer > counter is temporarily blocked without changing any player data 1ms
+     → expected true to be false // Object.is equality
+   × A-06.1: no purchase without an integrated consumer > tray is temporarily blocked without changing any player data 1ms
+     → expected true to be false // Object.is equality
+   × A-06.1: no purchase without an integrated consumer > garcom is temporarily blocked without changing any player data 1ms
+     → expected true to be false // Object.is equality
+   × A-06.1: no purchase without an integrated consumer > auxiliar is temporarily blocked without changing any player data 1ms
+     → expected true to be false // Object.is equality
+   × A-06.1: no purchase without an integrated consumer > churrasqueiro is temporarily blocked without changing any player data 0ms
+     → expected true to be false // Object.is equality
+   × A-06.1: no purchase without an integrated consumer > caixa is temporarily blocked without changing any player data 3ms
+     → expected true to be false // Object.is equality
+   × A-06.1: no purchase without an integrated consumer > gerente is temporarily blocked without changing any player data 1ms
+     → expected true to be false // Object.is equality
+   × A-06.1: no purchase without an integrated consumer > imperio_logistica is temporarily blocked without changing any player data 0ms
+     → expected true to be false // Object.is equality
+   × A-06.1: no purchase without an integrated consumer > knife requires an eligible prep recipe 1ms
+     → expected { currency: 'coins', …(3) } to be null
+   × A-06.1: no purchase without an integrated consumer > board requires an eligible prep recipe 1ms
+     → expected { currency: 'coins', …(3) } to be null
+   × A-06.1: no purchase without an integrated consumer > rejects malformed purchase levels -1, without repairing away history 1ms
+     → expected +0 to be Infinity // Object.is equality
+   × A-06.1: no purchase without an integrated consumer > rejects malformed purchase levels 0.5, without repairing away history 0ms
+     → expected 230 to be Infinity // Object.is equality
+   × A-06.1: no purchase without an integrated consumer > rejects malformed purchase levels NaN, without repairing away history 0ms
+     → expected NaN to be Infinity // Object.is equality
+   × A-06.1: no purchase without an integrated consumer > does not erase valid historical levels when a recipe gate is locked 0ms
+     → expected { currency: 'coins', …(3) } to be null
+   × A-06.1: benefits must reach gameplay, not only a derived stat > authored base3 + capacity2 + tables0 admits 5 orders 2ms
+     → expected [ …(3) ] to have a length of 5 but got 3
+   × A-06.1: benefits must reach gameplay, not only a derived stat > authored base3 + capacity0 + tables1 admits 4 orders 1ms
+     → expected [ …(3) ] to have a length of 4 but got 3
+   × A-06.1: benefits must reach gameplay, not only a derived stat > authored base3 + capacity2 + tables1 admits 6 orders 1ms
+     → expected [ …(3) ] to have a length of 6 but got 3
+   × A-06.1: benefits must reach gameplay, not only a derived stat > authored base3 + capacity5 + tables6 admits 14 orders 1ms
+     → expected [ …(3) ] to have a length of 14 but got 3
+   × A-06.1: benefits must reach gameplay, not only a derived stat > adds only extra tables, not restaurant base tables a second time 1ms
+     → expected [ …(7) ] to have a length of 8 but got 7
+   × A-06.1: benefits must reach gameplay, not only a derived stat > clientela_fiel 1 prolongs a real waiting customer 1ms
+     → expected 3800 to be close to 3838, received difference is 38, but expected 0.005
+   × A-06.1: benefits must reach gameplay, not only a derived stat > clientela_fiel 10 prolongs a real waiting customer 1ms
+     → expected 3800 to be close to 4180, received difference is 380, but expected 0.005
+   × A-06.1: benefits must reach gameplay, not only a derived stat > clientela_fiel 20 prolongs a real waiting customer 0ms
+     → expected 3800 to be close to 4560, received difference is 760, but expected 0.005
+   × A-06.1: benefits must reach gameplay, not only a derived stat > brasa_mastery 1 increases real served-plate coins 1ms
+     → expected 8 to be greater than 8
+   × A-06.1: benefits must reach gameplay, not only a derived stat > brasa_mastery 10 increases real served-plate coins 0ms
+     → expected 8 to be greater than 8
+   × A-06.1: benefits must reach gameplay, not only a derived stat > brasa_mastery 20 increases real served-plate coins 0ms
+     → expected 8 to be greater than 8
+   × A-06.1: benefits must reach gameplay, not only a derived stat > normalizes effective levels without mutating the historical map 0ms
+     → expected 10 to be 16 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 29 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: no purchase without an integrated consumer > grill_stability is temporarily blocked without changing any player data
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: no purchase without an integrated consumer > charcoal_quality is temporarily blocked without changing any player data
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: no purchase without an integrated consumer > charcoal_auto is temporarily blocked without changing any player data
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: no purchase without an integrated consumer > counter is temporarily blocked without changing any player data
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: no purchase without an integrated consumer > tray is temporarily blocked without changing any player data
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: no purchase without an integrated consumer > garcom is temporarily blocked without changing any player data
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: no purchase without an integrated consumer > auxiliar is temporarily blocked without changing any player data
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: no purchase without an integrated consumer > churrasqueiro is temporarily blocked without changing any player data
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: no purchase without an integrated consumer > caixa is temporarily blocked without changing any player data
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: no purchase without an integrated consumer > gerente is temporarily blocked without changing any player data
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: no purchase without an integrated consumer > imperio_logistica is temporarily blocked without changing any player data
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tools/studio/test/upgrades.test.ts:19:34
+     17|     const p = rich(); p.upgradeLevels[id] = 1;
+     18|     const before = structuredClone(p);
+     19|     expect(canAfford(p, db, id)).toBe(false);
+       |                                  ^
+     20|     expect(buyUpgrade(db, p, id)).toBeNull();
+     21|     expect(p).toEqual(before);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/29]⎯
+
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: no purchase without an integrated consumer > knife requires an eligible prep recipe
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: no purchase without an integrated consumer > board requires an eligible prep recipe
+AssertionError: expected { currency: 'coins', …(3) } to be null
+
+- Expected: 
+null
+
++ Received: 
+Object {
+  "amount": -140,
+  "balance": 99999860,
+  "currency": "coins",
+  "source": "upgrade:knife",
+}
+
+ ❯ tools/studio/test/upgrades.test.ts:26:35
+     24|     const p = rich(); p.level = 11;
+     25|     const before = structuredClone(p);
+     26|     expect(buyUpgrade(db, p, id)).toBeNull(); expect(p).toEqual(before…
+       |                                   ^
+     27|     p.level = 12; expect(buyUpgrade(db, p, id)).not.toBeNull();
+     28|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/29]⎯
+
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: no purchase without an integrated consumer > rejects malformed purchase levels -1, without repairing away history
+AssertionError: expected +0 to be Infinity // Object.is equality
+
+- Expected
++ Received
+
+- Infinity
++ 0
+
+ ❯ tools/studio/test/upgrades.test.ts:32:46
+     30|     const p = rich(); p.upgradeLevels.grill_size = level;
+     31|     const before = structuredClone(p);
+     32|     expect(costFor(db, 'grill_size', level)).toBe(Infinity);
+       |                                              ^
+     33|     expect(buyUpgrade(db, p, 'grill_size')).toBeNull(); expect(p).toEq…
+     34|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/29]⎯
+
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: no purchase without an integrated consumer > rejects malformed purchase levels 0.5, without repairing away history
+AssertionError: expected 230 to be Infinity // Object.is equality
+
+- Expected
++ Received
+
+- Infinity
++ 230
+
+ ❯ tools/studio/test/upgrades.test.ts:32:46
+     30|     const p = rich(); p.upgradeLevels.grill_size = level;
+     31|     const before = structuredClone(p);
+     32|     expect(costFor(db, 'grill_size', level)).toBe(Infinity);
+       |                                              ^
+     33|     expect(buyUpgrade(db, p, 'grill_size')).toBeNull(); expect(p).toEq…
+     34|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/29]⎯
+
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: no purchase without an integrated consumer > rejects malformed purchase levels NaN, without repairing away history
+AssertionError: expected NaN to be Infinity // Object.is equality
+
+- Expected
++ Received
+
+- Infinity
++ NaN
+
+ ❯ tools/studio/test/upgrades.test.ts:32:46
+     30|     const p = rich(); p.upgradeLevels.grill_size = level;
+     31|     const before = structuredClone(p);
+     32|     expect(costFor(db, 'grill_size', level)).toBe(Infinity);
+       |                                              ^
+     33|     expect(buyUpgrade(db, p, 'grill_size')).toBeNull(); expect(p).toEq…
+     34|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/29]⎯
+
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: no purchase without an integrated consumer > does not erase valid historical levels when a recipe gate is locked
+AssertionError: expected { currency: 'coins', …(3) } to be null
+
+- Expected: 
+null
+
++ Received: 
+Object {
+  "amount": -790,
+  "balance": 99999210,
+  "currency": "coins",
+  "source": "upgrade:board",
+}
+
+ ❯ tools/studio/test/upgrades.test.ts:37:75
+     35|   it('does not erase valid historical levels when a recipe gate is loc…
+     36|     const p = rich(); p.level = 11; p.upgradeLevels.board = 3;
+     37|     const before = structuredClone(p); expect(buyUpgrade(db, p, 'board…
+       |                                                                           ^
+     38|     p.level = 12; expect(buyUpgrade(db, p, 'board')).not.toBeNull(); e…
+     39|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/29]⎯
+
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: benefits must reach gameplay, not only a derived stat > authored base3 + capacity2 + tables0 admits 5 orders
+AssertionError: expected [ …(3) ] to have a length of 5 but got 3
+
+- Expected
++ Received
+
+- 5
++ 3
+
+ ❯ tools/studio/test/upgrades.test.ts:46:56
+     44|     const s = sim({capacity,tables},3);
+     45|     for (let i=0;i<100;i++) s.tick(.1);
+     46|     expect(s.customers.filter(c=>c.state==='waiting')).toHaveLength(co…
+       |                                                        ^
+     47|     expect(s.counters.peakSimultaneousOrders).toBe(count);
+     48|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/29]⎯
+
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: benefits must reach gameplay, not only a derived stat > authored base3 + capacity0 + tables1 admits 4 orders
+AssertionError: expected [ …(3) ] to have a length of 4 but got 3
+
+- Expected
++ Received
+
+- 4
++ 3
+
+ ❯ tools/studio/test/upgrades.test.ts:46:56
+     44|     const s = sim({capacity,tables},3);
+     45|     for (let i=0;i<100;i++) s.tick(.1);
+     46|     expect(s.customers.filter(c=>c.state==='waiting')).toHaveLength(co…
+       |                                                        ^
+     47|     expect(s.counters.peakSimultaneousOrders).toBe(count);
+     48|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/29]⎯
+
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: benefits must reach gameplay, not only a derived stat > authored base3 + capacity2 + tables1 admits 6 orders
+AssertionError: expected [ …(3) ] to have a length of 6 but got 3
+
+- Expected
++ Received
+
+- 6
++ 3
+
+ ❯ tools/studio/test/upgrades.test.ts:46:56
+     44|     const s = sim({capacity,tables},3);
+     45|     for (let i=0;i<100;i++) s.tick(.1);
+     46|     expect(s.customers.filter(c=>c.state==='waiting')).toHaveLength(co…
+       |                                                        ^
+     47|     expect(s.counters.peakSimultaneousOrders).toBe(count);
+     48|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/29]⎯
+
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: benefits must reach gameplay, not only a derived stat > authored base3 + capacity5 + tables6 admits 14 orders
+AssertionError: expected [ …(3) ] to have a length of 14 but got 3
+
+- Expected
++ Received
+
+- 14
++ 3
+
+ ❯ tools/studio/test/upgrades.test.ts:46:56
+     44|     const s = sim({capacity,tables},3);
+     45|     for (let i=0;i<100;i++) s.tick(.1);
+     46|     expect(s.customers.filter(c=>c.state==='waiting')).toHaveLength(co…
+       |                                                        ^
+     47|     expect(s.counters.peakSimultaneousOrders).toBe(count);
+     48|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/29]⎯
+
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: benefits must reach gameplay, not only a derived stat > adds only extra tables, not restaurant base tables a second time
+AssertionError: expected [ …(7) ] to have a length of 8 but got 7
+
+- Expected
++ Received
+
+- 8
++ 7
+
+ ❯ tools/studio/test/upgrades.test.ts:51:56
+     49|   it('adds only extra tables, not restaurant base tables a second time…
+     50|     const s=sim({capacity:2,tables:1}); for(let i=0;i<100;i++)s.tick(.…
+     51|     expect(s.customers.filter(c=>c.state==='waiting')).toHaveLength(s.…
+       |                                                        ^
+     52|   });
+     53|   it.each([1,10,20])('clientela_fiel %i prolongs a real waiting custom…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/29]⎯
+
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: benefits must reach gameplay, not only a derived stat > clientela_fiel 1 prolongs a real waiting customer
+AssertionError: expected 3800 to be close to 3838, received difference is 38, but expected 0.005
+ ❯ tools/studio/test/upgrades.test.ts:56:30
+     54|     const a=sim({}), b=sim({clientela_fiel:level});
+     55|     const ca=a.spawnCustomer('comum'), cb=b.spawnCustomer('comum');
+     56|     expect(cb.patienceTotal).toBeCloseTo(ca.patienceTotal*(1+.01*level…
+       |                              ^
+     57|     a.tick(5); b.tick(5); expect(cb.patienceLeft).toBeGreaterThan(ca.p…
+     58|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/29]⎯
+
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: benefits must reach gameplay, not only a derived stat > clientela_fiel 10 prolongs a real waiting customer
+AssertionError: expected 3800 to be close to 4180, received difference is 380, but expected 0.005
+ ❯ tools/studio/test/upgrades.test.ts:56:30
+     54|     const a=sim({}), b=sim({clientela_fiel:level});
+     55|     const ca=a.spawnCustomer('comum'), cb=b.spawnCustomer('comum');
+     56|     expect(cb.patienceTotal).toBeCloseTo(ca.patienceTotal*(1+.01*level…
+       |                              ^
+     57|     a.tick(5); b.tick(5); expect(cb.patienceLeft).toBeGreaterThan(ca.p…
+     58|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/29]⎯
+
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: benefits must reach gameplay, not only a derived stat > clientela_fiel 20 prolongs a real waiting customer
+AssertionError: expected 3800 to be close to 4560, received difference is 760, but expected 0.005
+ ❯ tools/studio/test/upgrades.test.ts:56:30
+     54|     const a=sim({}), b=sim({clientela_fiel:level});
+     55|     const ca=a.spawnCustomer('comum'), cb=b.spawnCustomer('comum');
+     56|     expect(cb.patienceTotal).toBeCloseTo(ca.patienceTotal*(1+.01*level…
+       |                              ^
+     57|     a.tick(5); b.tick(5); expect(cb.patienceLeft).toBeGreaterThan(ca.p…
+     58|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/29]⎯
+
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: benefits must reach gameplay, not only a derived stat > brasa_mastery 1 increases real served-plate coins
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: benefits must reach gameplay, not only a derived stat > brasa_mastery 10 increases real served-plate coins
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: benefits must reach gameplay, not only a derived stat > brasa_mastery 20 increases real served-plate coins
+AssertionError: expected 8 to be greater than 8
+ ❯ tools/studio/test/upgrades.test.ts:66:21
+     64|     };
+     65|     const a=serve({}), b=serve({brasa_mastery:level});
+     66|     expect(b.coins).toBeGreaterThan(a.coins); expect(b.scored.quality)…
+       |                     ^
+     67|   });
+     68|   it('normalizes effective levels without mutating the historical map'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/29]⎯
+
+ FAIL  tools/studio/test/upgrades.test.ts > A-06.1: benefits must reach gameplay, not only a derived stat > normalizes effective levels without mutating the historical map
+AssertionError: expected 10 to be 16 // Object.is equality
+
+- Expected
++ Received
+
+- 16
++ 10
+
+ ❯ tools/studio/test/upgrades.test.ts:71:33
+     69|     const levels={capacity:999,tables:999,brasa_mastery:Infinity,clien…
+     70|     const before=structuredClone(levels);const s=deriveStats(db,db.res…
+     71|     expect(s.maxOrdersOnScreen).toBe(16); expect(s.tipMult).toBe(1); e…
+       |                                 ^
+     72|     expect(s.autoFlipLevel).toBe(5);expect(s.autoServeLevel).toBe(0);e…
+     73|     expect(levels).toEqual(before);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/29]⎯
+
+ Test Files  1 failed (1)
+      Tests  29 failed | 2 passed (31)
+   Start at  04:28:21
+   Duration  553ms (transform 282ms, setup 0ms, collect 316ms, tests 33ms, environment 0ms, prepare 54ms)
+

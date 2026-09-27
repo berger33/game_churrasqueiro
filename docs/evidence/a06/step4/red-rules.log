@@ -1,0 +1,244 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/offline.test.ts (18 tests | 17 failed) 22ms
+   × A-06.4 real offline ledger > restaurant1 cannot earn offline 8ms
+     → expected 360 to be +0 // Object.is equality
+   × A-06.4 real offline ledger > restaurant2 cannot earn offline 1ms
+     → expected 960 to be +0 // Object.is equality
+   × A-06.4 real offline ledger > approved additive maximum is2.18, not separate multipliers 1ms
+     → expected 9907 to be 12557 // Object.is equality
+   × A-06.4 real offline ledger > migration without anchor invents no historical absence or payout 1ms
+     → api.returnFromOffline is not a function
+   × A-06.4 real offline ledger > first short absence uses ramp, not a30-minute minimum 1ms
+     → api.beginOfflineAbsence is not a function
+   × A-06.4 real offline ledger > snapshot at departure cannot be upgraded retroactively 1ms
+     → api.beginOfflineAbsence is not a function
+   × A-06.4 real offline ledger > cashier1 advances2/6 of six hours; manual remainder is immediately claimable 1ms
+     → api.beginOfflineAbsence is not a function
+   × A-06.4 real offline ledger > repeated returns/callbacks/reload neither lose pending credit nor pay twice 1ms
+     → api.beginOfflineAbsence is not a function
+   × A-06.4 real offline ledger > pending cap is8h across absences, not8h per popup; cashier allowance is also per batch 1ms
+     → api.beginOfflineAbsence is not a function
+   × A-06.4 real offline ledger > cooldown waits on a NEW batch, accumulating only actual absences and fractional credits 0ms
+     → api.beginOfflineAbsence is not a function
+   × A-06.4 real offline ledger > rollback cannot create negative time, a new window or later credit for online time 3ms
+     → api.beginOfflineAbsence is not a function
+   × A-06.4 real offline ledger > duplicate hide does not reset anchor or snapshot 0ms
+     → api.beginOfflineAbsence is not a function
+   × A-06.4 real offline ledger > cashier1 never extends8h and conserves coins/XP after split 0ms
+     → api.beginOfflineAbsence is not a function
+   × A-06.4 real offline ledger > cashier2 never extends8h and conserves coins/XP after split 0ms
+     → api.beginOfflineAbsence is not a function
+   × A-06.4 real offline ledger > cashier3 never extends8h and conserves coins/XP after split 0ms
+     → api.beginOfflineAbsence is not a function
+   × A-06.4 real offline ledger > cashier4 never extends8h and conserves coins/XP after split 0ms
+     → api.beginOfflineAbsence is not a function
+   × A-06.4 real offline ledger > invalid ledger fails closed without erasing wallet 0ms
+     → api.returnFromOffline is not a function
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 17 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 real offline ledger > restaurant1 cannot earn offline
+AssertionError: expected 360 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 360
+
+ ❯ tools/studio/test/offline.test.ts:8:117
+      6| const away=(p:any,start:number,end:number)=>api.returnFromOffline(db,a…
+      7| describe('A-06.4 real offline ledger',()=>{
+      8|  it.each([0,1,2])('restaurant%i cannot earn offline',r=>expect(E.compu…
+       |                                                                                                                     ^
+      9|  it('approved additive maximum is2.18, not separate multipliers',()=>{
+     10|   const p=player(4,{gerente:4,imperio_logistica:20,caixa:4});
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/17]⎯
+
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 real offline ledger > restaurant2 cannot earn offline
+AssertionError: expected 960 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 960
+
+ ❯ tools/studio/test/offline.test.ts:8:117
+      6| const away=(p:any,start:number,end:number)=>api.returnFromOffline(db,a…
+      7| describe('A-06.4 real offline ledger',()=>{
+      8|  it.each([0,1,2])('restaurant%i cannot earn offline',r=>expect(E.compu…
+       |                                                                                                                     ^
+      9|  it('approved additive maximum is2.18, not separate multipliers',()=>{
+     10|   const p=player(4,{gerente:4,imperio_logistica:20,caixa:4});
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/17]⎯
+
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 real offline ledger > approved additive maximum is2.18, not separate multipliers
+AssertionError: expected 9907 to be 12557 // Object.is equality
+
+- Expected
++ Received
+
+- 12557
++ 9907
+
+ ❯ tools/studio/test/offline.test.ts:11:55
+      9|  it('approved additive maximum is2.18, not separate multipliers',()=>{
+     10|   const p=player(4,{gerente:4,imperio_logistica:20,caixa:4});
+     11|   expect(E.computeOfflineEarnings(db,p,3600,T).coins).toBe(Math.round(…
+       |                                                       ^
+     12|  });
+     13|  it('migration without anchor invents no historical absence or payout'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/17]⎯
+
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 real offline ledger > migration without anchor invents no historical absence or payout
+TypeError: api.returnFromOffline is not a function
+ ❯ tools/studio/test/offline.test.ts:14:52
+     12|  });
+     13|  it('migration without anchor invents no historical absence or payout'…
+     14|   const p=player();p.coins=555;p.xp=17;const r=api.returnFromOffline(d…
+       |                                                    ^
+     15|   expect(r.owner.coins).toBe(555);expect(r.owner.xp).toBe(17);expect(r…
+     16|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/17]⎯
+
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 real offline ledger > first short absence uses ramp, not a30-minute minimum
+TypeError: api.beginOfflineAbsence is not a function
+ ❯ away tools/studio/test/offline.test.ts:6:74
+      4| const db=loadDatabase(),api=E as any,T=1_000_000;
+      5| const player=(restaurantIndex=3,upgradeLevels:Record<string,number>={}…
+      6| const away=(p:any,start:number,end:number)=>api.returnFromOffline(db,a…
+       |                                                                          ^
+      7| describe('A-06.4 real offline ledger',()=>{
+      8|  it.each([0,1,2])('restaurant%i cannot earn offline',r=>expect(E.compu…
+ ❯ tools/studio/test/offline.test.ts:18:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/17]⎯
+
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 real offline ledger > snapshot at departure cannot be upgraded retroactively
+TypeError: api.beginOfflineAbsence is not a function
+ ❯ tools/studio/test/offline.test.ts:23:13
+     21|  });
+     22|  it('snapshot at departure cannot be upgraded retroactively',()=>{
+     23|   let p=api.beginOfflineAbsence(db,player(),T).owner;p.restaurantIndex…
+       |             ^
+     24|   const r=api.returnFromOffline(db,p,T+3600);expect(r.owner.offline.ba…
+     25|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/17]⎯
+
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 real offline ledger > cashier1 advances2/6 of six hours; manual remainder is immediately claimable
+TypeError: api.beginOfflineAbsence is not a function
+ ❯ away tools/studio/test/offline.test.ts:6:74
+      4| const db=loadDatabase(),api=E as any,T=1_000_000;
+      5| const player=(restaurantIndex=3,upgradeLevels:Record<string,number>={}…
+      6| const away=(p:any,start:number,end:number)=>api.returnFromOffline(db,a…
+       |                                                                          ^
+      7| describe('A-06.4 real offline ledger',()=>{
+      8|  it.each([0,1,2])('restaurant%i cannot earn offline',r=>expect(E.compu…
+ ❯ tools/studio/test/offline.test.ts:27:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/17]⎯
+
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 real offline ledger > repeated returns/callbacks/reload neither lose pending credit nor pay twice
+TypeError: api.beginOfflineAbsence is not a function
+ ❯ away tools/studio/test/offline.test.ts:6:74
+      4| const db=loadDatabase(),api=E as any,T=1_000_000;
+      5| const player=(restaurantIndex=3,upgradeLevels:Record<string,number>={}…
+      6| const away=(p:any,start:number,end:number)=>api.returnFromOffline(db,a…
+       |                                                                          ^
+      7| describe('A-06.4 real offline ledger',()=>{
+      8|  it.each([0,1,2])('restaurant%i cannot earn offline',r=>expect(E.compu…
+ ❯ tools/studio/test/offline.test.ts:33:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/17]⎯
+
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 real offline ledger > pending cap is8h across absences, not8h per popup; cashier allowance is also per batch
+TypeError: api.beginOfflineAbsence is not a function
+ ❯ away tools/studio/test/offline.test.ts:6:74
+      4| const db=loadDatabase(),api=E as any,T=1_000_000;
+      5| const player=(restaurantIndex=3,upgradeLevels:Record<string,number>={}…
+      6| const away=(p:any,start:number,end:number)=>api.returnFromOffline(db,a…
+       |                                                                          ^
+      7| describe('A-06.4 real offline ledger',()=>{
+      8|  it.each([0,1,2])('restaurant%i cannot earn offline',r=>expect(E.compu…
+ ❯ tools/studio/test/offline.test.ts:39:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/17]⎯
+
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 real offline ledger > cooldown waits on a NEW batch, accumulating only actual absences and fractional credits
+TypeError: api.beginOfflineAbsence is not a function
+ ❯ away tools/studio/test/offline.test.ts:6:74
+      4| const db=loadDatabase(),api=E as any,T=1_000_000;
+      5| const player=(restaurantIndex=3,upgradeLevels:Record<string,number>={}…
+      6| const away=(p:any,start:number,end:number)=>api.returnFromOffline(db,a…
+       |                                                                          ^
+      7| describe('A-06.4 real offline ledger',()=>{
+      8|  it.each([0,1,2])('restaurant%i cannot earn offline',r=>expect(E.compu…
+ ❯ tools/studio/test/offline.test.ts:44:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/17]⎯
+
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 real offline ledger > rollback cannot create negative time, a new window or later credit for online time
+TypeError: api.beginOfflineAbsence is not a function
+ ❯ tools/studio/test/offline.test.ts:52:13
+     50|  });
+     51|  it('rollback cannot create negative time, a new window or later credi…
+     52|   let p=api.beginOfflineAbsence(db,player(),T).owner;p=api.returnFromO…
+       |             ^
+     53|   expect(p.offline.highWater).toBe(T);expect(p.offline.batch).toBeNull…
+     54|   p=api.returnFromOffline(db,p,T+3600).owner;expect(p.offline.batch).t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/17]⎯
+
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 real offline ledger > duplicate hide does not reset anchor or snapshot
+TypeError: api.beginOfflineAbsence is not a function
+ ❯ tools/studio/test/offline.test.ts:57:15
+     55|  });
+     56|  it('duplicate hide does not reset anchor or snapshot',()=>{
+     57|   const p=api.beginOfflineAbsence(db,player(),T).owner;
+       |               ^
+     58|   const again=api.beginOfflineAbsence(db,p,T+600).owner;expect(again.o…
+     59|   expect(api.returnFromOffline(db,again,T+3600).owner.offline.batch.mi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/17]⎯
+
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 real offline ledger > cashier1 never extends8h and conserves coins/XP after split
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 real offline ledger > cashier2 never extends8h and conserves coins/XP after split
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 real offline ledger > cashier3 never extends8h and conserves coins/XP after split
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 real offline ledger > cashier4 never extends8h and conserves coins/XP after split
+TypeError: api.beginOfflineAbsence is not a function
+ ❯ away tools/studio/test/offline.test.ts:6:74
+      4| const db=loadDatabase(),api=E as any,T=1_000_000;
+      5| const player=(restaurantIndex=3,upgradeLevels:Record<string,number>={}…
+      6| const away=(p:any,start:number,end:number)=>api.returnFromOffline(db,a…
+       |                                                                          ^
+      7| describe('A-06.4 real offline ledger',()=>{
+      8|  it.each([0,1,2])('restaurant%i cannot earn offline',r=>expect(E.compu…
+ ❯ tools/studio/test/offline.test.ts:62:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/17]⎯
+
+ FAIL  tools/studio/test/offline.test.ts > A-06.4 real offline ledger > invalid ledger fails closed without erasing wallet
+TypeError: api.returnFromOffline is not a function
+ ❯ tools/studio/test/offline.test.ts:67:93
+     65|  });
+     66|  it('invalid ledger fails closed without erasing wallet',()=>{
+     67|   const p={...player(),coins:999,offline:{version:1,batch:{coinsRaw:In…
+       |                                                                                             ^
+     68|   expect(r.owner.coins).toBe(999);expect(r.owner.offline.disabled).toB…
+     69|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/17]⎯
+
+ Test Files  1 failed (1)
+      Tests  17 failed | 1 passed (18)
+   Start at  05:57:19
+   Duration  393ms (transform 134ms, setup 0ms, collect 159ms, tests 22ms, environment 0ms, prepare 55ms)
+

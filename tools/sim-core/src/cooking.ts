@@ -1,18 +1,25 @@
+import { upgradeLevel } from './upgrades.ts';
 import { clamp, sampleCurve } from './data.ts';
-import type { EconomyTable, GameDatabase, Ingredient, RestaurantDef } from './types.ts';
+import type { ChurrasqueiraDef, ChurrasqueiraEvolution, EconomyTable, GameDatabase, GrillZone, Ingredient, RestaurantDef } from './types.ts';
 
 // ── Derived stats (from restaurant tier + upgrade levels) ────────────────────
 
 export interface DerivedStats {
   slotsPerZone: number;
   zoneCount: number;
+  /** Legacy restaurant field, not an invented oscillation consumer. */
   heatStability: number;
+  stabilityRecoveryFraction: number;
+  minCharcoalEfficiencyBonus: number;
+  autoRefillChance: number;
   charcoalDurationSec: number;
   highZoneBonus: number;
   heatRampRate: number;
   prepSlots: number;
   prepSpeedMult: number;
   tipMult: number;
+  /** Prestige only scales the tip component, not the legacy whole-plate multiplier. */
+  prestigeTipBonus?: number;
   serveSpeedMult: number;
   patienceMult: number;
   maxOrdersOnScreen: number;
@@ -23,12 +30,12 @@ export interface DerivedStats {
   autoServeLevel: number;
   autoPrepLevel: number;
   idleRateMult: number;
-  rawStockPerTurn: number;
+  rawStockCapacityPerIngredient: number;
 }
 
 export function deriveStats(db: GameDatabase, restaurant: RestaurantDef, levels: Record<string, number>): DerivedStats {
   const get = (trackId: string): number => {
-    const lvl = levels[trackId] ?? 0;
+    const lvl = upgradeLevel(db, levels, trackId);
     const track = db.upgradeById.get(trackId);
     if (!track || lvl <= 0) return 0;
     return track.effect.delta * Math.min(lvl, track.maxLevel);
@@ -37,30 +44,41 @@ export function deriveStats(db: GameDatabase, restaurant: RestaurantDef, levels:
   return {
     slotsPerZone: restaurant.grill.slotsPerZone + Math.floor(get('grill_size') / 1),
     zoneCount: restaurant.grill.zoneCount,
-    heatStability: restaurant.grill.heatStability + get('grill_stability'),
+    heatStability: restaurant.grill.heatStability,
+    stabilityRecoveryFraction: get('grill_stability'),
+    minCharcoalEfficiencyBonus: get('charcoal_quality'),
+    autoRefillChance: Math.min(1, get('charcoal_auto')),
     charcoalDurationSec: db.grill.charcoal.baseDurationSec * (1 + restaurant.grill.charcoalDurationBonus + get('charcoal_duration')),
     highZoneBonus: get('grill_heat'),
     heatRampRate: 1 + get('grill_speed'),
     prepSlots: restaurant.service.prepSlots + Math.floor(get('board')),
     prepSpeedMult: 1 + get('knife'),
-    tipMult: 1 + get('plates') + get('decor'),
+    tipMult: 1 + get('plates') + get('decor') + get('brasa_mastery'),
+    prestigeTipBonus: get('brasa_mastery'),
     serveSpeedMult: 1 + get('tray'),
-    patienceMult: 1 + get('patience_charm') + get('music'),
-    maxOrdersOnScreen: restaurant.service.maxOrdersOnScreen + Math.floor(get('capacity')),
+    patienceMult: 1 + get('patience_charm') + get('music') + get('clientela_fiel'),
+    maxOrdersOnScreen: restaurant.service.maxOrdersOnScreen + Math.floor(get('capacity')) + Math.floor(get('tables')),
     tables: restaurant.service.tables + Math.floor(get('tables')),
     xpMult: 1 + get('lighting'),
     customerSpawnRate: 1 + get('sign'),
-    autoFlipLevel: Math.floor(get('garcom') > 0 ? 0 : 0) + Math.floor(levels['churrasqueiro'] ?? 0),
-    autoServeLevel: Math.floor(levels['garcom'] ?? 0),
-    autoPrepLevel: Math.floor(levels['auxiliar'] ?? 0),
+    autoFlipLevel: upgradeLevel(db, levels, 'churrasqueiro'),
+    autoServeLevel: upgradeLevel(db, levels, 'garcom'),
+    autoPrepLevel: upgradeLevel(db, levels, 'auxiliar'),
     idleRateMult: 1 + get('gerente'),
-    rawStockPerTurn: 6 + Math.floor(get('counter'))
+    rawStockCapacityPerIngredient: db.grill.stock.basePerIngredient + Math.floor(get('counter'))
   };
+}
+
+/** Resolve the joint restaurant + equipped hardware expansion; no player-level shortcut. */
+export function churrasqueiraZoneCount(ch: ChurrasqueiraDef, evo: ChurrasqueiraEvolution, restaurant?: RestaurantDef): number {
+  const expansion = ch.restaurantExpansion;
+  return restaurant && expansion && restaurant.index >= expansion.restaurantIndex
+    ? expansion.zoneCount : evo.zoneCount;
 }
 
 /**
  * Apply churrasqueira evolution overrides on top of restaurant-derived stats
- * (data-driven 1F→2F→3F). The equipped grill *replaces* the restaurant's
+ * (data-driven 1F→2F→3F, with an explicit Premium expansion). The equipped grill *replaces* the restaurant's
  * hardware (zones, base slots, charcoal bonus) but additive upgrades
  * (`grill_size`, `charcoal_duration`) still stack — otherwise buying those
  * tracks would be a dead sink the moment a churrasqueira is equipped.
@@ -84,7 +102,7 @@ export function applyChurrasqueiraToStats(
   return {
     ...stats,
     slotsPerZone: evo.slotsPerZone + extraSlots,
-    zoneCount: evo.zoneCount,
+    zoneCount: churrasqueiraZoneCount(ch, evo, restaurant),
     charcoalDurationSec: baseCharcoal * (1 + (evo.charcoalBonus ?? 0) + extraCharcoal)
   };
 }
@@ -168,16 +186,20 @@ export interface GrillRuntime {
   charcoalT: number; // 0..1 progress of the current charcoal load
   charcoalEfficiency: number;
   refilling: number; // seconds remaining
+  charcoalAutoAttempted: boolean; // one attempt per sack, reset only on completed refill
   stats: DerivedStats;
 }
 
 export function createGrill(stats: DerivedStats, db: GameDatabase): GrillRuntime {
   const zones = [];
-  const count = Math.min(stats.zoneCount, db.grill.zones.length);
-  for (let i = 0; i < count; i++) {
-    zones.push({ index: i, heat: db.grill.zones[i]!.heatMultiplier, items: [] });
+  const count = stats.zoneCount;
+  if (!Number.isInteger(count) || count < 1 || count > db.grill.zones.length) {
+    throw new Error(`createGrill: unsupported zoneCount ${count}`);
   }
-  return { zones, charcoalT: 0, charcoalEfficiency: 1, refilling: 0, stats };
+  for (let i = 0; i < count; i++) {
+    zones.push({ index: i, heat: runtimeZoneDefinition(db, count, i)!.heatMultiplier, items: [] });
+  }
+  return { zones, charcoalT: 0, charcoalEfficiency: charcoalEfficiencyAt(stats, db, 0), refilling: 0, charcoalAutoAttempted: false, stats };
 }
 
 /**
@@ -188,25 +210,29 @@ export function createGrill(stats: DerivedStats, db: GameDatabase): GrillRuntime
  */
 export const CHURRASQUEIRA_HEAT_CAP = 1.7;
 
-/**
- * Zone heat for an equipped evolution.
- *
- * - 1-zone (FTUE lata): cooks at `heatBase` so the starter is slow and hard to burn.
- * - n-zone: the default table profile (0.55 / 1.0 / 1.55) remapped by relative
- *   position, scaled by `heatBase`. A hotter grill is a hotter *profile*, not
- *   a hotter floor plus a fixed 0.85 add on top.
- */
+/** Primary profile remains low/medium/high; auxiliary capacity is appended, never resampled into it. */
+export function primaryGrillZones(db: GameDatabase): GrillZone[] {
+  return db.grill.zones.filter(z => !z.auxiliaryOf);
+}
+
+/** One identity for heat, bonuses, bot mapping and UI labels, even on 1/2-zone grills. */
+export function runtimeZoneDefinition(db: GameDatabase, zoneCount: number, zoneIndex: number): GrillZone | undefined {
+  if (!Number.isInteger(zoneIndex) || zoneIndex < 0 || zoneIndex >= zoneCount) return undefined;
+  const primary = primaryGrillZones(db);
+  if (zoneIndex >= primary.length) return db.grill.zones[zoneIndex];
+  const n = Math.min(zoneCount, primary.length);
+  const index = n <= 1 ? 0 : Math.round(zoneIndex * (primary.length - 1) / (n - 1));
+  return primary[index];
+}
+
+/** Zone heat for equipped hardware: unchanged 1/2/3 profile plus explicit auxiliary medium. */
 export function churrasqueiraZoneHeat(
   evo: { zoneCount: number; heatBase: number },
   zoneIndex: number,
   db: GameDatabase
 ): number {
-  const n = evo.zoneCount;
-  if (n <= 1) return evo.heatBase;
-  const table = db.grill.zones;
-  if (table.length === 0) return evo.heatBase;
-  const tIndex = Math.round(zoneIndex * (table.length - 1) / (n - 1));
-  const profile = table[tIndex]?.heatMultiplier ?? 1;
+  if (evo.zoneCount <= 1) return evo.heatBase;
+  const profile = runtimeZoneDefinition(db, evo.zoneCount, zoneIndex)?.heatMultiplier ?? 1;
   return Math.min(CHURRASQUEIRA_HEAT_CAP, profile * evo.heatBase);
 }
 
@@ -217,35 +243,26 @@ export function patchGrillForChurrasqueira(grill: GrillRuntime, db: GameDatabase
   const evo = ch.evolutions.find(e => e.level === evoLevel) ?? ch.evolutions[0];
   if (!evo) return;
   const newZones: GrillRuntime['zones'] = [];
-  for (let i = 0; i < evo.zoneCount; i++) {
+  const zoneCount = grill.stats.zoneCount; // already resolved with the restaurant requirement
+  for (let i = 0; i < zoneCount; i++) {
     const old = grill.zones[i];
-    newZones.push({ index: i, heat: churrasqueiraZoneHeat(evo, i, db), items: old ? [...old.items] : [] });
+    newZones.push({ index: i, heat: churrasqueiraZoneHeat({ ...evo, zoneCount }, i, db), items: old ? [...old.items] : [] });
   }
   grill.zones = newZones;
-  grill.stats.zoneCount = evo.zoneCount;
+  grill.stats.zoneCount = zoneCount;
   // slotsPerZone is already set by applyChurrasqueiraToStats (evo base + grill_size).
 }
 
-/**
- * Runtime zone index for a data-table zone id (`low` / `medium` / `high`), or `-1`
- * for `none` / unknown ids.
- *
- * The table always describes three zones, but the runtime grill does not have to:
- * churrasqueira evolutions ship 1-, 2- and 3-zone grills (`lata_valente` has one).
- * Using the table index directly pointed `high` at a zone that does not exist and
- * crashed the skill policy on every starter grill. The id is mapped by its
- * *relative* position (cool end → cool end, hot end → hot end); when the counts
- * match this is the identity, so the default grill behaves exactly as before.
- */
+/** Primary IDs keep their relative mapping on 1/2/3 zones; extra IDs exist only if unlocked. */
 export function runtimeZoneIndex(g: GrillRuntime, db: GameDatabase, zoneId: string): number {
-  if (zoneId === 'none') return -1;
-  const table = db.grill.zones;
-  const t = table.findIndex((z) => z.id === zoneId);
+  const primary = primaryGrillZones(db);
+  const tableIndex = db.grill.zones.findIndex(z => z.id === zoneId);
   const n = g.zones.length;
-  if (t < 0 || n === 0) return -1;
-  if (n === table.length) return t;
-  if (n === 1 || table.length === 1) return 0;
-  return Math.round((t / (table.length - 1)) * (n - 1));
+  if (tableIndex < 0 || n === 0) return -1;
+  if (db.grill.zones[tableIndex]!.auxiliaryOf) return tableIndex < n ? tableIndex : -1;
+  const t = primary.findIndex(z => z.id === zoneId);
+  if (n === 1 || primary.length === 1) return 0;
+  return Math.round((t / (primary.length - 1)) * (Math.min(n, primary.length) - 1));
 }
 
 export function grillSlotsFree(g: GrillRuntime): number {
@@ -262,11 +279,21 @@ export function zoneIsFull(g: GrillRuntime, zoneIndex: number): boolean {
 
 /** Effective heat of a zone, including charcoal efficiency and upgrade bonuses. */
 export function effectiveHeat(g: GrillRuntime, zoneIndex: number, db: GameDatabase): number {
+  if (g.refilling > 0 || g.charcoalT >= 1) return 0;
+  return zoneThermalBase(g, zoneIndex, db) * g.charcoalEfficiency;
+}
+
+function zoneThermalBase(g: GrillRuntime, zoneIndex: number, db: GameDatabase): number {
   // Prefer churrasqueira-patched heat stored on the grill runtime; fallback to db table for legacy
   const base = g.zones[zoneIndex]?.heat ?? db.grill.zones[zoneIndex]?.heatMultiplier ?? 1;
-  const top = g.zones.length - 1;
-  const bonus = zoneIndex === top ? g.stats.highZoneBonus : g.stats.highZoneBonus * (zoneIndex / Math.max(1, top)) * 0.5;
-  return (base + bonus) * g.charcoalEfficiency;
+  const primary = primaryGrillZones(db);
+  const def = runtimeZoneDefinition(db, g.zones.length, zoneIndex);
+  const source = primary.findIndex(z => z.id === (def?.auxiliaryOf ?? def?.id));
+  // The new row inherits MEDIUM's upgrade bonus, never HIGH's just for being last.
+  const factor = g.zones.length === 1 || source === primary.length - 1
+    ? 1 : Math.max(0, source) / Math.max(1, primary.length - 1) * .5;
+  const bonus = g.stats.highZoneBonus * factor;
+  return base + bonus;
 }
 
 export function placeOnGrill(g: GrillRuntime, db: GameDatabase, f: FoodRuntime, zoneIndex: number): boolean {
@@ -290,6 +317,14 @@ export function removeFromGrill(g: GrillRuntime, f: FoodRuntime): void {
   f.zoneIndex = -1;
 }
 
+/** The public free-play flip cue, shared by UI and bounded staff (not an optimal timer). */
+export function publicFlipReady(db: GameDatabase, f: FoodRuntime): boolean {
+  if (!f.onGrill || f.burned || f.served || !f.ingredient.flipNeeded || f.sides.length < 2) return false;
+  const down=f.sides[f.downSide] ?? 0;
+  return down >= db.grill.interaction.flipPromptAtSideDoneness && f.sides.every(s=>s<=down+1e-9)
+    && evenness(f)<db.ingredients.shared.minEvennessForPerfect;
+}
+
 export function flipFood(g: GrillRuntime, f: FoodRuntime, now: number, db: GameDatabase): boolean {
   if (!f.onGrill) return false;
   if (now - f.lastFlipAt < db.grill.interaction.flipCooldownSec) return false;
@@ -299,9 +334,11 @@ export function flipFood(g: GrillRuntime, f: FoodRuntime, now: number, db: GameD
   return true;
 }
 
-export function startCharcoalRefill(g: GrillRuntime): boolean {
+/** Shared manual/automatic refill: no marker duration or second timer. */
+export function startCharcoalRefill(g: GrillRuntime, db: GameDatabase): boolean {
   if (g.refilling > 0) return false;
-  g.refilling = 1e-6; // marker; caller supplies duration via `charcoalRefillDuration`
+  g.refilling = charcoalRefillDuration(db);
+  g.charcoalEfficiency = 0;
   return true;
 }
 
@@ -309,38 +346,48 @@ export function charcoalRefillDuration(db: GameDatabase): number {
   return db.grill.charcoal.refillTimeSec;
 }
 
-/**
- * Advance the grill by `dt` seconds. This is the authoritative cooking step and
- * is mirrored exactly by `GrillSimulator.Tick()` in Unity.
- */
-export function tickGrill(g: GrillRuntime, db: GameDatabase, dt: number, onBurn?: (f: FoodRuntime) => void): void {
-  // Charcoal lifecycle
+/** Efficiency of live fuel; callers enforce exhaustion/refill rather than flooring dead fuel. */
+export function charcoalEfficiencyAt(stats: DerivedStats, db: GameDatabase, progress: number): number {
+  const curve = db.grill.charcoal.efficiencyCurve;
+  const e = sampleCurve(curve, progress);
+  const floor = Math.min(1, Math.min(...curve.map(p => p.value)) + stats.minCharcoalEfficiencyBonus);
+  const q = Math.max(e, floor);
+  return q + stats.stabilityRecoveryFraction * (1 - q);
+}
+
+/** Advances only the hot part of dt. Returns true once when a refill completes. */
+export function tickGrill(g: GrillRuntime, db: GameDatabase, dt: number, onBurn?: (f: FoodRuntime) => void): boolean {
+  if (!Number.isFinite(dt) || dt < 0) throw new Error('tickGrill: invalid dt');
+  let activeSec = dt, refilled = false;
   if (g.refilling > 0) {
-    g.refilling -= dt;
-    if (g.refilling <= 0) {
-      g.refilling = 0;
-      g.charcoalT = 0;
+    const coldSec = Math.min(dt, g.refilling);
+    activeSec -= coldSec;
+    g.refilling = Math.max(0, g.refilling - dt);
+    if (g.refilling < 1e-9) {
+      g.refilling = 0; g.charcoalT = 0; g.charcoalAutoAttempted = false; refilled = true;
     }
-  } else {
-    g.charcoalT = clamp(g.charcoalT + dt / g.stats.charcoalDurationSec, 0, 1);
   }
-  g.charcoalEfficiency = sampleCurve(db.grill.charcoal.efficiencyCurve, g.charcoalT);
+  activeSec = Math.min(activeSec, Math.max(0, 1 - g.charcoalT) * g.stats.charcoalDurationSec);
+  if (g.refilling > 0) activeSec = 0;
+  g.charcoalT = clamp(g.charcoalT + activeSec / g.stats.charcoalDurationSec, 0, 1);
+  const burnEfficiency = charcoalEfficiencyAt(g.stats, db, g.charcoalT);
+  g.charcoalEfficiency = g.refilling > 0 || g.charcoalT >= 1 ? 0 : burnEfficiency;
 
   const carry = db.ingredients.shared.carryoverRate;
   const burnAt = db.ingredients.shared.burnedThreshold;
 
   for (const zone of g.zones) {
     if (zone.items.length === 0) continue;
-    const heat = effectiveHeat(g, zone.index, db);
+    const heat = zoneThermalBase(g, zone.index, db) * burnEfficiency;
     for (const f of zone.items) {
       if (f.burned) continue;
       const ing = f.ingredient;
       if (ing.cookMethod !== 'grill' || ing.sideCookSec <= 0) continue;
       const rate = (heat * ing.heatRate * g.stats.heatRampRate) / ing.sideCookSec;
-      f.timeOnGrill += dt;
+      f.timeOnGrill += activeSec;
       for (let s = 0; s < f.sides.length; s++) {
         const k = s === f.downSide ? 1 : carry;
-        f.sides[s] = f.sides[s]! + dt * rate * k;
+        f.sides[s] = f.sides[s]! + activeSec * rate * k;
       }
       for (let s = 0; s < f.sides.length; s++) {
         if (f.sides[s]! >= burnAt) {
@@ -351,6 +398,7 @@ export function tickGrill(g: GrillRuntime, db: GameDatabase, dt: number, onBurn?
       }
     }
   }
+  return refilled;
 }
 
 // ── Scoring ──────────────────────────────────────────────────────────────────
@@ -390,6 +438,8 @@ export function rewardTuning(economy: EconomyTable): RewardTuning {
 }
 
 export interface ScoreContext {
+  /** Explicit in real turns; legacy isolated scoring fixtures default to starter tier. */
+  restaurantIndex?: number;
   /** Target overall doneness requested by the customer (default = window centre). */
   target: number;
   /** Customer tolerance scale; < 1 narrows the perfect window. */
@@ -398,6 +448,9 @@ export interface ScoreContext {
   patienceRemaining: number;
   combo: number;
   tipMult: number;
+  /** Prestige only scales the tip component, not the legacy whole-plate multiplier. */
+  prestigeTipBonus?: number;
+  autoServiceTipBonus?: number;
   xpMult: number;
   /** Customer generosity as authored in customers.json (e.g. VIP 3x, stingy 0.5x). */
   customerTipMult?: number;
@@ -443,16 +496,22 @@ export function scoreItem(db: GameDatabase, f: FoodRuntime, ctx: ScoreContext): 
   // Generosity scales a damped tip term, never the full plate price.
   const customerMult = 1 + ((ctx.customerTipMult ?? 1) - 1) * t.customerTipWeight;
 
+  const prestige = ctx.prestigeTipBonus ?? 0;
+  // Preserve Plates/Decor's existing payout, but never apply the new prestige to base price.
+  const tipFactor = (tips: number): number => {
+    const legacy=ctx.tipMult-prestige;
+    return (1+tips)*legacy + tips*prestige + tips*ctx.tipMult*(ctx.autoServiceTipBonus??0);
+  };
   let coins = 0;
   let xp = ing.xp * ctx.xpMult;
 
   switch (quality) {
     case 'perfect':
-      coins = ing.value * ing.satisfaction * (1 + t.orderBaseTip + t.perfectTipBonus + speedBonus) * comboMult * ctx.tipMult * eventMult * customerMult;
+      coins = ing.value * ing.satisfaction * tipFactor(t.orderBaseTip + t.perfectTipBonus + speedBonus) * comboMult * eventMult * customerMult;
       xp *= 1.35;
       break;
     case 'good':
-      coins = ing.value * ing.satisfaction * (1 + t.orderBaseTip + speedBonus) * comboMult * ctx.tipMult * eventMult * customerMult;
+      coins = ing.value * ing.satisfaction * tipFactor(t.orderBaseTip + speedBonus) * comboMult * eventMult * customerMult;
       break;
     case 'overcooked':
     case 'raw':
@@ -465,5 +524,12 @@ export function scoreItem(db: GameDatabase, f: FoodRuntime, ctx: ScoreContext): 
       break;
   }
 
-  return { quality, doneness, evenness: ev, windowLo: lo, windowHi: hi, coins: Math.round(coins), xp: Math.round(xp) };
+  return { quality, doneness, evenness: ev, windowLo: lo, windowHi: hi, coins: Math.round(coins * activeCoinMultiplier(db,ctx.restaurantIndex??0)), xp: Math.round(xp) };
+}
+
+/** Authored active revenue curve; shared by manual, staff and VIP serving in every client. */
+export function activeCoinMultiplier(db:GameDatabase,restaurantIndex:number):number {
+  const multiplier=db.economy.reward.activeCoinMultiplierByRestaurant[restaurantIndex];
+  if(!Number.isInteger(restaurantIndex)||multiplier===undefined||!Number.isFinite(multiplier)||multiplier<=0||multiplier>1)throw Error('invalid active income context');
+  return multiplier;
 }

@@ -17,7 +17,13 @@ namespace Churrasco.Core.Generated
     {
         public EmployeesAutomationCap AutomationCap { get; set; }
         public List<EmployeesRoles> Roles { get; set; }
+        public EmployeesService Service { get; set; }
         public int Version { get; set; }
+    }
+
+    public sealed class EmployeesService
+    {
+        public double MinimumWaitSec { get; set; }
     }
 
     public sealed class EmployeesRoles
@@ -39,9 +45,16 @@ namespace Churrasco.Core.Generated
 
     public sealed class EmployeesRolesAbilities
     {
+        public int? AutoOfflineHours { get; set; }
+        public double? BurnWarningSec { get; set; }
         public double Coverage { get; set; }
         public string Effect { get; set; }
+        public int? ExtraPrepSlots { get; set; }
+        public double? IntervalSec { get; set; }
         public int Level { get; set; }
+        public double? OfflineRateBonus { get; set; }
+        public int? PlatesPerTrip { get; set; }
+        public double? TipBonus { get; set; }
     }
 
     public sealed class EmployeesAutomationCap

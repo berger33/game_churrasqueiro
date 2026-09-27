@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ✓ tools/studio/test/late-income.test.ts (15 tests) 19ms
+ ✓ tools/studio/test/economy-long.test.ts (1 test) 32437ms
+   ✓ meets every original target over1500 active turns with no rewarded/offline injection 32436ms
+
+ Test Files  2 passed (2)
+      Tests  16 passed (16)
+   Start at  06:21:36
+   Duration  33.14s (transform 222ms, setup 0ms, collect 310ms, tests 32.46s, environment 0ms, prepare 100ms)
+

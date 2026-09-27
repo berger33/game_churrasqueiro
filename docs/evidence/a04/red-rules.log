@@ -1,0 +1,276 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/fourth-zone.test.ts (29 tests | 16 failed) 56ms
+   × A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > default restaurant 4 creates its declared zone count 9ms
+     → expected [ …(3) ] to have a length of 4 but got 3
+   × A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > default restaurant 5 creates its declared zone count 1ms
+     → expected [ …(3) ] to have a length of 4 but got 3
+   × A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > default restaurant 6 creates its declared zone count 1ms
+     → expected [ …(3) ] to have a length of 4 but got 3
+   × A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > fornalha_dragao_manso evo1: boundary3→4→5, only Fornalha expands 1ms
+     → expected [ …(3) ] to have a length of 4 but got 3
+   × A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > fornalha_dragao_manso evo2: boundary3→4→5, only Fornalha expands 1ms
+     → expected [ { index: +0, …(2) }, …(2) ] to have a length of 4 but got 3
+   × A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > fornalha_dragao_manso evo3: boundary3→4→5, only Fornalha expands 1ms
+     → expected [ { index: +0, …(2) }, …(2) ] to have a length of 4 but got 3
+   × A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > resolves stable low/medium/high IDs; extra exists only on expanded grills 1ms
+     → expected -1 to be 3 // Object.is equality
+   × A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > preserves all original effective heats/upgrade bonuses and gives extra the medium bonus 1ms
+     → expected 1.18 to be 1.06 // Object.is equality
+   × A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > rejects unsupported counts rather than silently clamping missing table zones 1ms
+     → expected [Function] to throw an error
+   × A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > fourth slot accepts, heats, flips, moves and serves a physically cooked plate 1ms
+     → expected false to be true // Object.is equality
+   × A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > enforces capacity/invalid indexes on fourth zone, without losing a plate on failed moves 1ms
+     → expected false to be true // Object.is equality
+   × A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > bot really places into extra capacity when all original zones are full 4ms
+     → expected undefined to be true // Object.is equality
+   × A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > costela still reaches a perfect window in every zone, including medium extra 6ms
+     → expected false to be true // Object.is equality
+   × A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > cupim still reaches a perfect window in every zone, including medium extra 11ms
+     → expected false to be true // Object.is equality
+   × A-04: malformed zone/expansion contracts fail semantic validation > rejects a restaurant promising an undefined zone 1ms
+     → expected '' to match /zoneCount/
+   × A-04: malformed zone/expansion contracts fail semantic validation > rejects duplicate zone IDs and noncontiguous indices 1ms
+     → expected '' to match /zone/
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 16 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > default restaurant 4 creates its declared zone count
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > default restaurant 5 creates its declared zone count
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > default restaurant 6 creates its declared zone count
+AssertionError: expected [ …(3) ] to have a length of 4 but got 3
+
+- Expected
++ Received
+
+- 4
++ 3
+
+ ❯ tools/studio/test/fourth-zone.test.ts:17:27
+     15|   it.each([0,1,2,3,4,5,6])('default restaurant %i creates its declared…
+     16|     const s = make(r);
+     17|     expect(s.grill.zones).toHaveLength(db.restaurantByIndex.get(r)!.gr…
+       |                           ^
+     18|     expect(s.grill.zones.map(z => z.heat)).toEqual(r < 4 ? [0.55,1,1.5…
+     19|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/16]⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > fornalha_dragao_manso evo1: boundary3→4→5, only Fornalha expands
+AssertionError: expected [ …(3) ] to have a length of 4 but got 3
+
+- Expected
++ Received
+
+- 4
++ 3
+
+ ❯ tools/studio/test/fourth-zone.test.ts:25:31
+     23|         const s = make(r, ch.id, evo.level, { grill_size: 2 });
+     24|         const n = ch.id === fornalha && r >= 4 ? 4 : evo.zoneCount;
+     25|         expect(s.grill.zones).toHaveLength(n); expect(s.stats.zoneCoun…
+       |                               ^
+     26|         expect(s.stats.slotsPerZone).toBe(evo.slotsPerZone + 2);
+     27|         const legacy = evo.zoneCount === 1 ? [evo.heatBase] : (evo.zon…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/16]⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > fornalha_dragao_manso evo2: boundary3→4→5, only Fornalha expands
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > fornalha_dragao_manso evo3: boundary3→4→5, only Fornalha expands
+AssertionError: expected [ { index: +0, …(2) }, …(2) ] to have a length of 4 but got 3
+
+- Expected
++ Received
+
+- 4
++ 3
+
+ ❯ tools/studio/test/fourth-zone.test.ts:25:31
+     23|         const s = make(r, ch.id, evo.level, { grill_size: 2 });
+     24|         const n = ch.id === fornalha && r >= 4 ? 4 : evo.zoneCount;
+     25|         expect(s.grill.zones).toHaveLength(n); expect(s.stats.zoneCoun…
+       |                               ^
+     26|         expect(s.stats.slotsPerZone).toBe(evo.slotsPerZone + 2);
+     27|         const legacy = evo.zoneCount === 1 ? [evo.heatBase] : (evo.zon…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/16]⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > resolves stable low/medium/high IDs; extra exists only on expanded grills
+AssertionError: expected -1 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ -1
+
+ ❯ tools/studio/test/fourth-zone.test.ts:40:61
+     38|       expect(runtimeZoneIndex(s.grill, db, 'medium')).toBe(n === 1 ? 0…
+     39|       expect(runtimeZoneIndex(s.grill, db, 'high')).toBe(n === 4 ? 2 :…
+     40|       expect(runtimeZoneIndex(s.grill, db, 'medium_extra')).toBe(n ===…
+       |                                                             ^
+     41|       expect(runtimeZoneIndex(s.grill, db, 'none')).toBe(-1);
+     42|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/16]⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > preserves all original effective heats/upgrade bonuses and gives extra the medium bonus
+AssertionError: expected 1.18 to be 1.06 // Object.is equality
+
+- Expected
++ Received
+
+- 1.06
++ 1.18
+
+ ❯ tools/studio/test/fourth-zone.test.ts:50:49
+     48|         before.grill.charcoalEfficiency = after.grill.charcoalEfficien…
+     49|         for (let z=0; z<3; z++) expect(effectiveHeat(after.grill,z,db)…
+     50|         expect(effectiveHeat(after.grill,3,db)).toBe(effectiveHeat(aft…
+       |                                                 ^
+     51|       }
+     52|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/16]⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > rejects unsupported counts rather than silently clamping missing table zones
+AssertionError: expected [Function] to throw an error
+
+- Expected: 
+null
+
++ Received: 
+undefined
+
+ ❯ tools/studio/test/fourth-zone.test.ts:56:115
+     54|   it('rejects unsupported counts rather than silently clamping missing…
+     55|     for (const count of [0,5,2.5,NaN]) {
+     56|       expect(() => createGrill({ ...deriveStats(db, db.restaurants.res…
+       |                                                                                                                   ^
+     57|     }
+     58|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/16]⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > fourth slot accepts, heats, flips, moves and serves a physically cooked plate
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tools/studio/test/fourth-zone.test.ts:62:27
+     60|     const s = make(4, fornalha), ing = db.ingredientById.get('linguica…
+     61|     const c = s.spawnScriptedCustomer('comum', [ing.id], 90), f = s.ta…
+     62|     expect(s.place(f, 3)).toBe(true);
+       |                           ^
+     63|     expect(s.grill.zones[3]!.items).toContain(f);
+     64|     for (let i=0; i<4000 && overallDoneness(f)<.78; i++) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/16]⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > enforces capacity/invalid indexes on fourth zone, without losing a plate on failed moves
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tools/studio/test/fourth-zone.test.ts:77:106
+     75|   it('enforces capacity/invalid indexes on fourth zone, without losing…
+     76|     const s = make(4,fornalha);
+     77|     for(let i=0;i<s.stats.slotsPerZone;i++) expect(s.place(s.takeFromS…
+       |                                                                                                          ^
+     78|     const f=s.takeFromStock(db.ingredients.items[0]!); expect(s.place(…
+     79|     expect(s.move(f,3)).toBe(false); expect(f.zoneIndex).toBe(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/16]⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > bot really places into extra capacity when all original zones are full
+AssertionError: expected undefined to be true // Object.is equality
+
+- Expected: 
+true
+
++ Received: 
+undefined
+
+ ❯ tools/studio/test/fourth-zone.test.ts:88:83
+     86|     const c=s.spawnScriptedCustomer('comum',['linguica_toscana'],90);
+     87|     const bot=new SkillPolicy(new Rng(4),{skill:1}); s.tick(.1,a=>bot.…
+     88|     expect(s.grill.zones[3]?.items.some(f=>f.ingredient.id==='linguica…
+       |                                                                                   ^
+     89|     for(let i=0;i<600 && c.state==='waiting';i++) s.tick(.1,a=>bot.act…
+     90|     expect(c.state).toBe('served');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/16]⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > costela still reaches a perfect window in every zone, including medium extra
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: owner contract — Premium AND Fornalha, extra medium, not a hotter profile > cupim still reaches a perfect window in every zone, including medium extra
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tools/studio/test/fourth-zone.test.ts:95:28
+     93|     for(let z=0;z<4;z++) {
+     94|       const s=make(4,fornalha),f=s.takeFromStock(db.ingredientById.get…
+     95|       expect(s.place(f,z)).toBe(true);
+       |                            ^
+     96|       let perfect=false;
+     97|       for(let i=0;i<5000 && !f.burned;i++) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/16]⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: malformed zone/expansion contracts fail semantic validation > rejects a restaurant promising an undefined zone
+AssertionError: expected '' to match /zoneCount/
+
+- Expected: 
+/zoneCount/
+
++ Received: 
+""
+
+ ❯ tools/studio/test/fourth-zone.test.ts:109:44
+    107|   it('rejects a restaurant promising an undefined zone', () => {
+    108|     const d=loadDatabase(); d.restaurants.restaurants[4]!.grill.zoneCo…
+    109|     expect(validateDatabase(d).join('\n')).toMatch(/zoneCount/);
+       |                                            ^
+    110|   });
+    111|   it('rejects duplicate zone IDs and noncontiguous indices', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/16]⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: malformed zone/expansion contracts fail semantic validation > rejects duplicate zone IDs and noncontiguous indices
+AssertionError: expected '' to match /zone/
+
+- Expected: 
+/zone/
+
++ Received: 
+""
+
+ ❯ tools/studio/test/fourth-zone.test.ts:113:44
+    111|   it('rejects duplicate zone IDs and noncontiguous indices', () => {
+    112|     const d=loadDatabase(); d.grill.zones[1]!.id='low';d.grill.zones[1…
+    113|     expect(validateDatabase(d).join('\n')).toMatch(/zone/);
+       |                                            ^
+    114|   });
+    115| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/16]⎯
+
+ Test Files  1 failed (1)
+      Tests  16 failed | 13 passed (29)
+   Start at  02:46:41
+   Duration  485ms (transform 167ms, setup 0ms, collect 201ms, tests 56ms, environment 0ms, prepare 58ms)
+

@@ -1,0 +1,99 @@
+
+> churrasco-mestre-da-brasa@0.1.0 test
+> vitest run
+
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ✓ tools/studio/test/turn.test.ts (29 tests) 302ms
+ ✓ tools/studio/test/tutorial.test.ts (22 tests) 121ms
+ ❯ tools/studio/test/cooking.test.ts (23 tests | 1 failed) 119ms
+   × skill policy sanity > achieves a high perfect rate at skill 1.0 and a low one at skill 0.2 99ms
+     → expected 14 to be 13 // Object.is equality
+ ✓ tools/studio/test/economy.test.ts (27 tests) 21ms
+ ✓ tools/studio/test/monetization.test.ts (27 tests) 9ms
+ ✓ tools/studio/test/save.test.ts (28 tests) 102ms
+ ✓ tools/studio/test/art-registry.test.ts (52 tests) 6740ms
+ ❯ tools/studio/test/golden.test.ts (7 tests | 1 failed) 115ms
+   × golden vectors > replays every full-turn vector 26ms
+     → turn.skill0.35.level_001 counters: expected { customersSpawned: 10, …(14) } to deeply equal { customersSpawned: 10, …(12) }
+ ✓ tools/studio/test/vip.test.ts (29 tests) 593ms
+   ✓ VIP completed service, economy and analytics > real progression has natural VIP without rewarded and obeys a persisted daily cap 539ms
+ ✓ tools/studio/test/fourth-zone.test.ts (41 tests) 88ms
+ ✓ tools/studio/test/churrasqueira.test.ts (25 tests) 1516ms
+   ✓ skill policy plays every churrasqueira > lata_valente: full turns complete, customers are served, skill still separates quality 515ms
+ ✓ tools/studio/test/data.test.ts (12 tests) 25ms
+ ✓ tools/studio/test/prep.test.ts (16 tests) 21ms
+ ✓ tools/studio/test/policy.test.ts (5 tests) 737ms
+   ✓ skill policy — zone choice > is monotonically more likely to hit the ideal zone as skill rises 343ms
+ ✓ tools/studio/test/ingredient-unlock.test.ts (50 tests) 247ms
+ ✓ tools/studio/test/slow-cuts.test.ts (19 tests) 188ms
+ ✓ tools/studio/test/l10n.test.ts (12 tests) 9ms
+ ✓ tools/studio/test/cooking-ui.test.ts (8 tests) 10ms
+ ✓ tools/studio/test/unlock-wiring.test.ts (2 tests) 538ms
+   ✓ A-02: real simulation callers pass player progression, not campaign indices > progression uses pre-payout XP and keeps every order inside the same eligible catalog 445ms
+ ✓ tools/studio/test/sim-grill.test.ts (3 tests) 1478ms
+   ✓ A-04: real progression passes the restaurant AND equipment expansion context > keeps three zones before Premium and reports four actual zones after unlock 1236ms
+ ✓ tools/studio/test/gates.test.ts (1 test) 3ms
+ ✓ tools/studio/test/prep-ui.test.ts (2 tests) 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/cooking.test.ts > skill policy sanity > achieves a high perfect rate at skill 1.0 and a low one at skill 0.2
+AssertionError: expected 14 to be 13 // Object.is equality
+
+- Expected
++ Received
+
+- 13
++ 14
+
+ ❯ tools/studio/test/cooking.test.ts:328:24
+    326|     expect(pro.lost).toBe(0);
+    327|     expect(rookie.lost).toBe(0);
+    328|     expect(pro.served).toBe(rookie.served);
+       |                        ^
+    329|   });
+    330| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tools/studio/test/golden.test.ts > golden vectors > replays every full-turn vector
+AssertionError: turn.skill0.35.level_001 counters: expected { customersSpawned: 10, …(14) } to deeply equal { customersSpawned: 10, …(12) }
+
+- Expected
++ Received
+
+  Object {
+    "bestCombo": 9,
+    "burnedFood": 0,
+    "charcoalRefills": 0,
+    "customersLost": 0,
+    "customersServed": 9,
+    "customersSpawned": 10,
+    "flawless": true,
+    "flips": 10,
+    "goodCooks": 2,
+    "itemsCooked": 9,
+    "ordersCompleted": 9,
+    "peakSimultaneousOrders": 2,
+    "perfectCooks": 7,
++   "vipServed": 0,
++   "vipSpawned": 0,
+  }
+
+ ❯ tools/studio/test/golden.test.ts:250:48
+    248|       expect(res.stars, `${v.id} stars`).toBe(v.expect.stars);
+    249|       expect(res.failed, `${v.id} failed`).toBe(v.expect.failed);
+    250|       expect(res.counters, `${v.id} counters`).toEqual(v.expect.counte…
+       |                                                ^
+    251|     }
+    252|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  2 failed | 20 passed (22)
+      Tests  2 failed | 438 passed (440)
+   Start at  03:24:12
+   Duration  17.40s (transform 396ms, setup 0ms, collect 831ms, tests 12.99s, environment 4ms, prepare 1.10s)
+

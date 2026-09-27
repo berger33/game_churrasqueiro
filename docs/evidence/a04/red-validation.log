@@ -1,0 +1,93 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/fourth-zone.test.ts (37 tests | 9 failed) 61ms
+   × A-04: malformed zone/expansion contracts fail semantic validation > rejects a restaurant promising an undefined zone 7ms
+     → expected '' to match /zoneCount/
+   × A-04: malformed zone/expansion contracts fail semantic validation > rejects duplicate zone IDs and noncontiguous indices 1ms
+     → expected '' to match /zone/
+   × A-04: auxiliary zones and hardware expansion references are validated > rejects broken heat contract 1ms
+     → expected '' to match /zone|expansion/i
+   × A-04: auxiliary zones and hardware expansion references are validated > rejects broken source contract 0ms
+     → expected '' to match /zone|expansion/i
+   × A-04: auxiliary zones and hardware expansion references are validated > rejects broken order contract 1ms
+     → expected '' to match /zone|expansion/i
+   × A-04: auxiliary zones and hardware expansion references are validated > rejects broken missingRestaurant contract 0ms
+     → expected '' to match /zone|expansion/i
+   × A-04: auxiliary zones and hardware expansion references are validated > rejects broken missingZone contract 0ms
+     → expected '' to match /zone|expansion/i
+   × A-04: auxiliary zones and hardware expansion references are validated > rejects broken fraction contract 1ms
+     → expected '' to match /zone|expansion/i
+   × A-04: auxiliary zones and hardware expansion references are validated > rejects broken notExpansion contract 0ms
+     → expected '' to match /zone|expansion/i
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: malformed zone/expansion contracts fail semantic validation > rejects a restaurant promising an undefined zone
+AssertionError: expected '' to match /zoneCount/
+
+- Expected: 
+/zoneCount/
+
++ Received: 
+""
+
+ ❯ tools/studio/test/fourth-zone.test.ts:109:44
+    107|   it('rejects a restaurant promising an undefined zone', () => {
+    108|     const d=loadDatabase(); d.restaurants.restaurants[4]!.grill.zoneCo…
+    109|     expect(validateDatabase(d).join('\n')).toMatch(/zoneCount/);
+       |                                            ^
+    110|   });
+    111|   it('rejects duplicate zone IDs and noncontiguous indices', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: malformed zone/expansion contracts fail semantic validation > rejects duplicate zone IDs and noncontiguous indices
+AssertionError: expected '' to match /zone/
+
+- Expected: 
+/zone/
+
++ Received: 
+""
+
+ ❯ tools/studio/test/fourth-zone.test.ts:113:44
+    111|   it('rejects duplicate zone IDs and noncontiguous indices', () => {
+    112|     const d=loadDatabase(); d.grill.zones[1]!.id='low';d.grill.zones[1…
+    113|     expect(validateDatabase(d).join('\n')).toMatch(/zone/);
+       |                                            ^
+    114|   });
+    115| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: auxiliary zones and hardware expansion references are validated > rejects broken heat contract
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: auxiliary zones and hardware expansion references are validated > rejects broken source contract
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: auxiliary zones and hardware expansion references are validated > rejects broken order contract
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: auxiliary zones and hardware expansion references are validated > rejects broken missingRestaurant contract
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: auxiliary zones and hardware expansion references are validated > rejects broken missingZone contract
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: auxiliary zones and hardware expansion references are validated > rejects broken fraction contract
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: auxiliary zones and hardware expansion references are validated > rejects broken notExpansion contract
+AssertionError: expected '' to match /zone|expansion/i
+
+- Expected: 
+/zone|expansion/i
+
++ Received: 
+""
+
+ ❯ tools/studio/test/fourth-zone.test.ts:132:44
+    130|     if(kind==='fraction')expansion.zoneCount=3.5;
+    131|     if(kind==='notExpansion')expansion.zoneCount=2;
+    132|     expect(validateDatabase(d).join('\n')).toMatch(/zone|expansion/i);
+       |                                            ^
+    133|   });
+    134| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ Test Files  1 failed (1)
+      Tests  9 failed | 28 passed (37)
+   Start at  02:47:44
+   Duration  405ms (transform 163ms, setup 0ms, collect 171ms, tests 61ms, environment 0ms, prepare 49ms)
+

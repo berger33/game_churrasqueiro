@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ✓ tools/studio/test/upgrades.test.ts (68 tests) 2533ms
+   ✓ A-06.1 shared quote, limits and persistence > bot can purchase offline tracks, but the comparable active campaign injects no absence 2451ms
+ ✓ tools/studio/test/offline.test.ts (34 tests) 29ms
+
+ Test Files  2 passed (2)
+      Tests  102 passed (102)
+   Start at  06:15:20
+   Duration  3.24s (transform 209ms, setup 0ms, collect 311ms, tests 2.56s, environment 0ms, prepare 96ms)
+

@@ -1,0 +1,42 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/staff.test.ts (48 tests | 4 failed) 144ms
+   × garcom purchase is shared, preserves historical level and charges exactly the quote 12ms
+     → expected false to be true // Object.is equality
+   × auxiliar purchase is shared, preserves historical level and charges exactly the quote 1ms
+     → expected false to be true // Object.is equality
+   × churrasqueiro purchase is shared, preserves historical level and charges exactly the quote 1ms
+     → expected false to be true // Object.is equality
+   × tray purchase is shared, preserves historical level and charges exactly the quote 1ms
+     → expected false to be true // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/staff.test.ts > garcom purchase is shared, preserves historical level and charges exactly the quote
+ FAIL  tools/studio/test/staff.test.ts > auxiliar purchase is shared, preserves historical level and charges exactly the quote
+ FAIL  tools/studio/test/staff.test.ts > churrasqueiro purchase is shared, preserves historical level and charges exactly the quote
+ FAIL  tools/studio/test/staff.test.ts > tray purchase is shared, preserves historical level and charges exactly the quote
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tools/studio/test/staff.test.ts:144:49
+    142| it.each(['garcom','auxiliar','churrasqueiro','tray'])('%s purchase is …
+    143|  const p=newPlayerState();p.level=44;p.restaurantIndex=4;p.coins=10000…
+    144|  const q=quoteUpgrade(db,p,id);expect(q.canBuy).toBe(true);expect(buyU…
+       |                                                 ^
+    145| });
+    146| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 44 passed (48)
+   Start at  05:34:28
+   Duration  763ms (transform 362ms, setup 0ms, collect 381ms, tests 144ms, environment 0ms, prepare 76ms)
+

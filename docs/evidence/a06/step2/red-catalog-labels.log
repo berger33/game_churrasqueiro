@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/resources.test.ts (36 tests | 1 failed) 38ms
+   × every active catalog effect has a real pt-BR label, never a dynamic key placeholder 9ms
+     → grill_stability: expected undefined to be type of 'string'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/resources.test.ts > every active catalog effect has a real pt-BR label, never a dynamic key placeholder
+AssertionError: grill_stability: expected undefined to be type of 'string'
+
+Expected: "string"
+Received: "undefined"
+
+ ❯ tools/studio/test/resources.test.ts:182:49
+    180|   for(const t of db.upgrades.tracks.filter(t=>UPGRADE_PHASES[t.id]==='…
+    181|     const stat=t.id==='brasa_mastery'?'prestigeTip':t.effect.stat;
+    182|     expect(pt[`ui.upgrades.stat.${stat}`],t.id).toBeTypeOf('string');
+       |                                                 ^
+    183|   }
+    184| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 35 passed (36)
+   Start at  05:18:53
+   Duration  484ms (transform 197ms, setup 0ms, collect 237ms, tests 38ms, environment 0ms, prepare 55ms)
+

@@ -1,0 +1,36 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/fourth-zone.test.ts (38 tests | 1 failed | 37 skipped) 11ms
+   × A-04: the generic grill constructor agrees with the same primary/auxiliary heat mapping 10ms
+     → expected [ 0.55, 1 ] to deeply equal [ 0.55, 1.55 ]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/fourth-zone.test.ts > A-04: the generic grill constructor agrees with the same primary/auxiliary heat mapping
+AssertionError: expected [ 0.55, 1 ] to deeply equal [ 0.55, 1.55 ]
+
+- Expected
++ Received
+
+  Array [
+    0.55,
+-   1.55,
++   1,
+  ]
+
+ ❯ tools/studio/test/fourth-zone.test.ts:140:36
+    138|   for(const [n,heats] of [[1,[.55]],[2,[.55,1.55]],[3,[.55,1,1.55]],[4…
+    139|     const g=createGrill({...stats,zoneCount:n},db);
+    140|     expect(g.zones.map(z=>z.heat)).toEqual(heats);
+       |                                    ^
+    141|   }
+    142| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 37 skipped (38)
+   Start at  02:55:54
+   Duration  395ms (transform 156ms, setup 0ms, collect 183ms, tests 11ms, environment 0ms, prepare 52ms)
+

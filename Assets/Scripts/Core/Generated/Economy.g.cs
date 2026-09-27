@@ -54,6 +54,7 @@ namespace Churrasco.Core.Generated
 
     public sealed class EconomyReward
     {
+        public List<double> ActiveCoinMultiplierByRestaurant { get; set; }
         public double ComboCap { get; set; }
         public double ComboStep { get; set; }
         public double CustomerTipWeight { get; set; }
@@ -94,6 +95,7 @@ namespace Churrasco.Core.Generated
         public int MaxOfflineHours { get; set; }
         public int MinCollectIntervalMin { get; set; }
         public int RampInMinutes { get; set; }
+        public int UnlockRestaurantIndex { get; set; }
         public List<double> XpPerMinuteByRestaurant { get; set; }
     }
 

@@ -1,0 +1,19 @@
+[shoot] 38-upgrade-catalog.png  167.5 kB
+art: 244 sprites decoded
+[shoot] 39-orders-paged.png  486.1 kB
+[shoot] 40-orders-page2-service.png  491.6 kB
+art: 244 sprites decoded
+art: 244 sprites decoded
+[shoot] 41-upgrade-prep-locked.png  159.9 kB
+art: 244 sprites decoded
+[shoot] 42-upgrade-prep-unlocked.png  169.2 kB
+[shoot] A-06.1: all27 catalog, shared purchase/relaunch, pending/max no debit; capacity14 all reachable, page2 real service, drag stable across arrivals, prep11/12 purchase gating
+[shoot] frames written to prototype/shots/
+[shoot] painted=222 skipped=12750 wall=17.3s
+PASS  check-shots
+
+── check-csharp  ──────────────────────────────────────
+   the C# core compiles as Unity would (netstandard2.1, C# 9) and replays the golden + FTUE vectors
+SKIP  check-csharp  (no `dotnet` on this machine — CI runs it)
+
+14 of 15 CI gates met here; skipped (missing toolchain, CI runs them): check-csharp

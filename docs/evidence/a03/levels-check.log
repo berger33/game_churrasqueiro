@@ -1,0 +1,9 @@
+
+> churrasco-mestre-da-brasa@0.1.0 gen-levels
+> node --experimental-strip-types tools/studio/gen-levels.ts
+
+wrote 60 levels → /home/user/game_churrasqueiro/shared/data/levels.json
+difficulty mix: {"easy":17,"reward":15,"medium":18,"hard":10}
+restaurants covered: 0, 1 (db has 7 tiers)
+spawn interval range: 4.8s .. 9s
+patience scalar range: 0.76 .. 1.28

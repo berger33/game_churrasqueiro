@@ -293,8 +293,9 @@ describe('grill capacity & charcoal', () => {
 
 describe('skill policy sanity', () => {
   it('achieves a high perfect rate at skill 1.0 and a low one at skill 0.2', () => {
+    // Isolate the original ordinary-customer cooking comparison from the new VIP lottery.
     const run = (skill: number) => {
-      const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 1, levelId: 'policy', upgradeLevels: {}, seed: 7 }, 7);
+      const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 1, levelId: 'policy', upgradeLevels: {}, seed: 7, overrides:{vipChance:0} }, 7);
       const rng = new Rng(7);
       const policy = new SkillPolicy(rng, { skill });
       let guard = 0;

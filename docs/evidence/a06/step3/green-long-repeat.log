@@ -1,0 +1,103 @@
+
+> churrasco-mestre-da-brasa@0.1.0 sim:long
+> LONG_HORIZON=1500 node --experimental-strip-types tools/studio/run-sim.ts
+
+── CHURRASCO! economy simulation ─────────────────────────────
+turns simulated: 1500
+final level: 80   restaurant: 6   grill: fornalha_dragao_manso evo 3   coins left: 14795479
+coins earned: 23263609   spent: 8468130   spend ratio: 0.364
+perfect rate: 42.2%   burned rate: 0.1%   lost customers: 2.3%
+avg turn length: 173.7s
+
+coins per turn by restaurant tier:
+  tier 0: avg 690 (min 269, max 1430) over 24 turns
+  tier 1: avg 2574 (min 657, max 5021) over 72 turns
+  tier 2: avg 5346 (min 3681, max 7383) over 72 turns
+  tier 3: avg 8827 (min 5177, max 12731) over 104 turns
+  tier 4: avg 12374 (min 9136, max 17847) over 150 turns
+  tier 5: avg 16128 (min 12031, max 21488) over 307 turns
+  tier 6: avg 19110 (min 13971, max 24720) over 771 turns
+
+faucets:
+  turn                   20865909
+  level_first_clear         20627
+  level_reward            2179818
+  level_up                 181255
+  vip_achievement           16000
+sinks:
+  churrasqueira_evolve:lata_valente       1000
+  upgrade:grill_size        13480
+  upgrade:charcoal_duration      21560
+  upgrade:plates             3480
+  upgrade:grill_heat        15380
+  churrasqueira_unlock:ze_da_esquina        900
+  churrasqueira_evolve:ze_da_esquina       3200
+  upgrade:charcoal_quality       9570
+  upgrade:patience_charm       9790
+  upgrade:tables            20740
+  upgrade:grill_stability       7850
+  upgrade:capacity          18180
+  upgrade:grill_speed        9470
+  upgrade:counter            6880
+  upgrade:decor             14490
+  upgrade:music              5920
+  upgrade:sign              13060
+  restaurant_unlock       4463500
+  churrasqueira_unlock:parrilla_chef_cisma       3200
+  upgrade:lighting           7180
+  churrasqueira_evolve:parrilla_chef_cisma      10000
+  upgrade:knife              2910
+  upgrade:board              3060
+  upgrade:charcoal_auto       7810
+  upgrade:brasa_mastery    1605720
+  upgrade:garcom            60800
+  upgrade:tray               4440
+  upgrade:clientela_fiel    1778420
+  churrasqueira_unlock:fornalha_dragao_manso       8500
+  upgrade:auxiliar         102130
+  churrasqueira_evolve:fornalha_dragao_manso      24300
+  upgrade:churrasqueiro     211210
+
+turn at which each establishment was unlocked:
+  espetinho_rua          turn 42
+  trailer                turn 96
+  churrascaria_bairro    turn 168
+  churrascaria_premium   turn 272
+  festival               turn 422
+  rede_nacional          turn 729
+
+turn at which each churrasqueira was unlocked:
+  ze_da_esquina          turn 11
+  parrilla_chef_cisma    turn 43
+  fornalha_dragao_manso  turn 87
+
+target checks:
+  PASS  turnsPerSession                    assumed 4 turns/session, target 3-5
+  PASS  firstUpgradeAffordableAfterTurns   cheapest upgrade reachable after turn 1, target 1-2
+  PASS  unlock:espetinho_rua               unlocked at turn 42, target 28-45
+  PASS  unlock:trailer                     unlocked at turn 96, target 72-115
+  PASS  unlock:churrascaria_bairro         unlocked at turn 168, target 115-185
+  PASS  unlock:churrascaria_premium        unlocked at turn 272, target 195-315
+  PASS  unlock:festival                    unlocked at turn 422, target 340-550
+  FAIL  unlock:rede_nacional               unlocked at turn 729, target 950-1450
+  PASS  income:level5                      10614 coins/day at level 5, target 9000-14000
+  PASS  income:level15                     39317 coins/day at level 15, target 36000-56000
+  PASS  income:level30                     114899 coins/day at level 30, target 78000-122000
+  FAIL  income:level50                     189197 coins/day at level 50, target 98000-152000
+  FAIL  coinSpendRatio                     spend ratio 0.364, target 0.7-0.99
+  PASS  coinSpike                          max/median turn income = 1.43 (max 24720, median 17236), cap 6
+  PASS  perfectRateAtSkillMid              perfect rate at skill 0.55 = 45.6%, target 40-62%
+  PASS  grill:ze_da_esquina                unlocked at turn 11, target 4-12
+  PASS  grill:parrilla_chef_cisma          unlocked at turn 43, target 32-60
+  PASS  grill:fornalha_dragao_manso        unlocked at turn 87, target 70-115
+
+skill curve (authored content, fixed skill; player level progresses from XP, no purchases):
+  skill  perfect   good   burned   lost   coins/turn
+  0.30    23.8%   76.2%     0.0%    0.9%         423
+  0.45    39.2%   60.5%     0.3%    0.4%         541
+  0.55    45.6%   54.2%     0.2%    0.4%         564
+  0.70    65.5%   34.5%     0.0%    0.4%         654
+  0.85    85.4%   14.6%     0.0%    0.0%         706
+  1.00    98.2%    1.6%     0.1%    0.2%         748
+
+3 of 18 balance targets FAILED

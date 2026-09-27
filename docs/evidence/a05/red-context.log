@@ -1,0 +1,33 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/vip.test.ts (29 tests | 1 failed | 28 skipped) 644ms
+   × VIP completed service, economy and analytics > real progression has natural VIP without rewarded and obeys a persisted daily cap 643ms
+     → expected 2 to be +0 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/vip.test.ts > VIP completed service, economy and analytics > real progression has natural VIP without rewarded and obeys a persisted daily cap
+AssertionError: expected 2 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 2
+
+ ❯ tools/studio/test/vip.test.ts:162:62
+    160|     for(const t of report.outcomes) {
+    161|       daily.set(t.vipSnapshot.day,(daily.get(t.vipSnapshot.day)??0)+t.…
+    162|       if(t.level.vipChance===0)expect(t.vipSnapshot.arrived).toBe(0);
+       |                                                              ^
+    163|     }
+    164|     for(const n of daily.values())expect(n).toBeLessThanOrEqual(2);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 28 skipped (29)
+   Start at  03:21:57
+   Duration  1.06s (transform 203ms, setup 0ms, collect 231ms, tests 644ms, environment 0ms, prepare 49ms)
+

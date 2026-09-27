@@ -1,0 +1,54 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/vip.test.ts (43 tests | 2 failed | 41 skipped) 14ms
+   × VIP current-save and context safety > does not interpret a missing v4 ledger as an old install 11ms
+     → expected false to be true // Object.is equality
+   × VIP current-save and context safety > does not reserve for a nonexistent restaurant 1ms
+     → expected 'vip-test-1' to be null
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/vip.test.ts > VIP current-save and context safety > does not interpret a missing v4 ledger as an old install
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tools/studio/test/vip.test.ts:228:46
+    226|     const restored=deserializeSave(serializeSave(save));expect(restore…
+    227|     if(!restored.ok)throw Error('load');
+    228|     expect(restored.save.player.vip.blocked).toBe(true);expect(restore…
+       |                                              ^
+    229|   });
+    230|   it('does not reserve for a nonexistent restaurant',()=>expect(beginV…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tools/studio/test/vip.test.ts > VIP current-save and context safety > does not reserve for a nonexistent restaurant
+AssertionError: expected 'vip-test-1' to be null
+
+- Expected: 
+null
+
++ Received: 
+"vip-test-1"
+
+ ❯ tools/studio/test/vip.test.ts:230:105
+    228|     expect(restored.save.player.vip.blocked).toBe(true);expect(restore…
+    229|   });
+    230|   it('does not reserve for a nonexistent restaurant',()=>expect(beginV…
+       |                                                                                                         ^
+    231| });
+    232| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 41 skipped (43)
+   Start at  03:34:45
+   Duration  432ms (transform 205ms, setup 0ms, collect 239ms, tests 14ms, environment 0ms, prepare 47ms)
+

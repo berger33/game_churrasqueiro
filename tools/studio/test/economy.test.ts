@@ -22,7 +22,7 @@ function turn(coins: number, xp: number, extra: Partial<TurnResult['counters']> 
     failed: false,
     events: [],
     counters: {
-      customersSpawned: 5, customersServed: 5, customersLost: 0, ordersCompleted: 5,
+      vipSpawned: 0, vipServed: 0, customersSpawned: 5, customersServed: 5, customersLost: 0, ordersCompleted: 5,
       perfectCooks: 4, goodCooks: 1, burnedFood: 0, bestCombo: 4, flips: 6, itemsCooked: 6,
       charcoalRefills: 0, peakSimultaneousOrders: 2, flawless: true, ...extra
     }

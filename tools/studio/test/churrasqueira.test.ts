@@ -22,7 +22,7 @@ import { generateLevels } from '../gen-levels.ts';
 import { TurnSimulation, type TurnCounters } from '../../sim-core/src/turn.ts';
 import { SkillPolicy } from '../../sim-core/src/policy.ts';
 import { Rng } from '../../sim-core/src/rng.ts';
-import { churrasqueiraZoneHeat, effectiveHeat, runtimeZoneIndex } from '../../sim-core/src/cooking.ts';
+import { primaryGrillZones, churrasqueiraZoneHeat, effectiveHeat, runtimeZoneIndex } from '../../sim-core/src/cooking.ts';
 
 const { db } = loadAndValidate();
 const LEVELS = generateLevels([[0, 12]]).levels;
@@ -47,7 +47,7 @@ function makeSim(churrasqueiraId: string | undefined, churrasqueiraLevel: number
 
 function playTurns(churrasqueiraId: string | undefined, churrasqueiraLevel: number, skill: number, turns = 8): TurnCounters {
   const total: TurnCounters = {
-    customersSpawned: 0, customersServed: 0, customersLost: 0, ordersCompleted: 0,
+    vipSpawned: 0, vipServed: 0, customersSpawned: 0, customersServed: 0, customersLost: 0, ordersCompleted: 0,
     perfectCooks: 0, goodCooks: 0, burnedFood: 0, bestCombo: 0, flips: 0,
     itemsCooked: 0, charcoalRefills: 0, peakSimultaneousOrders: 0, flawless: true
   };
@@ -87,15 +87,17 @@ describe('churrasqueira data', () => {
 describe('runtimeZoneIndex — table zone id → runtime zone', () => {
   const grillWith = (zoneCount: number) => makeSim(CHURRASQUEIRAS.find((c) => c.evolutions[0]!.zoneCount === zoneCount)!.id, 1, 0).grill;
 
-  it('is the identity on a grill with as many zones as the table', () => {
+  it('is the identity for the three primary zones of a starter restaurant', () => {
     const g = makeSim(undefined, 1, 0).grill;
-    expect(g.zones.length).toBe(db.grill.zones.length);
-    for (const z of db.grill.zones) expect(runtimeZoneIndex(g, db, z.id)).toBe(z.index);
+    expect(g.zones.length).toBe(3);
+    for (const z of primaryGrillZones(db)) expect(runtimeZoneIndex(g, db, z.id)).toBe(z.index);
+    expect(runtimeZoneIndex(g, db, 'medium_extra')).toBe(-1);
   });
 
-  it('maps every id onto the single zone of a 1-zone grill', () => {
+  it('maps primary IDs onto the starter zone, never fabricates the locked auxiliary zone', () => {
     const g = grillWith(1);
-    for (const z of db.grill.zones) expect(runtimeZoneIndex(g, db, z.id)).toBe(0);
+    for (const z of primaryGrillZones(db)) expect(runtimeZoneIndex(g, db, z.id)).toBe(0);
+    expect(runtimeZoneIndex(g, db, 'medium_extra')).toBe(-1);
   });
 
   it('keeps the cool end cool and the hot end hot on a 2-zone grill', () => {

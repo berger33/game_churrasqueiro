@@ -8,7 +8,163 @@
 
 ---
 
-## Atualização A-02 — vigente (2026-09-26 local /27 UTC)
+## A-06.4 — fechamento econômico autorizado (vigente)
+
+- O dono exigiu resolver as3 falhas antes de A-06.5 e escolheu explicitamente
+  **`late_income`**: rebalancear renda tardia, preservando preços, histórico, FTUE,
+  offline e metas. Não confundir com autorização para novos gastos ou tuning futuro.
+- `economy14`: moedas por prato ×1 nos restaurantes0–3, ×.85 no4, ×.62 no5, ×.48 no6.
+  Mesmo scorer no runtime manual/automático/VIP/browser, arredondamento único. Não reduz
+  XP ou saldo já ganho; não muda bônus de fase/nível, preços, unlocks, limites ou metas.
+- **1500 turnos ativos:18/18, exit0**, duas execuções byte-idênticas. Rede1130 (950–1450),
+  rendaL50=123.527 (98.000–152.000), spend74,07% (70–99%). Seeds extras20260918/19 também18/18.
+  Renda14.679.360/gasto10.873.220/saldo3.806.140;**27 trilhas** maximizadas.
+  Gasto inalterado, renda−8.069.590. Receita tardia por turno vira platô, não crescimento
+  garantido a cada restaurante. Campanha sem rewarded/offline, agenda ausente separada intacta.
+- **672 testes/29 arquivos;14/15 gates (C# SKIP);53 capturas;157+44 vetores.** Novo teste
+  de1500 turnos dentro de `npm test` impede que gates curtos escondam novamente esses desvios.
+  116 vetores antigos intactos;27 mudam apenas moedas;14 novos de scoring.44 FTUE byte-idênticos.
+  FTUE16,1/32,9/38,3s/0 misses/136 moedas. UI mostra a taxa; sem porta de regras C#/Unity.
+- Relatório vigente: **[evidence/a06/step4/reopened/README.md](evidence/a06/step4/reopened/README.md)**.
+  **A-06.5 não iniciada.** A-06.4 funcional e estes critérios econômicos locais validados;
+  revisão das27/F4 global ainda separadas. Sem push/PR/merge/arte/SDK/dispositivo/publicação.
+
+## A-06.4 — integração offline antes do rebalanceamento (histórico)
+
+- **27 trilhas integradas**, incluindo Caixa/Gerente/Logística. Âncora real e snapshot
+  por ausência; restaurante3, cap8h acumulado, rampa20min, multiplicador aditivo até2,18×.
+  Caixa antecipa2/4/6/8h no retorno; resto manual conservado. Cooldown30min entre novos
+  lotes, não entre parcelas. High-water, ID/claims e migração sem renda histórica.
+- Browser pausa turno oculto/retorno pendente, persiste carteira+XP+claim em um JSON antes
+  de publicar estado, preserva parcela ao fechar/recarregar e mostra anúncio indisponível.
+  Storage-fault/retry e reabertura pelo Home exercitados por ponteiro. Save5; economy13,
+  employees4; schemas/DTOs/cópias sincronizados, **não porta de regras C#**.
+- **649 testes/27 arquivos;14/15 gates, C# SKIP;52 capturas;143+44 vetores.**135 casos antigos
+  intactos,1 expandido,7 novos de ledger;44 FTUE byte-idênticos. FTUE0 misses/136 moedas.
+  Preços/moedas/crescimentos/máximos/deltas e níveis históricos preservados.
+- Campanha1500 natural **sem offline**:15/18, exit1, repetição idêntica. Renda22.748.950,
+  gasto10.873.220, saldo11.875.730. Falham Rede881, rendaL50=183.646, spend.4779657962.
+  Sinks novos2.405.090, nenhum retuning. Ausências medidas em24 fixtures separadas com
+  agenda explícita, não usadas para tornar a campanha verde.
+- Gerente só18% offline/nível; missões/descontos/VIP+2pp backlog. Browser não é servidor
+  antifraude. XP offline compartilha o caminho do sim-core; XP ativo legado do browser e
+  metaprogressão completa continuam dívida F10. Nenhuma prova de Unity/dispositivo/SDK.
+- Evidência **[evidence/a06/step4/README.md](evidence/a06/step4/README.md)**.
+  Próximo **A-06.5**, revisão final das27 trilhas/contratos e consolidação dos desvios.
+  A-06/F4 ainda abertos; sem commit/push/PR/merge/CI remoto/arte nova.
+
+## A-06.3 — equipe/Bandeja validadas localmente (histórico)
+
+- **24 trilhas integradas / 3 pendentes** (Caixa/Gerente/Logística, A-06.4). Garçom,
+  Auxiliar e Churrasqueiro executam ações reais pelas operações legais compartilhadas.
+  Serviço/virada têm cap `floor(cobertura × elegíveis distintos)`, incluindo manual no
+  denominador; sem crédito por cru/queimado/repetição/falha. Sem rajadas após lag, escolha
+  de zona ou chamada de ponto perfeito. Bandeja reduz viagem real1,5→1s, não reação do bot.
+- Garçom serve desde bom/prep pronta, espera>1,5s, cliente/porção mais antigos; gorjeta
+  automática5/10% só no termo de gorjeta. Nível5 até2/viagem ainda dentro do cap. Aviso3+
+  prevê queima em~1s, não a impede. Auxiliar só prep pedida com estoque/vaga, chance/cadência
+  da tabela e uma vaga extra3+; Faca/Tábua reais. Churrasqueiro usa sinal público.55.
+- **615 testes/26 arquivos,14/15 gates (C# SKIP),49 capturas,136+44 vetores.** Todos127
+  vetores antigos intactos;9 novos com métricas de staff;44 FTUE byte-idênticos.
+  FTUE16,1/32,9/38,3s/0 misses/136 moedas. Ponteiro compra/reabre/atua, mostra cap, vaga e
+  aviso de queima. Harness reutiliza pixels decodificados entre relaunches, não mocks.
+- Dados employees3/grill6; schemas/DTOs/cópias gerados, **não porta de regras C#**.
+  Savev4/CRC e browser meta v2 preservados; budgets/timers/RNG são runtime, não retomada
+  persistente/offline. Preços/moedas/crescimento/máximos/unlocks/coberturas preservados.
+- Longo1500 **15/18, exit1**, repetição idêntica. Renda23.263.609/gasto8.468.130/saldo14.795.479;
+  falham rede729, rendaL50=189.197, spend.364. Novas compras378.580. Perfeitos caem75,4→42,2%
+  com serviço desde bom; não retunar para esconder.64.715 serviços/29.630 viradas/147 prep
+  automáticos; caps verificados por turno. Offline0; A-06/F4 continuam abertos.
+- Relatório **[evidence/a06/step3/README.md](evidence/a06/step3/README.md)**. Próximo **A-06.4**,
+  ledger offline real no índice3 e três trilhas restantes, conforme contrato já aprovado.
+  Sem publicação, arte nova, SDK, C#/Unity ou prova em dispositivo.
+
+## A-06.2 — recursos validados localmente (histórico)
+
+- **20 trilhas integradas / 7 pendentes.** Estabilidade recupera perda; Qualidade eleva
+  piso; Auto33/66/99% tenta uma vez por saco no limiar22%, RNG isolado, mesma reposição2,2s.
+  Sem calor no esgotamento/reposição; sem duração extra/imunidade à queima. Legado heatStability
+  do restaurante não foi reinterpretado (A-13/F5). Estoque por ingrediente6+Balcão (máx11),
+  débito só em admissão válida, reposição explícita grátis3s, UI/bot no mesmo serviço.
+- Cancelamento/erro/vaga cheia não debita nem deixa raw órfão; mover/virar não cobra de novo,
+  descarte não reembolsa. Contagem/falta/reposição visíveis, controles48px. Quatro compras
+  reabertas somente após consumidores reais; níveis históricos preservados, sem reembolso.
+- **565 testes/25 arquivos,14/15 gates locais (C# SKIP),46 capturas,127+44 vetores.**
+  FTUE16,1/32,9/38,3s,0 misses,136 moedas.48 cooking/32 scoring intactos; calor emt=1 corrigido;
+  7 turnos mudaram por estoque (ablação restaura todos os resultados antigos);28 intactos,
+  6 novos.44 FTUE byte-idênticos. DTO/schema/dados gerados não são porta de regras C#.
+- Savev4/CRC e browser metakeyv2 mantidos. Recursos são runtime; não alegar retomada de turno
+  persistido. C# ainda diverge no calor esgotado, além de41 turnos+5 casos econômicos sem port.
+- Longo1500 **15/18, exit1**, repetição idêntica: renda24.816.326/gasto8.089.550/saldo16.726.776.
+  Falham rede670, rendaL50=210.171, spend.326. Novas trilhas gastaram32.110; demais preços,
+  recompensas/metas intactos. Não há renda offline nesta campanha. A-06/F4 continuam abertos.
+- Evidência **[evidence/a06/step2/README.md](evidence/a06/step2/README.md)**. Próximo **A-06.3**,
+  equipe/Bandeja, conforme contrato aprovado. Sem publicação, arte nova ou porta C#/Unity.
+
+## Atualização A-06.1 — histórica (2026-09-27 UTC)
+
+A-06 ainda aberto, mas compras/efeitos diretos foram corrigidos e validados localmente:
+**16 trilhas integradas,11 pendentes bloqueadas**, registro compartilhado entre serviço,
+UI e bot; catálogo27, histórico preservado, gates receita/restaurante/dependência. B-02
+compra está protegido; automação real de funcionários ainda depende A-06.3/A-06.4.
+Capacidade/Mesas agora ampliam a fila autoral; Mestria/Clientela afetam serviço/paciência.
+
+533 testes/24 arquivos,14/15 gates (C# SKIP),42 PNGs,121+44 vetores;7 turnos novos,
+28 antigos intactos. Longo15/18: rede664/rendaL50=208.316/spend0,324 continuam falhando.
+Nenhum retuning, reembolso, reset, porta C# ou publicação. Evidência **evidence/a06/step1/**.
+O mapa12/13/2 em evidence/a06/upgrade-map.md é diagnóstico anterior, não estado atual.
+Próximo A-06.2 recursos; contrato/decisões já aprovados, não perguntar novamente.
+
+## Atualização A-05 — vigente (2026-09-27 UTC)
+
+**VIP funcional corrigido localmente.** Decisões do dono: chegada, chance de nível com
+zero bloqueante/fallback6%/bônus semanal +4pp, cap2 natural+chamado, reset UTC, chamado
+simulado explícito. Reserva/cap/cooldown/callback único persistidos, save corev4, pedido
+completo/counters/conquistas VIP e analytics/áudio integrados. Sem SDK/anúncio real.
+
+455 testes/22 arquivos,14/15 gates locais (C# SKIP),37 PNGs, FTUE preservado.114+44 vetores:
+8 novos VIP,20 resultados antigos iguais,44 payloads FTUE iguais (metadado analytics5→6).
+Longo15/18: renda22.302.178, rede881, rendaL50=191.586, spend0,488; sem retuning.
+Natural sem rewarded244 VIPs/232 servidos, cap2/dia, nível80/rest6. Evidência **evidence/a05/**.
+
+Dos9 altos: F2 encerrou3, A-01–A-05 funcionais; **A-06 aberto**, economia global pendente.
+B-08/global conquistas e LiveOps completo não encerrados; consultar ledger VIP antes de
+pagar novamente as mesmas conquistas no futuro. Nenhum C#/Unity/arte/merge/CI remoto novo.
+
+## Atualização A-04 — histórico (2026-09-27 UTC)
+
+**Quarta zona funcional corrigida localmente.** Dono escolheu Fornalha E Premium,
+auxiliar média1×; demais equipamentos1/2/3, Fornalha antes do Premium3. Perfil/calor
+primários preservados, expansão real em stats/patch/bot/UI; fonte/expansão validadas.
+
+411 testes/21 arquivos,14/15 gates locais (C# SKIP),29 screenshots/244 sprites, FTUE intacto.
+106+44 vetores:3 resultados avançados mudam,8 turnos verificam contagem/calores; demais
+payloads intactos. Dados/schemas/sync/DTOs gerados atualizados; **nenhuma regra C# portada**.
+Longo15/18 idêntico a A-03:1241 turnos com4 zonas,0 ticks ocupados na4ª após o bot mover
+às ideais primárias. Limitação medida, não evidência de benefício econômico aprovado.
+Probe128 turnos avançados complementa. Evidências: [`evidence/a04/`](evidence/a04/README.md).
+
+Dos9 altos: F2 encerrou3; A-01–A-04 funcionais, economia global pendente; **A-05/A-06 abertos**.
+Sem push/PR/merge/CI remoto deste patch, sem Unity/arte nova. Demais seções são históricas.
+
+## Atualização A-03 — histórico (2026-09-27 UTC)
+
+**Preparo funcional corrigido localmente.** Estoque inerte até admissão explícita em vaga,
+capacidade restaurante+tábua, duração/faca, pronto retém vaga até servir/descartar. UI
+nível12+ oferece tap/drag, progresso, pronto, serviço e descarte fora da grelha, até10 vagas.
+
+- 369 testes/20 arquivos,18 novos com red antes do green; gates14/15 (C# SKIP).
+  Harness real em11/12/13, serviço de pedido natural, cancelamentos e lotação;24 PNGs/244 sprites.
+  Pedido misto/combo/recompensas em testes de regra. FTUE e106+44 vetores intactos.
+- Sim longo15/18 **idêntico ao A-02**; três desvios preservados. `board` agora tem consumidor,
+  mas bot continua uma porção por ingrediente; não considerar A-06/economia resolvidos.
+- Dos9 altos: F2 encerrou3; A-01/A-02/A-03 funcionais, aceite econômico global pendente;
+  **3 abertos (A-04–A-06)**. Sem C#/Unity/arte nova. CI desta entrega não executado;
+  PR14/basee50ce15 já MERGED com CI verde, A-03 ainda sem push/PR/merge.
+- Evidência: [`evidence/a03/README.md`](evidence/a03/README.md). Achados/reproduções abaixo
+  preservam o histórico; sequência vigente no plano §9.14 e handoff24.
+
+## Atualização A-02 — histórico (2026-09-26 local /27 UTC)
 
 **A-02 funcional corrigido:** playerLevel obrigatório/integral/positivo no contrato,
 catálogo de pedidos/estoque/UI por nível E restaurante, snapshot no início. Sim p.level,
@@ -100,7 +256,7 @@ Ambiente: Node v22.22.3, npm 10.9.8. Árvore limpa antes e depois (os gates que 
 
 ## 2. Sumário executivo
 
-**Achados originais: 47** — 9 altos · 19 médios · 19 baixos. Dos altos,3 encerrados em F2, A-01/A-02 funcionais com economia global pendente,4 sem correção (A-03–A-06).
+**Achados originais: 47** — 9 altos · 19 médios · 19 baixos. Dos altos,3 encerrados em F2, A-01–A-05 funcionais com economia global pendente,1 sem correção (A-06).
 
 Os nove que mais importam, em ordem de impacto no jogo:
 
@@ -126,9 +282,9 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
 |---|---|---|---|
 | A-01 | 🟠 funcional corrigido; economia pendente | Regras/Dados | Reprodução histórica: costela e cupim inalcançáveis sem virar (`flipNeeded:false` + `sides:2`) |
 | A-02 | ✅ funcional | Regras/Dados | `unlock.level` de ingrediente nunca aplicado |
-| A-03 | 🔴 | Protótipo | Pedidos de vinagrete (prep) impossíveis de concluir |
-| A-04 | 🔴 | Dados/Regras | Zona 4 declarada, nunca criada |
-| A-05 | 🔴 | Dados/Regras/Loja | VIP não aparece em jogo, mas é prometido |
+| A-03 | ✅ funcional | Protótipo | Pedidos de vinagrete (prep) impossíveis de concluir |
+| A-04 | ✅ funcional | Dados/Regras | Zona 4 declarada, nunca criada |
+| A-05 | ✅ funcional | Dados/Regras/Loja | VIP não aparece em jogo, mas é prometido |
 | A-06 | 🔴 | Regras/Dados | 14 trilhas de upgrade sem efeito |
 | A-07 | 🔴 | Regras | `restaurantsUnlocked` acumula |
 | A-08 | 🔴 | Regras | `burnedFood` dobrado |
@@ -202,13 +358,13 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
 - **Impacto:** contradiz `docs/02` §11 ("um ingrediente novo por vez") e a recompensa diária do dia 2 ("ingrediente queijo coalho" — que o jogador já recebe em pedidos desde o primeiro turno). Também deixa o FTUE dependente do `TutorialTurn` para não sortear um item difícil.
 - **Correção:** passar `playerLevel` em `TurnConfig` e filtrar por `unlock.level`; adicionar teste.
 
-### A-04 🔴 Zona 4 declarada, nunca criada
+### A-04 ✅ funcional corrigido — reprodução histórica: zona 4 declarada, nunca criada
 
 - **Onde:** `restaurants.json` idx 4/5/6 `grill.zoneCount: 4` (+ `introduces: zone_4`, `docs/02` l.129 "a fourth zone unlocks at restaurant 5"); `grill.json` define 3 zonas; `createGrill` itera `db.grill.zones` e clampa.
 - **Evidência:** script §8.1 — `sim.grill.zones.length` = 3 para os 7 restaurantes.
 - **Correção:** ou adicionar a 4ª zona em `grill.json` (com `heatMultiplier`, cor, ids) e fazer `createGrill` respeitar `zoneCount`, ou remover `zoneCount:4`/`zone_4` dos dados e docs.
 
-### A-05 🔴 VIP inexistente em jogo
+### A-05 ✅ funcional corrigido — reprodução histórica: VIP inexistente em jogo
 
 - **Onde:** `customers.json vip.weight = 0`; `levels.json[].vipChance` (gerado por `gen-levels.ts`) e `turn.ts:60` só tipam; `grep -rn vipChance tools prototype` → nenhum consumidor; `spawnCustomer('vip')` só em `test/turn.test.ts`.
 - **Contradições:** `restaurants.json` idx 1 `introduces: vip`; `events.json defaults.vipBaseChance 0.06 / vipMaxPerDay 2` sem consumidor; `ads.json rewardedPlacements.call_vip`; `Assets/Audio/sfx_vip_arrive.wav`; conquistas `vipServed`; ficha da loja "11 tipos de cliente, incluindo VIP que paga muito".
@@ -328,7 +484,7 @@ Não existe avaliador de conquistas/missões. `addFoodCounter` (`economy.ts:111`
 
 ## 6. Protótipo — `prototype/src/main.ts`
 
-### A-03 🔴 Vinagrete (detalhe)
+### A-03 ✅ funcional corrigido — reprodução histórica: Vinagrete (detalhe)
 
 `main.ts:531–534` monta a bancada só com `cookMethod === 'grill'`; não há `prepProgress`, nem gesto de prep, nem `serve()` para prep. `turn.ts` sorteia vinagrete (`unlock.restaurantIndex 0`, `perfectWindow [0,1]`, `heatRate 0`).
 Evidência (script §8.2, seeds do protótipo): restaurante 0 → 32/271 clientes (11,8 %), em 19 dos 24 turnos; restaurante 1 → 75/547 (13,7 %), em 34 de 36 turnos. Como estrelas = servidos/spawnados ≥ 0,9 para 3★, bastam 2 vinagretes num turno de ~12 clientes para a 3ª estrela ficar impossível.

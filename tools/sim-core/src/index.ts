@@ -8,3 +8,7 @@ export * from './economy.ts';
 export * from './save.ts';
 export * from './analytics.ts';
 export * from './tutorial.ts';
+export * from './vip.ts';
+export * from './upgrades.ts';
+export * from './staff.ts';
+export * from './offline.ts';

@@ -28,6 +28,7 @@ namespace Churrasco.Core.Generated
         public string Id { get; set; }
         public int Index { get; set; }
         public string NameKey { get; set; }
+        public ChurrasqueirasChurrasqueirasRestaurantExpansion? RestaurantExpansion { get; set; }
         public string SubtitleKey { get; set; }
         public string Tier { get; set; }
         public int UnlockCostCoins { get; set; }
@@ -42,6 +43,12 @@ namespace Churrasco.Core.Generated
         public string Color { get; set; }
         public string Material { get; set; }
         public string Style { get; set; }
+    }
+
+    public sealed class ChurrasqueirasChurrasqueirasRestaurantExpansion
+    {
+        public int RestaurantIndex { get; set; }
+        public int ZoneCount { get; set; }
     }
 
     public sealed class ChurrasqueirasChurrasqueirasEvolutions

@@ -1,7 +1,7 @@
 {
   "$schema": "schema/churrasqueiras.schema.json",
-  "_comment": "Churrasqueira progression — 1 fileira → 2 → 3 → Fornalha. Cada uma evolui em 3 níveis. Nomes com humor sutil BR, sem obscenidade. 1 fileira só no início reduz carga cognitiva (FTUE só 1 zona).",
-  "version": 1,
+  "_comment": "Churrasqueira progression — 1 fileira → 2 → 3 → Fornalha. Cada uma evolui em 3 níveis. Nomes com humor sutil BR, sem obscenidade. 1 fileira só no início reduz carga cognitiva (FTUE só 1 zona). A Fornalha ganha a quarta zona média no restaurante Premium e posteriores; as demais mantêm a contagem base.",
+  "version": 2,
   "churrasqueiras": [
     {
       "id": "lata_valente",
@@ -217,7 +217,11 @@
           "charcoalBonus": 0.42,
           "costCoins": 14500
         }
-      ]
+      ],
+      "restaurantExpansion": {
+        "restaurantIndex": 4,
+        "zoneCount": 4
+      }
     }
   ]
 }

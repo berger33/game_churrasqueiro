@@ -108,3 +108,15 @@ Never more than two per day. Never between 22:00 and 08:00 local.
 variable at a time: icon, onboarding variant, difficulty scalar, price point, offer copy,
 rewarded placement, paywall timing. Minimum sample and significance thresholds are defined in
 [09-ANALYTICS.md](09-ANALYTICS.md#7-experiments).
+
+## A-05 implementation boundary
+
+Only VIP's weekly chance modifier is newly consumed: active day/duration evaluated in
+UTC; Saturday48h covers Saturday/Sunday, not Monday. Explicit level0 disables natural
+VIP even during an event; otherwise level chance or default6% gets active +4pp, capped1.
+Daily natural/called total2 resets00h UTC. Reserved visits keep one quota slot across reset.
+
+The old weekly banner and other event multipliers/objectives/rewards/screens are **not**
+implemented by this scheduler fragment. Streak and mission reset rules did not change.
+VIP count/claims are persisted separately from those unfinished systems. Remote Config
+transport and trusted server time still absent. See evidence/a05 for actual tested scope.

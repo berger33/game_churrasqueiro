@@ -9,6 +9,7 @@
     "interaction",
     "scoring",
     "slots",
+    "stock",
     "version",
     "zones"
   ],
@@ -71,6 +72,9 @@
         "flipCooldownSec": {
           "type": "number"
         },
+        "flipPromptAtSideDoneness": {
+          "type": "number"
+        },
         "haptics": {
           "type": "object",
           "properties": {
@@ -108,6 +112,7 @@
       "required": [
         "dragThresholdPx",
         "flipCooldownSec",
+        "flipPromptAtSideDoneness",
         "haptics",
         "longPressSecToServe",
         "serveDragToTray"
@@ -181,6 +186,21 @@
         "slotWidthNorm"
       ]
     },
+    "stock": {
+      "type": "object",
+      "properties": {
+        "basePerIngredient": {
+          "type": "integer"
+        },
+        "refillTimeSec": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "basePerIngredient",
+        "refillTimeSec"
+      ]
+    },
     "version": {
       "type": "integer"
     },
@@ -189,6 +209,9 @@
       "items": {
         "type": "object",
         "properties": {
+          "auxiliaryOf": {
+            "type": "string"
+          },
           "color": {
             "type": "string",
             "pattern": "^#[0-9A-Fa-f]{6}$"
@@ -200,14 +223,23 @@
             "type": "number"
           },
           "id": {
-            "type": "string",
-            "pattern": "^[a-z][a-z0-9_]*$"
+            "enum": [
+              "high",
+              "low",
+              "medium",
+              "medium_extra"
+            ]
           },
           "index": {
             "type": "integer"
           },
           "nameKey": {
-            "type": "string"
+            "enum": [
+              "zone.high",
+              "zone.low",
+              "zone.medium",
+              "zone.medium_extra"
+            ]
           }
         },
         "required": [
