@@ -1,5 +1,12 @@
 # 25 — Auditoria de status, entrega e branches
 
+> **Atualização de integração — 2026-09-27:** o usuário autorizou resolver os conflitos
+> e integrar todo o histórico. PRs #7/#8 foram reconciliadas por merge real na branch
+> de consolidação; as decisões e evidências estão em [26 — Merge das PRs #7/#8](26-MERGE_PR7_PR8.md).
+> 756 testes e 18/18 metas longas passaram localmente. A decisão anterior de manter
+> essas PRs conflitantes está superada; os bloqueios Android/paridade da auditoria continuam abertos.
+
+
 **Data:** 2026-09-27 UTC  
 **Base auditada:** `origin/main` em `bf478348f2490263f2feab4a6bd902e57bf2cae6` (PR #17 integrada).  
 **Branch de trabalho:** `arena/01a0e494-game-churrasqueiro`.

@@ -9,7 +9,8 @@ Mobile cooking + skill + management + idle + collection + live-service game.
 > **Status audit — 2026-09-27:** the browser prototype passes its local gates, but
 > Android release is blocked. Unity runtime/core APIs and scene references are
 > inconsistent; production services are still simulated. CI reports 13 unvalidated
-> C# turn vectors. PRs #7/#8 conflict with main and were not merged or deleted.
+> C# turn vectors. PRs #7/#8 are now reconciled in the consolidation branch;
+> see [the merge record](docs/26-MERGE_PR7_PR8.md) for conflict decisions and delivery checks.
 > See [the current audit and ordered delivery plan](docs/25-AUDITORIA_STATUS_E_BRANCHES.md).
 
 ---
@@ -96,14 +97,16 @@ npm run proto             # design-verification prototype on http://0.0.0.0:5173
 | [23-PLANO_IMPLEMENTACAO.md](docs/23-PLANO_IMPLEMENTACAO.md) | Step-by-step implementation and improvement plan: phases, gates, progress log (pt-BR) |
 | [23-AUDITORIA_TECNICA.md](docs/23-AUDITORIA_TECNICA.md) | Technical audit: bugs, errors and data/code/doc inconsistencies, with evidence and repro scripts (pt-BR) |
 | [24-PROMPT_PROXIMA_SESSAO.md](docs/24-PROMPT_PROXIMA_SESSAO.md) | Historical handoff, with a current audit override (pt-BR) |
+| [26-MERGE_PR7_PR8.md](docs/26-MERGE_PR7_PR8.md) | Real merge, conflict decisions, recovered tools and validation (pt-BR) |
 | [25-AUDITORIA_STATUS_E_BRANCHES.md](docs/25-AUDITORIA_STATUS_E_BRANCHES.md) | Verified status, conflicting branches, release blockers and ordered delivery plan (pt-BR) |
 
 ## Current status
 
 The current source of status is [the 2026-09-27 audit](docs/25-AUDITORIA_STATUS_E_BRANCHES.md),
-which supersedes earlier claims that all phases are complete.
+which supersedes earlier claims that all phases are complete. Branch reconciliation
+is recorded separately in [the merge report](docs/26-MERGE_PR7_PR8.md).
 
-- **Verified locally:** 740 tests in 36 files, 14 of 15 CI gates (C# skipped locally
+- **Verified locally after reconciliation:** 756 tests in 38 files, 14 of 15 CI gates (C# skipped locally
   because .NET is absent), and all 18 long-horizon economy targets over 1,500 turns.
 - **Approved art:** 244 runtime sprites; registry, rendering and prototype screenshots pass.
 - **C# CI:** the engine-free core compiles, but the latest main check reports 13
@@ -114,9 +117,14 @@ which supersedes earlier claims that all phases are complete.
 - **Production:** ads, billing, consent and Firebase adapters are still simulated;
   save/autosave integration, Android localization, signed builds and real-device QA
   remain open. No Android build or publication was verified in this audit.
-- **Branches:** PRs #7 and #8 conflict with main and contain exclusive history.
-  PRs #16/#17 are already merged. No branch was deleted because the requested
-  “everything merged and delivered” prerequisite has not been met.
+- **Branches:** the #8 history (which contains #7) has been reconciled by a real merge,
+  preserving current gameplay/approved art and recovering useful research/art tools.
+  Obsolete 10-grill tuning is not activated. See the merge report for all 198 path decisions;
+  branch cleanup requires confirmed ancestry in remote main and a green consolidation PR.
+- **Recovered tools:** `npm run art:preview` previews without rewriting the atlas;
+  `npm run art:guide -- <out.png> [width] --grill <id> --evo <n>` creates authoring guides.
+  `npm run probe:monetization` runs isolated experiments. `art:inspect` compares against
+  a proposed authoring standard, not the current renderer or art approval policy.
 
 
 ## Legal / IP

@@ -1,5 +1,12 @@
 # 17 — Backlog
 
+> **Atualização de integração — 2026-09-27:** o usuário autorizou resolver os conflitos
+> e integrar todo o histórico. PRs #7/#8 foram reconciliadas por merge real na branch
+> de consolidação; as decisões e evidências estão em [26 — Merge das PRs #7/#8](26-MERGE_PR7_PR8.md).
+> 756 testes e 18/18 metas longas passaram localmente. A decisão anterior de manter
+> essas PRs conflitantes está superada; os bloqueios Android/paridade da auditoria continuam abertos.
+
+
 > **Revalidação de 2026-09-27 — este aviso prevalece sobre o histórico abaixo.**
 > A base `bf47834` (PR #17 integrada) **não está pronta para publicação Android**.
 > A auditoria encontrou incompatibilidades Runtime/Core Unity, GUIDs de cena incorretos,

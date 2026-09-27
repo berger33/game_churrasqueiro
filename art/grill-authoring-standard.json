@@ -1,0 +1,20 @@
+{
+  "_comment": "Proposed authoring standard recovered from PRs #7/#8. Used only by guide/research tools, NOT the production renderer, gameplay balance, or asset approval gate. No approved art is rewritten.",
+  "maxTiltDeg": 12,
+  "bedWidthOnScreen": 330,
+  "maxBedWidthOnScreen": 408,
+  "foodU": [
+    0.14,
+    0.86
+  ],
+  "cellSlackW": 1.1,
+  "cellSlackH": 1.1,
+  "foodFootprint": {
+    "width": 86,
+    "height": 54
+  },
+  "camera": "quase de frente, ~20° acima; boca retangular com topo e base perfeitamente horizontais",
+  "proceduralBedWidth": 310,
+  "proceduralBedHeight": 248,
+  "paintedCellsMaxSlots": 3
+}
