@@ -19,7 +19,7 @@ O inventário protege os 244 IDs aprovados e valida masters/CSV/lotes/manifesto/
 
 **Isto não resolve A-01–A-09:** os nove permanecem abertos. Não houve mudança de regras,
 dados, vetores ou economia; simulação longa integralmente idêntica. Vulnerabilidades também
-permanecem 5 (1 crítica/1 alta/3 moderadas). Ordem operacional vigente: F1 concluída localmente,
+permanecem 5 (1 crítica/1 alta/3 moderadas). CI remoto **15/15 aprovado**, incluindo C#, em [run 36282761422](https://github.com/berger33/game_churrasqueiro/actions/runs/36282761422) / PR #14 (aberto, sem merge). Ordem operacional vigente: F1 concluída,
 A-07 → A-08 → A-09 em seguida; demais fases e decisões em `23-PLANO_IMPLEMENTACAO.md` §9.
 A §9 histórica abaixo é referência, não autorização para portar regras defeituosas.
 

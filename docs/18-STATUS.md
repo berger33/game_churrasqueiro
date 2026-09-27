@@ -54,7 +54,9 @@ not another replacement batch.
 - Next: **A-07 → A-08 → A-09**, then content/progression and economic revalidation, medium/low
   debt, tooling security, selective PR #7/#8 review, C# and Unity, in that order. Operational
   plan and exit criteria: `23-PLANO_IMPLEMENTACAO.md` §9 (supersedes historical sequences).
-- Remote CI for this delivery: pending PR creation; update with evidence before handoff.
+- Remote CI: **15/15 passed**, including C# compilation/checks, on `92976b2`,
+  [run 36282761422](https://github.com/berger33/game_churrasqueiro/actions/runs/36282761422).
+  [PR #14](https://github.com/berger33/game_churrasqueiro/pull/14) is open, **not merged**.
 
 ## FTUE follow-ups (§7 item 6)
 
@@ -218,6 +220,7 @@ Every claim below was produced by a command run in this checkout.
 | Economy report | `HORIZON=1500 npm run balance-report` | reaches **level 80**; income growth L5→L70 **×12.27** vs cost growth **×29.28** → costs outpace income, so purchases stay meaningful |
 | Unity data copy | `npm run verify-data-sync` | **OK — Assets/Data matches shared/data (22 tables)** |
 | Prototype bundle | `npx esbuild --bundle prototype/src/main.ts` | **290 kB unminified (251 kB before the FTUE), 0 errors** — and the source now type-checks, which it never did |
+| Art registry | `npm run check-art-registry` | **OK** — 245 masters/rows/manifest entries, 244 approved runtime sprites, 244 protected baseline IDs; 52 contract tests (46 negative). |
 | Art coverage | `npm run check-art` | **OK** — 16 ingredients × 8 doneness levels + icons = **144 draws**, all painted |
 | Render smoke | `npm run check-render` | **OK, 4 s** — real bundle through the whole FTUE (played by following the hand: 8 events in order, 0 misses), step 6, Home's daily calendar (strip → modal → `RESGATAR` pays once → ✕), an ordinary turn to the result, then a second install that is backgrounded (`tutorial_abandon` once) and skipped (`tutorial_skip` → Home); **~38 M canvas ops, no exceptions** |
 | Shot harness | `npm run check-shots` | **OK — ~6 s.** 13 real PNGs: a fresh install (splash, title, FTUE steps 1 / 2-waiting / 2 / 3 / 4, FTUE result, step 6 on Home), then a relaunch that must open on Home (home, empty grill, cooking, result). Asserts the FTUE funnel from `__churrascoAnalytics` — first PERFEITO 16.1 s, step 6 at 38.3 s (< 60 s), 0 misses. 193 painted frames, ~1 390 sim-only ticks, 60 s self-budget. |
@@ -522,8 +525,9 @@ of shipped behaviour.
 records what the design-verification prototype *actually renders* (theme,
 per-ingredient silhouettes, composition), which rules are verified by
 `npm run check-art` / `npm run check-render`, and states plainly that the §6 food
-shader, §7 lighting rig, §8 VFX budgets remain specification. The §11 asset registry now has an executable inventory gate
-(`check-art-registry`, F1); Unity import remains pending. The prototype proves art *direction*, not the art *budget*.
+shader, §7 lighting rig and §8 VFX budgets remain specification. The §11 asset registry now
+has an executable inventory gate (`check-art-registry`, F1); Unity import remains pending.
+The prototype proves art *direction*, not the art *budget*.
 
 ---
 

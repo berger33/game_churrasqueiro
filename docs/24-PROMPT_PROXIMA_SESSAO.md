@@ -11,8 +11,10 @@ estado real de `origin/main` antes de alterar arquivos.
 - Branch usada exclusivamente: `arena/01a0e03e-game-churrasqueiro`.
 - Baseline `4fe4f4f` contém o merge PR #13, também confirmado em `origin/main` após fetch.
   CI de PR #13 aprovado, run `36281871246`; árvore inicial limpa; Node 22.22.3/npm 10.9.8.
-- Commits: `70a60b3` (plano/baseline), `ad29b56` (gate e testes). PR/CI desta entrega:
-  pendente de abertura/verificação; registrar resultado no fechamento, sem fazer merge.
+- Commits: `70a60b3` (plano/baseline), `ad29b56` (gate e testes), `92976b2` (docs/handoff).
+  [PR #14](https://github.com/berger33/game_churrasqueiro/pull/14) aberto, **sem merge**.
+  CI remoto **15/15 aprovado**, incluindo C#, em `92976b2`: [run 36282761422](https://github.com/berger33/game_churrasqueiro/actions/runs/36282761422).
+  O commit seguinte só registra essa evidência nas docs; confira também seu check no PR.
 - **F1 implementada:** `npm run check-art-registry`, CLI somente leitura em
   `tools/art/check-art-registry.ts`, integrado em `run-gates.mjs`, package e CI.
   Confere masters ↔ CSV ↔ especificações de lote ↔ manifesto ↔ runtime e lookups;
