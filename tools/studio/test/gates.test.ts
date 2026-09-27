@@ -8,18 +8,21 @@ import { describe, expect, it } from 'vitest';
 const GATES = [
   'typecheck', 'validate', 'check-schema', 'verify-schemas', 'check-l10n',
   'check-csharp-types', 'verify-data-sync', 'test', 'sim', 'check-vectors',
-  'check-art', 'check-render', 'check-shots', 'check-csharp'
+  'check-art-registry', 'check-art', 'check-render', 'check-shots', 'check-csharp'
 ];
 
 describe('CI lockstep', () => {
   it('ci.yml runs every gate that run-gates.mjs runs', () => {
     const yml = readFileSync('.github/workflows/ci.yml', 'utf8');
+    const scripts = JSON.parse(readFileSync('package.json', 'utf8')).scripts;
     const mjs = readFileSync('tools/studio/run-gates.mjs', 'utf8');
     expect(yml).toContain("node-version: '22'");
     // check-csharp must never SKIP on CI: the SDK is installed before it runs.
     expect(yml).toContain('actions/setup-dotnet@');
     expect(yml.indexOf('actions/setup-dotnet@')).toBeLessThan(yml.search(/^\s*- run: npm run check-csharp\s*$/m));
+    expect(scripts['check-art-registry']).toBe('node --experimental-strip-types tools/art/check-art-registry.ts');
     for (const id of GATES) {
+      expect(typeof scripts[id], `package.json missing ${id}`).toBe('string');
       expect(mjs.includes(`['${id}',`), `run-gates.mjs missing ${id}`).toBe(true);
       // Whole-line match: `npm run check-csharp` is a prefix of `npm run check-csharp-types`.
       const step = id === 'test' ? /^\s*- run: npm test\s*$/m : new RegExp(`^\\s*- run: npm run ${id}\\s*$`, 'm');
