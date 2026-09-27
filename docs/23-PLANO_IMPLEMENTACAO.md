@@ -142,7 +142,7 @@ Cada passo, ao ser aberto, ganha sub-passos próprios neste documento (mesmo for
 
 ## 7. Melhoria contínua (não bloqueia fases, mas não some)
 
-- [ ] **Gap dos 767 turnos** (418 → 1185 sem estabelecimento novo): validar com telemetria
+- [ ] **Gap entre Festival e Rede Nacional** (histórico 767 turnos; A-01: 476, 383→859, com unlock precoce fora da meta): validar com telemetria
   (D30/D60, funil `restaurant_unlock`) antes da V1.0 (18-STATUS §3).
 - [ ] **l10n en-US/es-419**: sair de ~10% stub para cobertura total antes de qualquer
   lançamento fora do BR.
@@ -156,9 +156,13 @@ Cada passo, ao ser aberto, ganha sub-passos próprios neste documento (mesmo for
 
 ## 8. Próximo passo imediato
 
-👉 **Iniciar F3 por A-01: confirmar com o dono `sides:1` para costela/cupim, mantendo `flipNeeded:false`.**
-F1 e F2 (A-07/A-08/A-09) estão implementadas e testadas. Não editar os cortes antes da confirmação. A arte está encerrada; não abrir lote.
-C# e Unity bloqueados até estabilização da referência. Não fazer merge sem nova autorização.
+👉 **Próximo checkpoint: A-02 (nível do jogador no contrato e nos pools de pedidos/bancada), ainda dentro de F3.**
+A-01 segue a escolha confirmada do dono: **2 lados + virada obrigatória**, não `sides:1`.
+Correção funcional, UI/bot e 299 testes validados; **aceite econômico pendente**: sim longo
+15/18, com Rede Nacional cedo, renda L50 alta e spend ratio baixo. Carregar os três desvios
+para a revalidação F4, depois de A-02–A-06, sem retuning oportunista nem fechar F3/F4 agora.
+Detalhes/evidências em §9.10 e `docs/evidence/a01/README.md`.
+F1/F2 concluídas; sem arte nova, C#/Unity bloqueados, nenhum merge sem autorização.
 
 **Registro de progresso:**
 
@@ -181,7 +185,7 @@ C# e Unity bloqueados até estabilização da referência. Não fazer merge sem 
 
 Esta seção prevalece sobre a numeração histórica das §§1–7 e a ordem antiga do handoff.
 Escopo inicial: baseline, planejamento e F1. Na continuação autorizada pelo dono,
-o mesmo PR #14 foi ampliado para **F1+F2** (§§9.7–9.8); F3–F13 permanecem pendentes. Uma mudança de segurança será isolada em commit/PR, **na branch da sessão**;
+o mesmo PR #14 foi ampliado para **F1+F2+A-01** (§§9.7–9.10); F3 está em curso, F4–F13 pendentes/bloqueadas. Uma mudança de segurança será isolada em commit/PR, **na branch da sessão**;
 não se aplica a recomendação antiga de trocar para outra branch.
 
 ### 9.1 Baseline reproduzido antes de alterações
@@ -217,14 +221,14 @@ não se aplica a recomendação antiga de trocar para outra branch.
 |---|---|---|---|
 | **F1 — concluída / PR #14 aberto** | Baseline → testes vermelhos → gate → CI | `tools/art/check-art-registry.ts`, baseline nominal `art/approved-runtime-baseline.json`, `tools/studio/test/art-registry.test.ts`, `package.json`, `run-gates.mjs`, `gates.test.ts`, `ci.yml` | Masters ↔ CSV ↔ manifesto ↔ runtime; nomes/caminhos/batch/status, duplicatas, flags, arquivos órfãos, remoção inclusive coordenada; fixtures isoladas e exit != 0. Manter os 244 IDs aprovados e CI com 15 gates. Sem regenerar arte. |
 | **F2 — concluída / PR #14 aberto** | **A-07 → A-08 → A-09**; depois de F1 | `economy.ts`, `turn.ts`, `save.ts` se normalização exigir, testes economy/turn/save, `gen-vectors.ts` só se contrato mudar | A-07: inicial=1, sequência 2..7, repetição sem crédito, roundtrip/save antigo com contador inflado e metas 3/5/7. A-08: queimar+descartar/servir, vários alimentos, resultado/restauração sem contar duas vezes. A-09: 2+ chamadas estruturalmente iguais, moedas/XP não duplicados, serialização e chamadores reais. Reproduzir cada falha antes da correção; gates+sim longo verdes ou divergência econômica explicitamente investigada, nunca retunada por conveniência. |
-| **F3 — pendente** | A-01 → A-02 → A-03 → A-04 → A-05 → A-06; decisões abaixo | `ingredients.json`, `grill.json`, `restaurants.json`, `levels.json`, `upgrades.json`, `events.json`, `types.ts`, `cooking.ts`, `turn.ts`, `policy.ts`, `economy.ts`, `prototype/src/main.ts`, tutorial/analytics/audio/l10n, `run-sim.ts` e testes | Janela perfeita costela/cupim e bot avançado; unlock imediatamente antes/no/depois (nível+restaurante), FTUE determinístico; prep com slots/input/hitboxes/pedido misto/paciência/combo/resultado; 4 zonas reais em grelha/bot/UI/calor/screenshots; VIP chance 0/natural/forçado/cap/recompensa/placement; mapa das 27 trilhas (consumidor/fórmula/limite/tela/teste/sim), no-ops explicitamente ocultos e incompráveis. Nove altos resolvidos, nenhuma promessa sem consumidor. |
-| **F4 — pendente** | Todas A-01–A-09 resolvidas | `shared/data`, schemas necessários, `Assets/Data`, `tools/golden`, docs 06/18/23 | Revisar dados antes de `gen-levels` e `gen-vectors`; revisar cada diff semântico, gates e 1.500 turnos; publicar unlocks/renda/spend/perfect/burned/perdidos/duração/grills. Não aceitar vetores novos apenas por terem sido gerados. |
+| **F3 — em curso** | A-01 → A-02 → A-03 → A-04 → A-05 → A-06; decisões abaixo | `ingredients.json`, `grill.json`, `restaurants.json`, `levels.json`, `upgrades.json`, `events.json`, `types.ts`, `cooking.ts`, `turn.ts`, `policy.ts`, `economy.ts`, `prototype/src/main.ts`, tutorial/analytics/audio/l10n, `run-sim.ts` e testes | Janela perfeita costela/cupim e bot avançado; unlock imediatamente antes/no/depois (nível+restaurante), FTUE determinístico; prep com slots/input/hitboxes/pedido misto/paciência/combo/resultado; 4 zonas reais em grelha/bot/UI/calor/screenshots; VIP chance 0/natural/forçado/cap/recompensa/placement; mapa das 27 trilhas (consumidor/fórmula/limite/tela/teste/sim), no-ops explicitamente ocultos e incompráveis. Nove altos resolvidos, nenhuma promessa sem consumidor. |
+| **F4 — pendente** | Todas A-01–A-09 corrigidas funcionalmente; consolidar aceite econômico aqui | `shared/data`, schemas necessários, `Assets/Data`, `tools/golden`, docs 06/18/23 | Revisar dados antes de `gen-levels` e `gen-vectors`; revisar cada diff semântico, gates e 1.500 turnos; publicar unlocks/renda/spend/perfect/burned/perdidos/duração/grills. Não aceitar vetores novos apenas por terem sido gerados. |
 | **F5 — pendente** | Referência corrigida, antes da porta | `economy.ts`, `cooking.ts`, `policy.ts`, `save.ts`, `prototype/src/main.ts`, dados/l10n, validadores, runner C#, auditoria | Triar 19 médios + 19 baixos. Resolver antes de C#: carvão, ledger brasas, offline, deriveStats/clamps, burned com overrides, vazamento bot, streak, campos mortos, gating funcionários, descrições, avaliadores missões/conquistas, level-up, alvos ignorados, levels commitado e skips C#. Teste reprovando implementação anterior por item; classificar explicitamente o que fica para serviços/device. |
 | **F6 — pendente / isolada** | Antes de C#, após fixar contratos | `package.json`, lock, configuração de testes/build necessária | Rever release notes de Vitest/Vite/esbuild e Node mínimo; audit antes/depois; typecheck, 202+ testes, schemas, vetores, sim curto/longo, render, screenshots e C# remoto. Zero vulnerabilidades conhecidas ou impedimento documentado, sem force cego. |
 | **F7 — pendente** | Antes da paridade econômica C# | PRs #7/#8 via `gh`, arquivos úteis extraídos no estado atual, registro de decisões | Comparar cada tema com main: útil/obsoleto/conflitante; reimplementar seletivamente com testes. Não fazer merge desses PRs; fechar apenas após revisão registrada. |
-| **F8 — bloqueada** | F2–F7 concluídas e contratos estáveis | `TurnSimulation.cs`, `EconomyRules.cs`, `SaveSystem.cs`, `Tutorial.cs`, parity runner | Mesmos 12 vetores de turno + 5 econômicos, save v3/migrações e FTUE completos; netstandard2.1/C#9, warnings=erros, **zero not ported**. |
+| **F8 — bloqueada** | F2–F7 concluídas e contratos estáveis | `TurnSimulation.cs`, `EconomyRules.cs`, `SaveSystem.cs`, `Tutorial.cs`, parity runner | Todos os 20 vetores de turno + 5 econômicos (8 turnos novos em A-01), save v3/migrações e FTUE completos; netstandard2.1/C#9, warnings=erros, **zero not ported**. |
 | **F9 — bloqueada** | F8 concluída | Unity 6 LTS: Packages/ProjectSettings/assemblies/cenas/prefabs; importer do manifesto, atlases/.meta; GrillView/FoodView/CustomerCardView/TurnFlow | Turno completo no Editor; input/UI/áudio/save/l10n integrados; 60 FPS em Android médio físico com medição. Arte no bundle não equivale a sistema funcional. |
-| **F10 — pendente** | Core Unity | Coleção/missões/conquistas/eventos/loja/passe/rota; en-US/es-419 | Fluxos completos, traduções além dos 10,5%, texto ampliado/contraste/ponto sem só cor/redução de movimento/toque/retorno/telas pequenas e proporções. |
+| **F10 — pendente** | Core Unity | Coleção/missões/conquistas/eventos/loja/passe/rota; en-US/es-419 | Fluxos completos, traduções além dos 11,1%, texto ampliado/contraste/ponto sem só cor/redução de movimento/toque/retorno/telas pequenas e proporções. |
 | **F11 — bloqueada** | Core Unity funcional | Serviços Firebase/Crashlytics/Remote Config, UMP, ads/billing | SDKs reais em projetos de teste; LGPD/Data Safety; caps/cooldowns dos dados; recibos/restauração/offline; nenhuma credencial real em Git. |
 | **F12 — pendente** | Core + serviços integrados | Áudio, profiling, QA e evidências de dispositivo | Mix/ducking, memória/GC/draw calls/atlases/build; foco/interrupções/save/migrações/reinstalação/offline/GPUs; 60 FPS/crash-free/estabilidade medidos, não simulados como evidência física. |
 | **F13 — bloqueada** | Critérios de QA/release atendidos | Pipeline assinatura, APK/AAB, store/privacy/ASO | Build reproduzível, closed testing com AAB e brutos/gravações, Play Console/consentimento/Data Safety/screenshots reais; rollout gradual observável com rollback. Sem evidência bruta, não declarar teste reproduzível. |
@@ -248,9 +252,10 @@ não se aplica a recomendação antiga de trocar para outra branch.
 
 ### 9.4 Decisões de produto (não bloqueiam F1/F2)
 
-1. **A-01 — recomendação, ainda não aprovada:** `sides:1`, mantendo `flipNeeded:false` para
-   os cortes lentos. Preserva a fantasia low-and-slow já documentada e reduz microgestão tardia.
-   Alternativa: exigir virada e ensinar no bot/UI/tutorial/docs. Confirmar antes de editar dados.
+1. **A-01 — decisão do dono confirmada e aplicada:** manter `sides:2` e habilitar
+   `flipNeeded:true` para costela/cupim. Rejeitada a recomendação anterior `sides:1`.
+   Cozimento lento preservado, bot/UI/textos alinhados, FTUE sem mudança de roteiro.
+   Correção funcional validada; três desvios de economia longa impedem aceite econômico.
 2. **A-04 — recomendação, ainda não aprovada:** manter a quarta zona prometida, implementada
    ponta a ponta, inclusive nas churrasqueiras equipadas (não só grelha default). Confirmar
    desenho/progressão e calor; alternativa é remover promessa de todos os contratos/textos.
@@ -373,7 +378,7 @@ sim longo 18/18, saída integral idêntica; vetores 98+44 e FTUE/sprites inalter
   Não retunamos números. F4 ainda depende de A-01–A-06; não declarar a economia estabilizada.
 - A-01–A-06, dívida média/baixa, dependências e paridade C# continuam pendentes. Regressões
   desta F2 também precisam ser portadas/testadas em F8, além dos vetores existentes.
-- Próximo: decisão A-01 (`sides:1` recomendado, ainda não aprovado) → janela perfeita/bot
+- Próximo à época (superado pela decisão oposta em §9.9): decisão A-01 (`sides:1` recomendado, então não aprovado) → janela perfeita/bot
   avançado → revisão semântica de dados/vetores/economia; depois A-02. A-04 ainda exige
   decisão explícita da quarta zona. Sem arte nova, C# ou Unity antes da estabilização.
 
@@ -411,3 +416,36 @@ avançadas explícitas e relatar janelas/curva de habilidade em vez de presumir 
 Depois gates+sim longo, screenshots, economia/documentação/handoff e CI no mesmo PR.
 Se guardrails econômicos falharem, manter os alvos/preços e registrar o desvio/bloqueio;
 não desfazer a correção funcional nem mascarar o efeito com tuning oportunista.
+
+
+### 9.10 Checkpoint A-01 — funcional validado; aceite econômico pendente
+
+- Dono rejeitou um lado e escolheu virada obrigatória. `ingredients` v5→v6: somente
+  `costela/cupim.flipNeeded` false→true, mantendo 2 lados. Validador semântico protege
+  receita multi-face; bot já consumia o flag, fórmula/tuning intactos. Assets/Data sincronizado.
+- Regressões vermelhas: regras 17/19, UI 4/6, seleção de vizinho 1/8 (falha no harness
+  real ao tentar virar cupim ao lado da costela). Correções mínimas de UI dependentes:
+  bancada paginada (8 itens, botão 140×56), dica espera dourar/usa regra do FTUE, target
+  vizinho mais próximo sem reduzir área. C-06 só resolvido quanto à truncagem, não l10n total.
+- **299/299 testes**, 16 arquivos; **14/15 gates locais**, C# SKIP sem SDK. `sim` curto
+  verde; **sim longo 15/18, exit 1**, deliberadamente não mascarado. Novos textos pt/en/es;
+  17 screenshots, 244 sprites; FTUE 16,1/32,9/38,3 s e zero erros. Fixture avançada não é
+  desbloqueio natural/campanha nova. Rótulos vizinhos ainda se sobrepõem: polish futuro.
+- Revisão antes de gerar: schemas, tipos C# e 60 níveis autorais sem mudança. Vetores
+  antigos **98+44 intactos em input/expect**, só metadado ingredients 5→6. **8 novos turnos**
+  restaurantes 3–6 × skills .55/.85 com uso efetivo dos cortes: total **106+44**.
+  Replay fortalecido; C# passa a 5 econômicos + 20 turnos **not ported**, não esconder.
+- Economia: renda **22.675.447**, gasto **10.873.220**, saldo **11.802.227**; spend **0,480**;
+  perfect **75,9%**, burned **0,2%**, perdidos **3,7%**, duração **173,4 s**. Restaurantes
+  **32/89/147/239/383/859**; grills **7/45/90**. Renda L5/L15/L30/L50:
+  **10.793/41.115/114.616/182.381**. Falhas: rede 859 vs 950–1450, L50 182.381 vs
+  98.000–152.000, spend 0,480 vs 0,70–0,99. Nenhum alvo/preço/janela/tempo relaxado.
+- Curva adicional avançada com 8 seeds por skill/tier confirma perfect e renda crescentes
+  com skill; a curva autoral 0/1 sozinha não testa os cortes. Janelas físicas em 3 zonas,
+  raw→burned sem virada e logs/JSON antes/depois em **`docs/evidence/a01/`**.
+- npm audit continua **5 vulnerabilidades (1 crítica, 1 alta, 3 moderadas)**; sem force-fix,
+  dependências/lock intactos. Portas C#/Unity/merge bloqueadas; nenhuma arte ou serviço novo.
+- A-07/A-08/A-09 encerrados; A-01 funcional corrigido com aceite econômico pendente;
+  **A-02–A-06 ainda abertos**. F3 não encerrada. Próximo checkpoint A-02, transportando
+  os desvios para F4 após as demais correções, sem pedir novamente a decisão A-01.
+- PR #14 será ampliado sem merge. CI remoto deste checkpoint: **pendente de push/execução**.

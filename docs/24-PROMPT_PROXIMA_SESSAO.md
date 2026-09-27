@@ -4,7 +4,52 @@ Use este texto como contexto inicial da próxima sessão no repositório
 `berger33/game_churrasqueiro`. Trabalhe somente na branch atribuída à nova sessão e confirme o
 estado real de `origin/main` antes de alterar arquivos.
 
-## Handoff F2 — vigente (2026-09-26 local / 27 UTC)
+## Handoff A-01 — vigente (2026-09-26 local / 27 UTC)
+
+- Branch desta sessão **`arena/01a0e03e-game-churrasqueiro`**, PR #14 aberto/sem merge.
+  F1/F2 concluídas; baseline A-01 `ec8ce1b`, árvore limpa, fetch/PR13 ancestry, npm ci,
+  272 testes, gates 14/15 (C# SKIP), sim longo 18/18 reexecutados antes de editar.
+- **Decisão explícita do dono (`require-flip`): manter costela/cupim com `sides:2`,
+  mudar `flipNeeded:true`. A recomendação `sides:1` foi REJEITADA. Não perguntar de novo.**
+  Decisão registrada em `331e1bb`. Ingredients v6, Assets/Data sincronizado, validador TS
+  rejeita multi-face sem flag; bot já lê o flag, sem alteração de fórmula ou tuning.
+- **A-01 funcional validado, aceite econômico pendente.** Regressões: regras 17/19 red,
+  UI 4/6 red, seleção de vizinho 1/8 red + falha real no harness. Final **299/299 testes**
+  em 16 arquivos. Janelas reais em 3 zonas, bot elegível restaurantes 3–6, curva adicional
+  com 8 seeds por skill/tier. Evidências persistidas em **`docs/evidence/a01/`**.
+- Dependências UI mínimas: C-06 truncagem resolvida por páginas de 8; dica normal espera
+  dourar como no FTUE; hit-test de pratos sobrepostos escolhe centro mais próximo sem
+  encolher área. Botão/descrições dos cortes pt/en/es. Nenhuma arte/tabela FTUE alterada.
+- **106+44 vetores**: 98 antigos e 44 FTUE integralmente preservados em input/expect;
+  metadado ingredients 5→6; 8 turnos avançados novos com Fornalha evo 3, restaurantes
+  3–6, skills .55/.85. Retém identidades observadas entre compactações, conta served via
+  `fulfilledBy` e não flag também usado por discard. Replay confere uso real dos cortes.
+- **Gates locais 14/15**, C# SKIP sem dotnet. CI remoto A-01 pendente de push/execução;
+  conferir registro final no plano §9.10 / corpo do PR. C# **25 not ported** (5+20),
+  ainda precisa das regressões F2 e A-01 em F8. Não declarar paridade plena.
+- **Sim longo 15/18, exit 1, falha preservada.** 1.500 turnos, nível 80/rest6/Fornalha3:
+  renda **22.675.447**, gasto **10.873.220**, saldo **11.802.227**, spend **0,480**,
+  perfect **75,9%**, burned **0,2%**, lost **3,7%**, duração **173,4 s**. Restaurantes
+  **32/89/147/239/383/859**, grills **7/45/90**, renda L5/15/30/50
+  **10.793/41.115/114.616/182.381**. Desvios: rede 859<950, L50 182.381>152.000,
+  spend 0,480<0,70. Metas, preços, janelas, tempos e política **não retunados**.
+- Curto verde não substitui longo; curva autoral original só cobre restaurantes 0/1.
+  Probe novo `node --experimental-strip-types tools/studio/slow-cuts-report.ts` é
+  read-only, saída JSON; before/after e logs longos íntegros persistidos.
+- FTUE **16,1/32,9/38,3 s**, zero misses; **17 screenshots**, 244 sprites. Quatro shots
+  novas validam página 2 e virada/janela perfeita dos dois cortes via ponteiro real.
+  Fixture troca só level inicial/save para restaurante4/grill comprado: **não** é
+  desbloqueio natural/metaprogressão pronta. Sobreposição de rótulos continua para polish.
+- npm audit: mesmas5 (1 crítica, 1 alta, 3 moderadas), dependências/lock intactos.
+- **Próximo: A-02**, ainda dentro da F3: nível no contrato + gating pool/bancada, testes
+  antes/no/depois de unlock, preservando FTUE determinístico. Antes, confirmar árvore,
+  branch, PR e CI atuais. Transportar os 3 desvios econômicos para F4 após A-02–A-06;
+  não chamar F3/F4 completas nem retunar para verde. A-04 ainda exige decisão de produto.
+- Sem arte, sem portas C#/Unity, sem merge autorizado, sem merge PR7/8, sem credenciais.
+  Ordem posterior F4 economia → F5 dívida → F6 tooling/security isolados → F7 extração
+  seletiva → F8 C# → F9 Unity → F10 meta/l10n/a11y → F11 serviços → F12 QA → F13 release.
+
+## Handoff F2 — histórico, substituído por A-01 acima (2026-09-26 local / 27 UTC)
 
 ### Estado atual e evidências
 

@@ -13,7 +13,29 @@ Both exit non-zero when a guardrail in `shared/data/economy.json → targets` is
 
 ---
 
-## Revalidação F2 — 2026-09-26 local / 27 UTC
+## Revalidação A-01 — estado vigente (2026-09-26 local / 27 UTC)
+
+**Correção funcional validada, economia NÃO aprovada.** A escolha do dono foi manter
+2 lados e exigir virada em costela/cupim. Com os flags corrigidos, `sim:long` **falha em
+3 de 18 alvos**: Rede Nacional no turno **859** (950–1450), renda L50 **182.381/dia**
+(98.000–152.000), spend **0,480** (0,70–0,99). Alvos e tuning não foram alterados.
+
+Em 1.500 turnos: nível 80/restaurante 6/Fornalha evo 3; renda **22.675.447**, gasto
+**10.873.220**, saldo **11.802.227**; perfect **75,9%**, burned **0,2%**, perdidos **3,7%**,
+duração média **173,4 s**. Restaurantes **32/89/147/239/383/859**; grills **7/45/90**;
+renda L5/L15/L30/L50 **10.793/41.115/114.616/182.381**. A queda de queimados reflete
+agora cortes caros cozinháveis pelo bot, não o ajuste de contagem A-08 (já isolado em F2).
+
+`sim` curto continua verde; sua curva autoral de skill só testa restaurantes 0/1.
+Probe complementar de 8 seeds por skill nos restaurantes 3–6 mostra perfect e renda
+crescentes com habilidade, com contagens/qualidades completas; não equivale à progressão.
+**Logs íntegros, JSONs antes/depois e métodos:** [`evidence/a01/`](evidence/a01/README.md).
+
+As medições abaixo são **históricas, anteriores a A-01**, não a economia atual.
+F3 continua em A-02–A-06. Carregar os 3 desvios para F4; não trocar alvos, encarecer sinks
+ou reverter a decisão funcional apenas para obter verde. Não liberar C#/Unity/publicação.
+
+## Revalidação F2 — histórico (2026-09-26 local / 27 UTC)
 
 A-07/A-08/A-09 corrigidos, sem tuning de dados. `sim:long` repetido após cada correção:
 **18/18 guardrails**, saída completa idêntica ao baseline F1. Em 1.500 turnos: nível 80,

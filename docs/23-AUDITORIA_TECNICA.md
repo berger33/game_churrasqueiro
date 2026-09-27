@@ -8,7 +8,24 @@
 
 ---
 
-## Atualização F2 — estado vigente (2026-09-26 local / 27 UTC)
+## Atualização A-01 — vigente (2026-09-26 local / 27 UTC)
+
+**A-01 funcional corrigido, aceite econômico pendente.** O dono escolheu 2 lados e
+virada obrigatória em costela/cupim. Dados v6, bot usando os flags, UI paginada/dica
+contextual/toque de vizinho corrigidos; roteiro FTUE intacto. Evidências red/green,
+janelas, probe avançado e revisão semântica: [`evidence/a01/`](evidence/a01/README.md).
+
+- **299 testes**, 14/15 gates locais (C# SKIP), 106+44 vetores (8 turnos avançados novos;
+  nenhum input/expect antigo alterado), 17 screenshots, FTUE 16,1/32,9/38,3 s sem erros.
+- **Sim longo 15/18**: rede 859 vs 950–1450, L50 182.381 vs 98.000–152.000,
+  spend 0,480 vs 0,70–0,99. Não retunado. A-02–A-06 e F4 precisam preceder aceite global.
+- Dos 9 altos originais: 3 encerrados em F2; A-01 corrigido funcionalmente com aceite
+  econômico pendente; **5 ainda sem correção (A-02–A-06)**. C-06 apenas parcialmente
+  resolvido (truncagem da bancada); dívida l10n/polish continua. Totais históricos preservados.
+- C# agora tem 25 casos não portados (5 econômicos + 20 turnos). Sem porta C#/Unity/arte
+  nova; PR #14 aberto/sem merge. CI remoto A-01 pendente de push/execução.
+
+## Atualização F2 — histórico (2026-09-26 local / 27 UTC)
 
 **A-07, A-08 e A-09 resolvidos na referência TypeScript**, em `5803806`, `f2958d6` e
 `02e7f61`. Restam **6 altos abertos (A-01–A-06)**; totais originais e reproduções abaixo
@@ -65,7 +82,7 @@ Ambiente: Node v22.22.3, npm 10.9.8. Árvore limpa antes e depois (os gates que 
 
 ## 2. Sumário executivo
 
-**Achados originais: 47** — 9 altos · 19 médios · 19 baixos. Dos altos, 3 resolvidos em F2; 6 abertos.
+**Achados originais: 47** — 9 altos · 19 médios · 19 baixos. Dos altos, 3 encerrados em F2, A-01 funcional corrigido/aceite econômico pendente, 5 ainda sem correção.
 
 Os nove que mais importam, em ordem de impacto no jogo:
 
@@ -89,7 +106,7 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
 
 | ID | Sev | Área | Título |
 |---|---|---|---|
-| A-01 | 🔴 | Regras/Dados | Costela e cupim inalcançáveis sem virar (`flipNeeded:false` + `sides:2`) |
+| A-01 | 🟠 funcional corrigido; economia pendente | Regras/Dados | Reprodução histórica: costela e cupim inalcançáveis sem virar (`flipNeeded:false` + `sides:2`) |
 | A-02 | 🔴 | Regras/Dados | `unlock.level` de ingrediente nunca aplicado |
 | A-03 | 🔴 | Protótipo | Pedidos de vinagrete (prep) impossíveis de concluir |
 | A-04 | 🔴 | Dados/Regras | Zona 4 declarada, nunca criada |
@@ -123,7 +140,7 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
 | C-03 | 🟠 | Protótipo | Level-up não paga `levelUpCoins`/brasas (diverge de `applyTurnResult`) |
 | C-04 | 🟡 | Protótipo | Fórmula de XP e `DAILY_REWARDS` duplicadas (hoje iguais, drift garantido) |
 | C-05 | 🟡 | Protótipo | Baú do dia 7 = `+500` fixo; roleta "Chest"/"Booster" não entregam nada; `buyUpgrade` ignora `track.currency` |
-| C-06 | 🟡 | Protótipo | Strings pt-BR literais (`'Moedas insuficientes'`, `'QUEIMADO'`, …) fora do l10n; bancada `.slice(0,8)` |
+| C-06 | 🟡 | Protótipo | Strings pt-BR literais (`'Moedas insuficientes'`, `'QUEIMADO'`, …) fora do l10n; truncagem `.slice(0,8)` resolvida por paginação no checkpoint A-01 |
 | C-07 | 🟡 | Protótipo | `dev-server.mjs` só observa `src/main.ts`; `readFile` em diretório → 500 |
 | D-01 | 🟠 | Ferramentas | `measureSkillCurve` roda na grelha padrão de 3 zonas; `simulateProgression` na `lata_valente` de 1 zona |
 | D-02 | 🟠 | Ferramentas | `targets.sessionLengthMinutes` e `noUpgradeCostRegression` nunca verificados |
@@ -145,7 +162,7 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
 
 ## 4. Regras de referência — `tools/sim-core/src`
 
-### A-01 🔴 Costela e cupim inalcançáveis sem virar
+### A-01 — reprodução histórica; funcional corrigido, aceite econômico pendente
 
 - **Onde:** `shared/data/ingredients.json` (`costela`: `sides:2, flipNeeded:false, perfectWindow [0.76,0.88]`; `cupim`: `[0.78,0.90]`), `shared.carryoverRate = 0.12`, `shared.burnedThreshold = 1.2`; `cooking.ts:341–350` (lado de cima cozinha a `carry`), `cooking.ts:427–437` (`scoreItem`), `policy.ts:111` (`if (ing.flipNeeded && …) a.flip(f)`).
 - **Matemática:** sem virar, quando o lado de baixo chega a 1,2 (queima) o de cima está em 0,144 → overall 0,672. Para costela `lo − padding = 0,76 − 0,08 = 0,68`; para cupim 0,70. O item **nunca** sai de `raw` antes de virar `burned`.
@@ -157,7 +174,7 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
   cupim    WITH flip  burn@ 29.3s                     … perfect:24.2-27.4s
   ```
   Turno completo com skill 1,0 no restaurante 4 (script §8.1): `costela {raw:6}`, `cupim {}` (clientes desistem), `picanha {perfect:18, good:3}`.
-- **Impacto:** `flipFood` **não** checa `flipNeeded`, então um humano que virar mesmo assim consegue — mas a UI/prompt não vai pedir, e o bot que calibra `docs/06`, `perfectRateAtSkillMid` e as metas L30/L50 nunca vira. As metas dos restaurantes 3–6 foram medidas com os cortes mais caros do jogo valendo `ing.value * 0.35` ou zero.
+- **Impacto:** `flipFood` **não** checa `flipNeeded`, então um humano que virar mesmo assim consegue — **correção da descrição original:** a UI normal já mostrava uma dica genérica, porém imediatamente/cedo demais; o FTUE usava prontidão contextual. O bot que calibra `docs/06`, `perfectRateAtSkillMid` e as metas L30/L50 nunca vira. As metas dos restaurantes 3–6 foram medidas com os cortes mais caros do jogo valendo `ing.value * 0.35` ou zero.
 - **Correção sugerida:** ou `sides: 1` para itens `flipNeeded:false` (cozinha "overall" de verdade), ou remover `flipNeeded:false` e ensinar o bot/UI a virar. Regerar `tools/golden/vectors.json` depois (`npm run gen-vectors`) e reavaliar `npm run sim`.
 
 ### A-02 🔴 `unlock.level` de ingrediente nunca aplicado

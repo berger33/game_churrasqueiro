@@ -1,0 +1,162 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/slow-cuts.test.ts (19 tests | 17 failed) 106ms
+   × A-01: slow cuts require a flip (owner decision) > costela declares two sides and a mandatory flip 7ms
+     → expected { id: 'costela', …(19) } to match object { sides: 2, flipNeeded: true, …(1) }
+(27 matching properties omitted from actual)
+   × A-01: slow cuts require a flip (owner decision) > costela has a usable perfect window following its recipe in zone 0 4ms
+     → expected +0 to be 1 // Object.is equality
+   × A-01: slow cuts require a flip (owner decision) > costela has a usable perfect window following its recipe in zone 1 4ms
+     → expected +0 to be 1 // Object.is equality
+   × A-01: slow cuts require a flip (owner decision) > costela has a usable perfect window following its recipe in zone 2 1ms
+     → expected +0 to be 1 // Object.is equality
+   × A-01: slow cuts require a flip (owner decision) > data validation rejects reintroducing costela's non-flipping multi-side recipe 2ms
+     → expected [] to include 'ingredient costela: multi-side grilli…'
+   × A-01: slow cuts require a flip (owner decision) > the bot flips and serves costela at restaurant 3 on the equipped advanced grill 8ms
+     → expected 0 to be greater than 0
+   × A-01: slow cuts require a flip (owner decision) > the bot flips and serves costela at restaurant 4 on the equipped advanced grill 7ms
+     → expected 0 to be greater than 0
+   × A-01: slow cuts require a flip (owner decision) > the bot flips and serves costela at restaurant 5 on the equipped advanced grill 2ms
+     → expected 0 to be greater than 0
+   × A-01: slow cuts require a flip (owner decision) > the bot flips and serves costela at restaurant 6 on the equipped advanced grill 12ms
+     → expected 0 to be greater than 0
+   × A-01: slow cuts require a flip (owner decision) > cupim declares two sides and a mandatory flip 1ms
+     → expected { id: 'cupim', …(18) } to match object { sides: 2, flipNeeded: true, …(1) }
+(25 matching properties omitted from actual)
+   × A-01: slow cuts require a flip (owner decision) > cupim has a usable perfect window following its recipe in zone 0 9ms
+     → expected +0 to be 1 // Object.is equality
+   × A-01: slow cuts require a flip (owner decision) > cupim has a usable perfect window following its recipe in zone 1 1ms
+     → expected +0 to be 1 // Object.is equality
+   × A-01: slow cuts require a flip (owner decision) > cupim has a usable perfect window following its recipe in zone 2 1ms
+     → expected +0 to be 1 // Object.is equality
+   × A-01: slow cuts require a flip (owner decision) > data validation rejects reintroducing cupim's non-flipping multi-side recipe 1ms
+     → expected [] to include 'ingredient cupim: multi-side grilling…'
+   × A-01: slow cuts require a flip (owner decision) > the bot flips and serves cupim at restaurant 4 on the equipped advanced grill 19ms
+     → expected 0 to be greater than 0
+   × A-01: slow cuts require a flip (owner decision) > the bot flips and serves cupim at restaurant 5 on the equipped advanced grill 12ms
+     → expected 0 to be greater than 0
+   × A-01: slow cuts require a flip (owner decision) > the bot flips and serves cupim at restaurant 6 on the equipped advanced grill 8ms
+     → expected 0 to be greater than 0
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 17 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/slow-cuts.test.ts > A-01: slow cuts require a flip (owner decision) > costela declares two sides and a mandatory flip
+AssertionError: expected { id: 'costela', …(19) } to match object { sides: 2, flipNeeded: true, …(1) }
+(27 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  Object {
+-   "flipNeeded": true,
++   "flipNeeded": false,
+    "idealZone": "low",
+    "sides": 2,
+  }
+
+ ❯ tools/studio/test/slow-cuts.test.ts:39:41
+     37|   for (const id of CUTS) {
+     38|     it(`${id} declares two sides and a mandatory flip`, () => {
+     39|       expect(db.ingredientById.get(id)).toMatchObject({ sides: 2, flip…
+       |                                         ^
+     40|     });
+     41|     it(`${id} cannot reach a valid window if the player never flips`, …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/17]⎯
+
+ FAIL  tools/studio/test/slow-cuts.test.ts > A-01: slow cuts require a flip (owner decision) > costela has a usable perfect window following its recipe in zone 0
+ FAIL  tools/studio/test/slow-cuts.test.ts > A-01: slow cuts require a flip (owner decision) > costela has a usable perfect window following its recipe in zone 1
+ FAIL  tools/studio/test/slow-cuts.test.ts > A-01: slow cuts require a flip (owner decision) > costela has a usable perfect window following its recipe in zone 2
+ FAIL  tools/studio/test/slow-cuts.test.ts > A-01: slow cuts require a flip (owner decision) > cupim has a usable perfect window following its recipe in zone 0
+ FAIL  tools/studio/test/slow-cuts.test.ts > A-01: slow cuts require a flip (owner decision) > cupim has a usable perfect window following its recipe in zone 1
+ FAIL  tools/studio/test/slow-cuts.test.ts > A-01: slow cuts require a flip (owner decision) > cupim has a usable perfect window following its recipe in zone 2
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tools/studio/test/slow-cuts.test.ts:52:25
+     50|       it(`${id} has a usable perfect window following its recipe in zo…
+     51|         const { f, perfectSec } = trace(id, zone, true);
+     52|         expect(f.flips).toBe(1);
+       |                         ^
+     53|         expect(perfectSec).toBeGreaterThan(1); // actual time window, …
+     54|         expect(f.burned).toBe(true); // leaving it too long must STILL…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/17]⎯
+
+ FAIL  tools/studio/test/slow-cuts.test.ts > A-01: slow cuts require a flip (owner decision) > data validation rejects reintroducing costela's non-flipping multi-side recipe
+AssertionError: expected [] to include 'ingredient costela: multi-side grilli…'
+ ❯ tools/studio/test/slow-cuts.test.ts:60:40
+     58|       const broken = structuredClone(db);
+     59|       broken.ingredientById.get(id)!.flipNeeded = false;
+     60|       expect(validateDatabase(broken)).toContain(`ingredient ${id}: mu…
+       |                                        ^
+     61|     });
+     62|     for (const restaurantIndex of [3, 4, 5, 6]) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/17]⎯
+
+ FAIL  tools/studio/test/slow-cuts.test.ts > A-01: slow cuts require a flip (owner decision) > the bot flips and serves costela at restaurant 3 on the equipped advanced grill
+ FAIL  tools/studio/test/slow-cuts.test.ts > A-01: slow cuts require a flip (owner decision) > the bot flips and serves costela at restaurant 4 on the equipped advanced grill
+ FAIL  tools/studio/test/slow-cuts.test.ts > A-01: slow cuts require a flip (owner decision) > the bot flips and serves costela at restaurant 5 on the equipped advanced grill
+ FAIL  tools/studio/test/slow-cuts.test.ts > A-01: slow cuts require a flip (owner decision) > the bot flips and serves costela at restaurant 6 on the equipped advanced grill
+ FAIL  tools/studio/test/slow-cuts.test.ts > A-01: slow cuts require a flip (owner decision) > the bot flips and serves cupim at restaurant 4 on the equipped advanced grill
+ FAIL  tools/studio/test/slow-cuts.test.ts > A-01: slow cuts require a flip (owner decision) > the bot flips and serves cupim at restaurant 5 on the equipped advanced grill
+ FAIL  tools/studio/test/slow-cuts.test.ts > A-01: slow cuts require a flip (owner decision) > the bot flips and serves cupim at restaurant 6 on the equipped advanced grill
+AssertionError: expected 0 to be greater than 0
+ ❯ tools/studio/test/slow-cuts.test.ts:76:38
+     74|           const policy = new SkillPolicy(new Rng(seed * 7919), { skill…
+     75|           while (!sim.finished && sim.counters.customersServed === 0) …
+     76|           expect(sim.counters.flips).toBeGreaterThan(0);
+       |                                      ^
+     77|           expect(sim.counters.customersServed).toBe(1);
+     78|           expect(sim.counters.burnedFood).toBe(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/17]⎯
+
+ FAIL  tools/studio/test/slow-cuts.test.ts > A-01: slow cuts require a flip (owner decision) > cupim declares two sides and a mandatory flip
+AssertionError: expected { id: 'cupim', …(18) } to match object { sides: 2, flipNeeded: true, …(1) }
+(25 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  Object {
+-   "flipNeeded": true,
++   "flipNeeded": false,
+    "idealZone": "low",
+    "sides": 2,
+  }
+
+ ❯ tools/studio/test/slow-cuts.test.ts:39:41
+     37|   for (const id of CUTS) {
+     38|     it(`${id} declares two sides and a mandatory flip`, () => {
+     39|       expect(db.ingredientById.get(id)).toMatchObject({ sides: 2, flip…
+       |                                         ^
+     40|     });
+     41|     it(`${id} cannot reach a valid window if the player never flips`, …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/17]⎯
+
+ FAIL  tools/studio/test/slow-cuts.test.ts > A-01: slow cuts require a flip (owner decision) > data validation rejects reintroducing cupim's non-flipping multi-side recipe
+AssertionError: expected [] to include 'ingredient cupim: multi-side grilling…'
+ ❯ tools/studio/test/slow-cuts.test.ts:60:40
+     58|       const broken = structuredClone(db);
+     59|       broken.ingredientById.get(id)!.flipNeeded = false;
+     60|       expect(validateDatabase(broken)).toContain(`ingredient ${id}: mu…
+       |                                        ^
+     61|     });
+     62|     for (const restaurantIndex of [3, 4, 5, 6]) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/17]⎯
+
+ Test Files  1 failed (1)
+      Tests  17 failed | 2 passed (19)
+   Start at  01:07:39
+   Duration  479ms (transform 149ms, setup 0ms, collect 175ms, tests 106ms, environment 0ms, prepare 52ms)
+

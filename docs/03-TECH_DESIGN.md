@@ -56,9 +56,28 @@ Rules for the port:
   `float` only for rendering.
 - **No allocations in `Tick`.** No LINQ, no closures, no boxing, pre-sized arrays.
 
+### A-01 reference contract (2026-09-26 local / 27 UTC)
+
+Costela/cupim are two-sided, `flipNeeded:true` (ingredients v6, owner decision).
+The TS semantic validator rejects multi-side grill recipes with `flipNeeded:false`;
+`SkillPolicy` already consumes the flag, so no bot formula changed. Use real cooking
+integration/advanced bot tests in `tools/studio/test/slow-cuts.test.ts` when porting.
+Normal UI uses the existing FTUE flip-readiness rule, recipe flag and an eight-item
+bench pager; the guided FTUE contract is unchanged.
+
+Golden coverage is **106 + 44 FTUE**: all old expectations intact, eight new advanced
+turns (restaurants 3–6, two skill levels, equipped Fornalha evo 3). Full-turn inputs now
+optionally carry `churrasqueiraId/Level`; advanced expectations include observed per-cut
+usage retained across runtime compaction, with serves identified by order fulfillment
+(not the `served` flag, also used by discard). C# has **25 unported cases** (5 economy +
+20 turns), plus F2 save/result/counting regressions to port. No C# rule port was attempted.
+Long-sim economic acceptance fails 3 targets; F8 remains blocked until F3/F4 stabilization.
+See `docs/evidence/a01/README.md` for exact scopes and proofs.
+
 ### Golden vectors
 
-`tools/studio/golden.test.ts` writes deterministic fixtures to `tools/sim-core/golden/`:
+`tools/studio/gen-vectors.ts` writes deterministic fixtures to `tools/golden/`;
+`tools/studio/test/golden.test.ts` replays them:
 
 ```json
 { "seed": 20260917, "levelId": "level_012", "dt": 0.05,
