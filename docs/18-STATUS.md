@@ -59,7 +59,8 @@ not another replacement batch.
 - Dados/schemas/levels/arte/economia não retunados. As regressões novas exercitam casos que
   os vetores do bot não cobrem. C# não foi portado; permanece com 17 vetores não portados.
 - Audit continua 5 vulnerabilidades (1 crítica/1 alta/3 moderadas); F6 isolada pendente.
-- PR #14 ampliado para F1+F2, sem merge. CI remoto F2: a confirmar após o push.
+- PR #14 ampliado para F1+F2, sem merge. CI remoto F2: **15/15 aprovado**, incluindo C#,
+  em `faf2081`: [run 36283526080](https://github.com/berger33/game_churrasqueiro/actions/runs/36283526080). São 139 checks C# existentes, ainda 17 vetores não portados.
 - **Próximo:** A-01 com confirmação de produto (`sides:1` recomendado para costela/cupim,
   mantendo `flipNeeded:false`), testes de janela/bot e revalidação. A-01–A-06 continuam abertos.
 

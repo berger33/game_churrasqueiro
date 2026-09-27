@@ -31,7 +31,10 @@ estado real de `origin/main` antes de alterar arquivos.
   Replay dos 12 turnos e consumidor FTUE agora exigem leitura idempotente.
 - FTUE 16,1/32,9/38,3 s, zero erros; 244 sprites, 13 screenshots; dados/schemas/levels/
   imagens/preços intactos. `npm audit` continua 1 crítica + 1 alta + 3 moderadas.
-- CI remoto F2/PR #14: registrar após o push. CI anterior F1 15/15 no run `36282836431`.
+- CI remoto F2/PR #14: **15/15 aprovado** em `faf2081`, [run 36283526080](https://github.com/berger33/game_churrasqueiro/actions/runs/36283526080),
+  incluindo C# (139 checks existentes; 17 vetores ainda não portados). O commit seguinte
+  só registra essa evidência; conferir também o check do HEAD no PR. Actions v4/runner
+  avisam de migração Node 20→24 e futura imagem Ubuntu 26; triagem na F6.
 
 ### Limites do que foi corrigido
 

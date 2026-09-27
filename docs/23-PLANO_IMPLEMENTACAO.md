@@ -216,7 +216,7 @@ não se aplica a recomendação antiga de trocar para outra branch.
 | Fase / estado | Ordem e dependências | Arquivos/contratos previstos | Testes negativos e critério de conclusão |
 |---|---|---|---|
 | **F1 — concluída / PR #14 aberto** | Baseline → testes vermelhos → gate → CI | `tools/art/check-art-registry.ts`, baseline nominal `art/approved-runtime-baseline.json`, `tools/studio/test/art-registry.test.ts`, `package.json`, `run-gates.mjs`, `gates.test.ts`, `ci.yml` | Masters ↔ CSV ↔ manifesto ↔ runtime; nomes/caminhos/batch/status, duplicatas, flags, arquivos órfãos, remoção inclusive coordenada; fixtures isoladas e exit != 0. Manter os 244 IDs aprovados e CI com 15 gates. Sem regenerar arte. |
-| **F2 — concluída localmente / CI a confirmar** | **A-07 → A-08 → A-09**; depois de F1 | `economy.ts`, `turn.ts`, `save.ts` se normalização exigir, testes economy/turn/save, `gen-vectors.ts` só se contrato mudar | A-07: inicial=1, sequência 2..7, repetição sem crédito, roundtrip/save antigo com contador inflado e metas 3/5/7. A-08: queimar+descartar/servir, vários alimentos, resultado/restauração sem contar duas vezes. A-09: 2+ chamadas estruturalmente iguais, moedas/XP não duplicados, serialização e chamadores reais. Reproduzir cada falha antes da correção; gates+sim longo verdes ou divergência econômica explicitamente investigada, nunca retunada por conveniência. |
+| **F2 — concluída / PR #14 aberto** | **A-07 → A-08 → A-09**; depois de F1 | `economy.ts`, `turn.ts`, `save.ts` se normalização exigir, testes economy/turn/save, `gen-vectors.ts` só se contrato mudar | A-07: inicial=1, sequência 2..7, repetição sem crédito, roundtrip/save antigo com contador inflado e metas 3/5/7. A-08: queimar+descartar/servir, vários alimentos, resultado/restauração sem contar duas vezes. A-09: 2+ chamadas estruturalmente iguais, moedas/XP não duplicados, serialização e chamadores reais. Reproduzir cada falha antes da correção; gates+sim longo verdes ou divergência econômica explicitamente investigada, nunca retunada por conveniência. |
 | **F3 — pendente** | A-01 → A-02 → A-03 → A-04 → A-05 → A-06; decisões abaixo | `ingredients.json`, `grill.json`, `restaurants.json`, `levels.json`, `upgrades.json`, `events.json`, `types.ts`, `cooking.ts`, `turn.ts`, `policy.ts`, `economy.ts`, `prototype/src/main.ts`, tutorial/analytics/audio/l10n, `run-sim.ts` e testes | Janela perfeita costela/cupim e bot avançado; unlock imediatamente antes/no/depois (nível+restaurante), FTUE determinístico; prep com slots/input/hitboxes/pedido misto/paciência/combo/resultado; 4 zonas reais em grelha/bot/UI/calor/screenshots; VIP chance 0/natural/forçado/cap/recompensa/placement; mapa das 27 trilhas (consumidor/fórmula/limite/tela/teste/sim), no-ops explicitamente ocultos e incompráveis. Nove altos resolvidos, nenhuma promessa sem consumidor. |
 | **F4 — pendente** | Todas A-01–A-09 resolvidas | `shared/data`, schemas necessários, `Assets/Data`, `tools/golden`, docs 06/18/23 | Revisar dados antes de `gen-levels` e `gen-vectors`; revisar cada diff semântico, gates e 1.500 turnos; publicar unlocks/renda/spend/perfect/burned/perdidos/duração/grills. Não aceitar vetores novos apenas por terem sido gerados. |
 | **F5 — pendente** | Referência corrigida, antes da porta | `economy.ts`, `cooking.ts`, `policy.ts`, `save.ts`, `prototype/src/main.ts`, dados/l10n, validadores, runner C#, auditoria | Triar 19 médios + 19 baixos. Resolver antes de C#: carvão, ledger brasas, offline, deriveStats/clamps, burned com overrides, vazamento bot, streak, campos mortos, gating funcionários, descrições, avaliadores missões/conquistas, level-up, alvos ignorados, levels commitado e skips C#. Teste reprovando implementação anterior por item; classificar explicitamente o que fica para serviços/device. |
@@ -304,7 +304,7 @@ não se aplica a recomendação antiga de trocar para outra branch.
 |---|---|---|---|---|
 | 2026-09-27 | F1 / histórico 1.4 | concluído, PR aberto sem merge | `arena/01a0e03e-game-churrasqueiro` / [#14](https://github.com/berger33/game_churrasqueiro/pull/14) | 254 testes; 14/15 locais (C# SKIP); 15/15 no CI run 36282761422; sim longo 18/18 sem diff |
 
-### 9.7 Continuação F2 — implementada e validada localmente (2026-09-26 local / 27 UTC)
+### 9.7 Continuação F2 — concluída (local e CI) (2026-09-26 local / 27 UTC)
 
 Pedido do dono: “Próximo passo”. Branch mantida; PR #14 continua aberto, não integrado.
 Baseline reexecutado em `3f1c9c6`: Node 22.22.3/npm 10.9.8, `npm ci`, 254 testes,
@@ -353,7 +353,7 @@ sim longo 18/18, saída integral idêntica; vetores 98+44 e FTUE/sprites inalter
 ### 9.8 Fechamento F2 e contratos alterados
 
 - Commits: `5803806` A-07, `f2958d6` A-08, `02e7f61` A-09; PR #14 ampliado para F1+F2,
-  ainda aberto e **sem merge**. CI remoto de F2: registrar após o push.
+  ainda aberto e **sem merge**. CI remoto F2 **15/15 aprovado** em `faf2081`: [run 36283526080](https://github.com/berger33/game_churrasqueiro/actions/runs/36283526080).
 - Baseline 254 → **272 testes**, 14 arquivos. Foram adicionados 18 testes e fortalecidos
   2 existentes (replay dos 12 turnos e consumidor FTUE). Cada defeito teve prova red/green.
 - Contratos TypeScript: `PlayerState.counters.restaurantsUnlocked` representa a quantidade
@@ -378,3 +378,10 @@ sim longo 18/18, saída integral idêntica; vetores 98+44 e FTUE/sprites inalter
   decisão explícita da quarta zona. Sem arte nova, C# ou Unity antes da estabilização.
 
 `npm audit` final repetido com timeout/retries limitados após um timeout de rede: exit 1, mesmas 5 vulnerabilidades. Nenhuma dependência alterada.
+
+
+**CI F2 confirmado:** 15/15 gates, incluindo compilação/checks C#, run `36283526080`
+(commit `faf2081`). Paridade existente: 139 checks; continuam 5 vetores econômicos e 12
+turnos não portados. Avisos do runner: actions v4 usam Node 20 e são executadas sob Node 24;
+ubuntu-latest migrará para Ubuntu 26. Triar actions/imagem junto do tooling na F6, sem
+confundir com o Node 22 configurado para npm. PR #14 aberto, merge não autorizado.

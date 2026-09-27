@@ -24,7 +24,8 @@ Validação: **272 testes** (antes 254), **14/15 gates locais**, C# SKIP sem SDK
 **18/18 guardrails longos**, saída integral igual à anterior. `check-vectors` confirma
 98+44 sem drift: vetores do bot descartam queimados/fazem só uma leitura final e não cobrem
 contador de unlock/save. Nenhum JSON de vetor foi regenerado. Dados/preços não alterados.
-PR #14 continua aberto, agora F1+F2, **sem merge**; CI remoto desta F2 será registrado após push.
+PR #14 continua aberto, agora F1+F2, **sem merge**; CI remoto F2 **15/15 aprovado** em
+`faf2081`, [run 36283526080](https://github.com/berger33/game_churrasqueiro/actions/runs/36283526080), incluindo compilação/checks C#.
 Próxima ação: A-01, decisão de produto antes de dados. Plano vigente: docs/23-PLANO §9.8.
 
 ## Histórico F1 pós-auditoria — 2026-09-27 UTC
