@@ -40,6 +40,8 @@ Ainda não existe:
 - As 33 substituições individuais do antigo lote 03 foram concluídas em 10 + 10 + 10 + 3
   imagens nos lotes 08–11.
 - O dono aprovou o lote 11 e autorizou o merge completo em 2026-09-26.
+- O fechamento foi enviado ao GitHub no **PR #13**; confirme o estado do merge e dos checks
+  antes de continuar.
 - Registro final: **245 entradas = 244 `approved`, 0 `pending`, 1 `superseded`**.
 - Runtime aprovado: **244 sprites / 3,98 MB WebP**.
 - Índice completo: **16 comidas, 7 fundos, 11 clientes, 12 variantes de churrasqueira e
