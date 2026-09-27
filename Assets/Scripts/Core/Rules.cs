@@ -20,6 +20,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Churrasco.Core.Generated;
 
 namespace Churrasco.Core
@@ -214,7 +215,7 @@ namespace Churrasco.Core
                 StabilityRecoveryFraction = Get("grill_stability"),
                 MinCharcoalEfficiencyBonus = Get("charcoal_quality"),
                 AutoRefillChance = Math.Min(1.0, Get("charcoal_auto")),
-                CharcoalDurationSec = data.Grill.Charcoal.BaseDurationSec
+                CharcoalDurationSec = (data.Grill?.Charcoal?.BaseDurationSec ?? 150.0)
                     * (1 + r.Grill.CharcoalDurationBonus + Get("charcoal_duration")),
                 HighZoneBonus = Get("grill_heat"),
                 HeatRampRate = 1 + Get("grill_speed"),
