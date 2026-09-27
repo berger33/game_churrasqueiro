@@ -1,0 +1,28 @@
+
+── churrasqueiras: boca pintada × grade prometida ─────────────────────────
+   padrão: comida 86×54 px · leito 330–408 px · topo ≤ 12°
+   grelha              Z×S  vagas   exige (vaga)     pintado (vaga)     boca    incl. b/larg cheio status
+   fornalha_dragao_ma e1 3×3      9     86×60         86×76            1.58:1  -0.1°  0.71  1.01 ⌗células  ok     spr_grill_fornalha_dragao_manso_evo1
+                       ⚕ boca em 71 % da largura do sprite (< 72 %): o teto de tela ganha da régua do leito e a comida encosta. Não reprova — as artes aprovadas antes desta regra também medem menos. É a régua da PRÓXIMA geração.
+   fornalha_dragao_ma e2 3×3      9     86×60         86×47            2.57:1  -0.1°  0.77  1.01 ⌗células  FALHA  spr_grill_fornalha_dragao_manso_evo2
+                       → faixa de 47 px < 60 px (comida de 54 px)
+   fornalha_dragao_ma e3 3×4     12     73×60         73×68               2:1  -0.1°   0.6     1 —aberto   ok     spr_grill_fornalha_dragao_manso_evo3
+                       ⚕ boca em 60 % da largura do sprite (< 72 %): o teto de tela ganha da régua do leito e a comida encosta. Não reprova — as artes aprovadas antes desta regra também medem menos. É a régua da PRÓXIMA geração.
+   lata_valente e1      1×2      2    119×60        119×106            3.1:1  -8.6°  0.89  1.03 ⌗células  ok     spr_grill_lata_valente_evo1
+   lata_valente e2      1×3      3     86×60         86×117           3.08:1  -8.7°  0.89  1.03 ⌗células  ok     spr_grill_lata_valente_evo2
+   lata_valente e3      1×3      3     86×60         86×119           3.01:1  -8.8°  0.86  1.02 ⌗células  ok     spr_grill_lata_valente_evo3
+   parrilla_chef_cism e1 3×2      6    119×60        119×55               2:1     0°  0.74  1.01 ⌗células  FALHA  spr_grill_parrilla_chef_cisma_evo1
+                       → faixa de 55 px < 60 px (comida de 54 px)
+   parrilla_chef_cism e2 3×2      6    119×60        119×54            2.02:1     0°  0.72  1.01 ⌗células  FALHA  spr_grill_parrilla_chef_cisma_evo2
+                       → faixa de 54 px < 60 px (comida de 54 px)
+   parrilla_chef_cism e3 3×3      9     86×60         86×60               2:1     0°  0.72  0.97 ⌗células  ok     spr_grill_parrilla_chef_cisma_evo3
+                       ⚕ boca em 72 % da largura do sprite (< 72 %): o teto de tela ganha da régua do leito e a comida encosta. Não reprova — as artes aprovadas antes desta regra também medem menos. É a régua da PRÓXIMA geração.
+   ze_da_esquina e1     2×2      4    119×60        119×105           1.58:1     0°  0.77     1 ⌗células  ok     spr_grill_ze_da_esquina_evo1
+   ze_da_esquina e2     2×2      4    119×60        119×81            2.05:1     0°  0.75  1.01 ⌗células  ok     spr_grill_ze_da_esquina_evo2
+   ze_da_esquina e3     2×3      6     86×60         86×68            2.66:1     0°  0.77  1.01 ⌗células  ok     spr_grill_ze_da_esquina_evo3
+   ⚕ 3 grelha(s) com boca estreita demais para a largura do sprite (< 72 %) — régua nova, ainda só aviso: é o piso da próxima geração.
+
+   escada de vagas: 2 → 3 → 3 → 4 → 4 → 6 → 6 → 6 → 9 → 9 → 9 → 12  (monótona: sim)
+
+[grill-geometry] FAILED — 3 grelha(s) aprovada(s) sem leito para a grade que os dados prometem
+[grill-geometry] Research finding only: do not retune gameplay or overwrite approved art to satisfy this proposed standard.

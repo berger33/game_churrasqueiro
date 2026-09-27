@@ -1,0 +1,5 @@
+{
+  "_comment": "Congelamento declarado (docs/22 §6.10) — LISTA VAZIA desde 2026-09-26, e a razão é um erro meu que este arquivo escondia: as seis linhas que havia aqui (5 estados da maminha e a fornalha do lote 05) diziam 'o atlas serve os bytes antigos aprovados enquanto o dono decide'. Não existiam bytes aprovados: nenhuma das seis passou por `approved` em commit algum (conferido em `0479ed7` e `a26408d` no ASSET_REGISTRY.csv). O que o atlas em serviço embarcava era arte `pending` — 125 sprites para 119 linhas aprovadas. O `build-runtime` honesto, feito agora para subir as cinco aprovações do lote 07, expôs isso ao apagar a pasta e re-codificar só o que é aprovado (124). Regra a partir daqui: um congelamento só pode ser declarado se os bytes congelados estiverem no repo em `art/frozen-atlas/<nome>.png`; o `build-runtime` recusa lista declarada sem arquivo, para o 'o atlas continua servindo' nunca mais virar uma frase de conforto.",
+  "version": 2,
+  "sprites": []
+}

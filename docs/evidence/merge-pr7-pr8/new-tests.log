@@ -1,0 +1,13 @@
+
+ RUN  v4.1.11 /home/user/game_churrasqueiro
+
+ ✓ tools/studio/test/merge-art-tools.test.ts (13 tests) 9693ms
+     ✓ dry-run neither rewrites the shipped atlas nor modifies/deletes output files  5707ms
+     ✓ creates a new guide using a current grill, without modifying its approved master  2325ms
+     ✓ runs the recovered probe against current unlock contracts and valid grill IDs  898ms
+ ✓ tools/studio/test/grill-art.test.ts (3 tests) 5ms
+
+ Test Files  2 passed (2)
+      Tests  16 passed (16)
+   Start at  20:48:22
+   Duration  10.11s (transform 101ms, setup 0ms, import 139ms, tests 9.70s, environment 0ms)

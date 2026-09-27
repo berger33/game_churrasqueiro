@@ -1,5 +1,12 @@
 # F7 — Revisão, Triagem e Resolução dos PRs Abertos #7 e #8
 
+> **Atualização de integração — 2026-09-27:** o usuário autorizou resolver os conflitos
+> e integrar todo o histórico. PRs #7/#8 foram reconciliadas por merge real na branch
+> de consolidação; as decisões e evidências estão em [26 — Merge das PRs #7/#8](../../26-MERGE_PR7_PR8.md).
+> 756 testes e 18/18 metas longas passaram localmente. A decisão anterior de manter
+> essas PRs conflitantes está superada; os bloqueios Android/paridade da auditoria continuam abertos.
+
+
 **2026-09-27 · Concluído e documentado localmente.**  
 Checkpoint de encerramento da **Fase F7** (Revisão, Triagem e Resolução dos PRs Abertos #7 e #8).  
 Base de referência: PR #16 MERGED (`a900445fe3def248973fc884564a632d829f9c65`), branch de trabalho `arena/01a0e1a4-game-churrasqueiro`.  
