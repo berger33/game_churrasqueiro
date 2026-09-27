@@ -303,3 +303,30 @@ não se aplica a recomendação antiga de trocar para outra branch.
 | Data | Passo operacional | Status | Branch/PR | Evidência |
 |---|---|---|---|---|
 | 2026-09-27 | F1 / histórico 1.4 | concluído, PR aberto sem merge | `arena/01a0e03e-game-churrasqueiro` / [#14](https://github.com/berger33/game_churrasqueiro/pull/14) | 254 testes; 14/15 locais (C# SKIP); 15/15 no CI run 36282761422; sim longo 18/18 sem diff |
+
+### 9.7 Continuação F2 — em andamento (2026-09-26 local / 27 UTC)
+
+Pedido do dono: “Próximo passo”. Branch mantida; PR #14 continua aberto, não integrado.
+Baseline reexecutado em `3f1c9c6`: Node 22.22.3/npm 10.9.8, `npm ci`, 254 testes,
+14/15 gates locais (C# SKIP), sim longo 18/18 e audit com as mesmas 5 vulnerabilidades.
+
+Execução: A-07 → A-08 → A-09, um commit por correção após red/green. A-07 deve inicializar
+contagem em 1, atribuir `index+1` ao desbloquear e normalizar o contador derivado ao carregar
+saves v1/v2/v3, preservando demais contadores/recompensas e checksum. A-08 terá o evento
+único de queima da grelha como fonte; servir não pode somar novamente. A-09 será cálculo
+puro: bonus no retorno, acumuladores intactos, sem cache prematuro durante turno em curso.
+Testar resultado → crédito único → save/load; não prometer restauração de turno em andamento
+(o SaveGame atual não serializa TurnSimulation). Revisar todos os chamadores reais.
+
+Não há decisão de produto bloqueante. Sem retuning, dados ou portas C#. Verificar drift
+antes de decidir sobre regeneração; se os vetores existentes não exercitarem os defeitos,
+registrar a ausência de diff e manter regressões explícitas na suíte. Ao encerrar, atualizar
+status/auditoria/economia/handoff e CI. Como o PR #14 está aberto na única branch permitida,
+os novos commits ampliarão esse PR para F1+F2; não abrir PR duplicado nem fazer merge.
+
+**Checkpoint A-07 — concluído:** 8 regressões adicionadas, 7 falhando no código antigo
+(inicial ausente, sequência 2/5/9/14/20/27, metas antecipadas e saves não normalizados).
+Depois: 55/55 testes economy/save; suíte completa 262; gates 14/15 (C# SKIP).
+`sim:long` 18/18, saída idêntica; 98+44 vetores sem drift, não regenerados.
+`newPlayerState` inicia em 1; unlock atribui a quantidade; load após CRC repara v1/v2/v3.
+Shape/versionamento v3 mantidos; recompensas já reclamadas e outros contadores preservados.

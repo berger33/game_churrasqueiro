@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { loadAndValidate } from '../load-data.ts';
+import { readJson, loadAndValidate } from '../load-data.ts';
 import {
   applyTurnResult, buyNextChurrasqueira, buyUpgrade, canUnlockRestaurant, computeOfflineEarnings, costFor,
   createSessionEconomy, evolveChurrasqueira, equippedChurrasqueira, equippedEvolution, levelUpCoinReward,
@@ -277,5 +277,51 @@ describe('xp curve', () => {
   it('never exceeds max level', () => {
     const { a, exponent, minPerLevel } = db.economy.xp.formula;
     expect(levelForXp(1e12, a, exponent, minPerLevel, db.economy.xp.maxLevel)).toBe(db.economy.xp.maxLevel);
+  });
+});
+
+
+describe('A-07: restaurantsUnlocked is a count, not a sum of indices', () => {
+  it('includes the free initial restaurant', () => {
+    expect(newPlayerState().counters.restaurantsUnlocked).toBe(1);
+  });
+
+  it('counts each sequential unlock exactly once and never recharges a repeat', () => {
+    const p = newPlayerState();
+    p.level = 80; p.coins = 99_999_999;
+    const counts: number[] = [];
+    for (let index = 1; index < db.restaurants.restaurants.length; index++) {
+      expect(unlockRestaurant(db, p, index)).toBe(true);
+      counts.push(p.counters.restaurantsUnlocked!);
+      const before = structuredClone(p);
+      expect(unlockRestaurant(db, p, index)).toBe(false);
+      expect(p).toEqual(before);
+    }
+    expect(counts).toEqual([2, 3, 4, 5, 6, 7]);
+  });
+
+  it('does not unlock or increment for skipped, level-locked or unaffordable restaurants', () => {
+    const p = newPlayerState();
+    const before = structuredClone(p);
+    for (const index of [0, 1, 2, 99]) expect(unlockRestaurant(db, p, index)).toBe(false);
+    expect(p).toEqual(before);
+    p.level = 80;
+    expect(unlockRestaurant(db, p, 1)).toBe(true); // first paid progression is level-gated, free in data
+    const withoutCoins = structuredClone(p);
+    expect(unlockRestaurant(db, p, 2)).toBe(false);
+    expect(p).toEqual(withoutCoins);
+    expect(p.counters.restaurantsUnlocked).toBe(2);
+  });
+
+  it('satisfies the real achievement goals only at the actual restaurant count', () => {
+    // Future evaluator integration contract, NOT an implementation of claiming rewards.
+    const goals = (readJson('achievements.json') as { achievements: { stat: string; goal: number }[] })
+      .achievements.filter(a => a.stat === 'restaurantsUnlocked').map(a => a.goal);
+    expect(goals).toEqual([2, 3, 5, 7]);
+    const p = newPlayerState(); p.level = 80; p.coins = 99_999_999;
+    for (let index = 0; index < 7; index++) {
+      if (index) expect(unlockRestaurant(db, p, index)).toBe(true);
+      for (const goal of goals) expect(p.counters.restaurantsUnlocked! >= goal).toBe(index + 1 >= goal);
+    }
   });
 });

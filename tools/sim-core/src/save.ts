@@ -185,6 +185,13 @@ export function deserializeSave(raw: string): LoadResult {
 export function migrate(save: SaveGame, fromVersion: number): SaveGame {
   const out: SaveGame = { ...save };
   if (fromVersion < 1 || !out.player) out.player = newPlayerState();
+  // A-07: this is a derived count, not a cumulative event counter. Repair even
+  // current v3 saves written by the buggy build, AFTER checksum verification.
+  // No schema bump: the shape is unchanged. Do not re-grant/revoke achievements.
+  out.player = {
+    ...out.player,
+    counters: { ...out.player.counters, restaurantsUnlocked: out.player.restaurantIndex + 1 }
+  };
   if (!out.daily) out.daily = defaultDaily();
   if (!out.settings) out.settings = defaultSettings();
   if (!out.progress) out.progress = defaultProgress();
