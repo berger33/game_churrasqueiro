@@ -245,24 +245,10 @@ namespace Churrasco.Core
         /// </summary>
         public static GrillRuntime CreateGrill(DerivedStats stats, GameData data)
         {
-            var g = new GrillRuntime
-            {
-                Stats = stats,
-                CharcoalT = 0,
-                CharcoalEfficiency = CharcoalEfficiencyAt(stats, data, 0),
-                Refilling = 0,
-                CharcoalAutoAttempted = false
-            };
-            int count = stats.ZoneCount;
+            var g = new GrillRuntime { Stats = stats, CharcoalT = 0, CharcoalEfficiency = 1, Refilling = 0 };
+            int count = Math.Min(stats.ZoneCount, data.Grill.Zones.Count);
             for (int i = 0; i < count; i++)
-            {
-                var def = RuntimeZoneDefinition(data, count, i);
-                g.Zones.Add(new GrillZoneRuntime
-                {
-                    Index = i,
-                    Heat = def != null ? def.HeatMultiplier : 1
-                });
-            }
+                g.Zones.Add(new GrillZoneRuntime { Index = i, Heat = data.Grill.Zones[i].HeatMultiplier });
             return g;
         }
 
@@ -370,7 +356,16 @@ namespace Churrasco.Core
             // Mirrors cooking.ts: an exhausted or refilling sack gives no heat, regardless of
             // residual efficiency or upgrades.
             if (g.Refilling > 0 || g.CharcoalT >= 1) return 0;
-            return ZoneThermalBase(g, zoneIndex, data) * g.CharcoalEfficiency;
+            double baseHeat = zoneIndex >= 0 && zoneIndex < g.Zones.Count
+                ? g.Zones[zoneIndex].Heat
+                : zoneIndex >= 0 && zoneIndex < data.Grill.Zones.Count
+                    ? data.Grill.Zones[zoneIndex].HeatMultiplier
+                    : 1;
+            int top = g.Zones.Count - 1;
+            double bonus = zoneIndex == top
+                ? g.Stats.HighZoneBonus
+                : g.Stats.HighZoneBonus * (zoneIndex / (double)Math.Max(1, top)) * 0.5;
+            return (baseHeat + bonus) * g.CharcoalEfficiency;
         }
 
         // ── Flip ────────────────────────────────────────────────────────────
@@ -449,26 +444,22 @@ namespace Churrasco.Core
         public static bool TickGrill(GrillRuntime g, GameData data, double dt, Action<FoodRuntime>? onBurn = null)
         {
             if (double.IsNaN(dt) || dt < 0) throw new ArgumentException("tickGrill: invalid dt");
-            double activeSec = dt;
             bool refilled = false;
             if (g.Refilling > 0)
             {
-                double coldSec = Math.Min(dt, g.Refilling);
-                activeSec -= coldSec;
-                g.Refilling = Math.Max(0.0, g.Refilling - dt);
-                if (g.Refilling < 1e-9)
+                g.Refilling -= dt;
+                if (g.Refilling <= 0)
                 {
                     g.Refilling = 0;
                     g.CharcoalT = 0;
-                    g.CharcoalAutoAttempted = false;
                     refilled = true;
                 }
             }
-            activeSec = Math.Min(activeSec, Math.Max(0.0, 1.0 - g.CharcoalT) * g.Stats.CharcoalDurationSec);
-            if (g.Refilling > 0) activeSec = 0;
-            g.CharcoalT = MathUtil.Clamp01(g.CharcoalT + activeSec / g.Stats.CharcoalDurationSec);
-            double burnEfficiency = CharcoalEfficiencyAt(g.Stats, data, g.CharcoalT);
-            g.CharcoalEfficiency = g.Refilling > 0 || g.CharcoalT >= 1 ? 0 : burnEfficiency;
+            else
+            {
+                g.CharcoalT = MathUtil.Clamp01(g.CharcoalT + dt / g.Stats.CharcoalDurationSec);
+            }
+            g.CharcoalEfficiency = SampleCurve(data.Grill.Charcoal.EfficiencyCurve, g.CharcoalT);
 
             double carry = data.Ingredients.Shared.CarryoverRate;
             double burnAt = data.Ingredients.Shared.BurnedThreshold;
@@ -477,7 +468,7 @@ namespace Churrasco.Core
             {
                 var zone = g.Zones[zi];
                 if (zone.Items.Count == 0) continue;
-                double heat = ZoneThermalBase(g, zone.Index, data) * burnEfficiency;
+                double heat = EffectiveHeat(g, zone.Index, data);
                 for (int i = 0; i < zone.Items.Count; i++)
                 {
                     var f = zone.Items[i];
@@ -485,11 +476,11 @@ namespace Churrasco.Core
                     var ing = f.Ingredient;
                     if (ing.CookMethod != "grill" || ing.SideCookSec <= 0) continue;
                     double rate = (heat * ing.HeatRate * g.Stats.HeatRampRate) / ing.SideCookSec;
-                    f.TimeOnGrill += activeSec;
+                    f.TimeOnGrill += dt;
                     for (int s = 0; s < f.Sides.Length; s++)
                     {
                         double k = s == f.DownSide ? 1 : carry;
-                        f.Sides[s] += activeSec * rate * k;
+                        f.Sides[s] += dt * rate * k;
                     }
                     for (int s = 0; s < f.Sides.Length; s++)
                     {
