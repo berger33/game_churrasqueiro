@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-27T19:17:10.282Z",
+  "generatedAt": "2026-09-27T22:23:35.894Z",
   "source": "shared/data",
   "files": {
     "achievements.json": {
@@ -15,7 +15,7 @@
       "bytes": 9827
     },
     "churrasqueiras.json": {
-      "sha256": "02a0cf33d8fbc14d34c5fd1255f509a9318105110844ea5f4c115f9ae5c3488e",
+      "sha256": "49ca2ea5c4ba844000877d2899e656165c5487312fb11ddb68d881edfa3c9ed9",
       "bytes": 6631
     },
     "collection.json": {

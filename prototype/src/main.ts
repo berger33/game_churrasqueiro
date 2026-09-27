@@ -3487,15 +3487,38 @@ class Game {
     }
     const stage=String(stageOf(this.db,f));
     const even=evenness(f);
+    const isPerfect = !f.burned && d >= ing.perfectWindow[0] && d <= ing.perfectWindow[1] && even >= this.db.ingredients.shared.minEvennessForPerfect;
+
+    // Detect burn risk for both manual player and staff:
+    let isBurnRisk = f.onGrill && !f.burned && !f.served && this.sim.staff.snapshot.riskFoodIds.includes(f.uid);
+    if (!isBurnRisk && f.onGrill && !f.burned && !f.served && heat > 0) {
+      const rate = (heat * ing.heatRate * this.sim.stats.heatRampRate) / ing.sideCookSec;
+      if (rate > 0) {
+        const burnAt = this.db.ingredients.shared.burnedThreshold;
+        const carry = this.db.ingredients.shared.carryoverRate;
+        const secToBurn = Math.min(...f.sides.map((side, i) => (burnAt - side) / (rate * (i === f.downSide ? 1 : carry))));
+        if (secToBurn >= 0 && secToBurn <= 1.8) {
+          isBurnRisk = true;
+        }
+      }
+    }
+
+    if (isBurnRisk && Math.random() < 0.25) {
+      const hh = ing.sides >= 4 ? 17 : 25; const w = ing.sides >= 4 ? 44 : 54;
+      this.particles.push({ x: x + (Math.random() - 0.5) * w * 0.7, y: y - hh * scale, vx: (Math.random() - 0.5) * 12, vy: -36 - Math.random() * 22, life: 0, max: 0.9 + Math.random() * 0.5, size: 6 + Math.random() * 6, color: 'rgba(40,22,14,0.68)', kind: 'smoke' });
+    }
+
     const hh= artH ? artH*0.72 : (ing.sides>=4?17:25)*scale;
-    outlinedText(ctx,this.stageLabel(f,stage).toUpperCase(),x,y+hh/2+14,f.burned?C.telha:even<0.6?C.ambar:'rgba(244,231,211,0.85)',10,{weight:800, family:UI, outline:3});
+    const stageColor = f.burned ? C.telha : isBurnRisk ? C.telha : isPerfect ? C.verdeClaro : even<0.6 ? C.ambar : 'rgba(244,231,211,0.85)';
+    outlinedText(ctx,this.stageLabel(f,stage).toUpperCase(),x,y+hh/2+14,stageColor,10,{weight:800, family:UI, outline:3});
     // In the FTUE the label follows the coach (docs/20: "espere dourar → toque"),
     // and the guided steps leave it to the overlay's prompt.
     const flipHint = this.ftue
       ? !this.ftue.guided && flipReady(this.db, this.tutorialTable, f)
       : cookingFlipHint(this.db, this.tutorialTable, f);
-    if(this.sim.staff.snapshot.riskFoodIds.includes(f.uid)){
-      outlinedText(ctx,this.l10n.t('ui.staff.burnRisk'),x,y+hh/2+25,C.telha,10,{weight:800,family:UI,outline:2.5});
+    if(isBurnRisk){
+      const pulse = 0.5 + 0.5 * Math.sin(this.now * 10);
+      outlinedText(ctx,this.l10n.t('ui.staff.burnRisk'),x,y+hh/2+25,pulse > 0.5 ? C.telha : C.chama,10,{weight:800,family:UI,outline:2.5});
     } else if(flipHint){
       outlinedText(ctx,this.l10n.t('ui.feedback.flipHint'),x,y+hh/2+25,C.ambar,9,{weight:700, family:UI, outline:2.5});
     }

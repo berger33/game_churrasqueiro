@@ -40,7 +40,7 @@
           "shortName": "Tijolinho de Apoio",
           "slotsPerZone": 3,
           "zoneCount": 1,
-          "heatBase": 0.82,
+          "heatBase": 0.74,
           "charcoalBonus": 0.08,
           "costCoins": 320
         },
@@ -51,7 +51,7 @@
           "shortName": "Aprovada pela Vo",
           "slotsPerZone": 3,
           "zoneCount": 1,
-          "heatBase": 0.95,
+          "heatBase": 0.82,
           "charcoalBonus": 0.15,
           "costCoins": 680
         }
@@ -83,7 +83,7 @@
           "shortName": "Chapa da Calcada",
           "slotsPerZone": 2,
           "zoneCount": 2,
-          "heatBase": 0.95,
+          "heatBase": 0.82,
           "charcoalBonus": 0.12,
           "costCoins": 0
         },
@@ -94,7 +94,7 @@
           "shortName": "Toldo Novo",
           "slotsPerZone": 2,
           "zoneCount": 2,
-          "heatBase": 1.05,
+          "heatBase": 0.90,
           "charcoalBonus": 0.18,
           "costCoins": 1100
         },
@@ -105,7 +105,7 @@
           "shortName": "Com Fritadeira",
           "slotsPerZone": 3,
           "zoneCount": 2,
-          "heatBase": 1.15,
+          "heatBase": 0.98,
           "charcoalBonus": 0.22,
           "costCoins": 2100
         }
@@ -137,7 +137,7 @@
           "shortName": "Inox Brilhando",
           "slotsPerZone": 2,
           "zoneCount": 3,
-          "heatBase": 1.15,
+          "heatBase": 0.98,
           "charcoalBonus": 0.18,
           "costCoins": 0
         },
@@ -148,7 +148,7 @@
           "shortName": "Altura Regulavel",
           "slotsPerZone": 2,
           "zoneCount": 3,
-          "heatBase": 1.28,
+          "heatBase": 1.05,
           "charcoalBonus": 0.24,
           "costCoins": 3800
         },
@@ -159,7 +159,7 @@
           "shortName": "Termometro que Nao Mente",
           "slotsPerZone": 3,
           "zoneCount": 3,
-          "heatBase": 1.38,
+          "heatBase": 1.10,
           "charcoalBonus": 0.3,
           "costCoins": 6200
         }
