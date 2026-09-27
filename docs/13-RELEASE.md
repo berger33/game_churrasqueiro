@@ -1,5 +1,7 @@
 # 13 — Release
 
+> **Guia Prático e Passo a Passo da Play Console:** Consulte [PLAY_CONSOLE_CHECKLIST.md](PLAY_CONSOLE_CHECKLIST.md) para o roteiro operacional completo de Closed Testing (20 testadores / 14 dias), formulário Data Safety campo a campo, IAP e upload do AAB.
+
 ## 1. Store listing (§68, §69)
 
 | Field | Value |

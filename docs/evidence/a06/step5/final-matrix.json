@@ -1,0 +1,529 @@
+{
+  "checkpoint": "A-06.5 final review of all 27 tracks and contracts",
+  "status": "All 27 tracks integrated with active consumers. Active 1500-turn campaign 18/18 pass (exit 0).",
+  "seed": 20260917,
+  "turns": 1500,
+  "stepSec": 0.08333333333333333,
+  "clock": "UTC 2026-09-21, 12 turns/day; natural VIP only; no rewarded calls; no offline income",
+  "baselineIdentical": true,
+  "activeCampaignTargets": {
+    "income": 14679360,
+    "spent": 10873220,
+    "balance": 3806140,
+    "spendRatio": 0.7407148540535827,
+    "redeNacionalTurn": 1130,
+    "dailyIncomeL50": 123527
+  },
+  "trackCapacity": {
+    "all": 6358620,
+    "integrated": 6358620,
+    "temporarilyBlocked": 0
+  },
+  "tracks": [
+    {
+      "id": "grill_size",
+      "category": "grill",
+      "effectStat": "slotsPerZone",
+      "effectDelta": 1,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 8,
+      "maxCost": 13480,
+      "purchasedLevel": 8,
+      "spent": 13480,
+      "consumer": {
+        "module": "cooking.ts / turn.ts",
+        "funcOrProp": "deriveStats.slotsPerZone / canPlaceOnGrill",
+        "testFile": "cooking.test.ts, upgrades.test.ts"
+      }
+    },
+    {
+      "id": "grill_heat",
+      "category": "grill",
+      "effectStat": "highZoneMultiplier",
+      "effectDelta": 0.06,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 8,
+      "maxCost": 15380,
+      "purchasedLevel": 8,
+      "spent": 15380,
+      "consumer": {
+        "module": "cooking.ts",
+        "funcOrProp": "deriveStats.highZoneBonus / effectiveHeat",
+        "testFile": "cooking.test.ts, resources.test.ts"
+      }
+    },
+    {
+      "id": "grill_stability",
+      "category": "grill",
+      "effectStat": "heatStability",
+      "effectDelta": 0.04,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 6,
+      "maxCost": 7850,
+      "purchasedLevel": 6,
+      "spent": 7850,
+      "consumer": {
+        "module": "cooking.ts",
+        "funcOrProp": "deriveStats.stabilityRecoveryFraction / charcoalEfficiency",
+        "testFile": "resources.test.ts"
+      }
+    },
+    {
+      "id": "grill_speed",
+      "category": "grill",
+      "effectStat": "heatRampRate",
+      "effectDelta": 0.05,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 6,
+      "maxCost": 9470,
+      "purchasedLevel": 6,
+      "spent": 9470,
+      "consumer": {
+        "module": "cooking.ts",
+        "funcOrProp": "deriveStats.heatRampRate / tickGrill",
+        "testFile": "cooking.test.ts"
+      }
+    },
+    {
+      "id": "charcoal_duration",
+      "category": "charcoal",
+      "effectStat": "charcoalDurationMult",
+      "effectDelta": 0.09,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 10,
+      "maxCost": 21560,
+      "purchasedLevel": 10,
+      "spent": 21560,
+      "consumer": {
+        "module": "cooking.ts",
+        "funcOrProp": "deriveStats.charcoalDurationSec / tickGrill",
+        "testFile": "cooking.test.ts, resources.test.ts"
+      }
+    },
+    {
+      "id": "charcoal_quality",
+      "category": "charcoal",
+      "effectStat": "minCharcoalEfficiency",
+      "effectDelta": 0.05,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 6,
+      "maxCost": 9570,
+      "purchasedLevel": 6,
+      "spent": 9570,
+      "consumer": {
+        "module": "cooking.ts",
+        "funcOrProp": "deriveStats.minCharcoalEfficiencyBonus / charcoalEfficiency",
+        "testFile": "resources.test.ts"
+      }
+    },
+    {
+      "id": "charcoal_auto",
+      "category": "charcoal",
+      "effectStat": "autoRefillChance",
+      "effectDelta": 0.33,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 3,
+      "maxCost": 7810,
+      "purchasedLevel": 3,
+      "spent": 7810,
+      "consumer": {
+        "module": "turn.ts",
+        "funcOrProp": "deriveStats.autoRefillChance / autoRefillCharcoal",
+        "testFile": "resources.test.ts"
+      }
+    },
+    {
+      "id": "knife",
+      "category": "prep",
+      "effectStat": "prepSpeedMult",
+      "effectDelta": 0.12,
+      "phase": "active",
+      "starterCanBuy": false,
+      "starterReasons": [
+        "recipe_locked"
+      ],
+      "maxLevel": 6,
+      "maxCost": 2910,
+      "purchasedLevel": 6,
+      "spent": 2910,
+      "consumer": {
+        "module": "turn.ts",
+        "funcOrProp": "deriveStats.prepSpeedMult / startPrep",
+        "testFile": "prep.test.ts, upgrades.test.ts"
+      }
+    },
+    {
+      "id": "board",
+      "category": "prep",
+      "effectStat": "prepSlots",
+      "effectDelta": 1,
+      "phase": "active",
+      "starterCanBuy": false,
+      "starterReasons": [
+        "recipe_locked"
+      ],
+      "maxLevel": 5,
+      "maxCost": 3060,
+      "purchasedLevel": 5,
+      "spent": 3060,
+      "consumer": {
+        "module": "turn.ts",
+        "funcOrProp": "deriveStats.prepSlots / startPrep",
+        "testFile": "prep.test.ts, upgrades.test.ts"
+      }
+    },
+    {
+      "id": "counter",
+      "category": "prep",
+      "effectStat": "rawStockCapacityPerIngredient",
+      "effectDelta": 1,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 5,
+      "maxCost": 6880,
+      "purchasedLevel": 5,
+      "spent": 6880,
+      "consumer": {
+        "module": "turn.ts",
+        "funcOrProp": "deriveStats.rawStockCapacityPerIngredient / rawStockCapacity",
+        "testFile": "resources.test.ts"
+      }
+    },
+    {
+      "id": "plates",
+      "category": "service",
+      "effectStat": "tipMult",
+      "effectDelta": 0.06,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 6,
+      "maxCost": 3480,
+      "purchasedLevel": 6,
+      "spent": 3480,
+      "consumer": {
+        "module": "cooking.ts",
+        "funcOrProp": "deriveStats.tipMult / scoreItem",
+        "testFile": "economy.test.ts, upgrades.test.ts"
+      }
+    },
+    {
+      "id": "tray",
+      "category": "service",
+      "effectStat": "serveSpeedMult",
+      "effectDelta": 0.1,
+      "phase": "active",
+      "starterCanBuy": false,
+      "starterReasons": [
+        "dependency_locked"
+      ],
+      "maxLevel": 5,
+      "maxCost": 4440,
+      "purchasedLevel": 5,
+      "spent": 4440,
+      "consumer": {
+        "module": "staff.ts",
+        "funcOrProp": "deriveStats.serveSpeedMult / waiter travel cadence",
+        "testFile": "staff.test.ts"
+      }
+    },
+    {
+      "id": "patience_charm",
+      "category": "service",
+      "effectStat": "patienceMult",
+      "effectDelta": 0.07,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 5,
+      "maxCost": 9790,
+      "purchasedLevel": 5,
+      "spent": 9790,
+      "consumer": {
+        "module": "turn.ts",
+        "funcOrProp": "deriveStats.patienceMult / spawnCustomer",
+        "testFile": "turn.test.ts"
+      }
+    },
+    {
+      "id": "tables",
+      "category": "restaurant",
+      "effectStat": "tables",
+      "effectDelta": 1,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 6,
+      "maxCost": 20740,
+      "purchasedLevel": 6,
+      "spent": 20740,
+      "consumer": {
+        "module": "cooking.ts / turn.ts",
+        "funcOrProp": "deriveStats.tables / maxOrdersOnScreen",
+        "testFile": "upgrades.test.ts"
+      }
+    },
+    {
+      "id": "decor",
+      "category": "restaurant",
+      "effectStat": "tipMult",
+      "effectDelta": 0.05,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 6,
+      "maxCost": 14490,
+      "purchasedLevel": 6,
+      "spent": 14490,
+      "consumer": {
+        "module": "cooking.ts",
+        "funcOrProp": "deriveStats.tipMult / scoreItem",
+        "testFile": "economy.test.ts, upgrades.test.ts"
+      }
+    },
+    {
+      "id": "lighting",
+      "category": "restaurant",
+      "effectStat": "xpMult",
+      "effectDelta": 0.05,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 4,
+      "maxCost": 7180,
+      "purchasedLevel": 4,
+      "spent": 7180,
+      "consumer": {
+        "module": "cooking.ts",
+        "funcOrProp": "deriveStats.xpMult / scoreItem",
+        "testFile": "economy.test.ts"
+      }
+    },
+    {
+      "id": "capacity",
+      "category": "restaurant",
+      "effectStat": "maxOrdersOnScreen",
+      "effectDelta": 1,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 5,
+      "maxCost": 18180,
+      "purchasedLevel": 5,
+      "spent": 18180,
+      "consumer": {
+        "module": "cooking.ts / turn.ts",
+        "funcOrProp": "deriveStats.maxOrdersOnScreen / spawnCustomer",
+        "testFile": "upgrades.test.ts"
+      }
+    },
+    {
+      "id": "sign",
+      "category": "restaurant",
+      "effectStat": "customerSpawnRate",
+      "effectDelta": 0.08,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 4,
+      "maxCost": 13060,
+      "purchasedLevel": 4,
+      "spent": 13060,
+      "consumer": {
+        "module": "turn.ts",
+        "funcOrProp": "deriveStats.customerSpawnRate / tick spawnTimer",
+        "testFile": "turn.test.ts"
+      }
+    },
+    {
+      "id": "music",
+      "category": "restaurant",
+      "effectStat": "patienceMult",
+      "effectDelta": 0.05,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 4,
+      "maxCost": 5920,
+      "purchasedLevel": 4,
+      "spent": 5920,
+      "consumer": {
+        "module": "turn.ts",
+        "funcOrProp": "deriveStats.patienceMult / spawnCustomer",
+        "testFile": "turn.test.ts"
+      }
+    },
+    {
+      "id": "garcom",
+      "category": "employees",
+      "effectStat": "autoServeLevel",
+      "effectDelta": 1,
+      "phase": "active",
+      "starterCanBuy": false,
+      "starterReasons": [
+        "restaurant_locked"
+      ],
+      "maxLevel": 5,
+      "maxCost": 60800,
+      "purchasedLevel": 5,
+      "spent": 60800,
+      "consumer": {
+        "module": "staff.ts",
+        "funcOrProp": "deriveStats.autoServeLevel / StaffRuntime waiter auto-serve",
+        "testFile": "staff.test.ts"
+      }
+    },
+    {
+      "id": "auxiliar",
+      "category": "employees",
+      "effectStat": "autoPrepLevel",
+      "effectDelta": 1,
+      "phase": "active",
+      "starterCanBuy": false,
+      "starterReasons": [
+        "restaurant_locked",
+        "recipe_locked"
+      ],
+      "maxLevel": 5,
+      "maxCost": 102130,
+      "purchasedLevel": 5,
+      "spent": 102130,
+      "consumer": {
+        "module": "staff.ts",
+        "funcOrProp": "deriveStats.autoPrepLevel / StaffRuntime helper auto-prep",
+        "testFile": "staff.test.ts"
+      }
+    },
+    {
+      "id": "churrasqueiro",
+      "category": "employees",
+      "effectStat": "autoFlipLevel",
+      "effectDelta": 1,
+      "phase": "active",
+      "starterCanBuy": false,
+      "starterReasons": [
+        "restaurant_locked"
+      ],
+      "maxLevel": 5,
+      "maxCost": 211210,
+      "purchasedLevel": 5,
+      "spent": 211210,
+      "consumer": {
+        "module": "staff.ts",
+        "funcOrProp": "deriveStats.autoFlipLevel / StaffRuntime chef auto-flip",
+        "testFile": "staff.test.ts"
+      }
+    },
+    {
+      "id": "caixa",
+      "category": "employees",
+      "effectStat": "autoCollectLevel",
+      "effectDelta": 1,
+      "phase": "active",
+      "starterCanBuy": false,
+      "starterReasons": [
+        "restaurant_locked"
+      ],
+      "maxLevel": 4,
+      "maxCost": 160430,
+      "purchasedLevel": 4,
+      "spent": 160430,
+      "consumer": {
+        "module": "offline.ts",
+        "funcOrProp": "offlineSnapshot.autoMinutes / advanceCashierHours",
+        "testFile": "offline.test.ts"
+      }
+    },
+    {
+      "id": "gerente",
+      "category": "employees",
+      "effectStat": "idleRateMult",
+      "effectDelta": 0.18,
+      "phase": "active",
+      "starterCanBuy": false,
+      "starterReasons": [
+        "restaurant_locked"
+      ],
+      "maxLevel": 4,
+      "maxCost": 354180,
+      "purchasedLevel": 4,
+      "spent": 354180,
+      "consumer": {
+        "module": "offline.ts",
+        "funcOrProp": "offlineSnapshot.multiplier / idleRateMult",
+        "testFile": "offline.test.ts"
+      }
+    },
+    {
+      "id": "brasa_mastery",
+      "category": "prestige",
+      "effectStat": "tipMult",
+      "effectDelta": 0.012,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 20,
+      "maxCost": 1605720,
+      "purchasedLevel": 20,
+      "spent": 1605720,
+      "consumer": {
+        "module": "cooking.ts",
+        "funcOrProp": "deriveStats.prestigeTipBonus / scoreItem",
+        "testFile": "upgrades.test.ts"
+      }
+    },
+    {
+      "id": "clientela_fiel",
+      "category": "prestige",
+      "effectStat": "patienceMult",
+      "effectDelta": 0.01,
+      "phase": "active",
+      "starterCanBuy": true,
+      "starterReasons": [],
+      "maxLevel": 20,
+      "maxCost": 1778420,
+      "purchasedLevel": 20,
+      "spent": 1778420,
+      "consumer": {
+        "module": "turn.ts",
+        "funcOrProp": "deriveStats.patienceMult / spawnCustomer",
+        "testFile": "upgrades.test.ts"
+      }
+    },
+    {
+      "id": "imperio_logistica",
+      "category": "prestige",
+      "effectStat": "idleRateMult",
+      "effectDelta": 0.02,
+      "phase": "active",
+      "starterCanBuy": false,
+      "starterReasons": [
+        "restaurant_locked"
+      ],
+      "maxLevel": 20,
+      "maxCost": 1890480,
+      "purchasedLevel": 20,
+      "spent": 1890480,
+      "consumer": {
+        "module": "offline.ts",
+        "funcOrProp": "offlineSnapshot.multiplier / idleRateMult",
+        "testFile": "offline.test.ts"
+      }
+    }
+  ]
+}

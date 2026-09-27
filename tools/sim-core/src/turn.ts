@@ -370,7 +370,18 @@ export class TurnSimulation {
   }
 
   refillCharcoal(): boolean {
-    return !this.finished && startCharcoalRefill(this.grill, this.db);
+    if (this.finished) return false;
+    const cost = this.db.grill.charcoal.refillCostCoins ?? 0;
+    if (cost > 0) {
+      if (this.coins < cost) return false;
+      this.coins -= cost;
+    }
+    const started = startCharcoalRefill(this.grill, this.db);
+    if (!started && cost > 0) {
+      this.coins += cost;
+      return false;
+    }
+    return started;
   }
 
   private tryAutoCharcoal(): void {

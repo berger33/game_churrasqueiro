@@ -60,9 +60,9 @@ assumed. All values are Remote-Config driven.
 |---|---|---|---|
 | `brasa.starterpack.v1` | once per account | 9,90 | 100 Brasas + 5 000 moedas + exclusive apron + 3 tip boosters |
 | `brasa.noads.v1` | non-consumable | 19,90 | removes interstitials (rewarded stays optional) |
-| `brasa.coins.small.v1` | consumable | 4,90 | 120 Brasas |
-| `brasa.coins.medium.v1` | consumable | 14,90 | 400 Brasas |
-| `brasa.coins.large.v1` | consumable | 39,90 | 1 200 Brasas |
+| `brasa.embers.small.v1` | consumable | 4,90 | 120 Brasas |
+| `brasa.embers.medium.v1` | consumable | 14,90 | 400 Brasas |
+| `brasa.embers.large.v1` | consumable | 39,90 | 1 200 Brasas |
 | `brasa.pass.season.v1` | seasonal | 24,90 | premium pass track + 60 Brasas |
 | `brasa.pass.bundle.v1` | seasonal | 49,90 | premium pass + 10 tier jump + 120 Brasas |
 

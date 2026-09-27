@@ -239,8 +239,21 @@ export function evolveChurrasqueira(db: GameDatabase, p: PlayerState): LedgerEnt
   p.embers -= step.costEmbers;
   p.churrasqueiraLevels[step.id] = step.toLevel;
   addCounter(p, 'churrasqueiraEvolutions', 1);
-  addCounter(p, 'coinsSpentTotal', step.costCoins);
-  addCounter(p, 'coinsSpentSession', step.costCoins);
+  if (step.costCoins > 0) {
+    addCounter(p, 'coinsSpentTotal', step.costCoins);
+    addCounter(p, 'coinsSpentSession', step.costCoins);
+  }
+  if (step.costEmbers > 0) {
+    addCounter(p, 'embersSpentTotal', step.costEmbers);
+  }
+  if (step.costCoins === 0 && step.costEmbers > 0) {
+    return {
+      currency: 'embers',
+      amount: -step.costEmbers,
+      source: `churrasqueira_evolve:${step.id}`,
+      balance: p.embers
+    };
+  }
   return {
     currency: 'coins',
     amount: -step.costCoins,

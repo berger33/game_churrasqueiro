@@ -84,6 +84,7 @@ namespace Churrasco.Core
         public double CharcoalEfficiency = 1;
         /// <summary>Seconds remaining on a refill; 0 when not refilling.</summary>
         public double Refilling;
+        public bool CharcoalAutoAttempted;
         public DerivedStats Stats = null!;
     }
 
@@ -96,12 +97,16 @@ namespace Churrasco.Core
         public int SlotsPerZone;
         public int ZoneCount;
         public double HeatStability;
+        public double StabilityRecoveryFraction;
+        public double MinCharcoalEfficiencyBonus;
+        public double AutoRefillChance;
         public double CharcoalDurationSec;
         public double HighZoneBonus;
         public double HeatRampRate;
         public int PrepSlots;
         public double PrepSpeedMult;
         public double TipMult;
+        public double PrestigeTipBonus;
         public double ServeSpeedMult;
         public double PatienceMult;
         public int MaxOrdersOnScreen;
@@ -112,7 +117,7 @@ namespace Churrasco.Core
         public int AutoServeLevel;
         public int AutoPrepLevel;
         public double IdleRateMult;
-        public int RawStockPerTurn;
+        public int RawStockCapacityPerIngredient;
     }
 
     public enum ServeQuality { Perfect, Good, Overcooked, Raw, Burned }
@@ -145,11 +150,14 @@ namespace Churrasco.Core
     /// <summary>Mirrors ScoreContext.</summary>
     public sealed class ScoreContext
     {
+        public int RestaurantIndex;
         public double Target;
         public double ToleranceScale = 1;
         public double PatienceRemaining = 1;
         public double Combo;
         public double TipMult = 1;
+        public double PrestigeTipBonus;
+        public double AutoServiceTipBonus;
         public double XpMult = 1;
         public double CustomerTipMult = 1;
         public double EventValueMult = 1;
@@ -197,30 +205,34 @@ namespace Churrasco.Core
             int Level(string trackId) => levels.TryGetValue(trackId, out var l) ? l : 0;
 
             var r = restaurant;
+            int baseStock = data.Grill?.Stock?.BasePerIngredient ?? 6;
             return new DerivedStats
             {
                 SlotsPerZone = r.Grill.SlotsPerZone + (int)Math.Floor(Get("grill_size")),
                 ZoneCount = r.Grill.ZoneCount,
-                HeatStability = r.Grill.HeatStability + Get("grill_stability"),
+                HeatStability = r.Grill.HeatStability,
+                StabilityRecoveryFraction = Get("grill_stability"),
+                MinCharcoalEfficiencyBonus = Get("charcoal_quality"),
+                AutoRefillChance = Math.Min(1.0, Get("charcoal_auto")),
                 CharcoalDurationSec = data.Grill.Charcoal.BaseDurationSec
                     * (1 + r.Grill.CharcoalDurationBonus + Get("charcoal_duration")),
                 HighZoneBonus = Get("grill_heat"),
                 HeatRampRate = 1 + Get("grill_speed"),
                 PrepSlots = r.Service.PrepSlots + (int)Math.Floor(Get("board")),
                 PrepSpeedMult = 1 + Get("knife"),
-                TipMult = 1 + Get("plates") + Get("decor"),
+                TipMult = 1 + Get("plates") + Get("decor") + Get("brasa_mastery"),
+                PrestigeTipBonus = Get("brasa_mastery"),
                 ServeSpeedMult = 1 + Get("tray"),
-                PatienceMult = 1 + Get("patience_charm") + Get("music"),
-                MaxOrdersOnScreen = r.Service.MaxOrdersOnScreen + (int)Math.Floor(Get("capacity")),
+                PatienceMult = 1 + Get("patience_charm") + Get("music") + Get("clientela_fiel"),
+                MaxOrdersOnScreen = r.Service.MaxOrdersOnScreen + (int)Math.Floor(Get("capacity")) + (int)Math.Floor(Get("tables")),
                 Tables = r.Service.Tables + (int)Math.Floor(Get("tables")),
                 XpMult = 1 + Get("lighting"),
                 CustomerSpawnRate = 1 + Get("sign"),
-                // Matches the TS: autoFlipLevel is purely the churrasqueiro level.
                 AutoFlipLevel = Level("churrasqueiro"),
                 AutoServeLevel = Level("garcom"),
                 AutoPrepLevel = Level("auxiliar"),
                 IdleRateMult = 1 + Get("gerente"),
-                RawStockPerTurn = 6 + (int)Math.Floor(Get("counter"))
+                RawStockCapacityPerIngredient = baseStock + (int)Math.Floor(Get("counter"))
             };
         }
 
@@ -232,10 +244,24 @@ namespace Churrasco.Core
         /// </summary>
         public static GrillRuntime CreateGrill(DerivedStats stats, GameData data)
         {
-            var g = new GrillRuntime { Stats = stats, CharcoalT = 0, CharcoalEfficiency = 1, Refilling = 0 };
-            int count = Math.Min(stats.ZoneCount, data.Grill.Zones.Count);
+            var g = new GrillRuntime
+            {
+                Stats = stats,
+                CharcoalT = 0,
+                CharcoalEfficiency = CharcoalEfficiencyAt(stats, data, 0),
+                Refilling = 0,
+                CharcoalAutoAttempted = false
+            };
+            int count = stats.ZoneCount;
             for (int i = 0; i < count; i++)
-                g.Zones.Add(new GrillZoneRuntime { Index = i, Heat = data.Grill.Zones[i].HeatMultiplier });
+            {
+                var def = RuntimeZoneDefinition(data, count, i);
+                g.Zones.Add(new GrillZoneRuntime
+                {
+                    Index = i,
+                    Heat = def != null ? def.HeatMultiplier : 1
+                });
+            }
             return g;
         }
 
@@ -317,21 +343,30 @@ namespace Churrasco.Core
         /// lata cooks at its heatBase) — and the table value only for a zone the
         /// grill does not have, exactly like the TypeScript.
         /// </summary>
-        public static double EffectiveHeat(GrillRuntime g, int zoneIndex, GameData data)
+        public static double ZoneThermalBase(GrillRuntime g, int zoneIndex, GameData data)
         {
-            // Mirrors cooking.ts: an exhausted or refilling sack gives no heat, regardless of
-            // residual efficiency or upgrades.
-            if (g.Refilling > 0 || g.CharcoalT >= 1) return 0;
             double baseHeat = zoneIndex >= 0 && zoneIndex < g.Zones.Count
                 ? g.Zones[zoneIndex].Heat
                 : zoneIndex >= 0 && zoneIndex < data.Grill.Zones.Count
                     ? data.Grill.Zones[zoneIndex].HeatMultiplier
                     : 1;
-            int top = g.Zones.Count - 1;
-            double bonus = zoneIndex == top
-                ? g.Stats.HighZoneBonus
-                : g.Stats.HighZoneBonus * (zoneIndex / (double)Math.Max(1, top)) * 0.5;
-            return (baseHeat + bonus) * g.CharcoalEfficiency;
+            var primary = PrimaryGrillZones(data);
+            var def = RuntimeZoneDefinition(data, g.Zones.Count, zoneIndex);
+            string? matchId = !string.IsNullOrEmpty(def?.AuxiliaryOf) ? def!.AuxiliaryOf : def?.Id;
+            int source = primary.FindIndex(z => z.Id == matchId);
+            double factor = g.Zones.Count == 1 || source == primary.Count - 1
+                ? 1.0
+                : Math.Max(0, source) / (double)Math.Max(1, primary.Count - 1) * 0.5;
+            double bonus = g.Stats.HighZoneBonus * factor;
+            return baseHeat + bonus;
+        }
+
+        public static double EffectiveHeat(GrillRuntime g, int zoneIndex, GameData data)
+        {
+            // Mirrors cooking.ts: an exhausted or refilling sack gives no heat, regardless of
+            // residual efficiency or upgrades.
+            if (g.Refilling > 0 || g.CharcoalT >= 1) return 0;
+            return ZoneThermalBase(g, zoneIndex, data) * g.CharcoalEfficiency;
         }
 
         // ── Flip ────────────────────────────────────────────────────────────
@@ -349,6 +384,14 @@ namespace Churrasco.Core
 
         // ── Charcoal ────────────────────────────────────────────────────────
 
+        public static bool StartCharcoalRefill(GrillRuntime g, GameData data)
+        {
+            if (g.Refilling > 0) return false;
+            g.Refilling = CharcoalRefillDuration(data);
+            g.CharcoalEfficiency = 0;
+            return true;
+        }
+
         public static bool StartCharcoalRefill(GrillRuntime g)
         {
             if (g.Refilling > 0) return false;
@@ -357,6 +400,16 @@ namespace Churrasco.Core
         }
 
         public static double CharcoalRefillDuration(GameData data) => data.Grill.Charcoal.RefillTimeSec;
+
+        public static double CharcoalEfficiencyAt(DerivedStats stats, GameData data, double progress)
+        {
+            var curve = data.Grill.Charcoal.EfficiencyCurve;
+            double e = SampleCurve(curve, progress);
+            double minCurve = curve != null && curve.Count > 0 ? curve.Min(p => p.Value) : 0.0;
+            double floor = Math.Min(1.0, minCurve + stats.MinCharcoalEfficiencyBonus);
+            double q = Math.Max(e, floor);
+            return q + stats.StabilityRecoveryFraction * (1.0 - q);
+        }
 
         /// <summary>
         /// sampleCurve(points, t): piecewise-linear interpolation with flat
@@ -389,22 +442,29 @@ namespace Churrasco.Core
         /// tickGrill(g, db, dt, onBurn). The single source of truth for how food
         /// cooks; mirrored exactly by the simulator and the client.
         /// </summary>
-        public static void TickGrill(GrillRuntime g, GameData data, double dt, Action<FoodRuntime>? onBurn = null)
+        public static bool TickGrill(GrillRuntime g, GameData data, double dt, Action<FoodRuntime>? onBurn = null)
         {
+            if (double.IsNaN(dt) || dt < 0) throw new ArgumentException("tickGrill: invalid dt");
+            double activeSec = dt;
+            bool refilled = false;
             if (g.Refilling > 0)
             {
-                g.Refilling -= dt;
-                if (g.Refilling <= 0)
+                double coldSec = Math.Min(dt, g.Refilling);
+                activeSec -= coldSec;
+                g.Refilling = Math.Max(0.0, g.Refilling - dt);
+                if (g.Refilling < 1e-9)
                 {
                     g.Refilling = 0;
                     g.CharcoalT = 0;
+                    g.CharcoalAutoAttempted = false;
+                    refilled = true;
                 }
             }
-            else
-            {
-                g.CharcoalT = MathUtil.Clamp01(g.CharcoalT + dt / g.Stats.CharcoalDurationSec);
-            }
-            g.CharcoalEfficiency = SampleCurve(data.Grill.Charcoal.EfficiencyCurve, g.CharcoalT);
+            activeSec = Math.Min(activeSec, Math.Max(0.0, 1.0 - g.CharcoalT) * g.Stats.CharcoalDurationSec);
+            if (g.Refilling > 0) activeSec = 0;
+            g.CharcoalT = MathUtil.Clamp01(g.CharcoalT + activeSec / g.Stats.CharcoalDurationSec);
+            double burnEfficiency = CharcoalEfficiencyAt(g.Stats, data, g.CharcoalT);
+            g.CharcoalEfficiency = g.Refilling > 0 || g.CharcoalT >= 1 ? 0 : burnEfficiency;
 
             double carry = data.Ingredients.Shared.CarryoverRate;
             double burnAt = data.Ingredients.Shared.BurnedThreshold;
@@ -413,7 +473,7 @@ namespace Churrasco.Core
             {
                 var zone = g.Zones[zi];
                 if (zone.Items.Count == 0) continue;
-                double heat = EffectiveHeat(g, zone.Index, data);
+                double heat = ZoneThermalBase(g, zone.Index, data) * burnEfficiency;
                 for (int i = 0; i < zone.Items.Count; i++)
                 {
                     var f = zone.Items[i];
@@ -421,11 +481,11 @@ namespace Churrasco.Core
                     var ing = f.Ingredient;
                     if (ing.CookMethod != "grill" || ing.SideCookSec <= 0) continue;
                     double rate = (heat * ing.HeatRate * g.Stats.HeatRampRate) / ing.SideCookSec;
-                    f.TimeOnGrill += dt;
+                    f.TimeOnGrill += activeSec;
                     for (int s = 0; s < f.Sides.Length; s++)
                     {
                         double k = s == f.DownSide ? 1 : carry;
-                        f.Sides[s] += dt * rate * k;
+                        f.Sides[s] += activeSec * rate * k;
                     }
                     for (int s = 0; s < f.Sides.Length; s++)
                     {
@@ -438,6 +498,7 @@ namespace Churrasco.Core
                     }
                 }
             }
+            return refilled;
         }
 
         // ── Stage ───────────────────────────────────────────────────────────
@@ -449,6 +510,7 @@ namespace Churrasco.Core
         public static string StageOf(GameData data, FoodRuntime f)
         {
             double d = OverallDoneness(f);
+            if (f.Burned || d >= data.Ingredients.Shared.BurnedThreshold) return "burned";
             var overrides = f.Ingredient.StageOverrides;
             if (overrides != null && overrides.Count > 0)
             {
@@ -457,7 +519,7 @@ namespace Churrasco.Core
                 return overrides[overrides.Count - 1].Id;
             }
             var t = data.Ingredients.Shared.StageThresholds;
-            if (f.Burned || d >= t.WELL_MAX) return "burned";
+            if (d >= t.WELL_MAX) return "burned";
             if (d >= t.MEDIUM_MAX) return "well";
             if (d >= t.RARE_MAX) return "medium";
             if (d >= t.RAW_MAX) return "rare"; // was "raw": the rare band did not exist in C# (caught by tools/csharp/parity)
@@ -524,6 +586,13 @@ namespace Churrasco.Core
             double eventMult = ctx.EventValueMult;
             double customerMult = 1 + (ctx.CustomerTipMult - 1) * t.CustomerTipWeight;
 
+            double prestige = ctx.PrestigeTipBonus;
+            double TipFactor(double tips)
+            {
+                double legacy = ctx.TipMult - prestige;
+                return (1 + tips) * legacy + tips * prestige + tips * ctx.TipMult * ctx.AutoServiceTipBonus;
+            }
+
             double coins = 0;
             double xp = ing.Xp * ctx.XpMult;
 
@@ -531,14 +600,14 @@ namespace Churrasco.Core
             {
                 case ServeQuality.Perfect:
                     coins = ing.Value * ing.Satisfaction
-                        * (1 + t.OrderBaseTip + t.PerfectTipBonus + speedBonus)
-                        * comboMult * ctx.TipMult * eventMult * customerMult;
+                        * TipFactor(t.OrderBaseTip + t.PerfectTipBonus + speedBonus)
+                        * comboMult * eventMult * customerMult;
                     xp *= 1.35;
                     break;
                 case ServeQuality.Good:
                     coins = ing.Value * ing.Satisfaction
-                        * (1 + t.OrderBaseTip + speedBonus)
-                        * comboMult * ctx.TipMult * eventMult * customerMult;
+                        * TipFactor(t.OrderBaseTip + speedBonus)
+                        * comboMult * eventMult * customerMult;
                     break;
                 case ServeQuality.Overcooked:
                 case ServeQuality.Raw:
@@ -551,6 +620,7 @@ namespace Churrasco.Core
                     break;
             }
 
+            double activeMult = ActiveCoinMultiplier(data, ctx.RestaurantIndex);
             return new ScoredItem
             {
                 Quality = quality,
@@ -560,9 +630,148 @@ namespace Churrasco.Core
                 WindowHi = hi,
                 // JS Math.round, not Math.Round: a 24.5-coin plate pays 25 in the
                 // reference and paid 24 here (espetinho_misto, tools/csharp/parity).
-                Coins = (int)MathUtil.RoundHalfUp(coins),
+                Coins = (int)MathUtil.RoundHalfUp(coins * activeMult),
                 Xp = (int)MathUtil.RoundHalfUp(xp)
             };
+        }
+
+        public static double ActiveCoinMultiplier(GameData db, int restaurantIndex)
+        {
+            var list = db.Economy.Reward?.ActiveCoinMultiplierByRestaurant;
+            if (list == null || restaurantIndex < 0 || restaurantIndex >= list.Count) return 1.0;
+            return list[restaurantIndex];
+        }
+
+        // ── Churrasqueira & helper operations ────────────────────────────────
+
+        public const double ChurrasqueiraHeatCap = 1.7;
+
+        public static int ChurrasqueiraZoneCount(
+            ChurrasqueirasChurrasqueiras ch,
+            ChurrasqueirasChurrasqueirasEvolutions evo,
+            RestaurantsRestaurants? restaurant)
+        {
+            var expansion = ch.RestaurantExpansion;
+            return restaurant != null && expansion != null && restaurant.Index >= expansion.RestaurantIndex
+                ? expansion.ZoneCount
+                : evo.ZoneCount;
+        }
+
+        public static DerivedStats ApplyChurrasqueiraToStats(
+            DerivedStats stats,
+            GameData db,
+            string churrasqueiraId,
+            int evoLevel,
+            RestaurantsRestaurants? restaurant)
+        {
+            var ch = db.ChurrasqueiraById(churrasqueiraId);
+            if (ch == null) return stats;
+            var evo = ch.Evolutions.FirstOrDefault(e => e.Level == evoLevel) ?? ch.Evolutions.FirstOrDefault();
+            if (evo == null) return stats;
+            int extraSlots = restaurant != null ? Math.Max(0, stats.SlotsPerZone - restaurant.Grill.SlotsPerZone) : 0;
+            double baseCharcoal = db.Grill.Charcoal.BaseDurationSec;
+            double extraCharcoal = restaurant != null
+                ? (stats.CharcoalDurationSec / baseCharcoal) - 1 - restaurant.Grill.CharcoalDurationBonus
+                : 0.0;
+            stats.SlotsPerZone = evo.SlotsPerZone + extraSlots;
+            stats.ZoneCount = ChurrasqueiraZoneCount(ch, evo, restaurant);
+            stats.CharcoalDurationSec = baseCharcoal * (1 + evo.CharcoalBonus + extraCharcoal);
+            return stats;
+        }
+
+        public static List<GrillZones> PrimaryGrillZones(GameData db)
+        {
+            return db.Grill.Zones.Where(z => string.IsNullOrEmpty(z.AuxiliaryOf)).ToList();
+        }
+
+        public static GrillZones? RuntimeZoneDefinition(GameData db, int zoneCount, int zoneIndex)
+        {
+            if (zoneIndex < 0 || zoneIndex >= zoneCount) return null;
+            var primary = PrimaryGrillZones(db);
+            if (zoneIndex >= primary.Count)
+            {
+                return zoneIndex < db.Grill.Zones.Count ? db.Grill.Zones[zoneIndex] : null;
+            }
+            int n = Math.Min(zoneCount, primary.Count);
+            int index = n <= 1 ? 0 : (int)Math.Round((double)zoneIndex * (primary.Count - 1) / (n - 1));
+            return primary[index];
+        }
+
+        public static double ChurrasqueiraZoneHeat(int zoneCount, double heatBase, int zoneIndex, GameData db)
+        {
+            if (zoneCount <= 1) return heatBase;
+            double profile = RuntimeZoneDefinition(db, zoneCount, zoneIndex)?.HeatMultiplier ?? 1.0;
+            return Math.Min(ChurrasqueiraHeatCap, profile * heatBase);
+        }
+
+        public static void PatchGrillForChurrasqueira(
+            GrillRuntime grill,
+            GameData db,
+            string churrasqueiraId,
+            int evoLevel)
+        {
+            var ch = db.ChurrasqueiraById(churrasqueiraId);
+            if (ch == null) return;
+            var evo = ch.Evolutions.FirstOrDefault(e => e.Level == evoLevel) ?? ch.Evolutions.FirstOrDefault();
+            if (evo == null) return;
+            var newZones = new List<GrillZoneRuntime>();
+            int zoneCount = grill.Stats.ZoneCount;
+            for (int i = 0; i < zoneCount; i++)
+            {
+                var old = i < grill.Zones.Count ? grill.Zones[i] : null;
+                newZones.Add(new GrillZoneRuntime
+                {
+                    Index = i,
+                    Heat = ChurrasqueiraZoneHeat(zoneCount, evo.HeatBase, i, db),
+                    Items = old != null ? new List<FoodRuntime>(old.Items) : new List<FoodRuntime>()
+                });
+            }
+            grill.Zones = newZones;
+            grill.Stats.ZoneCount = zoneCount;
+        }
+
+        public static int RuntimeZoneIndex(GrillRuntime g, GameData db, string zoneId)
+        {
+            var primary = PrimaryGrillZones(db);
+            int tableIndex = db.Grill.Zones.FindIndex(z => z.Id == zoneId);
+            int n = g.Zones.Count;
+            if (tableIndex < 0 || n <= 0) return -1;
+            if (tableIndex >= primary.Count) return tableIndex < n ? tableIndex : -1;
+            if (n <= 1) return 0;
+            if (n >= primary.Count) return tableIndex;
+            return (int)Math.Round((double)tableIndex * (n - 1) / (primary.Count - 1));
+        }
+
+        public static bool RemoveFromGrill(GrillRuntime g, FoodRuntime f)
+        {
+            if (!f.OnGrill || f.ZoneIndex < 0 || f.ZoneIndex >= g.Zones.Count) return false;
+            var z = g.Zones[f.ZoneIndex];
+            int i = z.Items.IndexOf(f);
+            if (i < 0) return false;
+            z.Items.RemoveAt(i);
+            f.OnGrill = false;
+            f.ZoneIndex = -1;
+            return true;
+        }
+
+        public static int GrillSlotsFree(GrillRuntime g)
+        {
+            int free = 0;
+            for (int i = 0; i < g.Zones.Count; i++)
+                free += Math.Max(0, g.Stats.SlotsPerZone - g.Zones[i].Items.Count);
+            return free;
+        }
+
+        public static bool PublicFlipReady(GameData db, FoodRuntime f)
+        {
+            if (!f.OnGrill || f.Burned || f.Served || !f.Ingredient.FlipNeeded || f.Sides.Length < 2) return false;
+            double down = f.DownSide < f.Sides.Length ? f.Sides[f.DownSide] : 0.0;
+            if (down < db.Grill.Interaction.FlipPromptAtSideDoneness) return false;
+            for (int i = 0; i < f.Sides.Length; i++)
+            {
+                if (f.Sides[i] > down + 1e-9) return false;
+            }
+            return Evenness(f) < db.Ingredients.Shared.MinEvennessForPerfect;
         }
     }
 }

@@ -402,12 +402,18 @@ class Game {
       const yISO = `${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,'0')}-${String(yesterday.getDate()).padStart(2,'0')}`;
       if (this.meta.lastLoginISO === yISO) {
         this.meta.streak = Math.min(7, this.meta.streak + 1);
-      } else if (!this.meta.graceUsed) {
-        this.meta.graceUsed = true; // one grace day, streak holds
-      } else {
-        this.meta.streak = 1;
         this.meta.graceUsed = false;
-        this.meta.lastClaimDay = 0;
+      } else {
+        const lastLoginTime = new Date(this.meta.lastLoginISO).getTime();
+        const todayTime = new Date(today).getTime();
+        const dayDiff = Math.round((todayTime - lastLoginTime) / 86400000);
+        if (dayDiff === 2 && !this.meta.graceUsed) {
+          this.meta.graceUsed = true; // one grace day, streak holds
+        } else {
+          this.meta.streak = 1;
+          this.meta.graceUsed = false;
+          this.meta.lastClaimDay = 0;
+        }
       }
       // A finished 7-day cycle starts over the next day (it used to stay at 7 for good).
       if (this.meta.lastClaimDay >= 7) this.meta.lastClaimDay = 0;

@@ -235,7 +235,7 @@ describe('IAP catalogue', () => {
     expect(ids).toContain('brasa.starterpack.v1');
     expect(ids).toContain('brasa.noads.v1');
     expect(ids).toContain('brasa.pass.season.v1');
-    expect(ids.filter((i) => i.startsWith('brasa.coins.')).length).toBeGreaterThanOrEqual(3);
+    expect(ids.filter((i) => i.startsWith('brasa.embers.') || i.startsWith('brasa.coins.')).length).toBeGreaterThanOrEqual(3);
   });
 
   it('has unique product ids and non-empty contents', () => {

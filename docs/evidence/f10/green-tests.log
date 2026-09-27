@@ -1,0 +1,58 @@
+
+> churrasco-mestre-da-brasa@0.1.0 test
+> vitest run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90m/home/user/game_churrasqueiro[39m
+
+ [32m✓[39m tools/studio/test/economy-long.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 41955[2mms[22m[39m
+   [33m[2m✓[22m[39m meets every original target over1500 active turns with no rewarded/offline injection [33m 41953[2mms[22m[39m
+ [32m✓[39m tools/studio/test/art-registry.test.ts [2m([22m[2m52 tests[22m[2m)[22m[33m 8264[2mms[22m[39m
+ [32m✓[39m tools/studio/test/upgrades.test.ts [2m([22m[2m68 tests[22m[2m)[22m[33m 3311[2mms[22m[39m
+     [33m[2m✓[22m[39m bot can purchase offline tracks, but the comparable active campaign injects no absence [33m 3217[2mms[22m[39m
+ [32m✓[39m tools/studio/test/sim-grill.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 3542[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps three zones before Premium and reports four actual zones after unlock [33m 3241[2mms[22m[39m
+ [32m✓[39m tools/studio/test/golden.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 1986[2mms[22m[39m
+     [33m[2m✓[22m[39m replays every full-turn vector [33m 1861[2mms[22m[39m
+ [32m✓[39m tools/studio/test/churrasqueira.test.ts [2m([22m[2m25 tests[22m[2m)[22m[33m 2013[2mms[22m[39m
+     [33m[2m✓[22m[39m lata_valente: full turns complete, customers are served, skill still separates quality [33m 644[2mms[22m[39m
+     [33m[2m✓[22m[39m ze_da_esquina: full turns complete, customers are served, skill still separates quality [33m 380[2mms[22m[39m
+     [33m[2m✓[22m[39m parrilla_chef_cisma: full turns complete, customers are served, skill still separates quality [33m 346[2mms[22m[39m
+     [33m[2m✓[22m[39m the top evolution of every grill is playable too [33m 334[2mms[22m[39m
+ [32m✓[39m tools/studio/test/policy.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 1220[2mms[22m[39m
+     [33m[2m✓[22m[39m sends most items to their ideal zone at a skilled level [33m 368[2mms[22m[39m
+     [33m[2m✓[22m[39m is monotonically more likely to hit the ideal zone as skill rises [33m 613[2mms[22m[39m
+ [32m✓[39m tools/studio/test/vip.test.ts [2m([22m[2m44 tests[22m[2m)[22m[33m 1025[2mms[22m[39m
+     [33m[2m✓[22m[39m real progression has natural VIP without rewarded and obeys a persisted daily cap [33m 938[2mms[22m[39m
+ [32m✓[39m tools/studio/test/unlock-wiring.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 796[2mms[22m[39m
+     [33m[2m✓[22m[39m progression uses pre-payout XP and keeps every order inside the same eligible catalog [33m 650[2mms[22m[39m
+ [32m✓[39m tools/studio/test/turn.test.ts [2m([22m[2m29 tests[22m[2m)[22m[33m 539[2mms[22m[39m
+ [32m✓[39m tools/studio/test/slow-cuts.test.ts [2m([22m[2m19 tests[22m[2m)[22m[33m 373[2mms[22m[39m
+ [32m✓[39m tools/studio/test/ingredient-unlock.test.ts [2m([22m[2m50 tests[22m[2m)[22m[33m 621[2mms[22m[39m
+ [32m✓[39m tools/studio/test/tutorial.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 215[2mms[22m[39m
+ [32m✓[39m tools/studio/test/save.test.ts [2m([22m[2m28 tests[22m[2m)[22m[32m 213[2mms[22m[39m
+ [32m✓[39m tools/studio/test/staff.test.ts [2m([22m[2m54 tests[22m[2m)[22m[32m 185[2mms[22m[39m
+ [32m✓[39m tools/studio/test/cooking.test.ts [2m([22m[2m23 tests[22m[2m)[22m[32m 192[2mms[22m[39m
+ [32m✓[39m tools/studio/test/f05-debts.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 137[2mms[22m[39m
+ [32m✓[39m tools/studio/test/fourth-zone.test.ts [2m([22m[2m41 tests[22m[2m)[22m[32m 161[2mms[22m[39m
+ [32m✓[39m tools/studio/test/resources.test.ts [2m([22m[2m36 tests[22m[2m)[22m[32m 64[2mms[22m[39m
+ [32m✓[39m tools/studio/test/prep.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 52[2mms[22m[39m
+ [32m✓[39m tools/studio/test/data.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 73[2mms[22m[39m
+ [32m✓[39m tools/studio/test/offline.test.ts [2m([22m[2m34 tests[22m[2m)[22m[32m 46[2mms[22m[39m
+ [32m✓[39m tools/studio/test/a06-final-matrix.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+ [32m✓[39m tools/studio/test/late-income.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 43[2mms[22m[39m
+ [32m✓[39m tools/studio/test/economy.test.ts [2m([22m[2m27 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+ [32m✓[39m tools/studio/test/monetization.test.ts [2m([22m[2m27 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32m✓[39m tools/studio/test/l10n.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tools/studio/test/cooking-ui.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+ [32m✓[39m tools/studio/test/prep-ui.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tools/studio/test/f10-meta-l10n.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tools/studio/test/f09-unity-setup.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m tools/studio/test/upgrade-ui.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m tools/studio/test/gates.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m33 passed[39m[22m[90m (33)[39m
+[2m      Tests [22m [1m[32m702 passed[39m[22m[90m (702)[39m
+[2m   Start at [22m 19:02:24
+[2m   Duration [22m 75.29s[2m (transform 907ms, setup 0ms, import 2.07s, tests 67.20s, environment 5ms)[22m
+

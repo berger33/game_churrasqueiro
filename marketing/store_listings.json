@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "version": 1,
+  "package": "com.studiobrasa.churrascomestredabrasa",
+  "defaultLocale": "pt-BR",
+  "targetAudience": "13+",
+  "category": "GAME_CASUAL",
+  "containsAds": true,
+  "hasInAppPurchases": true,
+  "dataSafety": {
+    "collectsPii": false,
+    "encryptedInTransit": true,
+    "deletionRequestSupported": true,
+    "deletionUrl": "https://studiobrasa.games/privacy/delete-data",
+    "privacyPolicyUrl": "https://studiobrasa.games/privacy",
+    "collectedDataTypes": [
+      {
+        "type": "Analytics",
+        "purpose": "Gameplay balance, bug fixing, retention",
+        "optional": false
+      },
+      {
+        "type": "Device Or Other Identifiers",
+        "detail": "Anonymous Install UUID only (no hardware serial or IMEI)",
+        "purpose": "Save continuity and duplicate reward prevention",
+        "optional": false
+      }
+    ]
+  },
+  "locales": {
+    "pt-BR": {
+      "title": "CHURRASCO! O Mestre da Brasa",
+      "shortDescriptionVariants": {
+        "A_skill": "Domine a brasa, acerte o ponto da picanha e seja o maior churrasqueiro!",
+        "B_progression": "Do quintal à maior churrascaria do Brasil. Construa seu império da brasa!",
+        "C_culture": "Picanha, linguiça e pão de alho. O autêntico churrasco brasileiro virou jogo!"
+      },
+      "fullDescription": "Prepare o carvão, acenda a grelha e sinta o aroma da brasa!\n\nCHURRASCO! O Mestre da Brasa é o primeiro jogo que traz a verdadeira tradição do churrasco brasileiro na palma da sua mão. Controle a temperatura de diferentes zonas de calor, acerte o ponto perfeito da carne e sirva clientes exigentes em um ritmo eletrizante.\n\nDESTAQUES:\n🔥 DOMINE A BRASA: Grelhe picanha, costela, cupim, linguiça toscana, coração de frango, queijo coalho e pão de alho no ponto exato.\n🥩 PONTO PERFEITO: Identifique o ponto com precisão visual (cru, selado, ao ponto menos, perfeito, ao ponto mais, bem passado).\n🏠 CONSTRUA SEU IMPÉRIO: Comece em um churrasco no quintal e evolua até ter um trailer, uma churrascaria de bairro, um restaurante premium e uma rede nacional!\n🗺️ ROTA DO BRASIL: Viaje pelo país desbloqueando cortes e receitas regionais em mais de 16 paradas.\n👥 EQUIPE COMPLETA: Contrate assador, garçom, auxiliar e caixa para automatizar seu serviço.\n📱 JOGUE OFFLINE: Sem energia e sem travas. Jogue onde e quando quiser, mesmo sem internet!\n\nSEM PEGADINHAS:\n• Zero Pay-to-Win: dinheiro compra cosméticos e tempo, nunca poder ou vitória.\n• Sem anúncios forçados durante o preparo.\n\nBaixe agora e torne-se o verdadeiro Mestre da Brasa!",
+      "keywords": [
+        "churrasco",
+        "churrasqueiro",
+        "picanha",
+        "jogo de cozinhar",
+        "churrascaria",
+        "mestre da brasa",
+        "cooking game",
+        "restaurante",
+        "espetinho",
+        "jogo offline"
+      ]
+    },
+    "en-US": {
+      "title": "CHURRASCO! Master of the Grill",
+      "shortDescriptionVariants": {
+        "A_skill": "Master the coals, grill perfect picanha and become the ultimate grill master!",
+        "B_progression": "From backyard BBQ to national steakhouse empire. Build your grill legacy!",
+        "C_culture": "Picanha, sausage and garlic bread: authentic Brazilian BBQ is now a game!"
+      },
+      "fullDescription": "Fire up the grill and smell the barbecue!\n\nCHURRASCO! Master of the Grill brings the rich tradition of authentic Brazilian barbecue to mobile. Master multi-zone thermal management, achieve the perfect sear on world-class cuts, and serve demanding guests in fast-paced arcade cooking action.\n\nFEATURES:\n🔥 MASTER THE EMBERS: Grill Picanha, Ribs, Beef Hump, Tuscan Sausage, Chicken Hearts, Coalho Cheese and Garlic Bread to perfection.\n🥩 DONENESS MASTERY: Identify 8 precise stages of doneness with intuitive visual cues and symbols.\n🏠 EMPIRE PROGRESSION: Start with a humble backyard setup and grow into food trucks, steak houses and a nationwide restaurant franchise!\n🗺️ BRAZILIAN ROUTE: Travel across regional BBQ capitals unlocking unique local recipes.\n👥 HIRE YOUR CREW: Staff up with grill assistants, waiters and managers.\n📱 PLAY OFFLINE: No energy meters, no forced ads during gameplay. 100% playable offline!\n\nFAIR MONETIZATION:\n• Zero Pay-to-Win: skill is always rewarded.\n• No intrusive ads during cooking turns.\n\nDownload now and become the Master of the Grill!",
+      "keywords": [
+        "bbq",
+        "grill",
+        "barbecue",
+        "cooking game",
+        "restaurant",
+        "steakhouse",
+        "picanha",
+        "tycoon",
+        "chef",
+        "offline game"
+      ]
+    },
+    "es-419": {
+      "title": "CHURRASCO! Maestro de la Brasa",
+      "shortDescriptionVariants": {
+        "A_skill": "¡Domina las brasas, logra el punto de la picaña y sé el mejor parrillero!",
+        "B_progression": "Del patio trasero a una gran parrillada nacional. ¡Construye tu imperio!",
+        "C_culture": "Picaña, chorizo y pan de ajo. ¡El auténtico churrasco ya es un juego!"
+      },
+      "fullDescription": "¡Enciende el carbón y siente el auténtico aroma de las brasas!\n\nCHURRASCO! Maestro de la Brasa trae la pasión de la parrilla brasileña a tu móvil. Controla zonas térmicas independientes, domina el punto exacto de la carne y atiende a clientes exigentes con rapidez y precisión.\n\nCARACTERÍSTICAS:\n🔥 DOMINA LAS BRASAS: Cocina picaña, costilla, joroba, chorizo, corazones, queso coalho y pan de ajo al punto perfecto.\n🥩 8 PUNTOS DE COCCIÓN: Identifica fácilmente cada término con indicadores visuales universales.\n🏠 DE LA CALLE AL IMPERIO: Evoluciona desde una parrilla humilde en el patio hasta las churrascarías más prestigiosas.\n🗺️ RUTA REGIONAL: Recorre el mapa desbloqueando cortes y guarniciones tradicionales.\n👥 FORMA TU EQUIPO: Contrata ayudantes, camareros y cajeros.\n📱 JUEGA SIN CONEXIÓN: Sin límites de energía. ¡Juega donde quieras, cuando quieras!\n\nJUEGO JUSTO:\n• Cero Pay-to-Win: el éxito depende de tu destreza.\n• Sin anuncios invasivos en plena cocción.\n\n¡Descárgalo hoy y conviértete en el auténtico Maestro de la Brasa!",
+      "keywords": [
+        "churrasco",
+        "parrillada",
+        "asado",
+        "juego de cocina",
+        "restaurante",
+        "picaña",
+        "parrillero",
+        "carnicería",
+        "juego casual",
+        "offline"
+      ]
+    }
+  }
+}

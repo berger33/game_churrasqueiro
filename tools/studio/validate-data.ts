@@ -8,7 +8,6 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { DATA_DIR, loadAndValidate, readJson } from './load-data.ts';
-import { validateDatabase } from '../sim-core/src/data.ts';
 import { costFor } from '../sim-core/src/economy.ts';
 import { TUTORIAL_EVENT_PARAMS, TUTORIAL_TRIGGERS, type TutorialTable } from '../sim-core/src/tutorial.ts';
 import { generateLevels } from './gen-levels.ts';
@@ -231,7 +230,12 @@ const high = byId.get('HIGH')?.particlesMultiplier ?? 0;
 if (low >= high) fail('performance.json', 'LOW quality must use fewer particles than HIGH');
 
 // ── 4. The level generator must produce a sane, playable curve ──────────────
-const levels = generateLevels([[0, 24], [1, 36]]).levels;
+const generatedLevels = generateLevels([[0, 24], [1, 36]]).levels;
+const committedLevels = (readJson('levels.json') as { levels: typeof generatedLevels }).levels;
+if (JSON.stringify(generatedLevels) !== JSON.stringify(committedLevels)) {
+  fail('levels.json', 'committed levels.json does not match generateLevels output — run npm run gen-levels');
+}
+const levels = committedLevels;
 if (levels.length !== 60) fail('levels', `expected 60 authored levels, got ${levels.length}`);
 const ids = new Set<string>();
 for (const l of levels) {
@@ -374,5 +378,3 @@ if (problems.length === 0) {
   for (const p of problems) console.error(`  [${p.file}] ${p.message}`);
   process.exit(1);
 }
-
-void validateDatabase;

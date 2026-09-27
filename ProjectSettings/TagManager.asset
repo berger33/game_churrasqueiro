@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - GrillZone
+  - FoodSkewer
+  - Customer
+  - PrepStation
+  - TrashBin
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Gameplay
+  - Grill
+  - Food
+  - Prep
+  - Customer
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Background
+    uniqueID: 0
+    locked: 0
+  - name: Grill
+    uniqueID: 100
+    locked: 0
+  - name: Food
+    uniqueID: 200
+    locked: 0
+  - name: Customer
+    uniqueID: 300
+    locked: 0
+  - name: UI
+    uniqueID: 400
+    locked: 0
+  - name: VFX
+    uniqueID: 500
+    locked: 0
