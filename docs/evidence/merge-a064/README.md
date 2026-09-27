@@ -35,3 +35,17 @@ A branch ativa da sessão e main serão preservadas.
   (excluindo apenas logs brutos de evidência) está limpo; logs não foram adulterados por estética.
 - Download do log de Actions retornou EOF no endpoint de armazenamento; usamos as anotações
   originais do check via GitHub API, sem tratar ausência do arquivo como ausência de falha.
+
+## Retomada após erro de sessão (2026-09-27)
+
+- A sessão anterior caiu depois de publicar a regressão (`43042ff7`) e antes da correção.
+- [CI36300987251](https://github.com/berger33/game_churrasqueiro/actions/runs/36300987251)
+  no commit só com a regressão: **vermelho, 2 falhas** (`econ.effectiveHeat` e
+  `econ.effectiveHeat.boundaries`) — prova de que o teste falha sem a correção.
+- Correção mínima em `Assets/Scripts/Core/Rules.cs`: `EffectiveHeat` retorna 0 quando
+  `Refilling > 0 || CharcoalT >= 1`, idêntico a `cooking.ts`. Nenhum outro sistema portado.
+- Esta sessão é fixa na branch `arena/01a0e19d-game-churrasqueiro`; os commits do PR15 foram
+  trazidos por fast-forward e o merge segue por um PR novo a partir dela. PR15 é fechado como
+  substituído e sua branch removida após o merge.
+- Local: `npm run gates` 14/15 (C# SKIP; instalação do .NET bloqueada no sandbox). O veredito
+  C# é exclusivamente o do CI remoto.
