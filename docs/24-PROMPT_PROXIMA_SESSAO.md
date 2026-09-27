@@ -1,489 +1,292 @@
-# Prompt de retomada — correção do núcleo técnico após fechamento da arte
+# Prompt completo de retomada — após a entrega do PR #14
 
-Use este texto como contexto inicial da próxima sessão no repositório
-`berger33/game_churrasqueiro`. Trabalhe somente na branch atribuída à nova sessão e confirme o
-estado real de `origin/main` antes de alterar arquivos.
-
-## Handoff A-02 — vigente (2026-09-26 local /27 UTC)
-
-- Mesma branch **arena/01a0e03e-game-churrasqueiro**, PR14 aberto/sem merge. Baseline
-  **223b843**: árvore limpa, fetch/ancestralidadePR13, npm ci,299 testes,14/15 gates
-  locais, sim longo15/18 com os3 desvios A-01. Nenhuma autorização de merge.
-- **A-02 funcional validado.** `TurnConfig.playerLevel` agora obrigatório, inteiro>=1,
-  snapshot no começo. Catálogo exige nível E restaurante. Natural/scripted orders,
-  estoque canônico, bot e bancada usam esse conjunto. Menu vazio rejeitado; unusualOnly
-  só sorteado se houver receita não comum desbloqueada, forçado sem menu gera erro.
-- Callers: progressão p.level antes de crédito, UI meta.level, FTUE1. Curva skill cria
-  newPlayerState por skill e acumula XP real via applyTurnResult, sem compras/upgrades.
-  Não derivar nível de levelId/index. Mechanics fixtures usam44 explicitamente para
-  preservar a regra isolada; não existe fallback44 na produção.
-- **351/351 testes**,18 arquivos;50 regressões red no original,2 wiring red com caller
-  all-unlocked, harness red com bancada antiga e tentativa de legumes bloqueados.
-  Agora **14/15 gates locais**, C# SKIP. **CI A-02 15/15 aprovado**,
-  [run36286427123](https://github.com/berger33/game_churrasqueiro/actions/runs/36286427123) em44ccf11.
-  Commits8d6fbde (código/testes/vetores) e44ccf11 (docs/evidências) enviados. Ver HEAD/CI
-  final no corpo do PR antes de avançar; C#139 checks com25 not ported, não paridade total.
-- **106+44 vetores**: formato principalv2, playerLevel nos20 turnos. Perfis1/4/8/14 nos
-  12 autorais (fixtures de cobertura, não previsão de XP da campanha),44 nos8 avançados.
-  **9 expectativas mudam**,3 de nível14 e8 avançadas intactas; cooking48/scoring32/economy6
-  e44 FTUE intactos. Tutorial vectors byte-idênticos. Replay valida os limites dos pedidos.
-- **Dados, schemas, Assets/Data, savev3 e tiposC# intactos**. C# permanece25 not ported
-  (5 economia+20 turnos); portar o novo contrato e regressões F2/A-01/A-02 só em F8.
-- **19 screenshots/244 sprites**, levels1/5/6/7 no save: catálogo/pedidos coerentes,
-  sem slot fantasma, queijo arrastável exatamente6 e após7. Fixture troca contexto/save;
-  não é metaprogressão natural concluída. FTUE16,1/32,9/38,3s e zero misses intactos.
-- **Longo15/18, exit1**:1500turnos, nível80/rest6/Fornalha3, renda22.233.557,
-  gasto10.873.220, saldo11.360.337, spend0,489, perfect75,7%, burned0,2%, lost3,5%,
-  duração172,5s. Restaurantes42/98/165/259/398/883; grills10/45/89; rendaL5/15/30/50
-  **10.480/39.445/108.533/192.223**. Falhas: rede883<950, L50=192.223>152.000,
-  spend0,489<0,70. Nenhum preço/tempo/receita/recompensa/limite retunado.
-- Curva .55 agora46,0% perfect/571moedas (antes55,7%/793), XP controla acesso aos itens.
-  Probe avançado A-01 nível44 mantém janelas/128turnos agregados inalterados.
-- **evidence/a02/**: red rules/wiring/UI, logs longos íntegros, vector-review.json,
-  progression-sample.json com60turnos reais/XP/pedidos. README explica métodos/limites.
-- npm audit mesmas5 (1 crítica/1 alta/3 moderadas), lock intacto/sem force-fix. Nightly
-  manual negado403 na etapa anterior: longo é evidência local, não inventar remoto.
-- **Próximo A-03:** fluxo real de prep/vinagrete no core/UI (input/hitboxes, pedidos mistos,
-  paciência/combo/resultado e orientação contextual), regressões antes da correção.
-  Vinagrete fica elegível em nível12/rest0; não remover para contornar o problema.
-- A-01 continua **2lados/flipNeeded:true por decisão explícita**, não perguntar de novo.
-  A-04 ainda exige decisão do dono. A-03–A-06 pendentes, economia global/F3/F4 não encerradas.
-  Ordem posterior preservada: F4 revalidação →F5 dívida →F6 tooling/security →F7 extração
-  seletivaPR7/8 →F8 C# →F9 Unity →F10 meta/l10n/a11y →F11 serviços →F12 QA →F13 release.
-  Sem arte nova, sem merge, sem portas C#/Unity/credenciais/publicação sem evidência.
-
-## Handoff A-01 — histórico, substituído por A-02 acima (2026-09-26 local /27 UTC)
-
-- Branch desta sessão **`arena/01a0e03e-game-churrasqueiro`**, PR #14 aberto/sem merge.
-  F1/F2 concluídas; baseline A-01 `ec8ce1b`, árvore limpa, fetch/PR13 ancestry, npm ci,
-  272 testes, gates 14/15 (C# SKIP), sim longo 18/18 reexecutados antes de editar.
-- **Decisão explícita do dono (`require-flip`): manter costela/cupim com `sides:2`,
-  mudar `flipNeeded:true`. A recomendação `sides:1` foi REJEITADA. Não perguntar de novo.**
-  Decisão registrada em `331e1bb`. Ingredients v6, Assets/Data sincronizado, validador TS
-  rejeita multi-face sem flag; bot já lê o flag, sem alteração de fórmula ou tuning.
-- **A-01 funcional validado, aceite econômico pendente.** Regressões: regras 17/19 red,
-  UI 4/6 red, seleção de vizinho 1/8 red + falha real no harness. Final **299/299 testes**
-  em 16 arquivos. Janelas reais em 3 zonas, bot elegível restaurantes 3–6, curva adicional
-  com 8 seeds por skill/tier. Evidências persistidas em **`docs/evidence/a01/`**.
-- Dependências UI mínimas: C-06 truncagem resolvida por páginas de 8; dica normal espera
-  dourar como no FTUE; hit-test de pratos sobrepostos escolhe centro mais próximo sem
-  encolher área. Botão/descrições dos cortes pt/en/es. Nenhuma arte/tabela FTUE alterada.
-- **106+44 vetores**: 98 antigos e 44 FTUE integralmente preservados em input/expect;
-  metadado ingredients 5→6; 8 turnos avançados novos com Fornalha evo 3, restaurantes
-  3–6, skills .55/.85. Retém identidades observadas entre compactações, conta served via
-  `fulfilledBy` e não flag também usado por discard. Replay confere uso real dos cortes.
-- **Gates locais 14/15**, C# SKIP sem dotnet. CI remoto A-01 **15/15 aprovado**,
-  [run 36285270473](https://github.com/berger33/game_churrasqueiro/actions/runs/36285270473) em `8b042ca`;
-  conferir HEAD/checks finais no PR. Commits `331e1bb` decisão, `579c846` implementação,
-  `8b042ca` docs/evidências. Nightly dispatch negado (403 permissão da integração),
-  portanto sim longo só executado localmente, repetido e idêntico. C# **25 not ported** (5+20),
-  ainda precisa das regressões F2 e A-01 em F8. Não declarar paridade plena.
-- **Sim longo 15/18, exit 1, falha preservada.** 1.500 turnos, nível 80/rest6/Fornalha3:
-  renda **22.675.447**, gasto **10.873.220**, saldo **11.802.227**, spend **0,480**,
-  perfect **75,9%**, burned **0,2%**, lost **3,7%**, duração **173,4 s**. Restaurantes
-  **32/89/147/239/383/859**, grills **7/45/90**, renda L5/15/30/50
-  **10.793/41.115/114.616/182.381**. Desvios: rede 859<950, L50 182.381>152.000,
-  spend 0,480<0,70. Metas, preços, janelas, tempos e política **não retunados**.
-- Curto verde não substitui longo; curva autoral original só cobre restaurantes 0/1.
-  Probe novo `node --experimental-strip-types tools/studio/slow-cuts-report.ts` é
-  read-only, saída JSON; before/after e logs longos íntegros persistidos.
-- FTUE **16,1/32,9/38,3 s**, zero misses; **17 screenshots**, 244 sprites. Quatro shots
-  novas validam página 2 e virada/janela perfeita dos dois cortes via ponteiro real.
-  Fixture troca só level inicial/save para restaurante4/grill comprado: **não** é
-  desbloqueio natural/metaprogressão pronta. Sobreposição de rótulos continua para polish.
-- npm audit: mesmas 5 (1 crítica, 1 alta, 3 moderadas), dependências/lock intactos.
-- **Próximo: A-02**, ainda dentro da F3: nível no contrato + gating pool/bancada, testes
-  antes/no/depois de unlock, preservando FTUE determinístico. Antes, confirmar árvore,
-  branch, PR e CI atuais. Transportar os 3 desvios econômicos para F4 após A-02–A-06;
-  não chamar F3/F4 completas nem retunar para verde. A-04 ainda exige decisão de produto.
-- Sem arte, sem portas C#/Unity, sem merge autorizado, sem merge PR7/8, sem credenciais.
-  Ordem posterior F4 economia → F5 dívida → F6 tooling/security isolados → F7 extração
-  seletiva → F8 C# → F9 Unity → F10 meta/l10n/a11y → F11 serviços → F12 QA → F13 release.
-
-## Handoff F2 — histórico, substituído por A-01 acima (2026-09-26 local / 27 UTC)
-
-### Estado atual e evidências
-
-- Mesma branch: `arena/01a0e03e-game-churrasqueiro`. Fetch confirmou PR #14 ainda **aberto,
-  sem merge**; F2 amplia esse PR porque não se pode criar/trocar de branch nesta sessão.
-  Main contém o merge PR #13 (`4fe4f4f`); **não assumir que F1/F2 foram integradas**.
-- Baseline da continuação `3f1c9c6`: árvore limpa, Node 22.22.3/npm 10.9.8, `npm ci`,
-  254 testes, 14/15 gates locais e 18/18 guardrails longos, mesmas 5 vulnerabilidades.
-- **F1 permanece concluída:** gate de arte, 52 testes, 244 IDs protegidos; sem arte nova.
-- **F2 concluída na referência TS:**
-  - `5803806` A-07: restaurantes inicial=1, sequência 2..7; save v1/v2/v3 normalizado após
-    CRC, sem mudar shape/v3 nem carteiras/conquistas/contadores não relacionados.
-  - `f2958d6` A-08: contar uma única transição onBurn, nunca somar de novo ao servir.
-  - `02e7f61` A-09: `result()` puro, bônus e rounding só no retorno, eventos/counters
-    independentes; leituras no meio do turno não congelam o resultado.
-- Provas red: A-07 7 falhas em 8 novos testes; A-08 3 falhas em 4; A-09 8 falhas
-  (6 novos + 2 consumidores fortalecidos). Reproduções incluem 2/5/9/14/20/27 restaurantes,
-  prato queimado=2 e moedas 745→842 (FTUE 86→127) na segunda leitura.
-- Final: **272/272 testes**, 14 arquivos; **14/15 gates locais**, só C# SKIP sem .NET.
-  `sim:long` após cada correção: **18/18**, saída integral idêntica ao baseline, spend 0,741,
-  burned 5,7%, perfect 71,8%, perdidos 6,9%, média 169,8 s, nível 80 em 1.500 turnos.
-- `check-vectors`: **98 + 44 sem drift**, não regenerados. Vetores do bot não exercitam
-  sequência de unlock/save, descarte→serve queimado ou segunda leitura; testes novos cobrem.
-  Replay dos 12 turnos e consumidor FTUE agora exigem leitura idempotente.
-- FTUE 16,1/32,9/38,3 s, zero erros; 244 sprites, 13 screenshots; dados/schemas/levels/
-  imagens/preços intactos. `npm audit` continua 1 crítica + 1 alta + 3 moderadas.
-- CI remoto F2/PR #14: **15/15 aprovado** em `faf2081`, [run 36283526080](https://github.com/berger33/game_churrasqueiro/actions/runs/36283526080),
-  incluindo C# (139 checks existentes; 17 vetores ainda não portados). O commit seguinte
-  só registra essa evidência; conferir também o check do HEAD no PR. Actions v4/runner
-  avisam de migração Node 20→24 e futura imagem Ubuntu 26; triagem na F6.
-
-### Limites do que foi corrigido
-
-- A-01–A-06 **seguem abertos**, assim como a triagem média/baixa, dependências e paridade C#.
-- O save não serializa turnos ativos; teste de restauração de burns cobre resultado creditado
-  ao jogador + save/load. Histórico inflado de burns não pode ser reconstruído sem diário por
-  item e não é alterado. Normalização de restaurantes confia em `restaurantIndex` válido.
-- `result()` é leitura, não concessão de recompensa. `applyTurnResult`/carteira ainda devem
-  ser chamados uma única vez; não foi implementado ledger idempotente de resgates.
-- C# continua sem os 12 vetores completos e 5 econômicos. Portar também as regressões F2
-  quando chegar F8, sem confiar só no conjunto golden antigo.
-
-### Próxima ação concreta — F3/A-01
-
-1. Confirmar branch/base/árvore e estado do PR #14; não mergear sem autorização.
-2. Ler os documentos obrigatórios e docs/23-PLANO §9. **Confirmar com o dono a escolha A-01:**
-   recomendação = costela/cupim `sides:1`, mantendo `flipNeeded:false` para cortes lentos;
-   alternativa = exigir virada com bot/UI/tutorial/docs alinhados. Não editar dados sem decisão.
-3. Reproduzir os cortes indo de cru direto a queimado; criar regressões de janela perfeita e
-   bot avançado antes de corrigir. Revisar dados e diff semântico dos vetores afetados;
-   revalidar renda, perfect/burned, unlocks e curva de habilidade. Nunca retunar só para passar.
-4. Depois A-02 (nível no contrato + gating sem mudar roteiro FTUE), A-03 (prep real), A-04
-   (decisão explícita sobre quarta zona), A-05 (VIP), A-06 (consumidores das 27 trilhas).
-5. Ordem restante: F4 revalidação global → F5 dívida técnica → F6 dependências isoladas →
-   F7 revisão seletiva PRs #7/#8 → F8 C# → F9 Unity → F10 meta/l10n/acessibilidade →
-   F11 serviços → F12 QA/device → F13 publicação com evidências.
-6. Não iniciar arte/Unity/C# agora, não mergear PRs antigos, não inserir credenciais. Cada
-   alteração exige red/green, gates+sim longo, docs atualizadas e commits na branch atribuída.
+Copie este documento para iniciar a próxima sessão. O pedido do dono foi integrar o
+trabalho concluído, limpar branches já integradas e continuar depois em uma nova sessão.
+Este handoff foi preparado para o merge autorizado do PR #14; **confirme o estado real
+no GitHub antes de alterar arquivos**. O registro final de merge/CI está no próprio PR.
+O histórico dos checkpoints permanece no plano §9, na auditoria, nas evidências e no Git
+(inclusive a versão anterior deste handoff em `7a591f3`).
 
 ---
 
-## Handoff F1 — histórico de 2026-09-27 UTC (substituído pela F2 acima)
+## 1. Missão e regras obrigatórias
 
-### Entrega desta sessão
+Você está no repositório **`berger33/game_churrasqueiro`**, jogo **CHURRASCO! O Mestre da
+Brasa**, Android portrait, Unity 6 LTS como destino. Hoje existe uma referência TS e
+protótipo web; **ainda não existe um jogo Unity publicável**.
 
-- Branch usada exclusivamente: `arena/01a0e03e-game-churrasqueiro`.
-- Baseline `4fe4f4f` contém o merge PR #13, também confirmado em `origin/main` após fetch.
-  CI de PR #13 aprovado, run `36281871246`; árvore inicial limpa; Node 22.22.3/npm 10.9.8.
-- Commits: `70a60b3` (plano/baseline), `ad29b56` (gate e testes), `92976b2` (docs/handoff).
-  [PR #14](https://github.com/berger33/game_churrasqueiro/pull/14) aberto, **sem merge**.
-  CI remoto **15/15 aprovado**, incluindo C#, em `92976b2`: [run 36282761422](https://github.com/berger33/game_churrasqueiro/actions/runs/36282761422).
-  O commit seguinte só registra essa evidência nas docs; confira também seu check no PR.
-- **F1 implementada:** `npm run check-art-registry`, CLI somente leitura em
-  `tools/art/check-art-registry.ts`, integrado em `run-gates.mjs`, package e CI.
-  Confere masters ↔ CSV ↔ especificações de lote ↔ manifesto ↔ runtime e lookups;
-  recusa pending/rejected/superseded no bundle, órfãos/links/caminhos inseguros/duplicatas;
-  mantém os 244 IDs de `art/approved-runtime-baseline.json` (extraídos e conferidos em PR #13).
-  Não regenerar essa lista para fazer um teste passar. PNG/WebP não foram alterados.
-- Reprodução: gate antigo aceitou arquivo órfão; 49 testes inicialmente vermelhos.
-  Final: **52 testes do gate** (46 negativos + 6 positivos), **254/254 testes no total**,
-  14 arquivos; **14/15 gates locais**, único SKIP = C# sem .NET SDK.
-- `sim:long`: **18/18** e saída integral idêntica ao baseline; spend 0,741, burned 5,7%,
-  perfect 71,8%, perdidos 6,9%, duração 169,8 s, nível 80 em 1.500 turnos.
-  Vetores 98 + 44 intactos; FTUE 16,1/32,9/38,3 s e zero erros; 244 sprites/13 screenshots.
-- `npm audit` antes/depois: **5 vulnerabilidades**, 1 crítica, 1 alta, 3 moderadas; exit 1.
-  Nenhuma atualização major aplicada, nem `audit fix --force`.
-- **Todos A-01–A-09 continuam abertos.** Nenhum contrato de gameplay/save/dados mudou.
-  Nenhuma decisão de produto foi aplicada; não confundir esta F1 com correção das regras.
+**Seu próximo trabalho é F3/A-03: implementar o fluxo real de preparo do vinagrete.**
+Não recomece A-01/A-02, não gere outro lote de arte, não antecipe C# ou Unity.
 
-### Próxima ação ao encerrar F1 — histórica
+1. Trabalhe **somente na branch atribuída à nova sessão**. Não reutilize/recrie a branch
+   da sessão anterior `arena/01a0e03e-game-churrasqueiro`, destinada à exclusão após merge.
+   Não troque/crie branches se a plataforma fixa a branch da sessão.
+2. Leia integralmente README, docs/18, docs/22, docs/23-AUDITORIA, docs/23-PLANO e este
+   handoff. Consulte os documentos de regras/economia/UX conforme os contratos envolvidos.
+3. Reproduza o defeito e crie regressão que falha **antes** de corrigi-lo. Referência TS
+   e dados primeiro; não portar defeitos para C#.
+4. Não retune preços, recompensas, tempos ou limites apenas para deixar guardrails verdes.
+   Não enfraqueça schemas/testes/gates nem aceite vetores só porque foram regenerados.
+5. Preserve o FTUE determinístico, os desbloqueios A-02 e as decisões de produto abaixo.
+6. Mantenha código, testes, docs e evidências sincronizados; preserve o histórico do plano,
+   distinguindo concluído, em curso, bloqueado e pendente. Um checkpoint por vez.
+7. A autorização de merge anterior vale **somente para PR #14**. Mudanças da nova sessão
+   precisam de nova autorização antes de merge. Nenhum merge automático de PR #7/#8.
+8. Sem credenciais reais no Git/chat; sem `npm audit fix --force` sem revisão de major.
+   Publicação e testes de dispositivo exigem artefatos/brutos reais, não alegações.
 
-1. Na branch atribuída à próxima sessão, fetch/confirmar base real e árvore limpa; conferir
-   estado do PR desta entrega. Não assumir que ele foi integrado. Reexecutar baseline.
-2. Ler integralmente os documentos obrigatórios e **docs/23-PLANO §9**, ordem vigente:
-   F1 arte (implementada) → **F2 A-07/A-08/A-09** → F3 A-01–A-06 → F4 revalidação →
-   F5 dívida média/baixa → F6 segurança → F7 revisão seletiva PRs antigos → F8 C# →
-   F9 Unity → F10 metajogo/l10n/acessibilidade → F11 serviços → F12 QA → F13 publicação.
-3. **Reproduzir A-07 primeiro** (`economy.ts`, `newPlayerState`, `unlockRestaurant` e save).
-   Escrever testes vermelhos para inicial=1, sequência 2..7, tentativa repetida, roundtrip e
-   save antigo com contador inflado; considerar metas de conquistas 3/5/7. Só então corrigir.
-4. A-08: única contagem por alimento queimado, servir/descartar/múltiplos/resultado/restauração.
-   A-09: result puro/memoizado, repetição/igualdade/moedas/XP/serialização/chamadores reais.
-5. Antes de A-01/A-04, pedir confirmação: recomendados cortes efetivamente de um lado
-   mantendo `flipNeeded:false` e quarta zona real ponta a ponta. Não aprovados ainda.
-   VIP/caps/placement, política de upgrades comprados e streak/offline também têm decisões
-   listadas no plano; não bloqueiam F2.
-6. Teste red antes de cada correção; revisar diff semântico antes de regenerar vetores;
-   gates + sim longo por grupo. Não retunar para mascarar falhas; não iniciar arte/C#/Unity.
-7. Fazer commits coerentes/PR na branch atribuída. Não mergear sem autorização explícita;
-   não mergear PRs #7/#8; revisar por tema antes de paridade econômica C#.
+## 2. Git, PRs e limpeza acordada
 
----
+- Entrega a integrar: **PR #14**, F1 + F2 + A-01 + A-02 + este fechamento:
+  https://github.com/berger33/game_churrasqueiro/pull/14
+- A arte anterior entrou pelo PR #13; merge base conhecido:
+  `4fe4f4ff20b11cfd625b0f65f7c4944701e373b9`.
+- Cabeça funcional/documental antes deste fechamento: `7a591f3`.
+  A-02: `8d6fbde` código/testes/vetores; `44ccf11` docs/evidências; `7a591f3` CI.
+- O dono escolheu **apagar apenas branches integradas e preservar os PRs #7 e #8**.
+  Não fechar nem apagar essas duas branches sem nova decisão/revisão:
+  - PR #7: `arena/01a0daed-game-churrasqueiro`, SHA
+    `1874270c0464c24e659e5edac9a0a03b00569d37`.
+    Progressão/brasas, carvão e paridade econômica C#: conteúdo ainda não revisado.
+  - PR #8: `arena/01a0de76-game-churrasqueiro`, SHA
+    `021cc2f2718cfff451659409432f1431c2318a5d`.
+    Propostas antigas de arte/grelhas: comparar com os assets já aprovados.
+- Limpeza autorizada após conferir os merges: branches dos PRs #12
+  (`arena/01a0dfd3-game-churrasqueiro`), #13 (`arena/01a0e001-game-churrasqueiro`) e #14.
+  `main` e branches #7/#8 devem permanecer. A branch local da sessão anterior pode continuar
+  existindo naquele workspace; não confundir com branch remota preservada.
 
-## Objetivo original pós-arte (histórico; atualização abaixo prevalece)
+### Antes de editar
 
-Começar a correção sistemática dos **nove achados de alta severidade** de
-`docs/23-AUDITORIA_TECNICA.md`, com testes negativos que falhem antes da correção. Não iniciar
-o projeto Unity nem portar regras defeituosas para C# antes de estabilizar a referência
-TypeScript e revalidar a economia.
+- `git status`, identificar branch da sessão, `git fetch origin --prune`.
+- Usar `gh` para confirmar **PR #14 MERGED**, SHA do merge, CI e ancestralidade em
+  `origin/main`/base da nova sessão. Se ainda não entrou ou houver divergência, **pare e
+  relate**, não suponha que o handoff substitui o estado real.
+- Conferir PRs #7/#8 ainda abertos e branches preservadas. Usar `git` para operações
+  locais e `gh` para PRs/checks; nunca pedir tokens/senhas.
+- Registrar baseline e diferenças em relação aos números abaixo.
 
-## Estado confirmado em 2026-09-26 (histórico)
+## 3. O que já está feito
 
-### Visão executiva
+### Arte e F1 — concluídos
 
-O projeto é um **protótipo técnico sólido**, mas ainda não é um jogo Unity publicável.
+- Todos os 33 assets pendentes foram substituídos/aprovados nos lotes 08–11.
+- Registro: **244 approved, 0 pending, 1 superseded**; runtime **244 sprites /3,98 MB WebP**.
+  Cobertura: 16 comidas, 7 fundos, clientes, grills, ícones e arte de metajogo.
+- `check-art-registry` integrado aos 15 gates: masters/CSV/lotes/manifest/runtime,
+  sem órfãos, approved-only e baseline nominal de **244 IDs protegidos**.
+  **52 testes**, incluindo 46 negativos. Não regenerar esse baseline para esconder remoções.
+- Aprovar/embarcar assets **não implementou** coleção, eventos, loja, passe, mapa etc.
+- Nenhum novo lote de arte é necessário para o próximo checkpoint.
 
-Existe e está automatizado:
+### F2 — A-07/A-08/A-09 corrigidos
 
-- fonte de verdade de dados, schemas e sincronização para `Assets/Data`;
-- regras de referência TypeScript, economia, save, FTUE e vetores dourados;
-- protótipo web jogável com FTUE completo;
-- arte 2D aprovada e bundle WebP;
-- áudio e materiais de loja para prototipagem;
-- CI com 14 gates, incluindo compilação/paridade parcial do núcleo C# no GitHub.
+- **A-07:** `restaurantsUnlocked` começa em1, passa por2..7, atribui index+1 sem acumular.
+  Saves v1/v2/v3 normalizados **depois de validar o CRC original**, sem mudar shape/v3,
+  carteiras/conquistas nem outros contadores. Commit `5803806`.
+- **A-08:** queimado contado uma única vez na transição onBurn; não duplicar ao servir
+  ou descartar. Não inventar correção de histórico sem diário por item. `f2958d6`.
+- **A-09:** `result()` puro/idempotente, bônus e arredondamento no retorno, eventos e
+  counters independentes; leitura no meio do turno não modifica/congela a simulação.
+  Regressões 745→842 e FTUE86→127 eliminadas. `02e7f61`.
+- Limites: save não serializa turno ativo; `applyTurnResult`/carteira continua responsabilidade
+  de concessão **uma vez** pelo chamador, não existe ledger idempotente de resgates.
 
-Ainda não existe:
+### F3/A-01 — funcional corrigido; aceite econômico global pendente
 
-- projeto Unity completo (`Packages/`, `ProjectSettings/`, cenas, prefabs e `.meta` de importação);
-- APK/AAB ou build assinado para dispositivo;
-- integração real de Firebase, Crashlytics, Remote Config, UMP, AdMob e Play Billing;
-- paridade C# de economia, save e turnos completos;
-- correção dos nove defeitos altos da auditoria;
-- localização completa fora de pt-BR.
+- **Decisão explícita do dono:** costela/cupim mantêm **`sides:2`, `flipNeeded:true`**.
+  A recomendação de `sides:1` foi **rejeitada**. Não pedir essa decisão novamente.
+- Ingredients v6; validador TS protege receita grill multi-face; bot já consome o flag.
+  Sem tuning de fórmulas, calor, tempos, janelas ou preços.
+- Testes de janelas reais em três zonas, cru→queimado sem virar e bot nos restaurantes3–6.
+- UI: bancada paginada de8, dica contextual espera dourar, hit-test seleciona o prato
+  mais próximo entre alvos sobrepostos sem encolher área. C-06 só parcialmente resolvido.
+- Oito vetores avançados adicionados; curva complementar com8 seeds por skill/tier.
+  Evidências completas em **`docs/evidence/a01/`**. Implementação `579c846`.
 
-### Arte — sequência encerrada
+### F3/A-02 — funcional corrigido
 
-- As 33 substituições individuais do antigo lote 03 foram concluídas em 10 + 10 + 10 + 3
-  imagens nos lotes 08–11.
-- O dono aprovou o lote 11 e autorizou o merge completo em 2026-09-26.
-- O fechamento foi enviado ao GitHub no **PR #13**; confirme o estado do merge e dos checks
-  antes de continuar.
-- Registro final: **245 entradas = 244 `approved`, 0 `pending`, 1 `superseded`**.
-- Runtime aprovado: **244 sprites / 3,98 MB WebP**.
-- Índice completo: **16 comidas, 7 fundos, 11 clientes, 12 variantes de churrasqueira e
-  51 ícones**.
-- Contra-filé e maminha têm cinco estados alinhados + prato servido; não dependem mais do
-  fallback procedural.
-- Revisões e prompts finais: `art/lote-08..11.json`, `art/prompts/lote-08..11.md` e
-  `art/review/lote-08..11*`.
-- O ciclo de substituição está fechado. Não iniciar lote 12 antes de corrigir o núcleo técnico.
+- **`TurnConfig.playerLevel` obrigatório**, inteiro positivo, separado de `levelId/index`.
+  Snapshot no começo do turno; catálogo exige **nível E restaurante**.
+- Pedidos naturais/roteirizados, estoque canônico, bot e UI respeitam esse catálogo.
+  Config sem menu falha; unusualOnly só sorteado com receita elegível não comum;
+  forçar cliente sem menu gera erro, não pedido vazio/conteúdo bloqueado.
+- Callers: progressão p.level antes do crédito; protótipo meta.level; FTUE1.
+  Curva skill começa com `newPlayerState` por skill e acumula XP real via regra,
+  sem compras/upgrades. Nunca inferir nível do jogador pelo índice da campanha.
+- Fixtures de mecânica isolada usam44 explicitamente; **não existe fallback44 de produção**.
+- 50 regressões novas +2 wiring; teste de validação existente fortalecido.
+  UI real nos níveis1/5/6/7: queijo aparece/é arrastável exatamente6, sem hitbox fantasma.
+- A-02 não alterou dados, schemas, Assets/Data, savev3 ou tipos C# gerados.
+  Relatório expõe nível/restaurante reais, catálogo e ingredientes efetivamente pedidos.
+- Evidências: **`docs/evidence/a02/`**, inclusive red-rules/data/wiring/UI, logs longos,
+  `vector-review.json` e `progression-sample.json` (60 turnos/XP/pedidos).
 
-### Dados, regras e protótipo
+## 4. Baseline de testes e limitações
 
-A validação reconhece:
+- Ambiente verificado: **Node22.22.3/npm10.9.8**; projeto exige Node>=22.
+- **351 testes passando**,18 arquivos; **14/15 gates locais** (só C# SKIP sem dotnet).
+- **CI remoto15/15** na entrega A-02, incluindo C#:
+  https://github.com/berger33/game_churrasqueiro/actions/runs/36286499059
+  em `7a591f3`. Consultar o PR para runs posteriores do fechamento/merge.
+- C# engine-free compila netstandard2.1/C#9, warnings=erros; **139 checks concordam**,
+  mas **25 casos não portados** (5 economia +20 turnos). Não declarar paridade plena.
+- **106 vetores +44 FTUE**. Arquivo principal formato **v2**, `playerLevel` explícito
+  nos20 turnos. A-02 alterou9 expectativas iniciais; preservou11 restantes e todas as
+  cooking48/scoring32/economy6. FTUE permaneceu byte-idêntico.
+  Perfis iniciais1/4/8/14 são fixtures, não previsão de nível pela fase; avançados usam44.
+- **19 screenshots**,244 sprites; FTUE: primeiro perfect16,1s, completo32,9s,
+  upgrade38,3s, zero misses. `prototype/shoot.mjs` usa bundle real/ponteiro real.
+  Fixtures avançadas/de unlock **não** provam metaprogressão natural completa.
+- Apenas60 níveis autorais (restaurantes0/1); não confundir o endless headless com fluxo
+  avançado de campanha já implementado na UI.
+- Não há `Packages/`, `ProjectSettings/`, cenas/prefabs, APK/AAB ou validação física Unity.
+- npm audit: **5 vulnerabilidades (1 crítica,1 alta,3 moderadas)** na cadeia tooling
+  Vitest/Vite/vite-node/mocker/esbuild transitivo. Major sugerida precisa de revisão F6.
+- Actions checkout/setup-node/setup-dotnet v4: aviso Node20 forçado para24; runner
+  ubuntu-latest anuncia Ubuntu26 a partir de19/10/2026. Projeto continua Node22.
+- Nightly manual foi negado403 pela permissão da integração. Evidência do sim longo é
+  **local**, repetida/idêntica; não inventar run remoto. Não pedir credenciais.
 
-- 22 tabelas de dados e 22 schemas;
-- 16 ingredientes, 11 clientes e 7 restaurantes;
-- 27 trilhas de upgrade;
-- 58 conquistas;
-- 37 itens de coleção em 10 categorias;
-- 48 eventos de analytics;
-- FTUE com 6 etapas;
-- 60 níveis autorais.
+## 5. Economia conhecida — NÃO estabilizada
 
-O protótipo web possui splash, título, FTUE, grelha, virar/servir, pedidos, paciência, combos,
-resultado, Home, calendário diário, abas de loja/missões/coleção/rota, arte aprovada com
-fallback, áudio e persistência local.
+O merge do checkpoint não elimina esses bloqueios de produto/publicação. Mesma seed,
+1.500 turnos, dt=1/12, nível80/restaurante6/Fornalha evo3:
 
-O harness do FTUE registra:
+| Métrica | Baseline A-02 |
+|---|---:|
+| Renda |22.233.557|
+| Gasto |10.873.220|
+| Saldo |11.360.337|
+| Spend ratio |**0,489 — falha**, alvo0,70–0,99|
+| Perfect / burned / clientes perdidos |75,7% /0,2% /3,5%|
+| Duração média |172,5s|
+| Unlocks de restaurantes |42/98/165/259/398/**883**|
+| Unlocks de grills |10/45/89|
+| Renda diária L5/L15/L30/L50 |10.480/39.445/108.533/**192.223**|
 
-- primeiro PERFEITO em 16,1 s;
-- fim da parte jogável em 32,9 s;
-- compra do upgrade em 38,3 s;
-- zero erros de interação.
+**Sim longo15/18, exit1.** As outras duas falhas são Rede Nacional883 vs950–1450 e
+L50=192.223 vs98.000–152.000. Metas/preços nunca foram afrouxados para esconder isso.
+Transportar os desvios para F4 após as correções funcionais; A-06 também afeta sinks.
 
-### Gates verificados no fechamento
+Curva autoral skill.55: **46,0% perfect /571 moedas por turno**, com XP/unlocks reais.
+Perfect/renda crescem com skill; cobre restaurantes0/1, não prova cortes avançados.
+Probe A-01 no nível44 conserva as janelas e agregados de128 turnos avançados.
+O sim curto segue verde, mas marca metas fora de alcance como PASS/skip: dívida F5,
+**não** evidência de economia longa aprovada.
 
-- `npm run gates`: **13/14 locais**; somente `check-csharp` dá SKIP sem .NET SDK.
-- Testes: **202/202**, 13 arquivos.
-- TypeScript strict: sem erros.
-- Dados e schemas: 22/22.
-- Vetores: 98 + 44 FTUE sem drift.
-- Arte: 16 ingredientes × 8 níveis + ícones = 144 draws.
-- `check-shots`: 244 sprites decodificados; 13 PNGs; FTUE inalterado.
-- `npm run sim:long`: 1.500 turnos, nível 80, spend ratio 0,741 e 18/18 guardrails
-  codificados aprovados.
+## 6. Próximo passo concreto — A-03, antes de qualquer outro sistema
 
-**Ressalva:** gates verdes confirmam consistência com o comportamento atual. Eles não provam
-que os nove defeitos de design/regra abaixo estejam corretos; alguns testes congelam o
-comportamento defeituoso atual.
+### Reprodução e arquivos
 
-### C# e Unity
+- Vinagrete: `cookMethod:'prep'`, `prepSec:2`, `sides:1`, sem calor/virada,
+  unlock nível12/restaurante0 (`shared/data/ingredients.json`). **Preservar a receita.**
+- `prototype/src/main.ts` usa `availableIngredients.filter(i => i.cookMethod === 'grill')`:
+  a regra pode pedir vinagrete desbloqueado, mas a UI não permite produzi-lo/servi-lo.
+- `turn.ts` já incrementa progresso de prep fora da grelha e impede servir antes de1.
+  Não presumir sistema completo: verificar início de preparo, capacidade, fila/ocupação,
+  estados, duplicação e integração com input/UI.
+- `cooking.ts`: `prepSlots`, `prepSpeedMult`, `prepProgress`; `policy.ts` já cria prep
+  fora da grelha. `board`/`knife` e restaurante.service precisam de consumidor coerente.
+  Preparar o vínculo com A-06 sem implementar todas as27 trilhas agora.
+- Ler `turn.ts`, `cooking.ts`, `policy.ts`, `types.ts`, dados, `prototype/src/main.ts`,
+  `cooking-ui.ts`, tutorial/l10n/áudio, `run-sim.ts`, testes e harnesses de ponteiro.
 
-O núcleo independente de Unity já contém tipos gerados, `GameData`, parte das regras de
-cozimento/pontuação, analytics e tutorial. O CI compila em netstandard2.1/C# 9 com warnings
-como erros.
+### Ordem e aceite
 
-Ainda faltam 17 vetores na paridade C#:
+1. Reproduzir pedido de vinagrete na UI com playerLevel12+; comparar antes/no/depois do
+   desbloqueio (11/12/13), mantendo FTUE1 intacto. Registrar prova do bloqueio atual.
+2. Propor/descrever fluxo mínimo coerente de prep antes de editar: área/slot fora da
+   grelha, início/progresso/pronto, retirada/serviço, ocupação/capacidade e descarte.
+   Não deixar timers consumirem capacidade fictícia nem permitir serviço prematuro.
+3. Escrever regressões red para regra e UI: capacidade, tempo/velocidade, prep sem grelha,
+   pickup/drag/drop/hitboxes, tentativas inválidas, pedido misto prep+grill, paciência,
+   combo, cliente servido só quando completo, moedas/XP/resultado sem duplicação.
+4. Implementar referência TS + UI e orientação contextual localizada se necessária,
+   usando a arte já aprovada. Não quebrar paginação, A-02 ou seleção de pratos vizinhos.
+5. Usar bot, sim e harness reais, sem hooks mutadores para fingir conclusão. Capturar
+   screenshots do fluxo. Distinguir fixture de teste de progressão natural implementada.
+6. Revisar cada diff semântico de dados/vetores; só regenerar contratos afetados.
+   Validar cozinha, prep, turnos mistos, skill curve e 1.500 turnos sem tuning oportunista.
+7. Atualizar docs02/03/06/18/23/24 conforme impacto, evidências red/green, plano/status,
+   commits e PR da nova sessão. Verificar CI remoto. **Não fazer merge sem novo pedido.**
 
-- 5 de economia;
-- 12 de turnos completos.
+## 7. Tudo que ainda falta, na ordem vigente
 
-Ainda faltam `TurnSimulation.cs`, `EconomyRules.cs`, `SaveSystem.cs`, a cola completa do
-`TutorialTurn` e toda a camada visual Unity (`GrillView`, `FoodView`, `CustomerCardView`,
-`TurnFlow`). Os serviços `AdService.cs`, `BillingService.cs` e `SecureConfig.cs` são stubs e
-não foram compilados dentro de um projeto Unity real.
+A auditoria tem47 achados originais (9 altos,19 médios,19 baixos). F2 está corrigida;
+A-01/A-02 funcionais, economia global pendente; **A-03–A-06 ainda abertos**.
+Plano autoritativo: `docs/23-PLANO_IMPLEMENTACAO.md` §9 (não usar a ordem histórica antiga).
 
-## Nove achados altos que devem ser resolvidos antes da porta C#
+1. **F3/A-03:** prep/vinagrete conforme seção6.
+2. **A-04 — quarta zona:** decisão do dono ainda pendente. Recomendação documentada:
+   manter a promessa e implementar4 zonas ponta a ponta (default e grills equipados),
+   dados/calor/bot/UI/arte aprovada/screenshots. Alternativa exige remover a promessa de
+   todos os contratos/textos. **Não escolher silenciosamente.**
+3. **A-05 — VIP:** consumir chance/fonte, aparição natural e forçada, teto diário
+   persistido, recompensas/analytics/áudio/conquistas e `call_vip`. Testar chance0,
+   caps e renda **sem rewarded**; conveniência, nunca requisito de progressão.
+4. **A-06 —27 trilhas:** mapear consumidor/fórmula/limite/tela/teste/sim. Implementar
+   consumidores faltantes ou ocultar/desabilitar compras no-op explicitamente; impedir
+   gastos fictícios do bot. Decisões de migração/reembolso de compras antigas exigem
+   aprovação. Revalidar sinks/spend sem aumentar preços só para voltar ao verde.
+5. **F4 — revalidação global:** após A-03–A-06, revisar dados/levels/vetores, guardrails,
+   economia e decisões de design. Publicar renda/unlocks/spend/perfect/burned/lost,
+   duração/grills, com logs brutos. Resolver os3 desvios, não declará-los aprovados.
+6. **F5 — dívida média/baixa e contratos:** triagem completa da auditoria (19+19).
+   Priorizar carvão; ledger de brasas; offline; deriveStats/clamps; burned com overrides;
+   vazamento do bot; streak/dia de graça; campos mortos; gating de funcionários;
+   descrições/l10n; avaliadores de missões/conquistas; level-up; guardrails ignorados;
+   divergência de levels commitados; skips de C#. Testes negativos por item e registro
+   explícito do que fica para serviços/dispositivo. Confirmar escolhas de streak/offline.
+7. **F6 — tooling/security isolados:** revisar releases de Vitest/Vite/esbuild e Node,
+   atualizar majors conscientemente, audit antes/depois e suíte completa/sim/render/C#.
+   Separar de mudanças de gameplay. Sem force-fix; revisar actions/runner também.
+8. **F7 — PRs #7/#8 preservados:** revisar por tema contra main, classificar
+   útil/obsoleto/conflitante, extrair/reimplementar seletivamente com testes.
+   Não fazer merge direto; fechar/apagar somente após revisão/decisão registrada.
+9. **F8 — C# completo:** só com TS/dados/economia estabilizados. Portar TurnSimulation,
+   EconomyRules, SaveSystem v3/migrações e cola completa TutorialTurn. Cobrir os20 turnos
+   +5 econômicos, regressões F2/A-01/A-02 e futuros fixes. netstandard2.1/C#9,
+   warnings=erros, **zero not ported**, não apenas os139 checks existentes.
+10. **F9 — Unity6 LTS:** criar Packages/ProjectSettings/assemblies/scenes/prefabs/.meta;
+    importer do manifesto/AssetPostprocessor/atlases; GrillView/FoodView/CustomerCardView/
+    TurnFlow; input/UI/áudio/save/l10n. Turno completo no Editor e60FPS em Android físico.
+11. **F10 — meta, localização e acessibilidade:** coleção/missões/conquistas/eventos/
+    loja/passe/rota e progressão real; en-US/es-419 além dos57/515 keys (11,1%, fallback);
+    texto/contraste/ponto sem depender de cor/redução de movimento/toque/telas pequenas.
+12. **F11 — serviços:** SDKs reais Firebase/Crashlytics/RemoteConfig, UMP/consentimento,
+    ads/billing com projetos/IDs de teste, caps/cooldowns, recibos/restauração/offline,
+    LGPD/Data Safety. Serviços atuais são stubs; não foram validados no Unity real.
+13. **F12 — áudio/performance/QA:** mix/ducking, interrupções/background, save/migração/
+    reinstalação/offline, memória/GC/draw calls/atlases/tamanho AAB, matriz física de
+    aparelhos/GPUs; medir60FPS/crash-free, não substituir por teste canvas.
+14. **F13 — publicação segura e comprovada:** pipeline assinado APK/AAB, closed testing
+    reproduzível, brutos/vídeos/AAB, PlayConsole/consentimento/privacy/DataSafety, screenshots
+    reais/ASO, KPIs e rollout gradual com rollback. `docs/21` alega n=20/closed track,
+    mas faltam artefatos para reproduzir: não repetir essa alegação como prova atual.
 
-Fonte de evidência e scripts de reprodução: `docs/23-AUDITORIA_TECNICA.md`.
+## 8. Comandos e evidências para começar
 
-1. **A-01 — Costela/cupim:** dados dizem `flipNeeded:false`, mas o modelo de dois lados não
-   permite atingir o ponto sem virar. O balanceamento avançado foi medido com esses cortes
-   falhando.
-2. **A-02 — Unlock de ingredientes:** `unlock.level` não filtra pedidos; cliente inicial pode
-   pedir conteúdo de níveis futuros.
-3. **A-03 — Vinagrete no protótipo:** é item de preparo, mas a interface só oferece fluxo de
-   grelha, tornando pedidos impossíveis.
-4. **A-04 — Zona 4:** restaurantes avançados declaram quatro zonas, mas o runtime cria no
-   máximo três.
-5. **A-05 — VIP:** `vipChance` não é consumido e o VIP tem peso zero; o conteúdo é prometido
-   em dados, áudio, conquistas e loja, mas não aparece naturalmente.
-6. **A-06 — Upgrades sem efeito:** 14 das 27 trilhas não têm consumidor funcional, embora o
-   simulador gaste moedas nelas e use esse gasto no `coinSpendRatio`.
-7. **A-07 — `restaurantsUnlocked`:** acumula `index + 1` em vez de representar a quantidade,
-   antecipando recompensas/conquistas.
-8. **A-08 — `burnedFood`:** um alimento queimado pode ser contado na grelha e novamente ao
-   servir.
-9. **A-09 — `TurnSimulation.result()`:** não é idempotente; cada chamada reaplica o bônus de
-   fim de turno.
+```sh
+node --version
+npm --version
+npm ci
+npm run gates
+npm run sim:long                 # baseline conhecido: exit1, três falhas; investigar drift
+npx vitest run tools/studio/test/ingredient-unlock.test.ts tools/studio/test/unlock-wiring.test.ts
+npm run check-vectors
+npm run check-shots              # prototype/shots/, artefatos ignorados pelo Git
+node --experimental-strip-types tools/studio/slow-cuts-report.ts
+npm audit --fetch-timeout=15000 --fetch-retries=0
+```
 
-## Outros riscos que não podem sumir
+- Só executar `gen-vectors`, `gen-levels`, `gen-schemas`, tipos C# ou sync-data quando a
+  mudança exigir; revisar o diff, não usar regeneração como substituto de análise.
+- Logs A-01/A-02 estão versionados em `docs/evidence/`. `/tmp` e arquivos ignorados de
+  outra sessão não são evidência persistida garantida; reproduzir o que precisar.
+- Para preview, usar o servidor do protótipo em0.0.0.0, URLs relativas e host permitido;
+  ferramentas de processo para servidor persistente, não bash bloqueante.
 
-- streak diário diverge entre documentação, sim e protótipo;
-- ganhos offline do protótipo usam fórmula própria e aleatória;
-- level-up do protótipo não paga todas as recompensas da regra;
-- missões e conquistas não têm avaliador completo;
-- ads e billing usam regras hardcoded/stubs;
-- vários campos aceitos pelos schemas não têm consumidor;
-- en-US e es-419 têm somente 54/514 chaves (10,5%) e passam por fallback;
-- `npm audit` registra 5 vulnerabilidades no tooling: 1 crítica, 1 alta e 3 moderadas,
-  principalmente na cadeia Vitest/Vite/esbuild; a correção exige atualização major e regressão;
-- `docs/21-5S_TEST_20.md` relata teste n=20/closed track, mas o repositório não contém os
-  brutos, gravações ou AAB necessários para reproduzir a evidência;
-- os PRs antigos **#7 e #8** continuam abertos, grandes e com conflitos (`DIRTY`). Não fazer
-  merge direto; revisar mudanças úteis seletivamente e depois fechar.
-
-## Regras de execução da próxima sessão
-
-1. Ler `docs/23-AUDITORIA_TECNICA.md` e reproduzir o achado antes de corrigir.
-2. Criar teste que falha no comportamento antigo e passa na correção.
-3. Corrigir a referência TypeScript e os dados; não portar para C# ainda.
-4. Se a semântica mudar, regenerar vetores explicitamente e revisar o diff — nunca aceitar
-   drift automático.
-5. Rodar `npm run gates` e `npm run sim:long` após cada grupo de correções.
-6. Recalcular economia depois de A-01, A-02, A-04 e A-06; os números atuais podem mudar.
-7. Manter pt-BR como fonte completa e não introduzir texto literal nos dados.
-8. Não inserir credenciais reais no repositório.
-9. Não tratar arte aprovada como implementação das telas de metajogo.
-10. Atualizar `docs/18-STATUS.md`, `docs/23-PLANO_IMPLEMENTACAO.md` e este prompt ao encerrar.
-
-# SEQUÊNCIA HISTÓRICA COMPLETA — ESCOPO PRESERVADO, ORDEM ATUAL EM DOCS/23-PLANO §9
-
-1. **Confirmar o merge e o CI**
-   - atualizar `origin/main` e confirmar árvore limpa;
-   - conferir o PR de fechamento da arte e os 14 gates no GitHub;
-   - registrar qualquer diferença entre o ambiente local e CI.
-
-2. **Implementar `check-art-registry`**
-   - todo master em `Assets/Art` deve ter linha no registro;
-   - toda linha deve apontar para arquivo existente;
-   - manifesto e registro devem concordar em nome, arquivo e batch;
-   - runtime versionado deve conter somente `approved`;
-   - criar testes negativos que provem que o gate falha;
-   - adicionar o gate a `npm run gates` e ao CI.
-
-3. **Corrigir A-01 — costela e cupim**
-   - decidir semanticamente entre `sides:1` e exigir virada;
-   - alinhar dados, UI, política do bot e documentação;
-   - adicionar teste de janela perfeita para ambos;
-   - revalidar restaurantes avançados e economia.
-
-4. **Corrigir A-02 — desbloqueio de ingredientes**
-   - passar nível do jogador ao `TurnSimulation`/pool de pedidos;
-   - filtrar por `unlock.restaurantIndex` e `unlock.level`;
-   - preservar o roteiro determinístico do FTUE;
-   - testar níveis limítrofes e campanhas existentes.
-
-5. **Corrigir A-03 — vinagrete/preparo**
-   - definir fluxo de prep no protótipo e na regra;
-   - permitir produzir e servir sem grelha;
-   - adicionar input/hitboxes e tutorial contextual, se necessário;
-   - testar pedido misto, combo, paciência e resultado.
-
-6. **Corrigir A-04 — quarta zona**
-   - decidir se o design mantém quatro zonas;
-   - se sim, adicionar contrato/dados e fazer runtime/UI respeitarem `zoneCount`;
-   - atualizar mapeamento de calor, bot, arte e testes por churrasqueira;
-   - se não, remover a promessa dos dados, l10n e docs.
-
-7. **Corrigir A-05 — VIP**
-   - consumir `vipChance`/configuração de eventos;
-   - limitar aparições e ligar analytics/áudio/conquistas;
-   - definir o placement `call_vip` sem pay-to-win;
-   - testar chance zero, teto diário e spawn forçado.
-
-8. **Corrigir A-06 — upgrades sem efeito**
-   - mapear as 27 trilhas para consumidores reais;
-   - implementar as 14 faltantes ou ocultá-las com flag explícita;
-   - impedir que o simulador compre no-ops;
-   - recalcular `coinSpendRatio`, pacing e custos.
-
-9. **Corrigir A-07, A-08 e A-09**
-   - `restaurantsUnlocked` deve representar quantidade correta;
-   - `burnedFood` deve contar uma vez por alimento;
-   - `result()` deve memoizar/ser idempotente;
-   - criar regressões unitárias e atualizar vetores afetados.
-
-10. **Regenerar contratos e revalidar a economia**
-    - `npm run gen-vectors` somente após revisar mudanças semânticas;
-    - `npm run gen-levels` e conferir diff;
-    - `npm run gates`;
-    - `npm run sim:long`;
-    - atualizar números publicados em `docs/06`, `docs/18` e auditoria.
-
-11. **Atualizar dependências de desenvolvimento**
-    - planejar upgrade major de Vitest/Vite/esbuild em commit/PR isolado na branch atribuída à sessão;
-    - registrar `npm audit` antes/depois;
-    - rodar toda a suíte, render e screenshots;
-    - não usar `npm audit fix --force` sem revisar breaking changes.
-
-12. **Concluir a paridade C#**
-    - portar `TurnSimulation.cs` e fazer os 12 vetores de turno passarem;
-    - portar `EconomyRules.cs` e fazer os 5 vetores econômicos passarem;
-    - portar `SaveSystem.cs` v3 e migrações;
-    - concluir `TutorialTurn`;
-    - exigir 0 vetores “not ported” no `check-csharp`.
-
-13. **Criar o projeto Unity V0.2**
-    - gerar `Packages/` e `ProjectSettings/` no Unity 6 LTS;
-    - criar assemblies, cenas, prefabs e `.meta`;
-    - implementar `AssetPostprocessor` para `sprites.manifest.json` e atlases;
-    - criar `GrillView`, `FoodView`, `CustomerCardView` e `TurnFlow`;
-    - integrar input, UI, áudio, save e localização;
-    - obter turno completo no Editor e 60 FPS em dispositivo Android médio.
-
-14. **Revisar PRs #7 e #8**
-    - comparar cada um com `main` por tema;
-    - extrair seletivamente apenas mudanças ainda úteis e testáveis;
-    - não resolver conflitos por merge cego;
-    - fechar os PRs antigos após registrar o que foi aproveitado/descartado.
-
-15. **Completar localização e acessibilidade**
-    - traduzir en-US e es-419 além dos 10,5% atuais;
-    - implementar resolver/localização no Unity;
-    - validar tamanho de texto, contraste, leitura do ponto sem depender só de cor e redução de movimento.
-
-16. **Integrar serviços e monetização somente depois do core Unity**
-    - Firebase Analytics, Crashlytics e Remote Config;
-    - UMP/consentimento e Data Safety/LGPD;
-    - AdMob com unidades de teste e caps vindos de dados;
-    - Play Billing com produtos de teste e validação de recibo;
-    - nenhuma credencial real no Git.
-
-17. **Fechar áudio, performance e QA em dispositivo**
-    - mixagem final e política de ducking;
-    - perfis de memória, GC, draw calls, atlas e tamanho do AAB;
-    - matriz de dispositivos físicos, interrupções, offline, save e migração;
-    - 60 FPS no device-alvo e crash-free medido.
-
-18. **Preparar publicação**
-    - gerar APK/AAB assinado por pipeline seguro;
-    - closed testing reproduzível com evidências brutas;
-    - revisar política de privacidade, consentimento e Data Safety;
-    - validar screenshots reais do jogo, ASO e listagem;
-    - executar rollout gradual somente após critérios V0.6–V0.9 do roadmap.
+**Comece conferindo o merge e o baseline. Depois reproduza A-03 e escreva seus testes red.
+Não execute outra fase, não altere a decisão de virada, não apague PRs preservados e não
+mascare falhas econômicas.**

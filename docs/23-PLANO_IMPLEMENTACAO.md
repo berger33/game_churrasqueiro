@@ -5,6 +5,13 @@
 **Status:** ativo — este é o documento-guia do dia a dia. Na dúvida sobre o que fazer
 a seguir, a resposta está em "Próximo passo imediato" (§8).
 
+**Fechamento autorizado pelo dono (2026-09-26 local):** integrar PR #14 e excluir
+somente branches integradas. PRs #7/#8 e suas branches foram **explicitamente preservados**.
+Este registro precede a operação no GitHub; o recibo final/CI está no PR #14. Na próxima
+sessão, confirmar MERGED/main antes de codar. A autorização não vale para merges futuros.
+Handoff consolidado: `docs/24-PROMPT_PROXIMA_SESSAO.md`; próximo A-03, economia pendente.
+Os registros de checkpoints abaixo preservam o estado histórico anterior à autorização.
+
 > **Por quê.** O projeto tem ótimas especificações (docs 00–22), mas faltava um roteiro
 > único, ordenado e marcável, dizendo *o que fazer agora, o que vem depois e quando cada
 > coisa está pronta*. Este documento é esse roteiro. Ele não substitui o roadmap por
@@ -163,7 +170,8 @@ E restaurante** no turno, pedidos/estoque/bancada e chamadores, preservando o FT
 Rede883, L50=192.223/dia, spend0,489. Não retunar nem declarar F3/F4 encerradas.
 Vinagrete permanece no pool a partir de nível12/restaurante0, mas UI de prep ainda falta;
 não apagar/ocultar o item para fugir de A-03. Detalhes em §9.12 e evidence/a02.
-Sem arte nova, C#/Unity bloqueados, nenhum merge sem autorização. A-04 ainda exige decisão.
+Sem arte nova; C#/Unity bloqueados. Merge do PR #14 autorizado no fechamento (§9.13);
+novas mudanças exigem nova autorização. A-04 ainda exige decisão.
 
 **Registro de progresso:**
 
@@ -512,3 +520,26 @@ Próximo checkpoint depois deste: A-03 prep, sem escondê-lo do pool para evitar
   incluindo C#139 checks com25 casos explicitamente não portados. Anotações Node20/Ubuntu26
   continuam F6. PR14 ampliado, aberto/sem merge; consultar corpo do PR para CI do HEAD final.
   O CI por PR não roda longo; suas3 falhas locais permanecem registradas e bloqueiam aceite global.
+
+
+### 9.13 Fechamento solicitado — merge PR #14 e retomada em nova sessão
+
+- O dono pediu merge completo do trabalho desta entrega, limpeza de branches e prompt
+  completo. Isso autoriza **PR #14**, não a incorporação cega dos PRs antigos #7/#8.
+- Na confirmação de limpeza, escolheu **preservar #7/#8** para revisão seletiva (F7).
+  Não foram fechados, descartados nem autorizados para merge.
+- Branches remotas a remover **somente após verificar integração e SHA**:
+  - PR #12 `arena/01a0dfd3-game-churrasqueiro`, head `eb2065e2262e21d41d59389695f75ead6111fe3d`;
+  - PR #13 `arena/01a0e001-game-churrasqueiro`, head `74a105e5c67075a6d69fe7672bd140566b78c6c2`;
+  - PR #14 `arena/01a0e03e-game-churrasqueiro`, após merge do HEAD final.
+- Preservar `main`, PR #7 (`arena/01a0daed-game-churrasqueiro`) e PR #8
+  (`arena/01a0de76-game-churrasqueiro`). Não trocar de branch local durante esta sessão.
+- Handoff24 foi consolidado: estado atual, contratos F2/A-01/A-02, 351 testes, vetores,
+  economia15/18, A-03 detalhado e toda a sequência até publicação. Histórico continua
+  neste plano, auditoria, evidence e Git (handoff anterior em `7a591f3`).
+- CI funcional pré-fechamento **15/15** em `7a591f3`, run `36286499059`; C#139 checks,
+ 25 casos não portados. O commit documental de fechamento também deve passar CI antes
+  do merge. Confirmar resultado final/merge SHA no PR #14 e na nova sessão.
+- **Integração não é aceite econômico/publicação:** as3 falhas longas permanecem
+  intencionais e evidenciadas; sem retuning, enfraquecimento de gates ou porta C#/Unity.
+  Nenhuma nova correção funcional foi adicionada neste fechamento.

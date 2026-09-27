@@ -1,6 +1,14 @@
 # 18 — Status Report
 
-**Snapshot:** 2026-09-27 · branch `arena/01a0e03e-game-churrasqueiro` · F1+F2 implementadas; A-01/A-02 funcionais validados, aceite econômico global pendente; merge desta sessão não autorizado
+**Snapshot:** 2026-09-27 · branch `arena/01a0e03e-game-churrasqueiro` · F1+F2 implementadas; A-01/A-02 funcionais validados, aceite econômico global pendente; merge do PR #14 autorizado para fechamento; confirmar integração no GitHub
+
+**Fechamento da sessão:** o dono autorizou integrar PR #14 e limpar branches já
+integradas, preservando explicitamente os PRs/branches #7/#8. O recibo de merge/CI está
+no [PR #14](https://github.com/berger33/game_churrasqueiro/pull/14); confirmar MERGED e
+base em main antes da retomada. Os registros abaixo conservam o estado histórico de
+cada checkpoint (incluindo “sem merge” antes desta autorização).
+Prompt consolidado em **docs/24-PROMPT_PROXIMA_SESSAO.md**; próximo A-03.
+A autorização atual não se estende às mudanças da próxima sessão.
 
 **Estado executivo:** 🟡 protótipo técnico sólido, com dados, regras de referência, FTUE,
 automação, arte e protótipo web avançados; ainda não é um jogo Unity publicável. Não existem
