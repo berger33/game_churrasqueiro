@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { unlockRestaurant } from '../../sim-core/src/economy.ts';
+import { loadDatabase } from '../load-data.ts';
 import {
   SAVE_SCHEMA_VERSION, crc32, defaultDaily, defaultProgress, defaultSettings,
   deserializeSave, detectClockTampering, migrate, newSave, resolveDailyClaim,
@@ -272,5 +274,51 @@ describe('defaults', () => {
     expect(defaultProgress().pass.claimedFree).toEqual([]);
     expect(defaultProgress().tutorial).toBeNull();
     expect(defaultProgress().ftueDone).toBe(false);
+  });
+});
+
+
+describe('A-07: restored restaurant count', () => {
+  const db = loadDatabase();
+  for (const version of [1, 2, 3]) {
+    it(`repairs missing/inflated/stale counters in v${version} saves, including current v3`, () => {
+      for (let index = 0; index < 7; index++) for (const oldCount of [undefined, 0, 2, 5, 9, 14, 20, 27]) {
+        const s = newSave('restaurant-restore', NOW);
+        s.schemaVersion = version;
+        s.player.restaurantIndex = index;
+        s.player.coins = 99_999_999; s.player.level = 80;
+        s.player.counters.coinsEarnedTotal = 1234;
+        if (oldCount === undefined) delete s.player.counters.restaurantsUnlocked;
+        else s.player.counters.restaurantsUnlocked = oldCount;
+        s.progress.achievements.restaurant_2 = 1;
+        const raw = envelopeAt(version, s); // checksum computed BEFORE normalization
+        const out = deserializeSave(raw);
+        expect(out.ok).toBe(true);
+        if (!out.ok) throw new Error(out.reason);
+        const p = out.save.player;
+        expect(p.counters).toEqual({ coinsEarnedTotal: 1234, restaurantsUnlocked: index + 1 });
+        expect(p.coins).toBe(s.player.coins);
+        expect(out.save.progress.achievements).toEqual(s.progress.achievements);
+        expect(deserializeSave(serializeSave(out.save))).toEqual(out); // stable subsequent restores
+        const before = structuredClone(p);
+        expect(unlockRestaurant(db, p, index)).toBe(false);
+        expect(p).toEqual(before);
+        if (index < 6) {
+          expect(unlockRestaurant(db, p, index + 1)).toBe(true);
+          expect(p.counters.restaurantsUnlocked).toBe(index + 2);
+        }
+      }
+    });
+  }
+
+  it('normalizes on a copy, leaving the caller and unrelated counters intact', () => {
+    const s = newSave('restaurant-pure-migration', NOW);
+    s.player.restaurantIndex = 3; s.player.counters.restaurantsUnlocked = 9;
+    s.player.counters.burnedFood = 10;
+    const before = structuredClone(s);
+    const migrated = migrate(s, 3);
+    expect(migrated.player.counters.restaurantsUnlocked).toBe(4);
+    expect(migrated.player.counters.burnedFood).toBe(10);
+    expect(s).toEqual(before);
   });
 });

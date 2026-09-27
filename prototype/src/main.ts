@@ -50,6 +50,7 @@ import {
   backgroundSprite, propSprite, fxSprite, drawIconSprite, quadPoint, quadInverse, quadPath, type Quad
 } from './sprites.ts';
 import { audio } from './audio.ts';
+import { BENCH_PAGER, grilledFoodHit, benchPage, benchPageCount, cookingFlipHint } from './cooking-ui.ts';
 
 const W = 420;
 const H = 780;
@@ -265,6 +266,7 @@ class Game {
   private shake = 0;
 
   private unlocked: Ingredient[] = [];
+  private benchPageIndex = 0;
   private bgCache: HTMLCanvasElement | null = null;
   /** What bgCache holds: 'proc' or 'art:<restaurant>' — the painted scene arrives after load. */
   private bgCacheKey = '';
@@ -508,6 +510,7 @@ class Game {
       this.db,
       {
         restaurantIndex: lvl.restaurantIndex,
+        playerLevel: this.meta.level,
         levelId: lvl.id,
         upgradeLevels: this.meta.upgrades,
         seed: 20260917 + lvl.id.length + this.levelIndex,
@@ -529,15 +532,15 @@ class Game {
     const chName = this.activeChurr() ? this.l10n.t(this.activeChurr()!.nameKey) : '';
     const evoData = this.activeEvo();
     const evoShort = evoData ? this.l10n.t(evoData.nameKey) : '';
-    this.unlocked = this.db.ingredients.items.filter(
-      (i) => i.unlock.restaurantIndex <= restaurant.index && i.cookMethod === 'grill'
-    ).slice(0, 8);
+    // Same progression snapshot as order generation; prep UI is tracked in A-03.
+    this.unlocked = this.sim.availableIngredients.filter(i => i.cookMethod === 'grill');
     this.ftue = null;
     this.beginTurnScreen();
     this.banner(`${chName ? chName.toUpperCase() + ' · ' : ''}${lvl.id}${evoShort ? ' · ' + evoShort : ''}`);
   }
 
   private beginTurnScreen(): void {
+    this.benchPageIndex = 0;
     this.screen = 'play';
     this.bgCache = null;
     this.coinFlights = [];
@@ -747,8 +750,22 @@ class Game {
   private update(dt: number): void {
     this.now += dt;
     // Read-only views for the Node harnesses (shoot.mjs / render-smoke.mjs).
-    const dbg = globalThis as unknown as { __churrascoScreen?: Screen; __churrascoFtue?: unknown; __churrascoHome?: unknown };
+    const dbg = globalThis as unknown as { __churrascoScreen?: Screen; __churrascoFtue?: unknown; __churrascoHome?: unknown; __churrascoCooking?: unknown };
     dbg.__churrascoScreen = this.screen;
+    dbg.__churrascoCooking = this.screen === 'play' ? {
+      playerLevel: this.sim.config.playerLevel, restaurantIndex: this.sim.restaurant.index,
+      orders: this.sim.customers.map(c => ({ id: c.def.id, ingredients: c.lines.map(l => l.ingredientId) })),
+      page: this.benchPageIndex, pages: benchPageCount(this.unlocked),
+      pager: !this.ftue && benchPageCount(this.unlocked) > 1 ? { ...BENCH_PAGER } : null,
+      zones: this.sim.grill.zones.map(z => this.toGrillScreen(W / 2, this.zoneY(z.index))),
+      bench: benchPage(this.unlocked, this.benchPageIndex).map((ing, i) => ({ id: ing.id, ...this.benchItemRect(i) })),
+      foods: this.sim.foods.filter(f => f.onGrill).map(f => ({
+        id: f.ingredient.id, uid: f.uid, ...this.foodScreenPos(f), flips: f.flips, burned: f.burned,
+        flipHint: cookingFlipHint(this.db, this.tutorialTable, f),
+        perfect: !f.burned && overallDoneness(f) >= f.ingredient.perfectWindow[0]
+          && overallDoneness(f) <= f.ingredient.perfectWindow[1] && evenness(f) >= this.db.ingredients.shared.minEvennessForPerfect
+      }))
+    } : null;
     if (!this.ftue && !this.homeFtueActive() && !this.ftueResultActive()) dbg.__churrascoFtue = null;
     dbg.__churrascoHome = this.screen === 'home' ? {
       coins: this.meta.coins, embers: this.meta.embers, lastClaimDay: this.meta.lastClaimDay,
@@ -1572,10 +1589,16 @@ class Game {
         if (this.ftueSkipAvailable() && contains(this.skipRect(), p)) { this.skipTutorial(); return; }
         this.ftueIdle = 0;
       }
-      for (let i = 0; i < this.unlocked.length; i++) {
+      if (!ftue && benchPageCount(this.unlocked) > 1 && contains(BENCH_PAGER, p)) {
+        this.benchPageIndex = (this.benchPageIndex + 1) % benchPageCount(this.unlocked);
+        audio.play('uiTap');
+        return;
+      }
+      const visibleBench = benchPage(this.unlocked, this.benchPageIndex);
+      for (let i = 0; i < visibleBench.length; i++) {
         const r = this.benchItemRect(i);
         if (p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h) {
-          const food = ftue ? ftue.take() : this.sim.takeFromStock(this.unlocked[i]!);
+          const food = ftue ? ftue.take() : this.sim.takeFromStock(visibleBench[i]!);
           if (!food) { this.ftueBlocked(); return; } // masked: the bench is not part of this step
           this.drag = { food, fromBench: true, x: p.x, y: p.y, startX: p.x, startY: p.y, moved: false, startTime: performance.now() };
           audio.play('uiTap');
@@ -1583,15 +1606,14 @@ class Game {
         }
       }
 
-      for (const f of this.sim.foods) {
-        if (!f.onGrill || f.served) continue;
-        const pos = this.foodScreenPos(f);
-        if (Math.abs(p.x - pos.x) < 32 && Math.abs(p.y - pos.y) < 28) {
-          // FTUE masking: a plate only lifts when serving or moving it is what the step allows.
-          const locked = !!ftue && !ftue.allows('serve', f) && !ftue.allows('move', f);
-          this.drag = { food: f, fromBench: false, x: p.x, y: p.y, startX: p.x, startY: p.y, moved: false, startTime: performance.now(), locked };
-          return;
-        }
+      const hit = grilledFoodHit(this.sim.foods.filter(f => f.onGrill && !f.served)
+        .map(food => ({ food, ...this.foodScreenPos(food) })), p);
+      if (hit) {
+        const f = hit.food;
+        // FTUE masking: a plate only lifts when serving or moving it is what the step allows.
+        const locked = !!ftue && !ftue.allows('serve', f) && !ftue.allows('move', f);
+        this.drag = { food: f, fromBench: false, x: p.x, y: p.y, startX: p.x, startY: p.y, moved: false, startTime: performance.now(), locked };
+        return;
       }
 
       if (p.y > GRILL_BOTTOM + 4 && p.y < GRILL_BOTTOM + 48) {
@@ -3171,7 +3193,7 @@ class Game {
     // and the guided steps leave it to the overlay's prompt.
     const flipHint = this.ftue
       ? !this.ftue.guided && flipReady(this.db, this.tutorialTable, f)
-      : even < 0.6 && !f.burned;
+      : cookingFlipHint(this.db, this.tutorialTable, f);
     if(flipHint){
       outlinedText(ctx,this.l10n.t('ui.feedback.flipHint'),x,y+hh/2+25,C.ambar,9,{weight:700, family:UI, outline:2.5});
     }
@@ -3197,7 +3219,7 @@ class Game {
       ctx.strokeStyle='rgba(255,214,160,0.22)'; ctx.lineWidth=1.5; roundRectPath(ctx,6+0.75,by+0.75,W-12-1.5,bh-1.5,16-0.75); ctx.stroke();
     }
     outlinedText(ctx,this.l10n.t('ui.hud.bench'),20,by+12,'rgba(255,235,205,0.75)',11,{weight:800, family:UI, align:'left', outline:2});
-    this.unlocked.forEach((ing,i)=>{
+    benchPage(this.unlocked, this.benchPageIndex).forEach((ing,i)=>{
       const r=this.benchItemRect(i);
       if(r.y+r.h>H) return;
       const isDragging=this.drag!==null && this.drag.food.ingredient.id===ing.id;
@@ -3211,6 +3233,13 @@ class Game {
       coinIcon(ctx,r.x+r.w/2-11,r.y+r.h-10,5.5);
       ctx.font=font(11,900,UI); ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillStyle=C.ouroLight; ctx.fillText(String(ing.value),r.x+r.w/2-3,r.y+r.h-10); ctx.restore();
     });
+    const pages = benchPageCount(this.unlocked);
+    if (!this.ftue && pages > 1) {
+      const r = BENCH_PAGER;
+      panel(ctx, r.x, r.y, r.w, r.h, { r: 12, top: 'rgba(50,35,26,0.95)', bottom: 'rgba(26,17,12,0.95)' });
+      outlinedText(ctx, this.l10n.t('ui.hud.benchMore'), r.x+r.w/2, r.y+20, C.perola, 11, { weight: 800, family: UI });
+      outlinedText(ctx, `${this.benchPageIndex+1}/${pages} →`, r.x+r.w/2, r.y+40, C.ouroLight, 14, { weight: 800, family: UI });
+    }
   }
 
   private drawDragged(ctx: CanvasRenderingContext2D): void {

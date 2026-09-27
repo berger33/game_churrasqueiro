@@ -295,6 +295,7 @@ const tut = readJson('tutorial.json') as TutorialTable;
   else {
     if (ing.cookMethod !== 'grill' || ing.sides < 2) fail(T, `${ing.id}: the FTUE teaches the flip, so its item must be grilled and have >= 2 sides`);
     if (level && ing.unlock.restaurantIndex > level.restaurantIndex) fail(T, `${ing.id} is not unlocked at ${level.id}'s restaurant`);
+    if (ing.unlock.level > 1) fail(T, `${ing.id} is not unlocked at player level 1 for the FTUE`);
     // Coach thresholds must describe a reachable, holdable PERFEITO.
     const [lo, hi] = ing.perfectWindow;
     const c = tut.coach;

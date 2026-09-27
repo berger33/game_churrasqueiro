@@ -56,9 +56,47 @@ Rules for the port:
   `float` only for rendering.
 - **No allocations in `Tick`.** No LINQ, no closures, no boxing, pre-sized arrays.
 
+### A-02 reference contract — required player progression
+
+`TurnConfig.playerLevel` is required and validated (integer >=1), distinct from campaign
+`levelId/index`. The turn snapshots a catalog requiring both level and restaurant. Orders,
+stock actions and UI use that catalog; scripted orders also reject locked ingredients.
+Empty catalogs fail explicitly. Natural unusual-only customers are filtered when their
+eligible menu is empty; forcing one without a menu errors, never grants locked content.
+
+Production callers: progression p.level before payout, prototype meta.level, scripted FTUE1.
+Skill benchmarks start at1 and accrue actual XP per skill; isolated mechanics fixtures use44
+explicitly, not as a runtime default. Boundary/wiring regressions are in
+`ingredient-unlock.test.ts` and `unlock-wiring.test.ts` (52 new tests).
+
+`tools/golden/vectors.json` **version2** requires playerLevel in all20 turn inputs:9 early
+expectations changed,11 preserved; cooking/scoring/economy and all44 FTUE cases unchanged.
+No game-data/schema/save version changed. C# still lacks25 cases (5+20); port this contract
+and F2/A-01/A-02 regressions in F8, not just old golden outputs. Global economy still fails
+3 long targets, so C#/Unity remain blocked. See `docs/evidence/a02/README.md`.
+
+### A-01 reference contract — historical checkpoint (2026-09-26 local / 27 UTC)
+
+Costela/cupim are two-sided, `flipNeeded:true` (ingredients v6, owner decision).
+The TS semantic validator rejects multi-side grill recipes with `flipNeeded:false`;
+`SkillPolicy` already consumes the flag, so no bot formula changed. Use real cooking
+integration/advanced bot tests in `tools/studio/test/slow-cuts.test.ts` when porting.
+Normal UI uses the existing FTUE flip-readiness rule, recipe flag and an eight-item
+bench pager; the guided FTUE contract is unchanged.
+
+Golden coverage is **106 + 44 FTUE**: all old expectations intact, eight new advanced
+turns (restaurants 3–6, two skill levels, equipped Fornalha evo 3). Full-turn inputs now
+optionally carry `churrasqueiraId/Level`; advanced expectations include observed per-cut
+usage retained across runtime compaction, with serves identified by order fulfillment
+(not the `served` flag, also used by discard). C# has **25 unported cases** (5 economy +
+20 turns), plus F2 save/result/counting regressions to port. No C# rule port was attempted.
+Long-sim economic acceptance fails 3 targets; F8 remains blocked until F3/F4 stabilization.
+See `docs/evidence/a01/README.md` for exact scopes and proofs.
+
 ### Golden vectors
 
-`tools/studio/golden.test.ts` writes deterministic fixtures to `tools/sim-core/golden/`:
+`tools/studio/gen-vectors.ts` writes deterministic fixtures to `tools/golden/`;
+`tools/studio/test/golden.test.ts` replays them:
 
 ```json
 { "seed": 20260917, "levelId": "level_012", "dt": 0.05,
@@ -138,8 +176,16 @@ Schema history (`SAVE_SCHEMA_VERSION` = 3):
 | v2 | `player.churrasqueiraId`, `player.churrasqueiraLevels` | grants the starter `lata_valente` at level 1 |
 | v3 | `progress.tutorial` (`TutorialState \| null`), `progress.ftueDone` | the FTUE counts as done — a pre-v3 save belongs to someone who already played (05-UX_FLOW §4.3) |
 
-All of this is implemented and unit-tested in `tools/sim-core/src/save.ts`; the C# port is
-`Assets/Scripts/Platform/SaveService.cs`.
+**F2 reference contract (A-07):** after checking the original CRC, load/migrate recomputes
+`player.counters.restaurantsUnlocked = player.restaurantIndex + 1` on v1/v2/v3 saves,
+including saves written by the faulty v3 build. This is derived-state normalization, not a
+schema-shape change: version stays 3; other counters and already-claimed rewards are preserved.
+Historical `burnedFood` cannot be repaired without a per-item journal and is not rewritten.
+SaveGame persists player/progress, **not** an in-flight TurnSimulation.
+
+The envelope/migrations above are implemented and tested in `tools/sim-core/src/save.ts`.
+Dual-slot storage/cloud/Unity integration remain specifications; the planned engine-free
+`Assets/Scripts/Core/SaveSystem.cs` port is not written yet (see docs/18).
 
 ## 7. Security (§58)
 

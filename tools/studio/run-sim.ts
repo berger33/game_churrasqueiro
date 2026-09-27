@@ -20,6 +20,11 @@ import { clamp } from '../sim-core/src/data.ts';
 
 export interface LevelOutcome {
   level: GeneratedLevel;
+  /** Progression snapshot actually passed into this turn (before its XP payout). */
+  playerLevel: number;
+  ingredientIds: string[];
+  restaurantIndex: number;
+  orderedIngredientIds: string[];
   coins: number;
   xp: number;
   perfect: number;
@@ -117,6 +122,7 @@ export function simulateProgression(opts: SimOptions = {}): ProgressionReport {
       db,
       {
         restaurantIndex: p.restaurantIndex,
+        playerLevel: p.level,
         levelId: level.id,
         upgradeLevels: { ...p.upgradeLevels },
         seed: seed + level.index,
@@ -204,6 +210,10 @@ export function simulateProgression(opts: SimOptions = {}): ProgressionReport {
     }
 
     outcomes.push({
+      playerLevel: sim.config.playerLevel,
+      restaurantIndex: sim.restaurant.index,
+      orderedIngredientIds: [...new Set(r.events.flatMap(e => e.type === 'spawn' ? e.customer.lines.map(l => l.ingredientId) : []))],
+      ingredientIds: sim.availableIngredients.map(i => i.id),
       level,
       coins: r.coins + level.rewards.coins,
       xp: r.xp,
@@ -286,6 +296,9 @@ export function measureSkillCurve(opts: { skills?: number[]; levels?: GeneratedL
   const out: Record<string, { perfect: number; good: number; burned: number; lost: number; coinsPerTurn: number }> = {};
 
   for (const skill of skills) {
+    // Fixed skill does not mean unlocked recipes: accrue actual XP from level 1.
+    // This isolated skill benchmark still has no purchases/upgrades, as before.
+    const player = newPlayerState();
     let perfect = 0;
     let good = 0;
     let burned = 0;
@@ -297,6 +310,7 @@ export function measureSkillCurve(opts: { skills?: number[]; levels?: GeneratedL
         db,
         {
           restaurantIndex: level.restaurantIndex,
+          playerLevel: player.level,
           levelId: level.id,
           upgradeLevels: {},
           seed: seed + level.index,
@@ -314,6 +328,7 @@ export function measureSkillCurve(opts: { skills?: number[]; levels?: GeneratedL
       let guard = 0;
       while (!sim.finished && guard++ < 40000) sim.tick(1 / 20, (a) => policy.act(a));
       const r = sim.result();
+      applyTurnResult(db, player, r);
       perfect += r.counters.perfectCooks;
       good += r.counters.goodCooks;
       burned += r.counters.burnedFood;
@@ -511,7 +526,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log(`  ${c.pass ? 'PASS' : 'FAIL'}  ${c.id.padEnd(34)} ${c.detail}`);
   }
   console.log('');
-  console.log('skill curve (authored content, fixed skill):');
+  console.log('skill curve (authored content, fixed skill; player level progresses from XP, no purchases):');
   console.log('  skill  perfect   good   burned   lost   coins/turn');
   for (const [k, v] of Object.entries(skillCurve)) {
     console.log(`  ${k}  ${(v.perfect * 100).toFixed(1).padStart(6)}%  ${(v.good * 100).toFixed(1).padStart(5)}%  ${(v.burned * 100).toFixed(1).padStart(6)}%  ${(v.lost * 100).toFixed(1).padStart(5)}%  ${String(v.coinsPerTurn).padStart(10)}`);

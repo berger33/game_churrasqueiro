@@ -8,6 +8,76 @@
 
 ---
 
+## Atualização A-02 — vigente (2026-09-26 local /27 UTC)
+
+**A-02 funcional corrigido:** playerLevel obrigatório/integral/positivo no contrato,
+catálogo de pedidos/estoque/UI por nível E restaurante, snapshot no início. Sim p.level,
+UI meta.level, FTUE1; skill curve usa XP real, não índice de fase/default all-unlocked.
+UnusualOnly sem menu não sorteado; forçado sem menu rejeitado; nenhuma ordem vazia.
+
+- **351 testes** (50 novos red +2 wiring red antes do green), gates locais14/15;
+ 19 screenshots/244 sprites, FTUE inalterado.106+44 vetores:20 entradas com playerLevel,
+ 9 expectativas iniciais mudam,11 preservadas;44 FTUE byte-idênticos. C#25 não portados.
+- **Longo15/18**: rede883<950, rendaL50=192.223>152.000, spend0,489<0,70. Três desvios
+  persistem, sem retuning. Logs/diffs/regressões em [`evidence/a02/`](evidence/a02/README.md).
+- Dos9 altos:3 encerrados F2; A-01/A-02 funcionais com economia global pendente;
+  **4 sem correção (A-03–A-06)**. Vinagrete permanece após nível12/rest0; não apagar para
+  contornar A-03. F3/F4 não encerradas. PR14 sem merge; CI A-02 **15/15 aprovado**,
+  [run36286427123](https://github.com/berger33/game_churrasqueiro/actions/runs/36286427123) em44ccf11, C#139 checks/25 não portados.
+
+## Atualização A-01 — histórico (2026-09-26 local /27 UTC)
+
+**A-01 funcional corrigido, aceite econômico pendente.** O dono escolheu 2 lados e
+virada obrigatória em costela/cupim. Dados v6, bot usando os flags, UI paginada/dica
+contextual/toque de vizinho corrigidos; roteiro FTUE intacto. Evidências red/green,
+janelas, probe avançado e revisão semântica: [`evidence/a01/`](evidence/a01/README.md).
+
+- **299 testes**, 14/15 gates locais (C# SKIP), 106+44 vetores (8 turnos avançados novos;
+  nenhum input/expect antigo alterado), 17 screenshots, FTUE 16,1/32,9/38,3 s sem erros.
+- **Sim longo 15/18**: rede 859 vs 950–1450, L50 182.381 vs 98.000–152.000,
+  spend 0,480 vs 0,70–0,99. Não retunado. A-02–A-06 e F4 precisam preceder aceite global.
+- Dos 9 altos originais: 3 encerrados em F2; A-01 corrigido funcionalmente com aceite
+  econômico pendente; **5 ainda sem correção (A-02–A-06)**. C-06 apenas parcialmente
+  resolvido (truncagem da bancada); dívida l10n/polish continua. Totais históricos preservados.
+- C# agora tem 25 casos não portados (5 econômicos + 20 turnos). Sem porta C#/Unity/arte
+  nova; PR #14 aberto/sem merge. CI remoto A-01 **15/15**, [run 36285270473](https://github.com/berger33/game_churrasqueiro/actions/runs/36285270473)
+  em `8b042ca` (139 checks C#, 25 não portados). Longo só local; Nightly dispatch negado (403).
+
+## Atualização F2 — histórico (2026-09-26 local / 27 UTC)
+
+**A-07, A-08 e A-09 resolvidos na referência TypeScript**, em `5803806`, `f2958d6` e
+`02e7f61`. Restam **6 altos abertos (A-01–A-06)**; totais originais e reproduções abaixo
+são mantidos como histórico. O CI verde não resolve os demais achados.
+
+| Achado | Prova antes da correção | Correção / prova depois |
+|---|---|---|
+| A-07 | 7 testes falhavam: contador inicial ausente, sequência 2/5/9/14/20/27, metas antecipadas, saves incorretos | inicial=1, unlock atribui índice+1, load normaliza v1/v2/v3 após CRC; 8 regressões verdes, incluindo metas reais 2/3/5/7 e saves antigos sem alteração de prêmios |
+| A-08 | 3 testes falhavam: 1 prato queimado servido=2; 3 pratos=5; resultado inflado | contar só na transição onBurn; 4 regressões verdes com queima real e persistência do resultado; não tentar inferir histórico por prato ausente do save |
+| A-09 | 8 testes falhavam: reprodução exata 745→842; FTUE 86→127; leituras alteravam acumuladores/snapshots | cálculo puro, bônus/rounding apenas no retorno, snapshots independentes; 6 novos testes + replay golden e FTUE fortalecidos |
+
+Validação: **272 testes** (antes 254), **14/15 gates locais**, C# SKIP sem SDK;
+**18/18 guardrails longos**, saída integral igual à anterior. `check-vectors` confirma
+98+44 sem drift: vetores do bot descartam queimados/fazem só uma leitura final e não cobrem
+contador de unlock/save. Nenhum JSON de vetor foi regenerado. Dados/preços não alterados.
+PR #14 continua aberto, agora F1+F2, **sem merge**; CI remoto F2 **15/15 aprovado** em
+`faf2081`, [run 36283526080](https://github.com/berger33/game_churrasqueiro/actions/runs/36283526080), incluindo compilação/checks C#.
+Próxima ação: A-01, decisão de produto antes de dados. Plano vigente: docs/23-PLANO §9.8.
+
+## Histórico F1 pós-auditoria — 2026-09-27 UTC
+
+Sessão `arena/01a0e03e-game-churrasqueiro`: baseline reexecutado sobre o merge PR #13
+(`4fe4f4f`), sem divergência nos 202 testes, 13/14 gates locais e 18/18 guardrails longos.
+A lacuna do pipeline de arte foi reproduzida: `check-art` aceitava WebP órfão no runtime;
+`check-art-registry` não existia. Agora há gate dedicado, incluído no CI, com 52 testes
+(46 negativos). Total atual **254 testes**, **14/15 gates locais**, C# ainda SKIP sem SDK.
+O inventário protege os 244 IDs aprovados e valida masters/CSV/lotes/manifesto/runtime.
+
+**Na entrega F1, A-01–A-09 permaneceram abertos** (ver F2 abaixo para o estado atual). Não houve mudança de regras,
+dados, vetores ou economia; simulação longa integralmente idêntica. Vulnerabilidades também
+permanecem 5 (1 crítica/1 alta/3 moderadas). CI remoto **15/15 aprovado**, incluindo C#, em [run 36282761422](https://github.com/berger33/game_churrasqueiro/actions/runs/36282761422) / PR #14 (aberto, sem merge). Ordem operacional vigente: F1 concluída,
+A-07 → A-08 → A-09 em seguida; demais fases e decisões em `23-PLANO_IMPLEMENTACAO.md` §9.
+A §9 histórica abaixo é referência, não autorização para portar regras defeituosas.
+
 ## 1. Baseline (o que roda e o que não roda)
 
 | Gate (`npm run …`) | Resultado | Observação |
@@ -30,7 +100,7 @@ Ambiente: Node v22.22.3, npm 10.9.8. Árvore limpa antes e depois (os gates que 
 
 ## 2. Sumário executivo
 
-**Achados: 47** — 🔴 9 altos · 🟠 19 médios · 🟡 19 baixos.
+**Achados originais: 47** — 9 altos · 19 médios · 19 baixos. Dos altos,3 encerrados em F2, A-01/A-02 funcionais com economia global pendente,4 sem correção (A-03–A-06).
 
 Os nove que mais importam, em ordem de impacto no jogo:
 
@@ -54,8 +124,8 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
 
 | ID | Sev | Área | Título |
 |---|---|---|---|
-| A-01 | 🔴 | Regras/Dados | Costela e cupim inalcançáveis sem virar (`flipNeeded:false` + `sides:2`) |
-| A-02 | 🔴 | Regras/Dados | `unlock.level` de ingrediente nunca aplicado |
+| A-01 | 🟠 funcional corrigido; economia pendente | Regras/Dados | Reprodução histórica: costela e cupim inalcançáveis sem virar (`flipNeeded:false` + `sides:2`) |
+| A-02 | ✅ funcional | Regras/Dados | `unlock.level` de ingrediente nunca aplicado |
 | A-03 | 🔴 | Protótipo | Pedidos de vinagrete (prep) impossíveis de concluir |
 | A-04 | 🔴 | Dados/Regras | Zona 4 declarada, nunca criada |
 | A-05 | 🔴 | Dados/Regras/Loja | VIP não aparece em jogo, mas é prometido |
@@ -88,7 +158,7 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
 | C-03 | 🟠 | Protótipo | Level-up não paga `levelUpCoins`/brasas (diverge de `applyTurnResult`) |
 | C-04 | 🟡 | Protótipo | Fórmula de XP e `DAILY_REWARDS` duplicadas (hoje iguais, drift garantido) |
 | C-05 | 🟡 | Protótipo | Baú do dia 7 = `+500` fixo; roleta "Chest"/"Booster" não entregam nada; `buyUpgrade` ignora `track.currency` |
-| C-06 | 🟡 | Protótipo | Strings pt-BR literais (`'Moedas insuficientes'`, `'QUEIMADO'`, …) fora do l10n; bancada `.slice(0,8)` |
+| C-06 | 🟡 | Protótipo | Strings pt-BR literais (`'Moedas insuficientes'`, `'QUEIMADO'`, …) fora do l10n; truncagem `.slice(0,8)` resolvida por paginação no checkpoint A-01 |
 | C-07 | 🟡 | Protótipo | `dev-server.mjs` só observa `src/main.ts`; `readFile` em diretório → 500 |
 | D-01 | 🟠 | Ferramentas | `measureSkillCurve` roda na grelha padrão de 3 zonas; `simulateProgression` na `lata_valente` de 1 zona |
 | D-02 | 🟠 | Ferramentas | `targets.sessionLengthMinutes` e `noUpgradeCostRegression` nunca verificados |
@@ -102,7 +172,7 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
 | E-04 | 🟡 | C# | Nenhum `.cs` foi compilado neste ambiente (ver §1) |
 | F-01 | 🟠 | Docs | README: `Packages/`, `ProjectSettings/`, `marketing/`, `Assets/Scripts/Sim/`, `tools/studio/golden.test.ts` não existem |
 | F-02 | 🟠 | Docs | `docs/02` tabela de restaurantes: custos 3 500/12 000/70 000/150 000/500 000/2 800 000 vs dados 0/3 500/15 000/67 000/178 000/4 200 000 |
-| F-03 | 🟡 | Docs | `docs/02` §10 curva de skill defasada vs `npm run sim`; §4.5 "janela de 4,3 s da costela" pressupõe algo impossível (A-01) |
+| F-03 | 🟡 | Docs | `docs/02` §10 curva atualizada em A-02 e §4.5 janelas/matemática corrigidas em A-01; descrições antigas abaixo são históricas |
 | F-04 | 🟡 | Docs | README "Not started: art assets, recorded audio" — há 100+ PNG e WAVs gerados |
 | F-05 | 🟡 | Docs | `types.ts` e `docs/03` citam `tools/sim-core/golden/` (é `tools/golden/`) |
 
@@ -110,7 +180,7 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
 
 ## 4. Regras de referência — `tools/sim-core/src`
 
-### A-01 🔴 Costela e cupim inalcançáveis sem virar
+### A-01 — reprodução histórica; funcional corrigido, aceite econômico pendente
 
 - **Onde:** `shared/data/ingredients.json` (`costela`: `sides:2, flipNeeded:false, perfectWindow [0.76,0.88]`; `cupim`: `[0.78,0.90]`), `shared.carryoverRate = 0.12`, `shared.burnedThreshold = 1.2`; `cooking.ts:341–350` (lado de cima cozinha a `carry`), `cooking.ts:427–437` (`scoreItem`), `policy.ts:111` (`if (ing.flipNeeded && …) a.flip(f)`).
 - **Matemática:** sem virar, quando o lado de baixo chega a 1,2 (queima) o de cima está em 0,144 → overall 0,672. Para costela `lo − padding = 0,76 − 0,08 = 0,68`; para cupim 0,70. O item **nunca** sai de `raw` antes de virar `burned`.
@@ -122,10 +192,10 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
   cupim    WITH flip  burn@ 29.3s                     … perfect:24.2-27.4s
   ```
   Turno completo com skill 1,0 no restaurante 4 (script §8.1): `costela {raw:6}`, `cupim {}` (clientes desistem), `picanha {perfect:18, good:3}`.
-- **Impacto:** `flipFood` **não** checa `flipNeeded`, então um humano que virar mesmo assim consegue — mas a UI/prompt não vai pedir, e o bot que calibra `docs/06`, `perfectRateAtSkillMid` e as metas L30/L50 nunca vira. As metas dos restaurantes 3–6 foram medidas com os cortes mais caros do jogo valendo `ing.value * 0.35` ou zero.
+- **Impacto:** `flipFood` **não** checa `flipNeeded`, então um humano que virar mesmo assim consegue — **correção da descrição original:** a UI normal já mostrava uma dica genérica, porém imediatamente/cedo demais; o FTUE usava prontidão contextual. O bot que calibra `docs/06`, `perfectRateAtSkillMid` e as metas L30/L50 nunca vira. As metas dos restaurantes 3–6 foram medidas com os cortes mais caros do jogo valendo `ing.value * 0.35` ou zero.
 - **Correção sugerida:** ou `sides: 1` para itens `flipNeeded:false` (cozinha "overall" de verdade), ou remover `flipNeeded:false` e ensinar o bot/UI a virar. Regerar `tools/golden/vectors.json` depois (`npm run gen-vectors`) e reavaliar `npm run sim`.
 
-### A-02 🔴 `unlock.level` de ingrediente nunca aplicado
+### A-02 ✅ funcional corrigido — reprodução histórica: `unlock.level` ignorado
 
 - **Onde:** `turn.ts spawnCustomer` monta o pool por `unlock.restaurantIndex <= restaurantIndex` (só isso). `unlock.level` aparece apenas em `tools/studio/test/data.test.ts:40`. O simulador nem recebe o nível do jogador.
 - **Evidência (script §8.1, 24 níveis do restaurante 0, seeds do protótipo):** queijo_coalho 16,1 % (nível 6), legumes 15,5 % (nível 10), pão de alho 13,4 %, coração 12,9 %, frango 11,8 %, fraldinha 10,8 % (nível 14), linguiça 10,5 %, vinagrete 8,9 %.
@@ -151,21 +221,21 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
 - **Impacto:** o jogador paga (até 2 500 × 1,85ⁿ) por nada; `run-sim.ts UPGRADE_PRIORITY` compra todas, então `coinSpendRatio` "passa" com dinheiro jogado fora, e o `noUpgradeCostRegression` nem é checado (D-02).
 - **Correção:** implementar ou esconder as trilhas (flag `implemented:false` filtrada na loja e no bot) até existirem.
 
-### A-07 🔴 `restaurantsUnlocked` acumula
+### A-07 ✅ Resolvido em F2 — reprodução histórica: `restaurantsUnlocked` acumula
 
 - **Onde:** `economy.ts:162` `addCounter(p, 'restaurantsUnlocked', index + 1)`.
 - **Evidência (script §8.1):** desbloqueando 1→6 em sequência o contador vale 2, 5, 9, 14, 20, 27.
 - **Impacto:** `achievements.json restaurant_3/5/7` (alvos 3/5/7) disparariam nos restaurantes 2/3/4 — `restaurant_7` paga 200 000 moedas, 150 brasas e a coroa. Latente só porque não há avaliador (B-08).
 - **Correção:** `p.counters.restaurantsUnlocked = index + 1` (ou `addCounter(…, 1)` com base 1).
 
-### A-08 🔴 `burnedFood` dobrado
+### A-08 ✅ Resolvido em F2 — reprodução histórica: `burnedFood` dobrado
 
 - **Onde:** `turn.ts:370` (callback `onBurn` do `tickGrill`) e `turn.ts:337` (`serve` com `quality === 'burned'`).
 - **Evidência (script §8.1):** deixar queimar e servir o mesmo prato → `burnedFood = 2`.
 - **Impacto:** `burnedRate` em `run-sim`/`balance-report` e o campo `counters.burnedFood` dos vetores dourados de turno (`tools/golden/vectors.json`) estão inflados. O bot descarta queimados antes de servir, então o efeito é pequeno no sim, mas no jogo real (servir queimado é comum) dobra.
 - **Correção:** contar só em um lugar (o `onBurn`), regerar vetores.
 
-### A-09 🔴 `result()` não idempotente
+### A-09 ✅ Resolvido em F2 — reprodução histórica: `result()` não idempotente
 
 - **Onde:** `turn.ts:501–` soma `turnEndBonus` em `this.coins` a cada chamada.
 - **Evidência (script §8.1):** duas chamadas seguidas → 745 e 842 moedas (turno `level_001`, seed 4242, skill 0,6). Os chamadores atuais (`main.ts:931`, `run-sim.ts:141,316`, `gen-vectors.ts:338`) chamam uma vez cada.

@@ -47,6 +47,9 @@ export function validateDatabase(db: GameDatabase): string[] {
     if (it.cookMethod === 'grill' && it.sideCookSec <= 0) {
       problems.push(`ingredient ${it.id}: grilled items need sideCookSec > 0`);
     }
+    if (it.cookMethod === 'grill' && it.sides > 1 && !it.flipNeeded) {
+      problems.push(`ingredient ${it.id}: multi-side grilling requires flipNeeded`);
+    }
     if (it.cookMethod === 'prep' && !it.prepSec) {
       problems.push(`ingredient ${it.id}: prep items need prepSec > 0`);
     }
@@ -54,6 +57,9 @@ export function validateDatabase(db: GameDatabase): string[] {
     if (!(lo < hi)) problems.push(`ingredient ${it.id}: perfectWindow must be ascending`);
     if (lo < 0 || hi > 1.2) problems.push(`ingredient ${it.id}: perfectWindow out of sane range`);
     if (it.value <= 0) problems.push(`ingredient ${it.id}: value must be > 0`);
+    if (!Number.isInteger(it.unlock.level) || it.unlock.level < 1) {
+      problems.push(`ingredient ${it.id}: unlock.level must be a positive integer`);
+    }
     if (!db.restaurantByIndex.has(it.unlock.restaurantIndex)) {
       problems.push(`ingredient ${it.id}: unlock.restaurantIndex ${it.unlock.restaurantIndex} not defined`);
     }

@@ -1,3 +1,5 @@
+// Mechanics fixtures explicitly use level 44: the full menu of their restaurant.
+// Player progression boundaries are covered by ingredient-unlock.test.ts.
 /**
  * Skill-policy behaviour.
  *
@@ -47,7 +49,7 @@ function measureIdealZoneHits(skill: number, turns = 40): { placed: number; hits
     const level = LEVELS[i % LEVELS.length]!;
     const sim = new TurnSimulation(
       db,
-      { restaurantIndex: level.restaurantIndex, levelId: level.id, upgradeLevels: {}, seed: 2000 + i },
+      { playerLevel: 44, restaurantIndex: level.restaurantIndex, levelId: level.id, upgradeLevels: {}, seed: 2000 + i },
       2000 + i
     );
     const policy = new SkillPolicy(new Rng(2000 + i * 7919), { skill });

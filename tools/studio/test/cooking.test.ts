@@ -1,3 +1,5 @@
+// Mechanics fixtures explicitly use level 44: the full menu of their restaurant.
+// Player progression boundaries are covered by ingredient-unlock.test.ts.
 import { describe, expect, it } from 'vitest';
 import { loadAndValidate } from '../load-data.ts';
 import {
@@ -280,7 +282,7 @@ describe('grill capacity & charcoal', () => {
   });
 
   it('refills instantly reset the charcoal clock', () => {
-    const sim = new TurnSimulation(db, { restaurantIndex: 0, levelId: 'test', upgradeLevels: {}, seed: 1 }, 1);
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 0, levelId: 'test', upgradeLevels: {}, seed: 1 }, 1);
     tickGrill(sim.grill, db, sim.stats.charcoalDurationSec * 0.9);
     expect(sim.grill.charcoalT).toBeGreaterThan(0.8);
     expect(sim.refillCharcoal()).toBe(true);
@@ -292,7 +294,7 @@ describe('grill capacity & charcoal', () => {
 describe('skill policy sanity', () => {
   it('achieves a high perfect rate at skill 1.0 and a low one at skill 0.2', () => {
     const run = (skill: number) => {
-      const sim = new TurnSimulation(db, { restaurantIndex: 1, levelId: 'policy', upgradeLevels: {}, seed: 7 }, 7);
+      const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 1, levelId: 'policy', upgradeLevels: {}, seed: 7 }, 7);
       const rng = new Rng(7);
       const policy = new SkillPolicy(rng, { skill });
       let guard = 0;

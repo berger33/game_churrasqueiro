@@ -89,7 +89,7 @@ For `n` sides and carryover `c`, flipping at the right moment makes all sides fi
 flipAt = T / (1 + (n − 1) · c)          total time D = T · n / (1 + (n − 1) · c) / rate
 ```
 
-For a 2-sided cut with `c = 0.12` that is `flipAt ≈ 0.73 · T`. Verified by
+For a 2-sided cut with `c = 0.12` that is `flipAt ≈ 0.893 · T` (costela T=0.82 → flipAt≈0.732). Verified by
 `cooking.test.ts > optimalFlipPoint equalises both sides`.
 
 ### 4.4 Evenness gate
@@ -112,9 +112,16 @@ who never flips can hit the right average doneness and still fail.
 
 A first-time player **must** be able to land a PERFEITO inside 60 seconds (§40), so the first
 food they ever cook is a linguiça with the widest window. Premium cuts are the mastery
-content. Note the emergent result: costela cooks at ~0.028 doneness/s on low heat, so its
-0.12 window is **~4.3 seconds wide** — slow low-heat cooking is naturally forgiving, exactly
-as it is in real life.
+content. **A-01 owner decision:** costela and cupim keep two sides and **require a flip**.
+Low heat/slow cooking remains the design; the bot obeys the recipe flag and the normal UI
+uses the FTUE's wait-until-browned cue before prompting a tap. No new guided FTUE step.
+
+The former “4.3 s on low heat” estimate did not integrate both sides or charcoal. Actual
+0.05 s ticks on restaurant 4's default grill, no upgrades, one optimal flip yield costela
+perfect samples at **52.40–60.15 s** (7.80 s of samples) and cupim **62.65–71.75 s**
+(9.15 s) in the low zone. The medium-zone costela window is 4.30 s in that fixture.
+Other grills/heat/upgrades change timing. **Neither cut can reach a good/perfect window
+without flipping** at carry=0.12. Reproduction and all three zones: `docs/evidence/a01/`.
 
 ### 4.6 Charcoal
 
@@ -241,21 +248,31 @@ frustration streak can never form. Verified in the generator output:
 
 ### Measured skill curve
 
-The balance harness models human reaction latency and coarse visual perception, then plays the
-authored content at fixed skill:
+The balance harness models human reaction latency and coarse perception at fixed skill.
+**A-02:** each skill run starts at player level1 and earns real XP, so recipe unlocks change
+with progression; no purchases/upgrades are added to this isolated benchmark. Campaign
+index is not player level. `simulateProgression` separately includes purchases/owned grills.
 
 | skill | perfect | good | burned | lost | coins/turn |
 |---|---|---|---|---|---|
-| 0.30 (new player) | 26.1 % | 73.5 % | 0.4 % | 10.5 % | 465 |
-| 0.45 | 35.3 % | 64.3 % | 0.4 % | 10.1 % | 480 |
-| 0.55 (competent casual) | 47.5 % | 52.5 % | 0.0 % | 11.1 % | 530 |
-| 0.70 | 68.2 % | 31.8 % | 0.0 % | 10.4 % | 634 |
-| 0.85 (experienced) | 87.7 % | 12.3 % | 0.0 % | 10.7 % | 674 |
-| 1.00 (expert) | 98.4 % | 1.6 % | 0.2 % | 10.3 % | 701 |
+| 0.30 (new player) |25.0%|75.0%|0.0%|0.9%|430|
+| 0.45 |40.1%|59.6%|0.3%|0.4%|546|
+| 0.55 (competent casual) |46.0%|54.0%|0.0%|0.2%|571|
+| 0.70 |65.7%|34.3%|0.0%|0.2%|659|
+| 0.85 (experienced) |84.9%|15.1%|0.0%|0.0%|709|
+| 1.00 (expert) |97.9%|1.9%|0.1%|0.2%|751|
 
-A new player lands a PERFEITO roughly one time in four — enough to feel it, rare enough to
-chase. Expert play pays **1.51×** a beginner at the same content. Reproduce with
-`npm run sim`.
+A beginner lands perfect roughly one time in four. Expert play pays **1.75×** the beginner
+in this benchmark. Reproduce with `npm run sim`; full evidence: `docs/evidence/a02/`.
+The three failed long-horizon targets are **not** waived by this passing skill curve.
+
+### Ingredient progression (A-02)
+
+A recipe needs **both** its `unlock.level` and `unlock.restaurantIndex`. The player level
+is snapshotted at turn start; XP payouts unlock new stock/orders on the next turn. At
+player1/restaurant0 only linguiça is available; cheese appears at player6, vinagrete at12.
+UI and bot use the same catalog as orders. Scripted FTUE remains level1/linguiça.
+Vinagrete still needs its actual non-grill UI flow (A-03); eligibility is not prep implementation.
 
 ## 11. FTUE (§40, §41, §76)
 

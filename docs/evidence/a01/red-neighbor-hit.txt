@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/cooking-ui.test.ts (8 tests | 1 failed) 13ms
+   × A-01 pointer dependency: neighboring plates on the painted grill > selects the nearest plate, not always the first item in overlapping targets 5ms
+     → expected 'costela' to be 'cupim' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/cooking-ui.test.ts > A-01 pointer dependency: neighboring plates on the painted grill > selects the nearest plate, not always the first item in overlapping targets
+AssertionError: expected 'costela' to be 'cupim' // Object.is equality
+
+Expected: "cupim"
+Received: "costela"
+
+ ❯ tools/studio/test/cooking-ui.test.ts:65:60
+     63|   it('selects the nearest plate, not always the first item in overlapp…
+     64|     const plates = [{ id: 'costela', x: 100, y: 100 }, { id: 'cupim', …
+     65|     expect(grilledFoodHit(plates, { x: 125, y: 100 })?.id).toBe('cupim…
+       |                                                            ^
+     66|     expect(grilledFoodHit(plates, { x: 100, y: 100 })?.id).toBe('coste…
+     67|     expect(grilledFoodHit([...plates].reverse(), { x: 125, y: 100 })?.…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  01:12:24
+   Duration  396ms (transform 179ms, setup 0ms, collect 197ms, tests 13ms, environment 0ms, prepare 44ms)
+

@@ -1,7 +1,7 @@
 {
   "$schema": "schema/ingredients.schema.json",
   "_comment": "CHURRASCO! O Mestre da Brasa — food table. Single source of truth. Unity reads Assets/Data/Ingredients.json (synced by `npm run sync-data`). Do NOT hand-tune gameplay values in C#.",
-  "version": 5,
+  "version": 6,
   "shared": {
     "stageThresholds": {
       "RAW_MAX": 0.35,
@@ -531,7 +531,7 @@
       "idealZone": "low",
       "heatRate": 0.9,
       "burnRate": 0.55,
-      "flipNeeded": false,
+      "flipNeeded": true,
       "perfectWindow": [
         0.76,
         0.88
@@ -568,7 +568,7 @@
       "idealZone": "low",
       "heatRate": 0.85,
       "burnRate": 0.5,
-      "flipNeeded": false,
+      "flipNeeded": true,
       "perfectWindow": [
         0.78,
         0.9

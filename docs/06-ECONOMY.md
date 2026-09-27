@@ -13,6 +13,69 @@ Both exit non-zero when a guardrail in `shared/data/economy.json → targets` is
 
 ---
 
+## Revalidação A-02 — estado vigente (2026-09-26 local / 27 UTC)
+
+Pedidos/estoque agora respeitam nível **e** restaurante. Sim passa p.level, UI meta.level;
+curva de skill parte do nível1 e acumula XP real por skill, sem compras. Não há fallback
+liberando receitas futuras. Dados/preços/tempos/receitas/recompensas/alvos intactos.
+
+Em1.500 turnos: nível80/rest6/Fornalha3; renda **22.233.557**, gasto **10.873.220**, saldo
+**11.360.337**; perfect **75,7%**, burned **0,2%**, perdidos **3,5%**, média **172,5s**.
+Restaurantes **42/98/165/259/398/883**; grills **10/45/89**; renda L5/15/30/50
+**10.480/39.445/108.533/192.223**. **15/18, exit1**: rede883<950, L50=192.223>152.000,
+spend **0,489**<0,70. São os mesmos três desvios A-01, não corrigidos por tuning.
+
+Curva skill.55 **46,0% perfect /571 moedas** (antes55,7%/793). Curva completa/antes-depois,
+logs longos e amostra de60 turnos com XP/pedidos em [`evidence/a02/`](evidence/a02/README.md).
+`sim` curto segue verde; não substitui longo nem resolve os sinks no-op de A-06.
+Probe avançado A-01 com nível44 explícito mantém janelas/128 turnos agregados idênticos.
+
+**Aceite econômico global pendente**. A-03–A-06 precedem F4. Vinagrete continua no pool
+quando desbloqueado (nível12/rest0); a UI prep será A-03, não esconder o item. As seções
+abaixo preservam medições históricas, não devem ser usadas como balanço atual.
+
+## Revalidação A-01 — histórico (2026-09-26 local / 27 UTC)
+
+**Correção funcional validada, economia NÃO aprovada.** A escolha do dono foi manter
+2 lados e exigir virada em costela/cupim. Com os flags corrigidos, `sim:long` **falha em
+3 de 18 alvos**: Rede Nacional no turno **859** (950–1450), renda L50 **182.381/dia**
+(98.000–152.000), spend **0,480** (0,70–0,99). Alvos e tuning não foram alterados.
+
+Em 1.500 turnos: nível 80/restaurante 6/Fornalha evo 3; renda **22.675.447**, gasto
+**10.873.220**, saldo **11.802.227**; perfect **75,9%**, burned **0,2%**, perdidos **3,7%**,
+duração média **173,4 s**. Restaurantes **32/89/147/239/383/859**; grills **7/45/90**;
+renda L5/L15/L30/L50 **10.793/41.115/114.616/182.381**. A queda de queimados reflete
+agora cortes caros cozinháveis pelo bot, não o ajuste de contagem A-08 (já isolado em F2).
+
+`sim` curto continua verde; sua curva autoral de skill só testa restaurantes 0/1.
+Probe complementar de 8 seeds por skill nos restaurantes 3–6 mostra perfect e renda
+crescentes com habilidade, com contagens/qualidades completas; não equivale à progressão.
+**Logs íntegros, JSONs antes/depois e métodos:** [`evidence/a01/`](evidence/a01/README.md).
+
+As medições abaixo são **históricas, anteriores a A-01**, não a economia atual.
+F3 continua em A-02–A-06. Carregar os 3 desvios para F4; não trocar alvos, encarecer sinks
+ou reverter a decisão funcional apenas para obter verde. Não liberar C#/Unity/publicação.
+
+## Revalidação F2 — histórico (2026-09-26 local / 27 UTC)
+
+A-07/A-08/A-09 corrigidos, sem tuning de dados. `sim:long` repetido após cada correção:
+**18/18 guardrails**, saída completa idêntica ao baseline F1. Em 1.500 turnos: nível 80,
+renda 14.665.839, gasto 10.873.220, saldo 3.792.619, spend ratio **0,741**, perfect **71,8%**,
+burned **5,7%**, perdidos **6,9%**, duração média **169,8 s**. Unlocks de restaurantes
+32/89/147/243/418/1185; churrasqueiras 7/45/90; renda L5/L15/L30/L50
+10.793/41.115/98.262/115.926 moedas/dia.
+
+Por que não mudou: a simulação não avalia recompensas de conquistas (A-07), o bot descarta
+queimados em vez de servi-los (A-08) e os chamadores leem o resultado uma vez (A-09).
+A nova contagem elimina o dobro ao servir queimados; não significa melhoria de habilidade.
+`burnedFood` inclui descartados, enquanto `itemsCooked` conta servidos: a razão não é uma
+probabilidade limitada a 100% para todo turno manual. Nenhum clamp foi adicionado.
+
+**Economia ainda não estabilizada:** A-01–A-06 e os gastos no-op da auditoria seguem abertos.
+Os guardrails verdes não autorizam portar ou publicar essas regras; revalidar após F3/F4.
+
+---
+
 ## 1. Currencies (§19)
 
 Exactly two, as mandated.

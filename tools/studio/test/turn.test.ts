@@ -1,7 +1,11 @@
+// Mechanics fixtures explicitly use level 44: the full menu of their restaurant.
+// Player progression boundaries are covered by ingredient-unlock.test.ts.
 import { describe, expect, it } from 'vitest';
 import { loadAndValidate } from '../load-data.ts';
 import { TurnSimulation } from '../../sim-core/src/turn.ts';
 import { SkillPolicy } from '../../sim-core/src/policy.ts';
+import { applyTurnResult } from '../../sim-core/src/economy.ts';
+import { newSave, serializeSave, deserializeSave } from '../../sim-core/src/save.ts';
 import { Rng } from '../../sim-core/src/rng.ts';
 import { createFood, overallDoneness, placeOnGrill } from '../../sim-core/src/cooking.ts';
 
@@ -11,12 +15,14 @@ function runTurn(opts: {
   restaurantIndex?: number;
   seed?: number;
   skill?: number;
+  stepSec?: number;
   overrides?: Record<string, unknown>;
 }) {
   const seed = opts.seed ?? 99;
   const sim = new TurnSimulation(
     db,
     {
+      playerLevel: 44,
       restaurantIndex: opts.restaurantIndex ?? 1,
       levelId: 'test',
       upgradeLevels: {},
@@ -27,7 +33,7 @@ function runTurn(opts: {
   );
   const policy = new SkillPolicy(new Rng(seed * 31 + 7), { skill: opts.skill ?? 0.8 });
   let guard = 0;
-  while (!sim.finished && guard++ < 40000) sim.tick(1 / 30, (a) => policy.act(a));
+  while (!sim.finished && guard++ < 40000) sim.tick(opts.stepSec ?? 1 / 30, (a) => policy.act(a));
   return sim;
 }
 
@@ -69,6 +75,7 @@ describe('turn simulation', () => {
     const sim = new TurnSimulation(
       db,
       {
+        playerLevel: 44,
         restaurantIndex: 0,
         levelId: 'idle',
         upgradeLevels: {},
@@ -86,7 +93,7 @@ describe('turn simulation', () => {
   });
 
   it('only accepts a serve for an ingredient the customer actually ordered', () => {
-    const sim = new TurnSimulation(db, { restaurantIndex: 1, levelId: 'match', upgradeLevels: {}, seed: 3 }, 3);
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 1, levelId: 'match', upgradeLevels: {}, seed: 3 }, 3);
     const customer = sim.spawnCustomer('comum');
     const ordered = customer.lines[0]!.ingredientId;
     const other = db.ingredients.items.find((i) => i.id !== ordered && i.cookMethod === 'grill')!;
@@ -104,7 +111,7 @@ describe('turn simulation', () => {
   });
 
   it('marks the customer served only when every order line is fulfilled', () => {
-    const sim = new TurnSimulation(db, { restaurantIndex: 3, levelId: 'multi', upgradeLevels: {}, seed: 8 }, 8);
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 3, levelId: 'multi', upgradeLevels: {}, seed: 8 }, 8);
     let customer = sim.spawnCustomer('familia');
     let guard = 0;
     while (customer.lines.length < 2 && guard++ < 40) customer = sim.spawnCustomer('familia');
@@ -132,7 +139,7 @@ describe('turn simulation', () => {
   });
 
   it('breaks the combo when food burns', () => {
-    const sim = new TurnSimulation(db, { restaurantIndex: 0, levelId: 'combo', upgradeLevels: {}, seed: 11 }, 11);
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 0, levelId: 'combo', upgradeLevels: {}, seed: 11 }, 11);
     const c = sim.spawnCustomer('comum');
     const ing = db.ingredientById.get(c.lines[0]!.ingredientId)!;
     const f = sim.takeFromStock(ing);
@@ -156,7 +163,7 @@ describe('turn simulation', () => {
 
     const idle = new TurnSimulation(
       db,
-      { restaurantIndex: 0, levelId: 'idle2', upgradeLevels: {}, seed: 22, overrides: { turnLengthSec: 40, spawnIntervalSec: 4, patienceScalar: 0.3 } },
+      { playerLevel: 44, restaurantIndex: 0, levelId: 'idle2', upgradeLevels: {}, seed: 22, overrides: { turnLengthSec: 40, spawnIntervalSec: 4, patienceScalar: 0.3 } },
       22
     );
     let guard = 0;
@@ -165,7 +172,7 @@ describe('turn simulation', () => {
   });
 
   it('grants a delayed serve after the modelled reaction latency', () => {
-    const sim = new TurnSimulation(db, { restaurantIndex: 0, levelId: 'delay', upgradeLevels: {}, seed: 33 }, 33);
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 0, levelId: 'delay', upgradeLevels: {}, seed: 33 }, 33);
     const c = sim.spawnCustomer('comum');
     const ing = db.ingredientById.get(c.lines[0]!.ingredientId)!;
     const f = sim.takeFromStock(ing);
@@ -183,7 +190,7 @@ describe('turn simulation', () => {
   });
 
   it('never lets one plate be queued twice', () => {
-    const sim = new TurnSimulation(db, { restaurantIndex: 0, levelId: 'dedupe', upgradeLevels: {}, seed: 44 }, 44);
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 0, levelId: 'dedupe', upgradeLevels: {}, seed: 44 }, 44);
     const c = sim.spawnCustomer('comum');
     // Pin the order to a grilled cut: the randomised pool can include `vinagrete`,
     // a prep item that is not ready after 1.1 s and would fail for an unrelated reason.
@@ -252,7 +259,7 @@ describe('food lifecycle', () => {
   });
 
   it('prep items become servable without ever touching the grill', () => {
-    const sim = new TurnSimulation(db, { restaurantIndex: 0, levelId: 'prep', upgradeLevels: {}, seed: 55 }, 55);
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 0, levelId: 'prep', upgradeLevels: {}, seed: 55 }, 55);
     const ing = db.ingredientById.get('vinagrete')!;
     const f = sim.takeFromStock(ing);
     expect(f.onGrill).toBe(false);
@@ -272,5 +279,161 @@ describe('food lifecycle', () => {
     const skewer = createFood(2, db.ingredientById.get('espetinho_misto')!);
     expect(skewer.sides.length).toBe(4);
     expect(overallDoneness(steak)).toBe(0);
+  });
+});
+
+
+/** Real cooking transitions, no test-written burned flags or preloaded counters. */
+function burnPlates(sim: TurnSimulation, count = 1) {
+  const plates = Array.from({ length: count }, (_, i) => {
+    const food = sim.takeFromStock(db.ingredientById.get('linguica_toscana')!);
+    expect(sim.place(food, i % sim.grill.zones.length)).toBe(true);
+    return food;
+  });
+  for (let ticks = 0; plates.some(f => !f.burned) && ticks < 6000; ticks++) sim.tick(1 / 30);
+  expect(plates.every(f => f.burned)).toBe(true);
+  return plates;
+}
+
+function manualTurn() {
+  return new TurnSimulation(db, {
+    playerLevel: 44,
+    restaurantIndex: 0, levelId: 'regression', upgradeLevels: {}, seed: 42,
+    overrides: { autoSpawn: false, turnLengthSec: 300 }
+  });
+}
+
+describe('A-08: one burnedFood per physical plate', () => {
+  it('counts a burn once, including subsequent ticks, moves and discard', () => {
+    const sim = manualTurn();
+    const [food] = burnPlates(sim);
+    expect(sim.counters.burnedFood).toBe(1);
+    expect(sim.move(food!, 1)).toBe(true);
+    for (let i = 0; i < 40; i++) sim.tick(1 / 30);
+    sim.discard(food!); sim.discard(food!);
+    expect(sim.counters.burnedFood).toBe(1);
+    expect(sim.events.filter(e => e.type === 'burned')).toHaveLength(1);
+    expect(sim.result().counters.flawless).toBe(false);
+  });
+
+  it('does not count a burned plate again when served (nor when serving it twice)', () => {
+    const sim = manualTurn();
+    const customer = sim.spawnScriptedCustomer('comum', ['linguica_toscana'], 500);
+    const [food] = burnPlates(sim);
+    expect(sim.counters.burnedFood).toBe(1);
+    expect(sim.serve(customer, food!)?.quality).toBe('burned');
+    expect(sim.serve(customer, food!)).toBeNull();
+    expect(sim.counters.burnedFood).toBe(1);
+    expect(sim.counters.itemsCooked).toBe(1);
+    expect(sim.counters.burnedFood / sim.counters.itemsCooked).toBe(1); // not the old 200%
+    expect(sim.events.filter(e => e.type === 'burned')).toHaveLength(1);
+  });
+
+  it('counts distinct plates once each when two are served and one discarded', () => {
+    const sim = manualTurn();
+    const customers = Array.from({ length: 2 }, () => sim.spawnScriptedCustomer('comum', ['linguica_toscana'], 500));
+    const plates = burnPlates(sim, 3);
+    expect(sim.counters.burnedFood).toBe(3);
+    customers.forEach((c, i) => expect(sim.serve(c, plates[i]!)?.quality).toBe('burned'));
+    sim.discard(plates[2]!);
+    const result = sim.result();
+    expect(result.counters.burnedFood).toBe(3);
+    const burnedIds = result.events.flatMap(e => e.type === 'burned' ? [e.food.uid] : []);
+    expect(new Set(burnedIds).size).toBe(3);
+    expect(burnedIds).toHaveLength(3);
+  });
+
+  it('preserves the count through result credit and save/load, without inferring historical burns', () => {
+    const sim = manualTurn();
+    const customer = sim.spawnScriptedCustomer('comum', ['linguica_toscana'], 500);
+    const [food] = burnPlates(sim);
+    sim.serve(customer, food!);
+    sim.endAfter(0);
+    const result = sim.result();
+    expect(result.counters.burnedFood).toBe(1);
+    const save = newSave('burn-save', 1234);
+    save.player.counters.burnedFood = 8; // previous history has no per-item journal; never halve it
+    applyTurnResult(db, save.player, result);
+    const restored = deserializeSave(serializeSave(save));
+    expect(restored.ok).toBe(true);
+    if (!restored.ok) throw new Error(restored.reason);
+    expect(restored.save.player.counters.burnedFood).toBe(9);
+    expect(JSON.parse(JSON.stringify(result)).counters.burnedFood).toBe(1);
+  });
+});
+
+
+describe('A-09: result is a pure reward snapshot', () => {
+  it('reproduces the audited 745→842 bug without changing the correct first payout', () => {
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 0, levelId: 'level_001', upgradeLevels: {}, seed: 4242 });
+    const policy = new SkillPolicy(new Rng(1), { skill: 0.6 });
+    while (!sim.finished) sim.tick(1 / 30, a => policy.act(a));
+    const first = sim.result();
+    expect(first.coins).toBe(745);
+    expect(sim.result()).toEqual(first);
+    expect(sim.result()).toEqual(first);
+  });
+
+  for (const stepSec of [1 / 20, 1 / 30]) {
+    it(`returns the same complete result across repeated reads at dt=${stepSec}`, () => {
+      const sim = runTurn({ seed: 4242, skill: 0.6, stepSec });
+      const coins = sim.coins, xp = sim.xp;
+      const first = sim.result();
+      for (let n = 0; n < 3; n++) expect(sim.result()).toEqual(first);
+      expect(sim.coins).toBe(coins);
+      expect(sim.xp).toBe(xp);
+      const save = newSave('result-read', 1234);
+      applyTurnResult(db, save.player, first); // credit exactly once; result() does not credit a wallet
+      const raw = serializeSave(save);
+      expect(sim.result()).toEqual(first);
+      expect(serializeSave(save)).toBe(raw);
+      const restored = deserializeSave(raw);
+      expect(restored.ok).toBe(true);
+      if (!restored.ok) throw new Error(restored.reason);
+      expect(restored.save.player).toEqual(save.player);
+      expect(save.player.counters.turnsPlayed).toBe(1);
+      expect(save.player.counters.coinsEarnedTotal).toBe(save.player.coins);
+    });
+  }
+
+  it('rounds only the returned values, never the live coins/XP accumulators', () => {
+    const sim = manualTurn();
+    sim.coins = 12.4; sim.xp = 3.6;
+    const first = sim.result();
+    expect(first.coins).toBe(Math.round(12.4 + db.economy.reward.turnEndBonus.base));
+    expect(first.xp).toBe(4);
+    expect({ coins: sim.coins, xp: sim.xp }).toEqual({ coins: 12.4, xp: 3.6 });
+    expect(sim.result()).toEqual(first);
+  });
+
+  it('does not cache a premature result or change gameplay when inspected mid-turn', () => {
+    const control = runTurn({ seed: 99, skill: 0.8 });
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 1, levelId: 'test', upgradeLevels: {}, seed: 99 });
+    const policy = new SkillPolicy(new Rng(99 * 31 + 7), { skill: 0.8 });
+    const initial = sim.result();
+    let ticks = 0;
+    while (!sim.finished) {
+      sim.tick(1 / 30, a => policy.act(a));
+      if (++ticks % 100 === 0) sim.result();
+    }
+    expect(sim.result()).toEqual(control.result());
+    expect(sim.result().counters.customersServed).toBeGreaterThan(initial.counters.customersServed);
+  });
+
+  it('returns detached counters and event payloads, safe to serialize or consume later', () => {
+    const sim = manualTurn();
+    sim.spawnScriptedCustomer('comum', ['linguica_toscana'], 500);
+    const snapshot = sim.result();
+    const frozenJSON = JSON.stringify(snapshot);
+    sim.tick(1);
+    expect(JSON.stringify(snapshot)).toBe(frozenJSON);
+    const mutable = sim.result();
+    const original = structuredClone(mutable);
+    mutable.counters.bestCombo = 999;
+    const spawn = mutable.events.find(e => e.type === 'spawn');
+    if (!spawn || spawn.type !== 'spawn') throw new Error('missing spawn fixture');
+    spawn.customer.patienceLeft = -100;
+    mutable.events.length = 0;
+    expect(sim.result()).toEqual(original);
   });
 });

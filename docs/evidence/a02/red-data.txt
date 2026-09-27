@@ -1,0 +1,26 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/data.test.ts (12 tests | 1 failed) 24ms
+   × data tables > unlock every ingredient from a defined restaurant tier 8ms
+     → expected [] to include 'ingredient queijo_coalho: unlock.leve…'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/data.test.ts > data tables > unlock every ingredient from a defined restaurant tier
+AssertionError: expected [] to include 'ingredient queijo_coalho: unlock.leve…'
+ ❯ tools/studio/test/data.test.ts:45:40
+     43|       const broken = structuredClone(db);
+     44|       broken.ingredientById.get('queijo_coalho')!.unlock.level = level;
+     45|       expect(validateDatabase(broken)).toContain('ingredient queijo_co…
+       |                                        ^
+     46|     }
+     47|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed (12)
+   Start at  01:43:22
+   Duration  288ms (transform 66ms, setup 0ms, collect 79ms, tests 24ms, environment 0ms, prepare 46ms)
+

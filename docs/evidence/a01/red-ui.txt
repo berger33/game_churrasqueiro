@@ -1,0 +1,93 @@
+
+ RUN  v2.1.9 /home/user/game_churrasqueiro
+
+ ❯ tools/studio/test/cooking-ui.test.ts (6 tests | 4 failed) 15ms
+   × A-01 UI: every grilled recipe is reachable without altering the FTUE > makes costela/cupim reachable beyond the old eight-item truncation 7ms
+     → expected [ 'linguica_toscana', …(7) ] to deeply equal [ 'linguica_toscana', …(14) ]
+   × A-01 UI: every grilled recipe is reachable without altering the FTUE > wraps pages with at most eight items, while the FTUE stays on one page 2ms
+     → expected 1 to be 2 // Object.is equality
+   × A-01 UI: every grilled recipe is reachable without altering the FTUE > costela asks to flip only after browning, stops after flipping and never prompts off-grill 2ms
+     → expected true to be false // Object.is equality
+   × A-01 UI: every grilled recipe is reachable without altering the FTUE > cupim asks to flip only after browning, stops after flipping and never prompts off-grill 1ms
+     → expected true to be false // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tools/studio/test/cooking-ui.test.ts > A-01 UI: every grilled recipe is reachable without altering the FTUE > makes costela/cupim reachable beyond the old eight-item truncation
+AssertionError: expected [ 'linguica_toscana', …(7) ] to deeply equal [ 'linguica_toscana', …(14) ]
+
+- Expected
++ Received
+
+  Array [
+    "linguica_toscana",
+    "pao_de_alho",
+    "queijo_coalho",
+    "coracao_frango",
+    "frango_coxa",
+    "asinha_frango",
+    "espetinho_frango",
+    "espetinho_misto",
+-   "legumes_grelhados",
+-   "fraldinha",
+-   "contra_file",
+-   "maminha",
+-   "picanha",
+-   "costela",
+-   "cupim",
+  ]
+
+ ❯ tools/studio/test/cooking-ui.test.ts:13:36
+     11|   it('makes costela/cupim reachable beyond the old eight-item truncati…
+     12|     const visible = Array.from({ length: benchPageCount(grilled) }, (_…
+     13|     expect(visible.map(i => i.id)).toEqual(grilled.map(i => i.id));
+       |                                    ^
+     14|     expect(benchPage(grilled, 1).map(i => i.id)).toEqual(expect.arrayC…
+     15|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tools/studio/test/cooking-ui.test.ts > A-01 UI: every grilled recipe is reachable without altering the FTUE > wraps pages with at most eight items, while the FTUE stays on one page
+AssertionError: expected 1 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ tools/studio/test/cooking-ui.test.ts:17:37
+     15|   });
+     16|   it('wraps pages with at most eight items, while the FTUE stays on on…
+     17|     expect(benchPageCount(grilled)).toBe(2);
+       |                                     ^
+     18|     expect(benchPageCount([])).toBe(1);
+     19|     expect(benchPage([], 3)).toEqual([]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tools/studio/test/cooking-ui.test.ts > A-01 UI: every grilled recipe is reachable without altering the FTUE > costela asks to flip only after browning, stops after flipping and never prompts off-grill
+ FAIL  tools/studio/test/cooking-ui.test.ts > A-01 UI: every grilled recipe is reachable without altering the FTUE > cupim asks to flip only after browning, stops after flipping and never prompts off-grill
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tools/studio/test/cooking-ui.test.ts:44:45
+     42|       sim.place(f, 0);
+     43|       f.sides = [0.1, 0.012];
+     44|       expect(cookingFlipHint(db, table, f)).toBe(false); // old UI imm…
+       |                                             ^
+     45|       f.sides = [table.coach.flipPromptAtSideDoneness, table.coach.fli…
+     46|       expect(cookingFlipHint(db, table, f)).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 2 passed (6)
+   Start at  01:09:31
+   Duration  359ms (transform 144ms, setup 0ms, collect 163ms, tests 15ms, environment 0ms, prepare 50ms)
+

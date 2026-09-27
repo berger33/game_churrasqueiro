@@ -30,7 +30,7 @@ export function newPlayerState(): PlayerState {
     upgradeLevels: {},
     churrasqueiraId: STARTER_CHURRASQUEIRA_ID,
     churrasqueiraLevels: { [STARTER_CHURRASQUEIRA_ID]: 1 },
-    counters: {},
+    counters: { restaurantsUnlocked: 1 },
     lastSeenUnixSec: 0
   };
 }
@@ -159,7 +159,8 @@ export function unlockRestaurant(db: GameDatabase, p: PlayerState, index: number
   p.coins -= r.unlockCostCoins;
   addCounter(p, 'coinsSpentTotal', r.unlockCostCoins);
   p.restaurantIndex = index;
-  addCounter(p, 'restaurantsUnlocked', index + 1);
+  // Sequential progression: restaurantIndex is the highest unlocked restaurant.
+  p.counters.restaurantsUnlocked = index + 1;
   return true;
 }
 

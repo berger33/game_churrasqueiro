@@ -398,6 +398,108 @@ assert(screen() === 'result', `turn should end on the result screen, got ${scree
 await shot('13-result');
 assert(!relaunchLog.some((e) => e.name.startsWith('tutorial_')), 'no tutorial events after the FTUE is done');
 
+// ═══ A-01 advanced fixture: real bundle, sprites and pointer input ═══════════
+// Only the authored starting level and saved progression are fixtures. Recipe,
+// heat, flip, input and UI all run unchanged; this is NOT a campaign-unlock proof.
+const levelFile = join(ROOT, 'shared', 'data', 'levels.json');
+const advancedLevels = JSON.parse(cache.get(levelFile));
+advancedLevels.levels[0].restaurantIndex = 4;
+advancedLevels.levels[0].turnLengthSec = 180;
+cache.set(levelFile, JSON.stringify(advancedLevels));
+const advancedMeta = meta();
+advancedMeta.level = 44;
+advancedMeta.churrasqueiraId = 'fornalha_dragao_manso';
+advancedMeta.churrasqueiraLv.fornalha_dragao_manso = 3;
+localStorage.setItem('churrasco_meta_v2', JSON.stringify(advancedMeta));
+listeners.clear(); rafQueue.length = 0;
+await import(pathToFileURL(BUNDLE).href + '?advanced-a01=1');
+await waitForLoop(); await waitForArt();
+await advance(0.35, { paint: false }); tap(210, 400);
+await advance(0.4, { paint: false });
+assert(screen() === 'home', 'advanced fixture must reach Home');
+tap(210, 310); await advance(0.3, { paint: false });
+const cooking = () => globalThis.__churrascoCooking;
+assert(screen() === 'play' && cooking()?.pages === 2, 'advanced bench must expose two pages');
+const pageButton = cooking().pager;
+assert(pageButton && pageButton.w >= 48 && pageButton.h >= 48, 'pager needs a touch-sized hitbox');
+tap(pageButton.x + pageButton.w/2, pageButton.y + pageButton.h/2);
+await advance(0.1, { paint: false });
+assert(cooking().page === 1, 'the DRAWN pager must respond to a tap');
+for (const id of ['costela', 'cupim']) assert(cooking().bench.some(b => b.id === id), `${id} must be reachable on page 2`);
+await shot('14-advanced-bench');
+// Wrap and come back, to check both directions without adding extra controls.
+for (const expectedPage of [0, 1]) {
+  tap(pageButton.x + pageButton.w/2, pageButton.y + pageButton.h/2);
+  await advance(0.1, { paint: false });
+  assert(cooking().page === expectedPage, 'pager must wrap without changing the selected recipe');
+}
+for (const id of ['costela', 'cupim']) {
+  const b = cooking().bench.find(b => b.id === id);
+  await act({ from: { x: b.x+b.w/2, y: b.y+b.h/2 }, to: cooking().zones[0] });
+  await advance(0.1, { paint: false });
+  assert(cooking().foods.some(f => f.id === id && f.flips === 0 && !f.flipHint), `${id}: page-2 pickup/drop must produce the right fresh plate without an early hint`);
+}
+let hintShot = false;
+const perfectSeen = new Set();
+for (let t = 0; t < 100 && perfectSeen.size < 2; t += 0.1) {
+  for (const id of ['costela', 'cupim']) {
+    const f = cooking().foods.find(f => f.id === id);
+    assert(f && !f.burned, `${id} must not burn while following the flip cue`);
+    if (f.flipHint && f.flips === 0) {
+      if (!hintShot) { await shot('15-advanced-flip-hint'); hintShot = true; }
+      tap(f.x, f.y); await advance(0.1, { paint: false });
+      const flipped = cooking().foods.find(f => f.id === id);
+      assert(flipped.flips === 1 && !flipped.flipHint, `${id}: tap must flip once and clear the hint`);
+    }
+    if (f.perfect && !perfectSeen.has(id)) {
+      perfectSeen.add(id);
+      await shot(id === 'costela' ? '16-costela-perfect-window' : '17-cupim-perfect-window');
+    }
+  }
+  await advance(0.1, { paint: false });
+}
+assert(hintShot && perfectSeen.size === 2, 'both slow cuts must reach their perfect window through real pointer input');
+console.log('[shoot] A-01: page 2 → costela/cupim → wait for cue → tap flips once → both perfect windows');
+
+// ═══ A-02 progression boundary in the actual UI ═════════════════════════════
+const ingredientTable = JSON.parse(await readFile(join(ROOT, 'shared', 'data', 'ingredients.json'), 'utf8'));
+for (const playerLevel of [1, 5, 6, 7]) {
+  const fixture = JSON.parse(cache.get(levelFile));
+  fixture.levels[0].restaurantIndex = 0;
+  cache.set(levelFile, JSON.stringify(fixture));
+  const saved = meta(); saved.level = playerLevel;
+  localStorage.setItem('churrasco_meta_v2', JSON.stringify(saved));
+  listeners.clear(); rafQueue.length = 0;
+  await import(pathToFileURL(BUNDLE).href + `?a02-player-level=${playerLevel}`);
+  await waitForLoop(); await waitForArt();
+  await advance(0.35, { paint: false }); tap(210, 400);
+  await advance(0.4, { paint: false }); tap(210, 310);
+  await advance(1.5, { paint: false });
+  assert(screen() === 'play' && cooking().playerLevel === playerLevel, 'normal turn must receive saved PLAYER level');
+  const available = ingredientTable.items.filter(i => i.unlock.restaurantIndex <= 0 && i.unlock.level <= playerLevel);
+  const grillIds = available.filter(i => i.cookMethod === 'grill').map(i => i.id);
+  assert(JSON.stringify(cooking().bench.map(i => i.id)) === JSON.stringify(grillIds), `A-02 level ${playerLevel}: bench must use BOTH unlock requirements`);
+  assert(cooking().orders.length > 0, 'must observe actual generated orders, not only the bench');
+  for (const c of cooking().orders) for (const id of c.ingredients) {
+    assert(available.some(i => i.id === id), `A-02 level ${playerLevel}: order includes a locked item ${id}`);
+  }
+  if (playerLevel === 1) {
+    await act({ from: { x: 215, y: 607 }, to: cooking().zones[0] });
+    await advance(0.1, { paint: false });
+    assert(cooking().foods.length === 0, 'old locked cheese slot must not retain a phantom hitbox');
+  }
+  if (playerLevel === 5) await shot('18-before-cheese-unlock');
+  if (playerLevel === 6 || playerLevel === 7) {
+    const b = cooking().bench.find(i => i.id === 'queijo_coalho');
+    assert(b, 'cheese unlocks at exactly level 6 and stays unlocked');
+    await act({ from: { x: b.x+b.w/2, y: b.y+b.h/2 }, to: cooking().zones[0] });
+    await advance(0.1, { paint: false });
+    assert(cooking().foods.some(f => f.id === 'queijo_coalho'), 'newly unlocked cheese must be pickable/placeable');
+    if (playerLevel === 6) await shot('19-cheese-unlocked');
+  }
+}
+console.log('[shoot] A-02: saved levels 1/5/6/7 → matching bench/orders → no phantom locked slot → cheese draggable at 6/7');
+
 const ms = Date.now() - wall0;
 console.log(`[shoot] frames written to prototype/shots/`);
 console.log(`[shoot] painted=${paintedFrames} skipped=${skippedFrames} wall=${(ms / 1000).toFixed(1)}s`);

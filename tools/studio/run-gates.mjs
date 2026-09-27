@@ -7,12 +7,12 @@
  * nothing ever invoked `tsc`.
  *
  * `sim:long` is deliberately not here — it is the nightly workflow.
- * The Unity build / AAB size / asset-registry are not here because there is no
+ * The Unity build / AAB size are not here because there is no
  * Unity toolchain (docs/12-BUILD.md §5). The engine-free C# core is:
  * `check-csharp` compiles it as Unity would and replays the golden vectors. It
  * needs the .NET 8 SDK, so a machine without one reports SKIP; CI never skips.
  *
- * GitHub Actions runs the same 14 commands as separate `run:` steps
+ * GitHub Actions runs the same 15 commands as separate `run:` steps
  * (`.github/workflows/ci.yml`) so a failure names the gate. `tools/studio/test/gates.test.ts`
  * fails the build if the two lists drift.
  */
@@ -29,6 +29,7 @@ const GATES = [
   ['test', 'full vitest suite'],
   ['sim', 'short-horizon economy guardrails'],
   ['check-vectors', 'golden vectors still match the rules'],
+  ['check-art-registry', 'masters, registry, batches, manifest and approved-only runtime agree; preserve 244 approved IDs'],
   ['check-art', '16 ingredients × 8 doneness levels all paint'],
   ['check-render', 'real prototype bundle: the FTUE played by following the hand, skip/abandon, a full turn'],
   ['check-shots', 'real PNGs of the first run (FTUE steps 1-6) and the relaunch path — sim catch-up, not 10 800 draws'],
