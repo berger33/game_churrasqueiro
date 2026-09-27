@@ -495,6 +495,16 @@ if (batch.reviewLayout === 'meta') {
     font: UI,
     displayFont: DISPLAY,
   });
+} else if (batch.reviewLayout === 'final-replacements') {
+  const { reviewFinalReplacements } = await import('./review-final-replacements.mjs');
+  await reviewFinalReplacements({
+    root: ROOT,
+    batch,
+    manifest,
+    status: await batchStatus(),
+    font: UI,
+    displayFont: DISPLAY,
+  });
 } else {
   await contactSheet();
   if (batch.preview) await montage(batch.preview);

@@ -1,0 +1,67 @@
+{
+  "batch": "lote-11",
+  "status": "pending",
+  "checks": {
+    "generatedImages": 3,
+    "processedSprites": 3,
+    "oneSpritePerImage": true,
+    "approvedReferencesOnly": true,
+    "servedCutsVisuallyDistinct": true,
+    "foodMagentaResidualPixels": 0,
+    "backgroundOpaque": true,
+    "backgroundPortrait9x16": true,
+    "backgroundCenterClear": true,
+    "noPeopleOrReadableText": true
+  },
+  "warnings": [],
+  "sprites": [
+    {
+      "name": "spr_food_contra_file_served",
+      "category": "food",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "width": 973,
+      "height": 617,
+      "opaquePixels": 441332,
+      "partialAlphaPixels": 4351,
+      "transparentPixels": 154658,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "spr_food_maminha_served",
+      "category": "food",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "width": 972,
+      "height": 783,
+      "opaquePixels": 565619,
+      "partialAlphaPixels": 4620,
+      "transparentPixels": 190837,
+      "magentaResidualPixels": 0
+    },
+    {
+      "name": "bg_restaurant_churrascaria_bairro",
+      "category": "background",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "width": 768,
+      "height": 1376,
+      "opaquePixels": 1056768,
+      "partialAlphaPixels": 0,
+      "transparentPixels": 0,
+      "magentaResidualPixels": null
+    }
+  ],
+  "pendingRuntimePreview": {
+    "sprites": 244,
+    "foods": 16,
+    "backgrounds": 7,
+    "result": "ok; approved-only runtime restored after preview"
+  }
+}

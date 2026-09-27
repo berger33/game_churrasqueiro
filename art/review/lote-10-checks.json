@@ -1,6 +1,6 @@
 {
   "batch": "lote-10",
-  "status": "pending",
+  "status": "approved",
   "checks": {
     "generatedImages": 10,
     "processedSprites": 10,
@@ -294,5 +294,10 @@
         215.99
       ]
     }
-  ]
+  ],
+  "ownerApproval": {
+    "date": "2026-09-26",
+    "decision": "approved",
+    "instruction": "aprovado; seguir para o lote 11 final e manter o merge adiado até completar as 33 imagens"
+  }
 }

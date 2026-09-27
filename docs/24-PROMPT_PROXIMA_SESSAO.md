@@ -1,53 +1,53 @@
-# Prompt de retomada — decisão do lote 10
+# Prompt de retomada — decisão final do lote 11
 
-Continuar o `game_churrasqueiro` na branch atribuída à sessão, durante a substituição dos 33
-sprites que estavam `pending` no antigo lote 03. O dono determinou quatro rodadas individuais
-(10 + 10 + 10 + 3) e que o merge só ocorrerá depois de completar as 33 imagens.
+Continuar o `game_churrasqueiro` na branch atribuída à sessão. A substituição dos 33 sprites
+que estavam `pending` no antigo lote 03 foi executada nas quatro rodadas individuais pedidas
+pelo dono (10 + 10 + 10 + 3). Nenhum merge foi realizado.
 
 ## Estado confirmado
 
-- Lotes 01–02 e 04–09 aprovados.
-- **Lote 08 aprovado:** 10 ícones individuais; runtime 211 → 221 sprites.
-- **Lote 09 aprovado pelo dono em 2026-09-26** ao pedir a rodada seguinte. A decisão inclui o
-  Espetinho de Rua com dois carrinhos espelhados. Runtime aprovado atual: **231 sprites /
-  3,81 MB WebP**.
-- **Lote 10 entregue:** 10 imagens individuais — `raw`, `rare`, `medium`, `well` e `burned` de
-  contra-filé e de maminha.
-- Contra-filé: corpo longo retangular e faixa fina de gordura; maminha: corpo baixo assimétrico
-  com ponta à direita. Os cortes permanecem visualmente distintos.
-- Cada estado posterior usou o raw recém-gerado da própria família como referência estrita.
-- O novo `alignGroups` normalizou tela, pivô e área aparente: contra-filé **918×404**, maminha
-  **1038×432**, pivô **0.5,0.5**; variação de área alfa de 0,01% e zero magenta residual.
-- Os 10 vereditos técnicos são `ok`, sem avisos. Revisão técnica não é aprovação.
-- As dez linhas do lote 10 permanecem `pending`; o runtime aprovado não foi alterado.
-- Restam exatamente três imagens para o lote 11: `spr_food_contra_file_served`,
-  `spr_food_maminha_served` e `bg_restaurant_churrascaria_bairro`.
+- Lotes 01–02 e 04–10 aprovados.
+- Lotes 08–10 substituíram e aprovaram 30/33 sprites individuais.
+- **Lote 10 aprovado pelo dono em 2026-09-26:** os dez estados de grelha foram marcados
+  `approved`; runtime reconstruído de 231 para **241 sprites / 3,88 MB WebP**.
+- **Lote 11 entregue:** três imagens individuais finais:
+  - `spr_food_contra_file_served` — fileira reta de fatias retangulares;
+  - `spr_food_maminha_served` — leque assimétrico de fatias em cunha;
+  - `bg_restaurant_churrascaria_bairro` — cozinha/balcão nas bordas e centro livre.
+- A primeira passada do fundo Bairro foi descartada por ocupar o eixo do gameplay; somente a
+  segunda passada, com palco central explícito, foi processada.
+- Os dois pratos têm 0 pixels magenta residuais. O fundo é opaco em 768×1376, sem pessoas ou
+  texto. Os três vereditos técnicos são `ok`, sem avisos.
+- As três linhas do lote 11 permanecem `pending` e fora do runtime aprovado.
+- As **33 imagens de substituição já foram geradas**; falta apenas a decisão final sobre estas
+  três para encerrar a sequência.
 
-## Entregáveis do lote 10
+## Entregáveis do lote 11
 
-- `art/prompts/lote-10.md`
-- `art/lote-10.json`
-- `art/review/lote-10.jpg`
-- `art/review/lote-10-preview.jpg`
-- `art/review/lote-10-checks.json`
-- masters em `Assets/Art/Sprites/Food/`
+- `art/prompts/lote-11.md`
+- `art/lote-11.json`
+- `art/review/lote-11.jpg`
+- `art/review/lote-11-preview.jpg`
+- `art/review/lote-11-checks.json`
+- masters em `Assets/Art/Sprites/Food/` e `Assets/Art/Backgrounds/`
 
 ## Próximo passo imediato
 
-Aguardar decisão explícita do dono sobre o lote 10.
+Aguardar decisão explícita do dono sobre o lote 11.
 
-- Se aprovar o lote completo: aplicar
-  `node tools/art/set-status.mjs lote-10 approved --note "aprovado pelo dono em 2026-09-26 ao pedir o próximo lote"`.
-  Só então preparar o lote 11 com os dois pratos servidos e o fundo Bairro. Usar os raws/estados
-  aprovados do lote 10 como referências dos pratos.
-- Se pedir refação: não iniciar o lote 11; regenerar apenas os nomes apontados, repetir
-  processamento, alinhamento e revisão técnica.
-- O runtime só deve ser reconstruído com linhas `approved`; nunca publicar os masters `pending`.
+- Se aprovar o lote completo:
+  1. `node tools/art/set-status.mjs lote-11 approved --note "aprovado pelo dono em 2026-09-26; sequência de 33 substituições concluída"`;
+  2. `node tools/art/build-runtime.mjs` e confirmar 16 comidas + 7 fundos no índice;
+  3. atualizar revisão, docs e snapshot honesto;
+  4. executar gates completos;
+  5. só abrir/mesclar PR se o dono der instrução explícita para isso.
+- Se pedir refação: manter apenas os nomes apontados fora do runtime, regenerar e repetir a
+  revisão antes de qualquer fechamento.
 
 ## Segurança do fluxo
 
-- Não iniciar o lote 11 antes da decisão do lote 10.
-- Não abrir/mesclar PR antes de completar as 33 imagens.
+- Revisão técnica não equivale à aprovação do dono.
+- O runtime versionado só pode conter linhas `approved`.
 - Brutos/referências são gitignored; masters, prompts, specs e revisões são versionados.
-- Depois do lote 11 e das decisões finais, retomar `check-art-registry`, os dados de cosméticos e
-  o snapshot de `docs/18-STATUS.md`.
+- Nenhum merge automático: completar as 33 imagens removeu o bloqueio de produção, mas não
+  substitui uma ordem explícita de merge.

@@ -10,8 +10,8 @@
         0.5
       ],
       "category": "background",
-      "source": "art/source/lote-03/bg_churrascaria_bairro.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-11/bg_restaurant_churrascaria_bairro.png",
+      "batch": "lote-11"
     },
     "bg_restaurant_churrascaria_premium": {
       "file": "Assets/Art/Backgrounds/bg_restaurant_churrascaria_premium.png",
@@ -1527,15 +1527,15 @@
     },
     "spr_food_contra_file_served": {
       "file": "Assets/Art/Sprites/Food/spr_food_contra_file_served.png",
-      "w": 374,
-      "h": 287,
+      "w": 973,
+      "h": 617,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-03/food_contra_file.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-11/contra_file_served.png",
+      "batch": "lote-11"
     },
     "spr_food_contra_file_well": {
       "file": "Assets/Art/Sprites/Food/spr_food_contra_file_well.png",
@@ -2247,15 +2247,15 @@
     },
     "spr_food_maminha_served": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_served.png",
-      "w": 374,
-      "h": 287,
+      "w": 972,
+      "h": 783,
       "pivot": [
         0.5,
         0.5
       ],
       "category": "food",
-      "source": "art/source/lote-03/food_maminha.png",
-      "batch": "lote-03"
+      "source": "art/source/lote-11/maminha_served.png",
+      "batch": "lote-11"
     },
     "spr_food_maminha_well": {
       "file": "Assets/Art/Sprites/Food/spr_food_maminha_well.png",

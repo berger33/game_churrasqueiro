@@ -1,0 +1,45 @@
+{
+  "_comment": "Lote 11 — rodada final (3/3 imagens) da substituição individual dos 33 pending do antigo lote 03. Dois pratos servidos completam as famílias de contra-filé e maminha aprovadas no lote 10; o fundo Churrascaria de Bairro completa os sete restaurantes. Prompts exatos em art/prompts/lote-11.md. Todo asset entra pending e fora do runtime até decisão do dono.",
+  "batch": "lote-11",
+  "date": "2026-09-26",
+  "sourceDir": "art/source/lote-11",
+  "reviewLayout": "final-replacements",
+  "assets": [
+    {
+      "source": "contra_file_served.png",
+      "mode": "single",
+      "category": "food",
+      "name": "spr_food_contra_file_served",
+      "label": "Contra-filé · servido",
+      "out": "Assets/Art/Sprites/Food",
+      "review": {
+        "verdict": "ok",
+        "note": "Fileira linear de fatias retangulares, gordura fina e centro rosado; um prato, sem extras."
+      }
+    },
+    {
+      "source": "maminha_served.png",
+      "mode": "single",
+      "category": "food",
+      "name": "spr_food_maminha_served",
+      "label": "Maminha · servida",
+      "out": "Assets/Art/Sprites/Food",
+      "review": {
+        "verdict": "ok",
+        "note": "Leque assimétrico de fatias curvas em cunha e ponta à direita; distingue-se do contra-filé."
+      }
+    },
+    {
+      "source": "bg_restaurant_churrascaria_bairro.png",
+      "mode": "opaque",
+      "category": "background",
+      "name": "bg_restaurant_churrascaria_bairro",
+      "label": "Fundo · Churrascaria de Bairro",
+      "out": "Assets/Art/Backgrounds",
+      "review": {
+        "verdict": "ok",
+        "note": "Segunda passada: cozinha e balcão nas bordas, palco central amplo, sem pessoas ou texto."
+      }
+    }
+  ]
+}

@@ -607,6 +607,31 @@
    "w": 240,
    "h": 158
   },
+  "spr_food_contra_file_burned": {
+   "file": "spr_food_contra_file_burned.webp",
+   "w": 240,
+   "h": 106
+  },
+  "spr_food_contra_file_medium": {
+   "file": "spr_food_contra_file_medium.webp",
+   "w": 240,
+   "h": 106
+  },
+  "spr_food_contra_file_rare": {
+   "file": "spr_food_contra_file_rare.webp",
+   "w": 240,
+   "h": 106
+  },
+  "spr_food_contra_file_raw": {
+   "file": "spr_food_contra_file_raw.webp",
+   "w": 240,
+   "h": 106
+  },
+  "spr_food_contra_file_well": {
+   "file": "spr_food_contra_file_well.webp",
+   "w": 240,
+   "h": 106
+  },
   "spr_food_coracao_frango_burned": {
    "file": "spr_food_coracao_frango_burned.webp",
    "w": 240,
@@ -876,6 +901,31 @@
    "file": "spr_food_linguica_toscana_well.webp",
    "w": 240,
    "h": 174
+  },
+  "spr_food_maminha_burned": {
+   "file": "spr_food_maminha_burned.webp",
+   "w": 240,
+   "h": 100
+  },
+  "spr_food_maminha_medium": {
+   "file": "spr_food_maminha_medium.webp",
+   "w": 240,
+   "h": 100
+  },
+  "spr_food_maminha_rare": {
+   "file": "spr_food_maminha_rare.webp",
+   "w": 240,
+   "h": 100
+  },
+  "spr_food_maminha_raw": {
+   "file": "spr_food_maminha_raw.webp",
+   "w": 240,
+   "h": 100
+  },
+  "spr_food_maminha_well": {
+   "file": "spr_food_maminha_well.webp",
+   "w": 240,
+   "h": 100
   },
   "spr_food_pao_de_alho_burned": {
    "file": "spr_food_pao_de_alho_burned.webp",
