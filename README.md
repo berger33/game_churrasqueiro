@@ -6,6 +6,12 @@ Mobile cooking + skill + management + idle + collection + live-service game.
 **Primary target:** Android / Google Play, portrait, one-handed. **Engine:** Unity 6 LTS (URP), C#.
 **Audience:** Brazilian casual players. **Business model:** rewarded-first, ethical IAP.
 
+> **Status audit — 2026-09-27:** the browser prototype passes its local gates, but
+> Android release is blocked. Unity runtime/core APIs and scene references are
+> inconsistent; production services are still simulated. CI reports 13 unvalidated
+> C# turn vectors. PRs #7/#8 conflict with main and were not merged or deleted.
+> See [the current audit and ordered delivery plan](docs/25-AUDITORIA_STATUS_E_BRANCHES.md).
+
 ---
 
 ## Repository layout
@@ -16,8 +22,8 @@ Mobile cooking + skill + management + idle + collection + live-service game.
 | `tools/sim-core/` | Reference implementation of the game rules in TypeScript. Deterministic, dependency-free, unit-tested; target contract for the incomplete C# port. |
 | `tools/studio/` | Designer tooling: data validation, level generator, balance simulator, golden-vector generator. |
 | `tools/studio/test/` | Automated QA (economy, cooking model, save integrity, data integrity). |
-| `Assets/` | Unity-oriented data, approved art/audio, engine-free C# core and service stubs. There are no scenes or prefabs yet. |
-| `Packages/`, `ProjectSettings/` | **Not present yet.** Creating the Unity 6 project is a V0.2 task. |
+| `Assets/` | Approved art/audio and data, engine-free C# core, Unity runtime scaffolding, scenes/prefabs and simulated services. Unity integration is not release-ready. |
+| `Packages/`, `ProjectSettings/` | Unity 6 project configuration exists; full Editor/runtime compilation and Android validation remain blocked (see current audit). |
 | `prototype/` | Design-verification prototype (playable in a browser) that runs the real `sim-core` rules. |
 | `docs/` | Full documentation set — see below. |
 | `store-assets/` | Store icons, feature graphic, screenshots, ASO copy, privacy copy and test material. |
@@ -33,7 +39,7 @@ The cooking model, the scoring rules and the entire economy are implemented **on
 
 The future Unity client must port the same rules. The current engine-free subset lives in
 `Assets/Scripts/Core/`; `npm run check-csharp` compiles it in CI and replays the checked-in
-vectors. Economy and full-turn parity are still incomplete.
+vectors. Full-turn parity is still incomplete; the current runner suppresses some turn divergences (see the audit).
 
 `npm run typecheck` is a gate, not a suggestion: the ideal-zone defect in
 `tools/sim-core/src/policy.ts` (see `docs/18-STATUS.md` §4.1) survived two rounds of
@@ -89,37 +95,29 @@ npm run proto             # design-verification prototype on http://0.0.0.0:5173
 | [22-ARTE_2D_PLANO.md](docs/22-ARTE_2D_PLANO.md) | Professional 2D art plan: AI generation in batches of 10, cut-out pipeline, approval, integration (pt-BR) |
 | [23-PLANO_IMPLEMENTACAO.md](docs/23-PLANO_IMPLEMENTACAO.md) | Step-by-step implementation and improvement plan: phases, gates, progress log (pt-BR) |
 | [23-AUDITORIA_TECNICA.md](docs/23-AUDITORIA_TECNICA.md) | Technical audit: bugs, errors and data/code/doc inconsistencies, with evidence and repro scripts (pt-BR) |
-| [24-PROMPT_PROXIMA_SESSAO.md](docs/24-PROMPT_PROXIMA_SESSAO.md) | Resumption prompt after A-06.4: final27-track review A-06.5 next, contracts, evidence and remaining release plan (pt-BR) |
+| [24-PROMPT_PROXIMA_SESSAO.md](docs/24-PROMPT_PROXIMA_SESSAO.md) | Historical handoff, with a current audit override (pt-BR) |
+| [25-AUDITORIA_STATUS_E_BRANCHES.md](docs/25-AUDITORIA_STATUS_E_BRANCHES.md) | Verified status, conflicting branches, release blockers and ordered delivery plan (pt-BR) |
 
 ## Current status
 
-See [docs/18-STATUS.md](docs/18-STATUS.md) for an honest, itemised account of what is
-implemented and verified versus what is still open. Short version:
+The current source of status is [the 2026-09-27 audit](docs/25-AUDITORIA_STATUS_E_BRANCHES.md),
+which supersedes earlier claims that all phases are complete.
 
-- **Implemented and verified here:** 22 data tables and schemas, the TypeScript reference
-  rules, level/save/balance tooling, a playable browser prototype, 533 tests and per-PR CI gates.
-- **Approved 2D art:** 244 sprites / 3.98 MB WebP, covering all 16 foods and 7 restaurant
-  backgrounds; registry state is 244 approved, 0 pending and 1 superseded.
-- **Compiled and partially parity-checked in CI:** the engine-free C# core
-  (`Assets/Scripts/Core`). Economy and the now50 complete-turn vectors still await their C# ports.
-- **Known technical debt:** `docs/23-AUDITORIA_TECNICA.md` records 47 findings, including
-  9 original high-severity findings: A-07/A-08/A-09 are fixed in TypeScript. A-01 now requires flipping both slow cuts
-  (owner decision), with functional tests/UI passed; the authorized A-06.4 late-income rebalance now passes
-  **all18 original long-run targets locally**, with a1500-turn regression inside the gates. A-02 now
-  applies player-level AND restaurant unlocks to orders/stock/UI; A-03 adds explicit prep
-  slots and a playable vinagrete flow. A-04 adds a fourth medium zone for Fornalha at Premium;
-  A-05 adds natural VIP and an explicitly simulated optional call with a shared persisted daily cap.
-  A-06.1 adds shared upgrade gating/purchases, the27-track catalog, real capacity/table slots,
-  and tip/patience prestige. A-06.2 adds real fuel quality/stability/automatic refill and finite
-  per-ingredient stock with explicit replenishment. A-06.3 adds bounded real staff actions,
-  tip-only auto-service bonuses, burn warnings and tray trip speed. A-06.4 adds a real absence
-  ledger, frozen snapshots, cashier partial collection and atomic wallet/claim persistence.
-  All 27 tracks have integrated consumers; purchased levels are preserved. Phase F8 is complete: full C# core engine-free port in `Assets/Scripts/Core/` with 100% parity across all 201 golden and FTUE vectors (zero not ported). Next is Phase F9 (Unity 6 LTS integration).
-  Current evidence: [F8 C# parity closure](docs/evidence/f08/README.md).
-- **Not yet a Unity game:** there are no `Packages/`, `ProjectSettings/`, scenes, prefabs,
-  APK or AAB. Unity services are stubs and have not been compiled against real SDKs.
-- **Audio and store material exist**, but still need Unity integration, device validation,
-  final mixing, signed builds and real Play Console/Firebase/AdMob test projects.
+- **Verified locally:** 740 tests in 36 files, 14 of 15 CI gates (C# skipped locally
+  because .NET is absent), and all 18 long-horizon economy targets over 1,500 turns.
+- **Approved art:** 244 runtime sprites; registry, rendering and prototype screenshots pass.
+- **C# CI:** the engine-free core compiles, but the latest main check reports 13
+  unvalidated turn vectors. A runner fallback hides their failures as “not ported”.
+  This is not full parity and must be fixed before relying on the gate.
+- **Unity:** project settings, scenes, prefabs and scripts exist, but runtime/core API
+  mismatches, invalid scene script GUIDs and missing gameplay wiring block delivery.
+- **Production:** ads, billing, consent and Firebase adapters are still simulated;
+  save/autosave integration, Android localization, signed builds and real-device QA
+  remain open. No Android build or publication was verified in this audit.
+- **Branches:** PRs #7 and #8 conflict with main and contain exclusive history.
+  PRs #16/#17 are already merged. No branch was deleted because the requested
+  “everything merged and delivered” prerequisite has not been met.
+
 
 ## Legal / IP
 

@@ -1,5 +1,17 @@
 # 17 — Backlog
 
+> **Revalidação de 2026-09-27 — este aviso prevalece sobre o histórico abaixo.**
+> A base `bf47834` (PR #17 integrada) **não está pronta para publicação Android**.
+> A auditoria encontrou incompatibilidades Runtime/Core Unity, GUIDs de cena incorretos,
+> serviços simulados e autosave não integrado. O CI registra **13 vetores C# não validados**,
+> não paridade completa. Localmente: 740 testes, 14/15 gates (C# sem .NET) e 18/18 metas longas.
+> PRs #7/#8 seguem conflitantes; nenhuma branch foi apagada. Declarações anteriores
+> de F1–F13 concluídas/100% de conformidade não são critérios de aceite comprovados.
+> **Status e próximos passos vigentes:** [25 — Auditoria de status e branches](25-AUDITORIA_STATUS_E_BRANCHES.md).
+> O conteúdo abaixo é histórico e precisa ser reconciliado com essas evidências;
+> não tratar instruções antigas de “não reabrir fases” como impedimento para corrigir os bloqueios.
+
+
 Prioritised backlog, ordered by the project's own priority stack
 (**1** fun · **2** retention · **3** stability · **4** experience · **5** monetisation · **6** content, spec §114).
 

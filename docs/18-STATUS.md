@@ -1,5 +1,17 @@
 # 18 — Status Report
 
+> **Revalidação de 2026-09-27 — este aviso prevalece sobre o histórico abaixo.**
+> A base `bf47834` (PR #17 integrada) **não está pronta para publicação Android**.
+> A auditoria encontrou incompatibilidades Runtime/Core Unity, GUIDs de cena incorretos,
+> serviços simulados e autosave não integrado. O CI registra **13 vetores C# não validados**,
+> não paridade completa. Localmente: 740 testes, 14/15 gates (C# sem .NET) e 18/18 metas longas.
+> PRs #7/#8 seguem conflitantes; nenhuma branch foi apagada. Declarações anteriores
+> de F1–F13 concluídas/100% de conformidade não são critérios de aceite comprovados.
+> **Status e próximos passos vigentes:** [25 — Auditoria de status e branches](25-AUDITORIA_STATUS_E_BRANCHES.md).
+> O conteúdo abaixo é histórico e precisa ser reconciliado com essas evidências;
+> não tratar instruções antigas de “não reabrir fases” como impedimento para corrigir os bloqueios.
+
+
 > **F13 concluído (2026-09-27 UTC): Pipeline de Assinatura, APK/AAB, Publicação e Release.**
 > Automação de compilação batchmode Android (`BuildPipeline.cs`) com suporte a AAB e APK, Target API 36, Min API 26, IL2CPP, arquitetura ARM64, Linear Color Space, ASTC texture compression e assinatura segura via variáveis de ambiente (`CHURRASCO_KEYSTORE_*`); enforçamento rigoroso dos orçamentos de tamanho (AAB base ≤ 90 MB, texturas ≤ 40 MB, código/engine ≤ 22 MB); catálogo completo de metadados Google Play Store e ASO (`marketing/store_listings.json`) com 3 localidades (pt-BR, en-US, es-419), títulos ≤ 30 caracteres, 3 variantes de descrições curtas ≤ 80 caracteres (habilidade, progressão, cultura), classificação 13+ e declaração Play Store Data Safety com zero PII; governança de Closed Testing (20 testadores / 14 dias), esteira de rollout gradual (1% a 100%) e kill-switches remotos de contingência.
 > 740 testes, 36 arquivos vitest, 14/15 gates locais (C# SKIP local coberto no CI), 53 capturas, 201 vetores (157 golden + 44 FTUE).
