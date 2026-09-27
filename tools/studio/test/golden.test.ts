@@ -202,6 +202,7 @@ describe.skipIf(!hasVectors)('golden vectors', () => {
         db,
         {
           restaurantIndex: v.input.restaurantIndex,
+          playerLevel: v.input.playerLevel,
           levelId: v.input.levelId,
           churrasqueiraId: v.input.churrasqueiraId,
           churrasqueiraLevel: v.input.churrasqueiraLevel,
@@ -220,6 +221,11 @@ describe.skipIf(!hasVectors)('golden vectors', () => {
       }
       const res = sim.result();
       expect(sim.result(), `${v.id} repeat read`).toEqual(res);
+      for (const e of res.events) if (e.type === 'spawn') for (const line of e.customer.lines) {
+        const ing = db.ingredientById.get(line.ingredientId)!;
+        expect(ing.unlock.level, `${v.id} ${ing.id} level`).toBeLessThanOrEqual(v.input.playerLevel);
+        expect(ing.unlock.restaurantIndex, `${v.id} ${ing.id} restaurant`).toBeLessThanOrEqual(v.input.restaurantIndex);
+      }
 
       expect(sim.time, `${v.id} final time`).toBeCloseTo(v.expect.finalTimeSec, 9);
       if (v.expect.slowCuts) {

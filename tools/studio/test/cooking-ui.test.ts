@@ -1,3 +1,5 @@
+// Mechanics fixtures explicitly use level 44: the full menu of their restaurant.
+// Player progression boundaries are covered by ingredient-unlock.test.ts.
 import { describe, expect, it } from 'vitest';
 import { loadDatabase, readJson } from '../load-data.ts';
 import { TurnSimulation } from '../../sim-core/src/turn.ts';
@@ -36,7 +38,7 @@ describe('A-01 UI: every grilled recipe is reachable without altering the FTUE',
   });
   for (const id of ['costela', 'cupim']) {
     it(`${id} asks to flip only after browning, stops after flipping and never prompts off-grill`, () => {
-      const sim = new TurnSimulation(db, { restaurantIndex: 4, levelId: 'ui', upgradeLevels: {}, seed: 1 });
+      const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 4, levelId: 'ui', upgradeLevels: {}, seed: 1 });
       const f = sim.takeFromStock(db.ingredientById.get(id)!);
       expect(cookingFlipHint(db, table, f)).toBe(false);
       sim.place(f, 0);
@@ -52,7 +54,7 @@ describe('A-01 UI: every grilled recipe is reachable without altering the FTUE',
     });
   }
   it('never asks to flip a prep recipe', () => {
-    const sim = new TurnSimulation(db, { restaurantIndex: 4, levelId: 'ui', upgradeLevels: {}, seed: 1 });
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 4, levelId: 'ui', upgradeLevels: {}, seed: 1 });
     const f = sim.takeFromStock(db.ingredientById.get('vinagrete')!);
     expect(cookingFlipHint(db, table, f)).toBe(false);
   });

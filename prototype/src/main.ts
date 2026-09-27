@@ -510,6 +510,7 @@ class Game {
       this.db,
       {
         restaurantIndex: lvl.restaurantIndex,
+        playerLevel: this.meta.level,
         levelId: lvl.id,
         upgradeLevels: this.meta.upgrades,
         seed: 20260917 + lvl.id.length + this.levelIndex,
@@ -531,9 +532,8 @@ class Game {
     const chName = this.activeChurr() ? this.l10n.t(this.activeChurr()!.nameKey) : '';
     const evoData = this.activeEvo();
     const evoShort = evoData ? this.l10n.t(evoData.nameKey) : '';
-    this.unlocked = this.db.ingredients.items.filter(
-      (i) => i.unlock.restaurantIndex <= restaurant.index && i.cookMethod === 'grill'
-    );
+    // Same progression snapshot as order generation; prep UI is tracked in A-03.
+    this.unlocked = this.sim.availableIngredients.filter(i => i.cookMethod === 'grill');
     this.ftue = null;
     this.beginTurnScreen();
     this.banner(`${chName ? chName.toUpperCase() + ' · ' : ''}${lvl.id}${evoShort ? ' · ' + evoShort : ''}`);
@@ -753,6 +753,8 @@ class Game {
     const dbg = globalThis as unknown as { __churrascoScreen?: Screen; __churrascoFtue?: unknown; __churrascoHome?: unknown; __churrascoCooking?: unknown };
     dbg.__churrascoScreen = this.screen;
     dbg.__churrascoCooking = this.screen === 'play' ? {
+      playerLevel: this.sim.config.playerLevel, restaurantIndex: this.sim.restaurant.index,
+      orders: this.sim.customers.map(c => ({ id: c.def.id, ingredients: c.lines.map(l => l.ingredientId) })),
       page: this.benchPageIndex, pages: benchPageCount(this.unlocked),
       pager: !this.ftue && benchPageCount(this.unlocked) > 1 ? { ...BENCH_PAGER } : null,
       zones: this.sim.grill.zones.map(z => this.toGrillScreen(W / 2, this.zoneY(z.index))),

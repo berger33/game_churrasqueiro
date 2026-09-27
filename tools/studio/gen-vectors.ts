@@ -308,17 +308,22 @@ function charcoalEfficiencyAt(t: number): number {
 // ── 5. Full turns ───────────────────────────────────────────────────────────
 // End-to-end: a seeded turn driven by a fixed skill policy must produce
 // identical counters. Strongest parity check — it exercises every subsystem.
-const LEVEL_INDICES = [0, 10, 30, 59];
+// Explicit progression fixtures, not a conversion from campaign index to player XP.
+const LEVEL_CONTEXTS = [
+  { index: 0, playerLevel: 1 }, { index: 10, playerLevel: 4 },
+  { index: 30, playerLevel: 8 }, { index: 59, playerLevel: 14 }
+];
 const authored = generateLevels([[0, 24], [1, 36]]).levels;
 
 for (const skill of [0.35, 0.55, 0.85]) {
-  for (const li of LEVEL_INDICES) {
-    const lvl = authored[li]!;
+  for (const { index, playerLevel } of LEVEL_CONTEXTS) {
+    const lvl = authored[index]!;
     const seed = 4242;
     const sim = new TurnSimulation(
       db,
       {
         restaurantIndex: lvl.restaurantIndex,
+        playerLevel,
         levelId: lvl.id,
         upgradeLevels: {},
         seed,
@@ -343,6 +348,7 @@ for (const skill of [0.35, 0.55, 0.85]) {
         levelId: lvl.id,
         levelIndex: lvl.index,
         restaurantIndex: lvl.restaurantIndex,
+        playerLevel,
         seed,
         stepSec: r9(STEP),
         overrides: {
@@ -367,7 +373,7 @@ for (const skill of [0.35, 0.55, 0.85]) {
 
 // A-01: the authored vectors above only reach restaurants 0/1. Explicit advanced
 // fixtures exercise actual random orders/policy on the owned grill, not fake food
-// sides or new campaign content. Keep the original twelve expectations intact.
+// sides or new campaign content. A-02 makes the player level explicit; these advanced fixtures use level 44.
 for (const restaurantIndex of [3, 4, 5, 6]) for (const skill of [0.55, 0.85]) {
   const seed = 4242;
   const levelId = `a01_rest_${restaurantIndex}`;
@@ -375,7 +381,7 @@ for (const restaurantIndex of [3, 4, 5, 6]) for (const skill of [0.55, 0.85]) {
   const churrasqueiraId = 'fornalha_dragao_manso';
   const churrasqueiraLevel = 3;
   const sim = new TurnSimulation(db, {
-    restaurantIndex, levelId, seed, upgradeLevels: {}, churrasqueiraId, churrasqueiraLevel
+    restaurantIndex, playerLevel: 44, levelId, seed, upgradeLevels: {}, churrasqueiraId, churrasqueiraLevel
   }, seed);
   const policy = new SkillPolicy(new Rng(seed + levelIndex * 104729), { skill });
   // The hot foods array is compacted; retain observed identities for coverage.
@@ -388,7 +394,7 @@ for (const restaurantIndex of [3, 4, 5, 6]) for (const skill of [0.55, 0.85]) {
   const fulfilled = new Set(res.events.flatMap(e => e.type === 'serve' ? e.customer.lines.flatMap(l => l.fulfilledBy) : []));
   turns.push({
     id: `turn.skill${skill}.${levelId}`,
-    input: { skill, levelId, levelIndex, restaurantIndex, seed, stepSec: STEP,
+    input: { skill, levelId, levelIndex, restaurantIndex, playerLevel: 44, seed, stepSec: STEP,
       churrasqueiraId, churrasqueiraLevel, overrides: {} },
     expect: { coins: r9(res.coins), xp: r9(res.xp), stars: res.stars, failed: res.failed,
       finalTimeSec: r9(sim.time), counters: res.counters,
@@ -718,7 +724,7 @@ for (const v of tDirector) {
 
 // ── Write ───────────────────────────────────────────────────────────────────
 const doc = {
-  version: 1,
+  version: 2, // A-02: full-turn inputs require an explicit playerLevel.
   generatedBy: 'tools/studio/gen-vectors.ts',
   note: 'Golden vectors for TS <-> C# parity. Regenerate with `npm run gen-vectors`. Never edit by hand.',
   dataVersions: {

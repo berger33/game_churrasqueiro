@@ -461,6 +461,45 @@ for (let t = 0; t < 100 && perfectSeen.size < 2; t += 0.1) {
 assert(hintShot && perfectSeen.size === 2, 'both slow cuts must reach their perfect window through real pointer input');
 console.log('[shoot] A-01: page 2 → costela/cupim → wait for cue → tap flips once → both perfect windows');
 
+// ═══ A-02 progression boundary in the actual UI ═════════════════════════════
+const ingredientTable = JSON.parse(await readFile(join(ROOT, 'shared', 'data', 'ingredients.json'), 'utf8'));
+for (const playerLevel of [1, 5, 6, 7]) {
+  const fixture = JSON.parse(cache.get(levelFile));
+  fixture.levels[0].restaurantIndex = 0;
+  cache.set(levelFile, JSON.stringify(fixture));
+  const saved = meta(); saved.level = playerLevel;
+  localStorage.setItem('churrasco_meta_v2', JSON.stringify(saved));
+  listeners.clear(); rafQueue.length = 0;
+  await import(pathToFileURL(BUNDLE).href + `?a02-player-level=${playerLevel}`);
+  await waitForLoop(); await waitForArt();
+  await advance(0.35, { paint: false }); tap(210, 400);
+  await advance(0.4, { paint: false }); tap(210, 310);
+  await advance(1.5, { paint: false });
+  assert(screen() === 'play' && cooking().playerLevel === playerLevel, 'normal turn must receive saved PLAYER level');
+  const available = ingredientTable.items.filter(i => i.unlock.restaurantIndex <= 0 && i.unlock.level <= playerLevel);
+  const grillIds = available.filter(i => i.cookMethod === 'grill').map(i => i.id);
+  assert(JSON.stringify(cooking().bench.map(i => i.id)) === JSON.stringify(grillIds), `A-02 level ${playerLevel}: bench must use BOTH unlock requirements`);
+  assert(cooking().orders.length > 0, 'must observe actual generated orders, not only the bench');
+  for (const c of cooking().orders) for (const id of c.ingredients) {
+    assert(available.some(i => i.id === id), `A-02 level ${playerLevel}: order includes a locked item ${id}`);
+  }
+  if (playerLevel === 1) {
+    await act({ from: { x: 215, y: 607 }, to: cooking().zones[0] });
+    await advance(0.1, { paint: false });
+    assert(cooking().foods.length === 0, 'old locked cheese slot must not retain a phantom hitbox');
+  }
+  if (playerLevel === 5) await shot('18-before-cheese-unlock');
+  if (playerLevel === 6 || playerLevel === 7) {
+    const b = cooking().bench.find(i => i.id === 'queijo_coalho');
+    assert(b, 'cheese unlocks at exactly level 6 and stays unlocked');
+    await act({ from: { x: b.x+b.w/2, y: b.y+b.h/2 }, to: cooking().zones[0] });
+    await advance(0.1, { paint: false });
+    assert(cooking().foods.some(f => f.id === 'queijo_coalho'), 'newly unlocked cheese must be pickable/placeable');
+    if (playerLevel === 6) await shot('19-cheese-unlocked');
+  }
+}
+console.log('[shoot] A-02: saved levels 1/5/6/7 → matching bench/orders → no phantom locked slot → cheese draggable at 6/7');
+
 const ms = Date.now() - wall0;
 console.log(`[shoot] frames written to prototype/shots/`);
 console.log(`[shoot] painted=${paintedFrames} skipped=${skippedFrames} wall=${(ms / 1000).toFixed(1)}s`);

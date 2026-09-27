@@ -391,7 +391,7 @@ describe('a player who only follows the hand', () => {
 });
 
 describe('TurnSimulation hooks the FTUE needs', () => {
-  const base = { restaurantIndex: 0, levelId: 'level_001', upgradeLevels: {}, seed: 3 };
+  const base = { playerLevel: 1, restaurantIndex: 0, levelId: 'level_001', upgradeLevels: {}, seed: 3 };
 
   it('spawnScriptedCustomer admits a fixed order with normal bookkeeping', () => {
     const sim = new TurnSimulation(db, { ...base, overrides: { autoSpawn: false } });

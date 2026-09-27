@@ -46,6 +46,8 @@ export interface CustomerRuntime {
 }
 
 export interface TurnConfig {
+  /** Player progression at turn start, NOT the authored level index. Required, integer >= 1. */
+  playerLevel: number;
   restaurantIndex: number;
   levelId: string;
   upgradeLevels: Record<string, number>;
@@ -149,6 +151,9 @@ export class TurnSimulation {
 
   foods: FoodRuntime[] = [];
   bench: Ingredient[] = [];
+  /** Shared eligible catalog for orders, bot stock and UI; frozen at turn start. */
+  readonly availableIngredients: readonly Ingredient[];
+  private readonly availableById: ReadonlyMap<string, Ingredient>;
   customers: CustomerRuntime[] = [];
   events: TurnEvent[] = [];
 
@@ -188,10 +193,19 @@ export class TurnSimulation {
 
   constructor(db: GameDatabase, config: TurnConfig, seed: number = config.seed) {
     this.db = db;
-    this.config = config;
+    if (!Number.isInteger(config.playerLevel) || config.playerLevel < 1) {
+      throw new Error('TurnSimulation: playerLevel must be a positive integer');
+    }
+    this.config = { ...config };
     this.rng = new Rng(seed ^ 0x5eed);
     this.tuning = rewardTuning(db.economy);
     this.restaurant = db.restaurantByIndex.get(config.restaurantIndex) ?? db.restaurantByIndex.get(0)!;
+    this.availableIngredients = Object.freeze(db.ingredients.items.filter(i =>
+      i.unlock.restaurantIndex <= this.restaurant.index && i.unlock.level <= config.playerLevel
+    ));
+    if (!this.availableIngredients.length) throw new Error('TurnSimulation: no unlocked ingredients');
+    this.availableById = new Map(this.availableIngredients.map(i => [i.id, i]));
+    this.bench = [...this.availableIngredients];
     // base stats from restaurant + upgrades
     let stats = deriveStats(db, this.restaurant, config.upgradeLevels);
     // churrasqueira overrides (1F → 2F → 3F progression, data-driven)
@@ -223,6 +237,7 @@ export class TurnSimulation {
     const lines: OrderLine[] = [];
     for (const id of ingredientIds) {
       if (!this.db.ingredientById.has(id)) throw new Error(`spawnScriptedCustomer: unknown ingredient "${id}"`);
+      if (!this.availableById.has(id)) throw new Error(`spawnScriptedCustomer: locked ingredient "${id}"`);
       if (lines.some((l) => l.ingredientId === id)) continue;
       lines.push({ ingredientId: id, target: 0, fulfilledBy: [] });
     }
@@ -243,7 +258,9 @@ export class TurnSimulation {
 
   /** Create a raw item on the bench and return it (models taking food from the cooler). */
   takeFromStock(ingredient: Ingredient): FoodRuntime {
-    const f = createFood(this.uidCounter++, ingredient);
+    const unlocked = this.availableById.get(ingredient.id);
+    if (!unlocked) throw new Error(`takeFromStock: locked or unknown ingredient "${ingredient.id}"`);
+    const f = createFood(this.uidCounter++, unlocked);
     this.foods.push(f);
     return f;
   }
@@ -537,15 +554,20 @@ export class TurnSimulation {
   /** Deterministic customer + order generation. Mirrors `OrderGenerator.cs`. */
   spawnCustomer(forcedId?: string): CustomerRuntime {
     const rngPick = this.rng;
+    const menuFor = (c: CustomerDef): readonly Ingredient[] => c.unusualOnly
+      ? this.availableIngredients.filter(i => i.rarity !== 'common') : this.availableIngredients;
     const pool = this.restaurant.customerPool
       .map((id) => this.db.customerById.get(id))
-      .filter((c): c is CustomerDef => !!c && c.weight > 0 && c.minRestaurant <= this.restaurant.index);
+      .filter((c): c is CustomerDef => !!c && c.weight > 0 && c.minRestaurant <= this.restaurant.index && menuFor(c).length > 0);
 
     const weights = pool.map((c) => c.weight);
     let def: CustomerDef;
     if (forcedId) {
-      def = this.db.customerById.get(forcedId) ?? pool[0]!;
+      const forced = this.db.customerById.get(forcedId);
+      if (!forced) throw new Error(`spawnCustomer: unknown customer "${forcedId}"`);
+      def = forced;
     } else {
+      if (!pool.length) throw new Error('spawnCustomer: no eligible customers with unlocked ingredients');
       let total = 0;
       for (const w of weights) total += w;
       let roll = rngPick.next() * total;
@@ -560,10 +582,9 @@ export class TurnSimulation {
       def = pool[idx] ?? pool[0]!;
     }
 
+    const available = menuFor(def);
+    if (!available.length) throw new Error(`spawnCustomer: no unlocked ingredients for "${def.id}"`);
     const itemCount = Math.max(def.itemsMin, Math.min(def.itemsMax, 1 + Math.floor(rngPick.next() * def.itemsMax)));
-    const available = this.db.ingredients.items.filter(
-      (i) => i.unlock.restaurantIndex <= this.restaurant.index && (!def.unusualOnly || i.rarity !== 'common')
-    );
     const lines: OrderLine[] = [];
     for (let i = 0; i < itemCount && available.length > 0; i++) {
       const ing = available[Math.floor(rngPick.next() * available.length)]!;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { loadAndValidate, readJson } from '../load-data.ts';
-import { upgradeCost, xpForLevel, totalXpForLevel, levelForXp } from '../../sim-core/src/data.ts';
+import { validateDatabase, upgradeCost, xpForLevel, totalXpForLevel, levelForXp } from '../../sim-core/src/data.ts';
 
 describe('data tables', () => {
   it('are structurally valid and internally consistent', () => {
@@ -38,6 +38,11 @@ describe('data tables', () => {
     for (const ing of db.ingredients.items) {
       expect(ing.unlock.restaurantIndex).toBeLessThanOrEqual(maxIndex);
       expect(ing.unlock.level).toBeGreaterThanOrEqual(1);
+    }
+    for (const level of [0, -1, 1.5, NaN]) {
+      const broken = structuredClone(db);
+      broken.ingredientById.get('queijo_coalho')!.unlock.level = level;
+      expect(validateDatabase(broken)).toContain('ingredient queijo_coalho: unlock.level must be a positive integer');
     }
   });
 

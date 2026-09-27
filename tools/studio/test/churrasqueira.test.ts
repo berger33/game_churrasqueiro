@@ -1,3 +1,5 @@
+// Mechanics fixtures explicitly use level 44: the full menu of their restaurant.
+// Player progression boundaries are covered by ingredient-unlock.test.ts.
 /**
  * Churrasqueira progression (1F → 2F → 3F → Fornalha) inside the sim-core.
  *
@@ -31,6 +33,7 @@ function makeSim(churrasqueiraId: string | undefined, churrasqueiraLevel: number
   return new TurnSimulation(
     db,
     {
+      playerLevel: 44,
       restaurantIndex: level.restaurantIndex,
       levelId: level.id,
       upgradeLevels: {},
@@ -180,6 +183,7 @@ describe('churrasqueira keeps additive upgrades', () => {
     const bumped = new TurnSimulation(
       db,
       {
+        playerLevel: 44,
         restaurantIndex: 0,
         levelId: 't',
         upgradeLevels: { grill_size: 2 },

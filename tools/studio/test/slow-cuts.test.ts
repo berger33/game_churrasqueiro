@@ -1,3 +1,5 @@
+// Mechanics fixtures explicitly use level 44: the full menu of their restaurant.
+// Player progression boundaries are covered by ingredient-unlock.test.ts.
 import { describe, expect, it } from 'vitest';
 import { loadDatabase } from '../load-data.ts';
 import { validateDatabase } from '../../sim-core/src/data.ts';
@@ -15,7 +17,7 @@ const CUTS = ['costela', 'cupim'];
 /** Integrate actual sides/charcoal until burning; obey the recipe, not a test-forced flip. */
 function trace(id: string, zone: number, obeyRecipe: boolean) {
   const ing = db.ingredientById.get(id)!;
-  const sim = new TurnSimulation(db, { restaurantIndex: 4, levelId: 'slow-cut', upgradeLevels: {}, seed: 1 });
+  const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 4, levelId: 'slow-cut', upgradeLevels: {}, seed: 1 });
   const f = createFood(1, ing);
   expect(placeOnGrill(sim.grill, db, f, zone)).toBe(true);
   const target = (ing.perfectWindow[0] + ing.perfectWindow[1]) / 2;
@@ -66,6 +68,7 @@ describe('A-01: slow cuts require a flip (owner decision)', () => {
         // Isolated real orders: prove the cut is cookable independently of random pool/patience balance.
         for (let seed = 1; seed <= 8; seed++) {
           const sim = new TurnSimulation(db, {
+            playerLevel: 44,
             restaurantIndex, levelId: 'slow-cut-bot', upgradeLevels: {}, seed,
             churrasqueiraId: 'fornalha_dragao_manso', churrasqueiraLevel: 3,
             overrides: { autoSpawn: false, turnLengthSec: 150 }

@@ -1,3 +1,5 @@
+// Mechanics fixtures explicitly use level 44: the full menu of their restaurant.
+// Player progression boundaries are covered by ingredient-unlock.test.ts.
 import { describe, expect, it } from 'vitest';
 import { loadAndValidate } from '../load-data.ts';
 import { TurnSimulation } from '../../sim-core/src/turn.ts';
@@ -20,6 +22,7 @@ function runTurn(opts: {
   const sim = new TurnSimulation(
     db,
     {
+      playerLevel: 44,
       restaurantIndex: opts.restaurantIndex ?? 1,
       levelId: 'test',
       upgradeLevels: {},
@@ -72,6 +75,7 @@ describe('turn simulation', () => {
     const sim = new TurnSimulation(
       db,
       {
+        playerLevel: 44,
         restaurantIndex: 0,
         levelId: 'idle',
         upgradeLevels: {},
@@ -89,7 +93,7 @@ describe('turn simulation', () => {
   });
 
   it('only accepts a serve for an ingredient the customer actually ordered', () => {
-    const sim = new TurnSimulation(db, { restaurantIndex: 1, levelId: 'match', upgradeLevels: {}, seed: 3 }, 3);
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 1, levelId: 'match', upgradeLevels: {}, seed: 3 }, 3);
     const customer = sim.spawnCustomer('comum');
     const ordered = customer.lines[0]!.ingredientId;
     const other = db.ingredients.items.find((i) => i.id !== ordered && i.cookMethod === 'grill')!;
@@ -107,7 +111,7 @@ describe('turn simulation', () => {
   });
 
   it('marks the customer served only when every order line is fulfilled', () => {
-    const sim = new TurnSimulation(db, { restaurantIndex: 3, levelId: 'multi', upgradeLevels: {}, seed: 8 }, 8);
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 3, levelId: 'multi', upgradeLevels: {}, seed: 8 }, 8);
     let customer = sim.spawnCustomer('familia');
     let guard = 0;
     while (customer.lines.length < 2 && guard++ < 40) customer = sim.spawnCustomer('familia');
@@ -135,7 +139,7 @@ describe('turn simulation', () => {
   });
 
   it('breaks the combo when food burns', () => {
-    const sim = new TurnSimulation(db, { restaurantIndex: 0, levelId: 'combo', upgradeLevels: {}, seed: 11 }, 11);
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 0, levelId: 'combo', upgradeLevels: {}, seed: 11 }, 11);
     const c = sim.spawnCustomer('comum');
     const ing = db.ingredientById.get(c.lines[0]!.ingredientId)!;
     const f = sim.takeFromStock(ing);
@@ -159,7 +163,7 @@ describe('turn simulation', () => {
 
     const idle = new TurnSimulation(
       db,
-      { restaurantIndex: 0, levelId: 'idle2', upgradeLevels: {}, seed: 22, overrides: { turnLengthSec: 40, spawnIntervalSec: 4, patienceScalar: 0.3 } },
+      { playerLevel: 44, restaurantIndex: 0, levelId: 'idle2', upgradeLevels: {}, seed: 22, overrides: { turnLengthSec: 40, spawnIntervalSec: 4, patienceScalar: 0.3 } },
       22
     );
     let guard = 0;
@@ -168,7 +172,7 @@ describe('turn simulation', () => {
   });
 
   it('grants a delayed serve after the modelled reaction latency', () => {
-    const sim = new TurnSimulation(db, { restaurantIndex: 0, levelId: 'delay', upgradeLevels: {}, seed: 33 }, 33);
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 0, levelId: 'delay', upgradeLevels: {}, seed: 33 }, 33);
     const c = sim.spawnCustomer('comum');
     const ing = db.ingredientById.get(c.lines[0]!.ingredientId)!;
     const f = sim.takeFromStock(ing);
@@ -186,7 +190,7 @@ describe('turn simulation', () => {
   });
 
   it('never lets one plate be queued twice', () => {
-    const sim = new TurnSimulation(db, { restaurantIndex: 0, levelId: 'dedupe', upgradeLevels: {}, seed: 44 }, 44);
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 0, levelId: 'dedupe', upgradeLevels: {}, seed: 44 }, 44);
     const c = sim.spawnCustomer('comum');
     // Pin the order to a grilled cut: the randomised pool can include `vinagrete`,
     // a prep item that is not ready after 1.1 s and would fail for an unrelated reason.
@@ -255,7 +259,7 @@ describe('food lifecycle', () => {
   });
 
   it('prep items become servable without ever touching the grill', () => {
-    const sim = new TurnSimulation(db, { restaurantIndex: 0, levelId: 'prep', upgradeLevels: {}, seed: 55 }, 55);
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 0, levelId: 'prep', upgradeLevels: {}, seed: 55 }, 55);
     const ing = db.ingredientById.get('vinagrete')!;
     const f = sim.takeFromStock(ing);
     expect(f.onGrill).toBe(false);
@@ -293,6 +297,7 @@ function burnPlates(sim: TurnSimulation, count = 1) {
 
 function manualTurn() {
   return new TurnSimulation(db, {
+    playerLevel: 44,
     restaurantIndex: 0, levelId: 'regression', upgradeLevels: {}, seed: 42,
     overrides: { autoSpawn: false, turnLengthSec: 300 }
   });
@@ -360,7 +365,7 @@ describe('A-08: one burnedFood per physical plate', () => {
 
 describe('A-09: result is a pure reward snapshot', () => {
   it('reproduces the audited 745→842 bug without changing the correct first payout', () => {
-    const sim = new TurnSimulation(db, { restaurantIndex: 0, levelId: 'level_001', upgradeLevels: {}, seed: 4242 });
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 0, levelId: 'level_001', upgradeLevels: {}, seed: 4242 });
     const policy = new SkillPolicy(new Rng(1), { skill: 0.6 });
     while (!sim.finished) sim.tick(1 / 30, a => policy.act(a));
     const first = sim.result();
@@ -403,7 +408,7 @@ describe('A-09: result is a pure reward snapshot', () => {
 
   it('does not cache a premature result or change gameplay when inspected mid-turn', () => {
     const control = runTurn({ seed: 99, skill: 0.8 });
-    const sim = new TurnSimulation(db, { restaurantIndex: 1, levelId: 'test', upgradeLevels: {}, seed: 99 });
+    const sim = new TurnSimulation(db, { playerLevel: 44, restaurantIndex: 1, levelId: 'test', upgradeLevels: {}, seed: 99 });
     const policy = new SkillPolicy(new Rng(99 * 31 + 7), { skill: 0.8 });
     const initial = sim.result();
     let ticks = 0;
