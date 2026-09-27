@@ -7,8 +7,8 @@
 > essas PRs conflitantes está superada; os bloqueios Android/paridade da auditoria continuam abertos.
 
 
-**Data:** 2026-09-27 UTC  
-**Base auditada:** `origin/main` em `bf478348f2490263f2feab4a6bd902e57bf2cae6` (PR #17 integrada).  
+**Data:** 2026-09-27 UTC
+**Base auditada:** `origin/main` em `bf478348f2490263f2feab4a6bd902e57bf2cae6` (PR #17 integrada).
 **Branch de trabalho:** `arena/01a0e494-game-churrasqueiro`.
 
 ## 1. Conclusão executiva
