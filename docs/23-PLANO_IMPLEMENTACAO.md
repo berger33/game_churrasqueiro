@@ -1,6 +1,7 @@
 # 23 — Plano de Implementação e Melhoria (passo a passo)
 
-**Data:** 2026-09-26 · branch `arena/01a0e001-game-churrasqueiro`
+**Atualização operacional:** 2026-09-27 · branch `arena/01a0e03e-game-churrasqueiro`
+**Histórico:** plano original de 2026-09-26 preservado nas seções 1–7 e no registro.
 **Status:** ativo — este é o documento-guia do dia a dia. Na dúvida sobre o que fazer
 a seguir, a resposta está em "Próximo passo imediato" (§8).
 
@@ -26,7 +27,7 @@ a seguir, a resposta está em "Próximo passo imediato" (§8).
 
 ---
 
-## 1. Visão geral das fases
+## 1. Visão geral histórica das fases (substituída operacionalmente pela §9)
 
 | Fase | Objetivo | Sai de | Chega em | Doc-mãe |
 |---|---|---|---|---|
@@ -37,8 +38,8 @@ a seguir, a resposta está em "Próximo passo imediato" (§8).
 | **4** | V0.3 — Vertical Slice | core funcional | 1 experiência em qualidade final | 14 (V0.3) |
 | **5** | V0.4 → V1.0 | slice vertical | jogo publicado em rollout | 14 (V0.4–V1.0) |
 
-Dependências: 1 e 2 são independentes entre si e podem intercalar; 3 precisa da 2;
-4 precisa da 1 + 3; 5 segue a ordem do roadmap.
+Dependências históricas acima **não autorizam mais a porta C#**: a auditoria exige
+estabilizar TypeScript, contratos, dados e economia primeiro. A ordem vigente está na §9.
 
 ---
 
@@ -155,13 +156,9 @@ Cada passo, ao ser aberto, ganha sub-passos próprios neste documento (mesmo for
 
 ## 8. Próximo passo imediato
 
-👉 **Iniciar a correção dos nove achados altos da auditoria técnica** antes de congelar as
-regras para a porta C#. A arte está encerrada: 244 sprites aprovados, 0 pending, 16 comidas e
-7 fundos. Ordem operacional: (1) corrigir A-01–A-09 com testes negativos; (2) regenerar vetores
-e revalidar economia; (3) implementar `check-art-registry`; (4) atualizar dependências do
-tooling; (5) concluir `TurnSimulation`, economia e save em C#; (6) criar o projeto Unity V0.2.
-Revisar/encerrar os PRs antigos #7 e #8 sem merge direto. Prompt detalhado de retomada:
-`docs/24-PROMPT_PROXIMA_SESSAO.md`.
+👉 **Executar a fase operacional F1 (§9): `check-art-registry`, testes negativos e CI.**
+Depois, iniciar F2 na ordem A-07 → A-08 → A-09. A arte está encerrada; não abrir lote.
+C# e Unity bloqueados até estabilização da referência. Não fazer merge sem nova autorização.
 
 **Registro de progresso:**
 
@@ -178,3 +175,101 @@ Revisar/encerrar os PRs antigos #7 e #8 sem merge direto. Prompt detalhado de re
 | 2026-09-26 | 1.3-A (lote 09) | 10/10 aprovados e integrados | `arena/01a0e001-game-churrasqueiro` | dono pediu o próximo lote e aceitou os dois carrinhos; runtime 221 → 231 sprites / 3,81 MB |
 | 2026-09-26 | 1.3-A (lote 10) | 10/10 aprovados e integrados | `arena/01a0e001-game-churrasqueiro` | cinco estados de contra-filé + cinco de maminha; runtime 231 → 241 sprites / 3,88 MB |
 | 2026-09-26 | 0.1 + 0.3 + 1.3-A (lote 11) | 3/3 aprovados, sequência encerrada e merge autorizado | `arena/01a0e001-game-churrasqueiro` | registro 244 approved / 0 pending / 1 superseded; runtime 244 sprites / 3,98 MB, 16 comidas, 7 fundos; docs e snapshot atualizados |
+
+
+## 9. Plano operacional pós-arte — vigente em 2026-09-27
+
+Esta seção prevalece sobre a numeração histórica das §§1–7 e a ordem antiga do handoff.
+Escopo desta entrega/PR: baseline, planejamento e **F1**. F2–F13 permanecem pendentes,
+não abandonadas. Uma mudança de segurança será isolada em commit/PR, **na branch da sessão**;
+não se aplica a recomendação antiga de trocar para outra branch.
+
+### 9.1 Baseline reproduzido antes de alterações
+
+- `git fetch origin`; HEAD `4fe4f4f`, ancestralidade do merge PR #13 confirmada em HEAD e
+  `origin/main`; branch `arena/01a0e03e-game-churrasqueiro`; árvore limpa.
+- Leitura integral: README, docs 18, 22, 23-AUDITORIA, 23-PLANO e 24-PROMPT.
+- Node **v22.22.3**, npm **10.9.8**; `npm ci` concluído.
+- `npm run gates`: **13/14 executados e aprovados**, só `check-csharp` SKIP (sem .NET).
+  Lista: typecheck, validate, check-schema, verify-schemas, check-l10n, check-csharp-types,
+  verify-data-sync, test, sim, check-vectors, check-art, check-render, check-shots, check-csharp.
+- **202/202 testes**, 13 arquivos; 22 schemas; 98 + 44 vetores sem drift; 144 draws;
+  244 sprites decodificados; 13 screenshots; FTUE 16,1/32,9/38,3 s e zero erros.
+- `sim:long`: 1.500 turnos, nível 80, restaurante 6, Fornalha evo 3; renda 14.665.839,
+  gasto 10.873.220, saldo 3.792.619; spend 0,741; perfect 71,8%; burned 5,7%;
+  perdidos 6,9%; duração média 169,8 s; **18/18 guardrails codificados**.
+  Unlocks 32/89/147/243/418/1185; churrasqueiras 7/45/90;
+  renda diária L5/L15/L30/L50 = 10.793/41.115/98.262/115.926.
+- `npm audit`: **5 vulnerabilidades (1 crítica, 1 alta, 3 moderadas)**, cadeia
+  Vitest/@vitest/mocker/Vite/vite-node/esbuild transitivo. Sugere Vitest 5.0.2 major;
+  não aplicado `audit fix --force`. O advisory remoto mudou, mas a contagem coincide.
+- PR #13 confirmado MERGED com SHA integral `4fe4f4ff20b11cfd625b0f65f7c4944701e373b9`;
+  CI `Studio gates` SUCCESS, run `36281871246`. Não confundir com CI desta nova entrega.
+- Nenhuma divergência numérica do handoff. Ressalvas mantidas: o sim curto marca alvos
+  não alcançados como PASS; o longo é necessário. Os verdes não corrigem A-01–A-09.
+- Reprodução da lacuna F1: `check-art-registry` não existe (`npm` falha); adicionar
+  temporariamente um WebP órfão ao runtime **não faz `check-art` falhar** (exit 0).
+  Arquivo de prova removido, nenhum master alterado.
+
+### 9.2 Fases, dependências, arquivos, regressões e saída
+
+| Fase / estado | Ordem e dependências | Arquivos/contratos previstos | Testes negativos e critério de conclusão |
+|---|---|---|---|
+| **F1 — em andamento** | Baseline → testes vermelhos → gate → CI | `tools/art/check-art-registry.ts`, baseline nominal `art/approved-runtime-baseline.json`, `tools/studio/test/art-registry.test.ts`, `package.json`, `run-gates.mjs`, `gates.test.ts`, `ci.yml` | Masters ↔ CSV ↔ manifesto ↔ runtime; nomes/caminhos/batch/status, duplicatas, flags, arquivos órfãos, remoção inclusive coordenada; fixtures isoladas e exit != 0. Manter os 244 IDs aprovados e CI com 15 gates. Sem regenerar arte. |
+| **F2 — pendente** | **A-07 → A-08 → A-09**; depois de F1 | `economy.ts`, `turn.ts`, `save.ts` se normalização exigir, testes economy/turn/save, `gen-vectors.ts` só se contrato mudar | A-07: inicial=1, sequência 2..7, repetição sem crédito, roundtrip/save antigo com contador inflado e metas 3/5/7. A-08: queimar+descartar/servir, vários alimentos, resultado/restauração sem contar duas vezes. A-09: 2+ chamadas estruturalmente iguais, moedas/XP não duplicados, serialização e chamadores reais. Reproduzir cada falha antes da correção; gates+sim longo verdes ou divergência econômica explicitamente investigada, nunca retunada por conveniência. |
+| **F3 — pendente** | A-01 → A-02 → A-03 → A-04 → A-05 → A-06; decisões abaixo | `ingredients.json`, `grill.json`, `restaurants.json`, `levels.json`, `upgrades.json`, `events.json`, `types.ts`, `cooking.ts`, `turn.ts`, `policy.ts`, `economy.ts`, `prototype/src/main.ts`, tutorial/analytics/audio/l10n, `run-sim.ts` e testes | Janela perfeita costela/cupim e bot avançado; unlock imediatamente antes/no/depois (nível+restaurante), FTUE determinístico; prep com slots/input/hitboxes/pedido misto/paciência/combo/resultado; 4 zonas reais em grelha/bot/UI/calor/screenshots; VIP chance 0/natural/forçado/cap/recompensa/placement; mapa das 27 trilhas (consumidor/fórmula/limite/tela/teste/sim), no-ops explicitamente ocultos e incompráveis. Nove altos resolvidos, nenhuma promessa sem consumidor. |
+| **F4 — pendente** | Todas A-01–A-09 resolvidas | `shared/data`, schemas necessários, `Assets/Data`, `tools/golden`, docs 06/18/23 | Revisar dados antes de `gen-levels` e `gen-vectors`; revisar cada diff semântico, gates e 1.500 turnos; publicar unlocks/renda/spend/perfect/burned/perdidos/duração/grills. Não aceitar vetores novos apenas por terem sido gerados. |
+| **F5 — pendente** | Referência corrigida, antes da porta | `economy.ts`, `cooking.ts`, `policy.ts`, `save.ts`, `prototype/src/main.ts`, dados/l10n, validadores, runner C#, auditoria | Triar 19 médios + 19 baixos. Resolver antes de C#: carvão, ledger brasas, offline, deriveStats/clamps, burned com overrides, vazamento bot, streak, campos mortos, gating funcionários, descrições, avaliadores missões/conquistas, level-up, alvos ignorados, levels commitado e skips C#. Teste reprovando implementação anterior por item; classificar explicitamente o que fica para serviços/device. |
+| **F6 — pendente / isolada** | Antes de C#, após fixar contratos | `package.json`, lock, configuração de testes/build necessária | Rever release notes de Vitest/Vite/esbuild e Node mínimo; audit antes/depois; typecheck, 202+ testes, schemas, vetores, sim curto/longo, render, screenshots e C# remoto. Zero vulnerabilidades conhecidas ou impedimento documentado, sem force cego. |
+| **F7 — pendente** | Antes da paridade econômica C# | PRs #7/#8 via `gh`, arquivos úteis extraídos no estado atual, registro de decisões | Comparar cada tema com main: útil/obsoleto/conflitante; reimplementar seletivamente com testes. Não fazer merge desses PRs; fechar apenas após revisão registrada. |
+| **F8 — bloqueada** | F2–F7 concluídas e contratos estáveis | `TurnSimulation.cs`, `EconomyRules.cs`, `SaveSystem.cs`, `Tutorial.cs`, parity runner | Mesmos 12 vetores de turno + 5 econômicos, save v3/migrações e FTUE completos; netstandard2.1/C#9, warnings=erros, **zero not ported**. |
+| **F9 — bloqueada** | F8 concluída | Unity 6 LTS: Packages/ProjectSettings/assemblies/cenas/prefabs; importer do manifesto, atlases/.meta; GrillView/FoodView/CustomerCardView/TurnFlow | Turno completo no Editor; input/UI/áudio/save/l10n integrados; 60 FPS em Android médio físico com medição. Arte no bundle não equivale a sistema funcional. |
+| **F10 — pendente** | Core Unity | Coleção/missões/conquistas/eventos/loja/passe/rota; en-US/es-419 | Fluxos completos, traduções além dos 10,5%, texto ampliado/contraste/ponto sem só cor/redução de movimento/toque/retorno/telas pequenas e proporções. |
+| **F11 — bloqueada** | Core Unity funcional | Serviços Firebase/Crashlytics/Remote Config, UMP, ads/billing | SDKs reais em projetos de teste; LGPD/Data Safety; caps/cooldowns dos dados; recibos/restauração/offline; nenhuma credencial real em Git. |
+| **F12 — pendente** | Core + serviços integrados | Áudio, profiling, QA e evidências de dispositivo | Mix/ducking, memória/GC/draw calls/atlases/build; foco/interrupções/save/migrações/reinstalação/offline/GPUs; 60 FPS/crash-free/estabilidade medidos, não simulados como evidência física. |
+| **F13 — bloqueada** | Critérios de QA/release atendidos | Pipeline assinatura, APK/AAB, store/privacy/ASO | Build reproduzível, closed testing com AAB e brutos/gravações, Play Console/consentimento/Data Safety/screenshots reais; rollout gradual observável com rollback. Sem evidência bruta, não declarar teste reproduzível. |
+
+### 9.3 Vetores e impacto econômico esperado
+
+- F1: **nenhum** vetor, dado de jogo ou número econômico deve mudar; comparar saída longa.
+- A-07: contadores de estado/save e futuros consumidores de conquistas; não adiantar prêmios.
+  A-08: `counters.burnedFood` nos vetores de turnos que servem queimados e `burnedRate`;
+  menos contagem não significa melhoria de habilidade. A-09: primeira chamada deve manter
+  recompensa; chamadas repetidas não geram moedas/XP. Vetores de primeira chamada podem não mudar.
+- A-01: cooking/scoring de costela/cupim e turnos avançados; renda/perfect podem subir.
+  A-02: composição de pedidos e seeds dos 12 turnos; curva inicial/unlocks/renda mudam;
+  FTUE roteirizado deve permanecer. A-03: prep real deve melhorar pedidos concluídos na UI;
+  tempo/slots podem afetar sim. A-04: calor/capacidade/turnos avançados e progressão de grills.
+  A-05: spawn RNG/VIP/recompensas; medir renda sem rewarded e verificar ausência de pay-to-win.
+- A-06: consumidores de stats, economia e turnos; excluir compras no-op provavelmente reduz
+  spend ratio. Investigar sinks reais; **não** ajustar preços só para restaurar guardrails.
+- Mudanças de save/contrato em F5 também exigem vetores e migrações. Regenerar apenas de modo
+  explícito, após revisar expectativas; C# fica bloqueado se houver contrato reconhecidamente falso.
+
+### 9.4 Decisões de produto (não bloqueiam F1/F2)
+
+1. **A-01 — recomendação, ainda não aprovada:** `sides:1`, mantendo `flipNeeded:false` para
+   os cortes lentos. Preserva a fantasia low-and-slow já documentada e reduz microgestão tardia.
+   Alternativa: exigir virada e ensinar no bot/UI/tutorial/docs. Confirmar antes de editar dados.
+2. **A-04 — recomendação, ainda não aprovada:** manter a quarta zona prometida, implementada
+   ponta a ponta, inclusive nas churrasqueiras equipadas (não só grelha default). Confirmar
+   desenho/progressão e calor; alternativa é remover promessa de todos os contratos/textos.
+3. **A-05:** confirmar chance/fonte, teto diário persistido e `call_vip` como conveniência,
+   nunca requisito de progressão; testar renda sem anúncios.
+4. **A-06:** priorizar prep/board junto de A-03; ocultar por flag os no-ops restantes até
+   consumidor testado, sem deixar compras do bot passarem. Aprovar eventual impacto em saves
+   com compras antigas antes de decidir reembolso/migração.
+5. **F5:** confirmar streak/dia de graça (doc e código divergem) e início de offline;
+   não escolher silenciosamente uma regra que altere recompensas.
+
+### 9.5 Checkpoints de commit e PR
+
+1. Commit de planejamento/baseline (sem semântica).
+2. F1: testes red → implementação green + integração gate/CI, commit coerente sem binários.
+3. Commit de encerramento: resultados, status e handoff; abrir PR F1 para `main` pela branch
+   `arena/01a0e03e-game-churrasqueiro`, aguardar CI remoto e registrar resultado. **Não mergear.**
+4. F2: commits separados por A-07/A-08/A-09 com prova red/green e diff de vetores revisado;
+   PR/grupo independente depois de F1 (mesma branch enquanto durar esta sessão).
+5. F3: checkpoints por achado/decisão; F4 um checkpoint de revalidação. F5 por contrato;
+   F6 isolada; F7 inventário+extrações; F8 por port; F9–F13 por milestone com evidências.
+   Cada fase fecha com docs sincronizadas, testes e verificações da tabela; merge só com dono.
