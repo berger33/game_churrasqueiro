@@ -13,6 +13,7 @@ function runTurn(opts: {
   restaurantIndex?: number;
   seed?: number;
   skill?: number;
+  stepSec?: number;
   overrides?: Record<string, unknown>;
 }) {
   const seed = opts.seed ?? 99;
@@ -29,7 +30,7 @@ function runTurn(opts: {
   );
   const policy = new SkillPolicy(new Rng(seed * 31 + 7), { skill: opts.skill ?? 0.8 });
   let guard = 0;
-  while (!sim.finished && guard++ < 40000) sim.tick(1 / 30, (a) => policy.act(a));
+  while (!sim.finished && guard++ < 40000) sim.tick(opts.stepSec ?? 1 / 30, (a) => policy.act(a));
   return sim;
 }
 
@@ -353,5 +354,81 @@ describe('A-08: one burnedFood per physical plate', () => {
     if (!restored.ok) throw new Error(restored.reason);
     expect(restored.save.player.counters.burnedFood).toBe(9);
     expect(JSON.parse(JSON.stringify(result)).counters.burnedFood).toBe(1);
+  });
+});
+
+
+describe('A-09: result is a pure reward snapshot', () => {
+  it('reproduces the audited 745→842 bug without changing the correct first payout', () => {
+    const sim = new TurnSimulation(db, { restaurantIndex: 0, levelId: 'level_001', upgradeLevels: {}, seed: 4242 });
+    const policy = new SkillPolicy(new Rng(1), { skill: 0.6 });
+    while (!sim.finished) sim.tick(1 / 30, a => policy.act(a));
+    const first = sim.result();
+    expect(first.coins).toBe(745);
+    expect(sim.result()).toEqual(first);
+    expect(sim.result()).toEqual(first);
+  });
+
+  for (const stepSec of [1 / 20, 1 / 30]) {
+    it(`returns the same complete result across repeated reads at dt=${stepSec}`, () => {
+      const sim = runTurn({ seed: 4242, skill: 0.6, stepSec });
+      const coins = sim.coins, xp = sim.xp;
+      const first = sim.result();
+      for (let n = 0; n < 3; n++) expect(sim.result()).toEqual(first);
+      expect(sim.coins).toBe(coins);
+      expect(sim.xp).toBe(xp);
+      const save = newSave('result-read', 1234);
+      applyTurnResult(db, save.player, first); // credit exactly once; result() does not credit a wallet
+      const raw = serializeSave(save);
+      expect(sim.result()).toEqual(first);
+      expect(serializeSave(save)).toBe(raw);
+      const restored = deserializeSave(raw);
+      expect(restored.ok).toBe(true);
+      if (!restored.ok) throw new Error(restored.reason);
+      expect(restored.save.player).toEqual(save.player);
+      expect(save.player.counters.turnsPlayed).toBe(1);
+      expect(save.player.counters.coinsEarnedTotal).toBe(save.player.coins);
+    });
+  }
+
+  it('rounds only the returned values, never the live coins/XP accumulators', () => {
+    const sim = manualTurn();
+    sim.coins = 12.4; sim.xp = 3.6;
+    const first = sim.result();
+    expect(first.coins).toBe(Math.round(12.4 + db.economy.reward.turnEndBonus.base));
+    expect(first.xp).toBe(4);
+    expect({ coins: sim.coins, xp: sim.xp }).toEqual({ coins: 12.4, xp: 3.6 });
+    expect(sim.result()).toEqual(first);
+  });
+
+  it('does not cache a premature result or change gameplay when inspected mid-turn', () => {
+    const control = runTurn({ seed: 99, skill: 0.8 });
+    const sim = new TurnSimulation(db, { restaurantIndex: 1, levelId: 'test', upgradeLevels: {}, seed: 99 });
+    const policy = new SkillPolicy(new Rng(99 * 31 + 7), { skill: 0.8 });
+    const initial = sim.result();
+    let ticks = 0;
+    while (!sim.finished) {
+      sim.tick(1 / 30, a => policy.act(a));
+      if (++ticks % 100 === 0) sim.result();
+    }
+    expect(sim.result()).toEqual(control.result());
+    expect(sim.result().counters.customersServed).toBeGreaterThan(initial.counters.customersServed);
+  });
+
+  it('returns detached counters and event payloads, safe to serialize or consume later', () => {
+    const sim = manualTurn();
+    sim.spawnScriptedCustomer('comum', ['linguica_toscana'], 500);
+    const snapshot = sim.result();
+    const frozenJSON = JSON.stringify(snapshot);
+    sim.tick(1);
+    expect(JSON.stringify(snapshot)).toBe(frozenJSON);
+    const mutable = sim.result();
+    const original = structuredClone(mutable);
+    mutable.counters.bestCombo = 999;
+    const spawn = mutable.events.find(e => e.type === 'spawn');
+    if (!spawn || spawn.type !== 'spawn') throw new Error('missing spawn fixture');
+    spawn.customer.patienceLeft = -100;
+    mutable.events.length = 0;
+    expect(sim.result()).toEqual(original);
   });
 });

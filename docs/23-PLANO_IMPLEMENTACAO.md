@@ -338,3 +338,13 @@ Após correção: 23/23 testes de turno, total 266; gates 14/15 e sim longo 18/1
 Vetores 98+44 não mudaram: o bot descarta queimados antes de servir, não exercitando o bug.
 Não regenerados. A regressão de serve queimado exige burn/items=1, não 2. Histórico de
 burns em saves existentes preservado: não é possível reconstruí-lo sem diário por item.
+
+**Checkpoint A-09 — concluído:** 6 testes novos + 2 testes de consumidores fortalecidos;
+todos os 8 falharam antes da correção, incluindo reprodução exata 745→842 e FTUE 86→127.
+`result()` agora calcula o bônus somente no retorno, arredonda sem alterar moedas/XP e
+entrega snapshot de eventos sem aliases mutáveis. Leituras durante o turno não congelam
+um resultado prematuro. Crédito de carteira continua responsabilidade do chamador:
+`applyTurnResult` não se tornou um ledger idempotente de resgates.
+Verificados consumidor FTUE, replay dos 12 vetores e passos 1/20 e 1/30; gates reais também
+executam protótipo, simulador e gerador em modo `--check`. 272 testes; gates 14/15 locais;
+sim longo 18/18, saída integral idêntica; vetores 98+44 e FTUE/sprites inalterados.

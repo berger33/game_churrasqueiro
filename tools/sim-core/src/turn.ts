@@ -495,6 +495,12 @@ export class TurnSimulation {
     return this.time >= this.timeLimit;
   }
 
+  /**
+   * Pure snapshot: includes the end bonus once in the returned payout, never in
+   * the live accumulators. Repeated reads (including mid-turn inspection) cannot
+   * award currency or freeze a premature result. Credit the finished result once
+   * via the caller's wallet flow; applyTurnResult itself is not a claim ledger.
+   */
   result(): TurnResult {
     const served = this.counters.customersServed;
     const total = Math.max(1, this.counters.customersSpawned);
@@ -502,19 +508,17 @@ export class TurnSimulation {
     const stars = ratio >= 0.9 ? 3 : ratio >= 0.65 ? 2 : ratio >= 0.35 ? 1 : 0;
     const bonus = this.db.economy.reward.turnEndBonus;
     const endBonus = Math.max(0, bonus.base + bonus.perPerfect * this.counters.perfectCooks + bonus.perLostCustomer * this.counters.customersLost);
-    this.coins += endBonus;
-    this.xp = Math.round(this.xp);
 
     return {
       levelId: this.config.levelId,
-      coins: Math.round(this.coins),
-      xp: this.xp,
+      coins: Math.round(this.coins + endBonus),
+      xp: Math.round(this.xp),
       stars,
       combo: this.counters.bestCombo,
       counters: { ...this.counters },
       durationSec: this.time,
       failed: stars === 0 && this.counters.customersLost > served,
-      events: this.events
+      events: structuredClone(this.events)
     };
   }
 

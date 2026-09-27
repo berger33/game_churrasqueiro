@@ -349,6 +349,7 @@ describe('a player who only follows the hand', () => {
     playByHand(turn);
     while (!turn.sim.finished) turn.tick(DT); // the wind-down after the last order
     const r = turn.sim.result();
+    expect(turn.sim.result()).toEqual(r); // FTUE/prototype result consumer must be read-only
     const coins = 0 + r.coins + level.rewards.coins + level.rewards.firstClearBonus.coins;
     const cost = costFor(db, table.upgradeTrackId, 0);
     expect(coins).toBeGreaterThanOrEqual(cost);

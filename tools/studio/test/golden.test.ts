@@ -208,6 +208,7 @@ describe.skipIf(!hasVectors)('golden vectors', () => {
       let guard = 0;
       while (!sim.finished && guard++ < 40000) sim.tick(v.input.stepSec, (a) => policy.act(a));
       const res = sim.result();
+      expect(sim.result(), `${v.id} repeat read`).toEqual(res);
 
       expect(res.coins, `${v.id} coins`).toBe(v.expect.coins);
       expect(res.xp, `${v.id} xp`).toBe(v.expect.xp);
