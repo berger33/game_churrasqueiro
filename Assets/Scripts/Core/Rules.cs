@@ -327,13 +327,16 @@ namespace Churrasco.Core
             return true;
         }
 
-        public static void RemoveFromGrill(GrillRuntime g, FoodRuntime f)
+        public static bool RemoveFromGrill(GrillRuntime g, FoodRuntime f)
         {
-            if (!f.OnGrill) return;
-            if (f.ZoneIndex >= 0 && f.ZoneIndex < g.Zones.Count)
-                g.Zones[f.ZoneIndex].Items.Remove(f);
+            if (!f.OnGrill || f.ZoneIndex < 0 || f.ZoneIndex >= g.Zones.Count) return false;
+            var z = g.Zones[f.ZoneIndex];
+            int i = z.Items.IndexOf(f);
+            if (i < 0) return false;
+            z.Items.RemoveAt(i);
             f.OnGrill = false;
             f.ZoneIndex = -1;
+            return true;
         }
 
         /// <summary>
@@ -740,18 +743,6 @@ namespace Churrasco.Core
             if (n <= 1) return 0;
             if (n >= primary.Count) return tableIndex;
             return (int)Math.Round((double)tableIndex * (n - 1) / (primary.Count - 1));
-        }
-
-        public static bool RemoveFromGrill(GrillRuntime g, FoodRuntime f)
-        {
-            if (!f.OnGrill || f.ZoneIndex < 0 || f.ZoneIndex >= g.Zones.Count) return false;
-            var z = g.Zones[f.ZoneIndex];
-            int i = z.Items.IndexOf(f);
-            if (i < 0) return false;
-            z.Items.RemoveAt(i);
-            f.OnGrill = false;
-            f.ZoneIndex = -1;
-            return true;
         }
 
         public static int GrillSlotsFree(GrillRuntime g)
