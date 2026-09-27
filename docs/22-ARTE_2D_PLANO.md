@@ -540,7 +540,7 @@ ele não existe neste ambiente. **Ponto de decisão: lote 03.**
 ## 11. Próximos passos (atualizado em 2026-09-27)
 
 1. **Sequência 08–11 concluída:** 33/33 substituições aprovadas, runtime completo com 244 sprites, 16 comidas e 7 fundos.
-2. **Correções de regras:** próximo trabalho = A-07 → A-08 → A-09, depois A-01–A-06; revalidar vetores/economia antes de C#. Plano operacional vigente: docs/23-PLANO §9.
+2. **Correções de regras:** A-07/A-08/A-09 concluídos em F2; próximo trabalho = confirmar A-01 e corrigir A-01–A-06; revalidar vetores/economia antes de C#. Plano operacional vigente: docs/23-PLANO §9.
 3. **Gate `check-art-registry` concluído:** valida masters PNG (os dois arquivos de metadados são excluídos do inventário), CSV, lote, nome/caminho/status, manifesto, runtime approved-only e lookups. Rejeita arquivos órfãos, links e build `--include-pending`. O baseline nominal `art/approved-runtime-baseline.json` protege os 244 IDs aprovados de PR #13 mesmo contra remoção coordenada; mudanças nele exigem revisão explícita, nunca regeneração automática. 52 testes isolados; adicionado a `npm run gates` e ao CI. O gate não exige brutos descartáveis e não altera aprovação ou arte.
 4. **Unity:** depois das correções e da paridade C#, implementar o `AssetPostprocessor` lendo `sprites.manifest.json` (§7.2).
 5. **ASO/store:** as peças adicionais ficam para o lote 12 ou posterior, sem bloquear a correção do núcleo técnico.

@@ -4,7 +4,66 @@ Use este texto como contexto inicial da próxima sessão no repositório
 `berger33/game_churrasqueiro`. Trabalhe somente na branch atribuída à nova sessão e confirme o
 estado real de `origin/main` antes de alterar arquivos.
 
-## Handoff atualizado — 2026-09-27 (prevalece sobre o histórico abaixo)
+## Handoff F2 — vigente (2026-09-26 local / 27 UTC)
+
+### Estado atual e evidências
+
+- Mesma branch: `arena/01a0e03e-game-churrasqueiro`. Fetch confirmou PR #14 ainda **aberto,
+  sem merge**; F2 amplia esse PR porque não se pode criar/trocar de branch nesta sessão.
+  Main contém o merge PR #13 (`4fe4f4f`); **não assumir que F1/F2 foram integradas**.
+- Baseline da continuação `3f1c9c6`: árvore limpa, Node 22.22.3/npm 10.9.8, `npm ci`,
+  254 testes, 14/15 gates locais e 18/18 guardrails longos, mesmas 5 vulnerabilidades.
+- **F1 permanece concluída:** gate de arte, 52 testes, 244 IDs protegidos; sem arte nova.
+- **F2 concluída na referência TS:**
+  - `5803806` A-07: restaurantes inicial=1, sequência 2..7; save v1/v2/v3 normalizado após
+    CRC, sem mudar shape/v3 nem carteiras/conquistas/contadores não relacionados.
+  - `f2958d6` A-08: contar uma única transição onBurn, nunca somar de novo ao servir.
+  - `02e7f61` A-09: `result()` puro, bônus e rounding só no retorno, eventos/counters
+    independentes; leituras no meio do turno não congelam o resultado.
+- Provas red: A-07 7 falhas em 8 novos testes; A-08 3 falhas em 4; A-09 8 falhas
+  (6 novos + 2 consumidores fortalecidos). Reproduções incluem 2/5/9/14/20/27 restaurantes,
+  prato queimado=2 e moedas 745→842 (FTUE 86→127) na segunda leitura.
+- Final: **272/272 testes**, 14 arquivos; **14/15 gates locais**, só C# SKIP sem .NET.
+  `sim:long` após cada correção: **18/18**, saída integral idêntica ao baseline, spend 0,741,
+  burned 5,7%, perfect 71,8%, perdidos 6,9%, média 169,8 s, nível 80 em 1.500 turnos.
+- `check-vectors`: **98 + 44 sem drift**, não regenerados. Vetores do bot não exercitam
+  sequência de unlock/save, descarte→serve queimado ou segunda leitura; testes novos cobrem.
+  Replay dos 12 turnos e consumidor FTUE agora exigem leitura idempotente.
+- FTUE 16,1/32,9/38,3 s, zero erros; 244 sprites, 13 screenshots; dados/schemas/levels/
+  imagens/preços intactos. `npm audit` continua 1 crítica + 1 alta + 3 moderadas.
+- CI remoto F2/PR #14: registrar após o push. CI anterior F1 15/15 no run `36282836431`.
+
+### Limites do que foi corrigido
+
+- A-01–A-06 **seguem abertos**, assim como a triagem média/baixa, dependências e paridade C#.
+- O save não serializa turnos ativos; teste de restauração de burns cobre resultado creditado
+  ao jogador + save/load. Histórico inflado de burns não pode ser reconstruído sem diário por
+  item e não é alterado. Normalização de restaurantes confia em `restaurantIndex` válido.
+- `result()` é leitura, não concessão de recompensa. `applyTurnResult`/carteira ainda devem
+  ser chamados uma única vez; não foi implementado ledger idempotente de resgates.
+- C# continua sem os 12 vetores completos e 5 econômicos. Portar também as regressões F2
+  quando chegar F8, sem confiar só no conjunto golden antigo.
+
+### Próxima ação concreta — F3/A-01
+
+1. Confirmar branch/base/árvore e estado do PR #14; não mergear sem autorização.
+2. Ler os documentos obrigatórios e docs/23-PLANO §9. **Confirmar com o dono a escolha A-01:**
+   recomendação = costela/cupim `sides:1`, mantendo `flipNeeded:false` para cortes lentos;
+   alternativa = exigir virada com bot/UI/tutorial/docs alinhados. Não editar dados sem decisão.
+3. Reproduzir os cortes indo de cru direto a queimado; criar regressões de janela perfeita e
+   bot avançado antes de corrigir. Revisar dados e diff semântico dos vetores afetados;
+   revalidar renda, perfect/burned, unlocks e curva de habilidade. Nunca retunar só para passar.
+4. Depois A-02 (nível no contrato + gating sem mudar roteiro FTUE), A-03 (prep real), A-04
+   (decisão explícita sobre quarta zona), A-05 (VIP), A-06 (consumidores das 27 trilhas).
+5. Ordem restante: F4 revalidação global → F5 dívida técnica → F6 dependências isoladas →
+   F7 revisão seletiva PRs #7/#8 → F8 C# → F9 Unity → F10 meta/l10n/acessibilidade →
+   F11 serviços → F12 QA/device → F13 publicação com evidências.
+6. Não iniciar arte/Unity/C# agora, não mergear PRs antigos, não inserir credenciais. Cada
+   alteração exige red/green, gates+sim longo, docs atualizadas e commits na branch atribuída.
+
+---
+
+## Handoff F1 — histórico de 2026-09-27 UTC (substituído pela F2 acima)
 
 ### Entrega desta sessão
 
@@ -32,7 +91,7 @@ estado real de `origin/main` antes de alterar arquivos.
 - **Todos A-01–A-09 continuam abertos.** Nenhum contrato de gameplay/save/dados mudou.
   Nenhuma decisão de produto foi aplicada; não confundir esta F1 com correção das regras.
 
-### Próxima ação concreta
+### Próxima ação ao encerrar F1 — histórica
 
 1. Na branch atribuída à próxima sessão, fetch/confirmar base real e árvore limpa; conferir
    estado do PR desta entrega. Não assumir que ele foi integrado. Reexecutar baseline.

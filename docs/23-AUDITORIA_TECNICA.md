@@ -8,7 +8,26 @@
 
 ---
 
-## Atualização pós-auditoria — 2026-09-27
+## Atualização F2 — estado vigente (2026-09-26 local / 27 UTC)
+
+**A-07, A-08 e A-09 resolvidos na referência TypeScript**, em `5803806`, `f2958d6` e
+`02e7f61`. Restam **6 altos abertos (A-01–A-06)**; totais originais e reproduções abaixo
+são mantidos como histórico. O CI verde não resolve os demais achados.
+
+| Achado | Prova antes da correção | Correção / prova depois |
+|---|---|---|
+| A-07 | 7 testes falhavam: contador inicial ausente, sequência 2/5/9/14/20/27, metas antecipadas, saves incorretos | inicial=1, unlock atribui índice+1, load normaliza v1/v2/v3 após CRC; 8 regressões verdes, incluindo metas reais 2/3/5/7 e saves antigos sem alteração de prêmios |
+| A-08 | 3 testes falhavam: 1 prato queimado servido=2; 3 pratos=5; resultado inflado | contar só na transição onBurn; 4 regressões verdes com queima real e persistência do resultado; não tentar inferir histórico por prato ausente do save |
+| A-09 | 8 testes falhavam: reprodução exata 745→842; FTUE 86→127; leituras alteravam acumuladores/snapshots | cálculo puro, bônus/rounding apenas no retorno, snapshots independentes; 6 novos testes + replay golden e FTUE fortalecidos |
+
+Validação: **272 testes** (antes 254), **14/15 gates locais**, C# SKIP sem SDK;
+**18/18 guardrails longos**, saída integral igual à anterior. `check-vectors` confirma
+98+44 sem drift: vetores do bot descartam queimados/fazem só uma leitura final e não cobrem
+contador de unlock/save. Nenhum JSON de vetor foi regenerado. Dados/preços não alterados.
+PR #14 continua aberto, agora F1+F2, **sem merge**; CI remoto desta F2 será registrado após push.
+Próxima ação: A-01, decisão de produto antes de dados. Plano vigente: docs/23-PLANO §9.8.
+
+## Histórico F1 pós-auditoria — 2026-09-27 UTC
 
 Sessão `arena/01a0e03e-game-churrasqueiro`: baseline reexecutado sobre o merge PR #13
 (`4fe4f4f`), sem divergência nos 202 testes, 13/14 gates locais e 18/18 guardrails longos.
@@ -17,7 +36,7 @@ A lacuna do pipeline de arte foi reproduzida: `check-art` aceitava WebP órfão 
 (46 negativos). Total atual **254 testes**, **14/15 gates locais**, C# ainda SKIP sem SDK.
 O inventário protege os 244 IDs aprovados e valida masters/CSV/lotes/manifesto/runtime.
 
-**Isto não resolve A-01–A-09:** os nove permanecem abertos. Não houve mudança de regras,
+**Na entrega F1, A-01–A-09 permaneceram abertos** (ver F2 abaixo para o estado atual). Não houve mudança de regras,
 dados, vetores ou economia; simulação longa integralmente idêntica. Vulnerabilidades também
 permanecem 5 (1 crítica/1 alta/3 moderadas). CI remoto **15/15 aprovado**, incluindo C#, em [run 36282761422](https://github.com/berger33/game_churrasqueiro/actions/runs/36282761422) / PR #14 (aberto, sem merge). Ordem operacional vigente: F1 concluída,
 A-07 → A-08 → A-09 em seguida; demais fases e decisões em `23-PLANO_IMPLEMENTACAO.md` §9.
@@ -45,7 +64,7 @@ Ambiente: Node v22.22.3, npm 10.9.8. Árvore limpa antes e depois (os gates que 
 
 ## 2. Sumário executivo
 
-**Achados: 47** — 🔴 9 altos · 🟠 19 médios · 🟡 19 baixos.
+**Achados originais: 47** — 9 altos · 19 médios · 19 baixos. Dos altos, 3 resolvidos em F2; 6 abertos.
 
 Os nove que mais importam, em ordem de impacto no jogo:
 
@@ -166,21 +185,21 @@ Severidade: 🔴 afeta regra/economia/contrato ou promessa ao jogador · 🟠 co
 - **Impacto:** o jogador paga (até 2 500 × 1,85ⁿ) por nada; `run-sim.ts UPGRADE_PRIORITY` compra todas, então `coinSpendRatio` "passa" com dinheiro jogado fora, e o `noUpgradeCostRegression` nem é checado (D-02).
 - **Correção:** implementar ou esconder as trilhas (flag `implemented:false` filtrada na loja e no bot) até existirem.
 
-### A-07 🔴 `restaurantsUnlocked` acumula
+### A-07 ✅ Resolvido em F2 — reprodução histórica: `restaurantsUnlocked` acumula
 
 - **Onde:** `economy.ts:162` `addCounter(p, 'restaurantsUnlocked', index + 1)`.
 - **Evidência (script §8.1):** desbloqueando 1→6 em sequência o contador vale 2, 5, 9, 14, 20, 27.
 - **Impacto:** `achievements.json restaurant_3/5/7` (alvos 3/5/7) disparariam nos restaurantes 2/3/4 — `restaurant_7` paga 200 000 moedas, 150 brasas e a coroa. Latente só porque não há avaliador (B-08).
 - **Correção:** `p.counters.restaurantsUnlocked = index + 1` (ou `addCounter(…, 1)` com base 1).
 
-### A-08 🔴 `burnedFood` dobrado
+### A-08 ✅ Resolvido em F2 — reprodução histórica: `burnedFood` dobrado
 
 - **Onde:** `turn.ts:370` (callback `onBurn` do `tickGrill`) e `turn.ts:337` (`serve` com `quality === 'burned'`).
 - **Evidência (script §8.1):** deixar queimar e servir o mesmo prato → `burnedFood = 2`.
 - **Impacto:** `burnedRate` em `run-sim`/`balance-report` e o campo `counters.burnedFood` dos vetores dourados de turno (`tools/golden/vectors.json`) estão inflados. O bot descarta queimados antes de servir, então o efeito é pequeno no sim, mas no jogo real (servir queimado é comum) dobra.
 - **Correção:** contar só em um lugar (o `onBurn`), regerar vetores.
 
-### A-09 🔴 `result()` não idempotente
+### A-09 ✅ Resolvido em F2 — reprodução histórica: `result()` não idempotente
 
 - **Onde:** `turn.ts:501–` soma `turnEndBonus` em `this.coins` a cada chamada.
 - **Evidência (script §8.1):** duas chamadas seguidas → 745 e 842 moedas (turno `level_001`, seed 4242, skill 0,6). Os chamadores atuais (`main.ts:931`, `run-sim.ts:141,316`, `gen-vectors.ts:338`) chamam uma vez cada.

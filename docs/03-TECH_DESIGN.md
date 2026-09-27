@@ -138,8 +138,16 @@ Schema history (`SAVE_SCHEMA_VERSION` = 3):
 | v2 | `player.churrasqueiraId`, `player.churrasqueiraLevels` | grants the starter `lata_valente` at level 1 |
 | v3 | `progress.tutorial` (`TutorialState \| null`), `progress.ftueDone` | the FTUE counts as done — a pre-v3 save belongs to someone who already played (05-UX_FLOW §4.3) |
 
-All of this is implemented and unit-tested in `tools/sim-core/src/save.ts`; the C# port is
-`Assets/Scripts/Platform/SaveService.cs`.
+**F2 reference contract (A-07):** after checking the original CRC, load/migrate recomputes
+`player.counters.restaurantsUnlocked = player.restaurantIndex + 1` on v1/v2/v3 saves,
+including saves written by the faulty v3 build. This is derived-state normalization, not a
+schema-shape change: version stays 3; other counters and already-claimed rewards are preserved.
+Historical `burnedFood` cannot be repaired without a per-item journal and is not rewritten.
+SaveGame persists player/progress, **not** an in-flight TurnSimulation.
+
+The envelope/migrations above are implemented and tested in `tools/sim-core/src/save.ts`.
+Dual-slot storage/cloud/Unity integration remain specifications; the planned engine-free
+`Assets/Scripts/Core/SaveSystem.cs` port is not written yet (see docs/18).
 
 ## 7. Security (§58)
 

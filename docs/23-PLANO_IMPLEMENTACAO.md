@@ -156,8 +156,8 @@ Cada passo, ao ser aberto, ganha sub-passos próprios neste documento (mesmo for
 
 ## 8. Próximo passo imediato
 
-👉 **Iniciar F2: reproduzir A-07 e escrever regressões antes de corrigir `restaurantsUnlocked`.**
-F1 está implementada; depois de A-07, seguir A-08 → A-09. A arte está encerrada; não abrir lote.
+👉 **Iniciar F3 por A-01: confirmar com o dono `sides:1` para costela/cupim, mantendo `flipNeeded:false`.**
+F1 e F2 (A-07/A-08/A-09) estão implementadas e testadas. Não editar os cortes antes da confirmação. A arte está encerrada; não abrir lote.
 C# e Unity bloqueados até estabilização da referência. Não fazer merge sem nova autorização.
 
 **Registro de progresso:**
@@ -180,8 +180,8 @@ C# e Unity bloqueados até estabilização da referência. Não fazer merge sem 
 ## 9. Plano operacional pós-arte — vigente em 2026-09-27
 
 Esta seção prevalece sobre a numeração histórica das §§1–7 e a ordem antiga do handoff.
-Escopo desta entrega/PR: baseline, planejamento e **F1**. F2–F13 permanecem pendentes,
-não abandonadas. Uma mudança de segurança será isolada em commit/PR, **na branch da sessão**;
+Escopo inicial: baseline, planejamento e F1. Na continuação autorizada pelo dono,
+o mesmo PR #14 foi ampliado para **F1+F2** (§§9.7–9.8); F3–F13 permanecem pendentes. Uma mudança de segurança será isolada em commit/PR, **na branch da sessão**;
 não se aplica a recomendação antiga de trocar para outra branch.
 
 ### 9.1 Baseline reproduzido antes de alterações
@@ -216,7 +216,7 @@ não se aplica a recomendação antiga de trocar para outra branch.
 | Fase / estado | Ordem e dependências | Arquivos/contratos previstos | Testes negativos e critério de conclusão |
 |---|---|---|---|
 | **F1 — concluída / PR #14 aberto** | Baseline → testes vermelhos → gate → CI | `tools/art/check-art-registry.ts`, baseline nominal `art/approved-runtime-baseline.json`, `tools/studio/test/art-registry.test.ts`, `package.json`, `run-gates.mjs`, `gates.test.ts`, `ci.yml` | Masters ↔ CSV ↔ manifesto ↔ runtime; nomes/caminhos/batch/status, duplicatas, flags, arquivos órfãos, remoção inclusive coordenada; fixtures isoladas e exit != 0. Manter os 244 IDs aprovados e CI com 15 gates. Sem regenerar arte. |
-| **F2 — pendente** | **A-07 → A-08 → A-09**; depois de F1 | `economy.ts`, `turn.ts`, `save.ts` se normalização exigir, testes economy/turn/save, `gen-vectors.ts` só se contrato mudar | A-07: inicial=1, sequência 2..7, repetição sem crédito, roundtrip/save antigo com contador inflado e metas 3/5/7. A-08: queimar+descartar/servir, vários alimentos, resultado/restauração sem contar duas vezes. A-09: 2+ chamadas estruturalmente iguais, moedas/XP não duplicados, serialização e chamadores reais. Reproduzir cada falha antes da correção; gates+sim longo verdes ou divergência econômica explicitamente investigada, nunca retunada por conveniência. |
+| **F2 — concluída localmente / CI a confirmar** | **A-07 → A-08 → A-09**; depois de F1 | `economy.ts`, `turn.ts`, `save.ts` se normalização exigir, testes economy/turn/save, `gen-vectors.ts` só se contrato mudar | A-07: inicial=1, sequência 2..7, repetição sem crédito, roundtrip/save antigo com contador inflado e metas 3/5/7. A-08: queimar+descartar/servir, vários alimentos, resultado/restauração sem contar duas vezes. A-09: 2+ chamadas estruturalmente iguais, moedas/XP não duplicados, serialização e chamadores reais. Reproduzir cada falha antes da correção; gates+sim longo verdes ou divergência econômica explicitamente investigada, nunca retunada por conveniência. |
 | **F3 — pendente** | A-01 → A-02 → A-03 → A-04 → A-05 → A-06; decisões abaixo | `ingredients.json`, `grill.json`, `restaurants.json`, `levels.json`, `upgrades.json`, `events.json`, `types.ts`, `cooking.ts`, `turn.ts`, `policy.ts`, `economy.ts`, `prototype/src/main.ts`, tutorial/analytics/audio/l10n, `run-sim.ts` e testes | Janela perfeita costela/cupim e bot avançado; unlock imediatamente antes/no/depois (nível+restaurante), FTUE determinístico; prep com slots/input/hitboxes/pedido misto/paciência/combo/resultado; 4 zonas reais em grelha/bot/UI/calor/screenshots; VIP chance 0/natural/forçado/cap/recompensa/placement; mapa das 27 trilhas (consumidor/fórmula/limite/tela/teste/sim), no-ops explicitamente ocultos e incompráveis. Nove altos resolvidos, nenhuma promessa sem consumidor. |
 | **F4 — pendente** | Todas A-01–A-09 resolvidas | `shared/data`, schemas necessários, `Assets/Data`, `tools/golden`, docs 06/18/23 | Revisar dados antes de `gen-levels` e `gen-vectors`; revisar cada diff semântico, gates e 1.500 turnos; publicar unlocks/renda/spend/perfect/burned/perdidos/duração/grills. Não aceitar vetores novos apenas por terem sido gerados. |
 | **F5 — pendente** | Referência corrigida, antes da porta | `economy.ts`, `cooking.ts`, `policy.ts`, `save.ts`, `prototype/src/main.ts`, dados/l10n, validadores, runner C#, auditoria | Triar 19 médios + 19 baixos. Resolver antes de C#: carvão, ledger brasas, offline, deriveStats/clamps, burned com overrides, vazamento bot, streak, campos mortos, gating funcionários, descrições, avaliadores missões/conquistas, level-up, alvos ignorados, levels commitado e skips C#. Teste reprovando implementação anterior por item; classificar explicitamente o que fica para serviços/device. |
@@ -304,7 +304,7 @@ não se aplica a recomendação antiga de trocar para outra branch.
 |---|---|---|---|---|
 | 2026-09-27 | F1 / histórico 1.4 | concluído, PR aberto sem merge | `arena/01a0e03e-game-churrasqueiro` / [#14](https://github.com/berger33/game_churrasqueiro/pull/14) | 254 testes; 14/15 locais (C# SKIP); 15/15 no CI run 36282761422; sim longo 18/18 sem diff |
 
-### 9.7 Continuação F2 — em andamento (2026-09-26 local / 27 UTC)
+### 9.7 Continuação F2 — implementada e validada localmente (2026-09-26 local / 27 UTC)
 
 Pedido do dono: “Próximo passo”. Branch mantida; PR #14 continua aberto, não integrado.
 Baseline reexecutado em `3f1c9c6`: Node 22.22.3/npm 10.9.8, `npm ci`, 254 testes,
@@ -348,3 +348,33 @@ um resultado prematuro. Crédito de carteira continua responsabilidade do chamad
 Verificados consumidor FTUE, replay dos 12 vetores e passos 1/20 e 1/30; gates reais também
 executam protótipo, simulador e gerador em modo `--check`. 272 testes; gates 14/15 locais;
 sim longo 18/18, saída integral idêntica; vetores 98+44 e FTUE/sprites inalterados.
+
+
+### 9.8 Fechamento F2 e contratos alterados
+
+- Commits: `5803806` A-07, `f2958d6` A-08, `02e7f61` A-09; PR #14 ampliado para F1+F2,
+  ainda aberto e **sem merge**. CI remoto de F2: registrar após o push.
+- Baseline 254 → **272 testes**, 14 arquivos. Foram adicionados 18 testes e fortalecidos
+  2 existentes (replay dos 12 turnos e consumidor FTUE). Cada defeito teve prova red/green.
+- Contratos TypeScript: `PlayerState.counters.restaurantsUnlocked` representa a quantidade
+  incluindo o quintal; `migrate`/load normaliza esse contador após CRC em todos os saves
+  suportados, inclusive v3. Não mudou a forma do JSON ou a versão do save.
+- `TurnCounters.burnedFood` conta transições únicas de queima, não serves; histórico antigo
+  sem diário por item não é recalculável e permanece intacto. SaveGame não salva turnos ativos.
+- `TurnSimulation.result()` devolve snapshot puro e independente, com bônus no retorno.
+  `sim.coins`/`sim.xp` continuam acumuladores pré-bônus; chamadores devem usar o retorno.
+  Leitura não concede recompensa e não torna `applyTurnResult` idempotente.
+- Dados, schemas, levels, golden JSONs e imagens não foram alterados. Revisão do gerador:
+  vetores não cobrem sequência de unlock/save; turnos do bot descartam queimados e fazem
+  só uma leitura final. Logo **nenhum dos 98+44 vetores muda**, embora os bugs sejam reais.
+  `check-vectors` foi executado em cada checkpoint; nenhuma regeneração automática.
+- Economia: saída integral do sim longo idêntica ao baseline em A-07, A-08 e A-09.
+  18/18 guardrails, spend 0,741, perfect 71,8%, burned 5,7%, perdidos 6,9%, duração 169,8 s.
+  Não retunamos números. F4 ainda depende de A-01–A-06; não declarar a economia estabilizada.
+- A-01–A-06, dívida média/baixa, dependências e paridade C# continuam pendentes. Regressões
+  desta F2 também precisam ser portadas/testadas em F8, além dos vetores existentes.
+- Próximo: decisão A-01 (`sides:1` recomendado, ainda não aprovado) → janela perfeita/bot
+  avançado → revisão semântica de dados/vetores/economia; depois A-02. A-04 ainda exige
+  decisão explícita da quarta zona. Sem arte nova, C# ou Unity antes da estabilização.
+
+`npm audit` final repetido com timeout/retries limitados após um timeout de rede: exit 1, mesmas 5 vulnerabilidades. Nenhuma dependência alterada.

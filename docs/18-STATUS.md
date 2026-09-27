@@ -1,12 +1,12 @@
 # 18 — Status Report
 
-**Snapshot:** 2026-09-27 · branch `arena/01a0e03e-game-churrasqueiro` · F1 pós-arte implementada; merge desta sessão não autorizado
+**Snapshot:** 2026-09-27 · branch `arena/01a0e03e-game-churrasqueiro` · F1+F2 pós-arte implementadas; merge desta sessão não autorizado
 
 **Estado executivo:** 🟡 protótipo técnico sólido, com dados, regras de referência, FTUE,
 automação, arte e protótipo web avançados; ainda não é um jogo Unity publicável. Não existem
 `Packages/`, `ProjectSettings/`, cenas/prefabs Unity, APK ou AAB. A auditoria técnica
-`docs/23-AUDITORIA_TECNICA.md` registra 47 achados (9 altos, 19 médios, 19 baixos) que devem
-ser tratados antes de congelar as regras para a porta C#.
+`docs/23-AUDITORIA_TECNICA.md` registra 47 achados originais (9 altos, 19 médios, 19 baixos). A-07/A-08/A-09 foram
+corrigidos na referência TS; os seis altos restantes devem ser resolvidos antes da porta C#.
 
 This report states plainly what is **done and verified**, what is **built but
 unverified here**, and what is **not built**. Anything marked ⚠ was not executed
@@ -42,7 +42,28 @@ The owner approved the final round and authorised the complete merge on 2026-09-
 The art lifecycle is closed; the next work is rule remediation and platform implementation,
 not another replacement batch.
 
-## Post-art F1 verification — 2026-09-27
+## Post-art F2 — contagem e idempotência (2026-09-26 local / 27 UTC)
+
+- **A-07 resolvido:** restaurantes = 1 inicialmente, depois 2..7; repetição não altera
+  estado. Saves v1/v2/v3 são normalizados por `restaurantIndex+1` após validação do checksum,
+  sem alterar outros contadores, carteiras ou conquistas já resgatadas. Save continua v3.
+- **A-08 resolvido:** um evento de queima por prato; servir não soma novamente. Testes reais
+  de grelha/servir/descartar/múltiplos/resultado/save. Não se divide pela metade o histórico
+  de saves antigos, pois não há informação por item para repará-lo.
+- **A-09 resolvido:** `result()` puro, bônus só no retorno, moedas/XP vivos intactos;
+  eventos/counters isolados de alterações externas. Repetir a leitura não reaplica bônus,
+  nem congela o turno se consultado antes do fim. Crédito da carteira deve continuar único.
+- Testes **254 → 272**, com red/green por achado; gates locais **14/15**, somente C# SKIP.
+  Sim longo **18/18**, saída integral idêntica ao baseline; vetores **98+44 sem drift**,
+  não regenerados. FTUE **16,1/32,9/38,3 s**, zero erros; 244 sprites e 13 screenshots.
+- Dados/schemas/levels/arte/economia não retunados. As regressões novas exercitam casos que
+  os vetores do bot não cobrem. C# não foi portado; permanece com 17 vetores não portados.
+- Audit continua 5 vulnerabilidades (1 crítica/1 alta/3 moderadas); F6 isolada pendente.
+- PR #14 ampliado para F1+F2, sem merge. CI remoto F2: a confirmar após o push.
+- **Próximo:** A-01 com confirmação de produto (`sides:1` recomendado para costela/cupim,
+  mantendo `flipNeeded:false`), testes de janela/bot e revalidação. A-01–A-06 continuam abertos.
+
+## Post-art F1 verification — historical checkpoint (2026-09-27 UTC)
 
 - Baseline: PR #13 merged at `4fe4f4f`; clean session branch; Node 22.22.3/npm 10.9.8.
 - Tests **202 → 254**, all passing (14 files). `npm run gates`: **14/15 local gates**,
@@ -50,7 +71,7 @@ not another replacement batch.
 - `sim:long`: **18/18**, full output unchanged from baseline: spend 0.741, burned 5.7%,
   perfect 71.8%, lost 6.9%, mean duration 169.8 s, level 80 after 1,500 turns.
 - `npm audit`: unchanged **1 critical + 1 high + 3 moderate**, deferred to isolated F6.
-- No gameplay semantics, vectors, data or art changed. **All nine high findings remain open.**
+- No gameplay semantics, vectors, data or art changed. **At the F1 checkpoint, all nine high findings remained open.**
 - Next: **A-07 → A-08 → A-09**, then content/progression and economic revalidation, medium/low
   debt, tooling security, selective PR #7/#8 review, C# and Unity, in that order. Operational
   plan and exit criteria: `23-PLANO_IMPLEMENTACAO.md` §9 (supersedes historical sequences).
@@ -209,7 +230,7 @@ Every claim below was produced by a command run in this checkout.
 
 | Area | Check | Result |
 |---|---|---|
-| Unit tests | `npx vitest run` | **254 passed / 0 failed** (14 files; `art-registry.test.ts` adds 52 contract tests) |
+| Unit tests | `npx vitest run` | **272 passed / 0 failed** (14 files; F1 added 52 art tests, F2 added 18 rule/save regressions) |
 | Type check | `npm run typecheck` | **OK — 0 errors.** `tsconfig.json` was strict (`strict`, `noUncheckedIndexedAccess`) but no script ever ran it: the first run reported **140 errors**, of which **15 were real code defects** (section 4.1) |
 | Localisation | `npm run check-l10n` | **OK** — 380 keys referenced by data, all translated in pt-BR (514 keys total; the six text-heavy `ui.tut.1–6` gave way to the FTUE's short prompts); en-US / es-419 are declared 10.5 % stubs that fall back to pt-BR |
 | Data integrity | `npm run validate` | **OK** — 22 tables (incl. `churrasqueiras`, `tutorial`), 16 ingredients, 11 customers, 7 restaurants, 27 upgrade tracks, 58 achievements, 37 collection entries, 48 analytics events, 6 FTUE steps, 60 authored levels |
@@ -534,7 +555,7 @@ The prototype proves art *direction*, not the art *budget*.
 ## 7. Historical next-step list — superseded by operational plan §9
 
 **Do not start these ports yet:** remediate TypeScript/data/economy first. The current next
-action is A-07, followed by A-08/A-09. The list below preserves the earlier port backlog.
+action is the A-01 product decision, followed by its regressions and correction. The list below preserves the earlier port backlog.
 
 1. ~~**Compile the C# core** (`dotnet build` in CI) and add golden-vector parity~~ — **done**:
    `npm run check-csharp` (gate 14), 139 checks agree (see "FTUE follow-ups").

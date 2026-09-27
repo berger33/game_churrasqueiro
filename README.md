@@ -97,14 +97,14 @@ See [docs/18-STATUS.md](docs/18-STATUS.md) for an honest, itemised account of wh
 implemented and verified versus what is still open. Short version:
 
 - **Implemented and verified here:** 22 data tables and schemas, the TypeScript reference
-  rules, level/save/balance tooling, a playable browser prototype, 254 tests and per-PR CI gates.
+  rules, level/save/balance tooling, a playable browser prototype, 272 tests and per-PR CI gates.
 - **Approved 2D art:** 244 sprites / 3.98 MB WebP, covering all 16 foods and 7 restaurant
   backgrounds; registry state is 244 approved, 0 pending and 1 superseded.
 - **Compiled and partially parity-checked in CI:** the engine-free C# core
   (`Assets/Scripts/Core`). Economy and 12 complete-turn vectors still await their C# ports.
 - **Known technical debt:** `docs/23-AUDITORIA_TECNICA.md` records 47 findings, including
-  9 high-severity rule/prototype defects. Green gates describe current behaviour; they do not
-  prove those design defects are fixed.
+  9 original high-severity findings: A-07/A-08/A-09 are fixed in TypeScript; A-01–A-06
+  remain open. Green gates do not prove those remaining design defects are fixed.
 - **Not yet a Unity game:** there are no `Packages/`, `ProjectSettings/`, scenes, prefabs,
   APK or AAB. Unity services are stubs and have not been compiled against real SDKs.
 - **Audio and store material exist**, but still need Unity integration, device validation,

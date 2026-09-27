@@ -13,6 +13,26 @@ Both exit non-zero when a guardrail in `shared/data/economy.json → targets` is
 
 ---
 
+## Revalidação F2 — 2026-09-26 local / 27 UTC
+
+A-07/A-08/A-09 corrigidos, sem tuning de dados. `sim:long` repetido após cada correção:
+**18/18 guardrails**, saída completa idêntica ao baseline F1. Em 1.500 turnos: nível 80,
+renda 14.665.839, gasto 10.873.220, saldo 3.792.619, spend ratio **0,741**, perfect **71,8%**,
+burned **5,7%**, perdidos **6,9%**, duração média **169,8 s**. Unlocks de restaurantes
+32/89/147/243/418/1185; churrasqueiras 7/45/90; renda L5/L15/L30/L50
+10.793/41.115/98.262/115.926 moedas/dia.
+
+Por que não mudou: a simulação não avalia recompensas de conquistas (A-07), o bot descarta
+queimados em vez de servi-los (A-08) e os chamadores leem o resultado uma vez (A-09).
+A nova contagem elimina o dobro ao servir queimados; não significa melhoria de habilidade.
+`burnedFood` inclui descartados, enquanto `itemsCooked` conta servidos: a razão não é uma
+probabilidade limitada a 100% para todo turno manual. Nenhum clamp foi adicionado.
+
+**Economia ainda não estabilizada:** A-01–A-06 e os gastos no-op da auditoria seguem abertos.
+Os guardrails verdes não autorizam portar ou publicar essas regras; revalidar após F3/F4.
+
+---
+
 ## 1. Currencies (§19)
 
 Exactly two, as mandated.
