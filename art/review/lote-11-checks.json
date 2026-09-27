@@ -1,6 +1,6 @@
 {
   "batch": "lote-11",
-  "status": "pending",
+  "status": "approved",
   "checks": {
     "generatedImages": 3,
     "processedSprites": 3,
@@ -58,10 +58,14 @@
       "magentaResidualPixels": null
     }
   ],
-  "pendingRuntimePreview": {
+  "ownerApproval": {
+    "date": "2026-09-26",
+    "decision": "approved",
+    "instruction": "sequência de 33 substituições concluída; merge completo autorizado"
+  },
+  "approvedRuntime": {
     "sprites": 244,
     "foods": 16,
-    "backgrounds": 7,
-    "result": "ok; approved-only runtime restored after preview"
+    "backgrounds": 7
   }
 }

@@ -13,14 +13,14 @@ Mobile cooking + skill + management + idle + collection + live-service game.
 | Path | What lives there |
 |---|---|
 | `shared/data/` | **Single source of truth.** All gameplay, economy and LiveOps tables (JSON). Nothing is hardcoded in C#. |
-| `tools/sim-core/` | Reference implementation of the game rules in TypeScript. Deterministic, dependency-free, unit-tested. The Unity `Sim` assembly is a 1:1 port. |
+| `tools/sim-core/` | Reference implementation of the game rules in TypeScript. Deterministic, dependency-free, unit-tested; target contract for the incomplete C# port. |
 | `tools/studio/` | Designer tooling: data validation, level generator, balance simulator, golden-vector generator. |
 | `tools/studio/test/` | Automated QA (economy, cooking model, save integrity, data integrity). |
-| `Assets/` | Unity project (scripts, prefabs, scenes, imported data). |
-| `Packages/`, `ProjectSettings/` | Unity package manifest and project configuration. |
+| `Assets/` | Unity-oriented data, approved art/audio, engine-free C# core and service stubs. There are no scenes or prefabs yet. |
+| `Packages/`, `ProjectSettings/` | **Not present yet.** Creating the Unity 6 project is a V0.2 task. |
 | `prototype/` | Design-verification prototype (playable in a browser) that runs the real `sim-core` rules. |
 | `docs/` | Full documentation set — see below. |
-| `marketing/` | Store assets: icon concepts, feature graphic, screenshot templates, ASO copy. |
+| `store-assets/` | Store icons, feature graphic, screenshots, ASO copy, privacy copy and test material. |
 
 ### Why a TypeScript reference implementation?
 
@@ -31,8 +31,9 @@ The cooking model, the scoring rules and the entire economy are implemented **on
 - an executable specification the Unity port can be verified against (golden vectors);
 - designer tooling that needs no Unity Editor and no license.
 
-The Unity client ports the same rules (`Assets/Scripts/Sim/`). Parity is checked by
-`tools/studio/golden.test.ts` against checked-in vectors.
+The future Unity client must port the same rules. The current engine-free subset lives in
+`Assets/Scripts/Core/`; `npm run check-csharp` compiles it in CI and replays the checked-in
+vectors. Economy and full-turn parity are still incomplete.
 
 `npm run typecheck` is a gate, not a suggestion: the ideal-zone defect in
 `tools/sim-core/src/policy.ts` (see `docs/18-STATUS.md` §4.1) survived two rounds of
@@ -41,7 +42,7 @@ green tests precisely because the strict `tsconfig.json` was never wired to a sc
 ## Quick start (no Unity required)
 
 ```bash
-npm install
+npm ci
 
 npm run gates             # the 14 per-PR CI gates, same list GitHub Actions runs
 npm run typecheck         # tsc --noEmit over tools/, prototype/ and shared/ (strict)
@@ -52,7 +53,7 @@ npm run check-art         # all 16 ingredient silhouettes x 8 doneness levels re
 npm run check-render      # drive the real prototype bundle through a full turn
 npm run gen-levels        # regenerate the authored turn list
 npm run sim               # economy simulation + balance guardrails (exits non-zero on breach)
-LONG_HORIZON=1500 npm run sim   # multi-month pacing projection
+npm run sim:long          # 1,500-turn multi-month pacing projection
 npm run balance-report    # human-readable tuning tables
 npm run sync-data         # copy shared/data → Assets/Data for Unity
 npm run proto             # design-verification prototype on http://0.0.0.0:5173
@@ -87,24 +88,26 @@ npm run proto             # design-verification prototype on http://0.0.0.0:5173
 | [22-ARTE_2D_PLANO.md](docs/22-ARTE_2D_PLANO.md) | Professional 2D art plan: AI generation in batches of 10, cut-out pipeline, approval, integration (pt-BR) |
 | [23-PLANO_IMPLEMENTACAO.md](docs/23-PLANO_IMPLEMENTACAO.md) | Step-by-step implementation and improvement plan: phases, gates, progress log (pt-BR) |
 | [23-AUDITORIA_TECNICA.md](docs/23-AUDITORIA_TECNICA.md) | Technical audit: bugs, errors and data/code/doc inconsistencies, with evidence and repro scripts (pt-BR) |
+| [24-PROMPT_PROXIMA_SESSAO.md](docs/24-PROMPT_PROXIMA_SESSAO.md) | Handoff prompt with current status and the complete ordered next-step sequence (pt-BR) |
 
 ## Current status
 
 See [docs/18-STATUS.md](docs/18-STATUS.md) for an honest, itemised account of what is
 implemented and verified versus what is still open. Short version:
 
-- **Implemented and verified here:** the complete data layer, the cooking/scoring/economy
-  rules, the level generator, the save system, the balance simulator with guardrails, a
-  playable design-verification prototype, and the per-PR CI gates (`npm run gates` /
-  `.github/workflows/ci.yml`).
-- **Compiled and parity-checked in CI:** the engine-free C# core (`Assets/Scripts/Core` —
-  data classes, cooking/scoring rules, the FTUE director, the analytics contract):
-  `npm run check-csharp` builds it as Unity would and replays the golden vectors against it
-  (it SKIPs on a machine without the .NET 8 SDK; CI always runs it).
-- **Not yet compiled anywhere:** the Unity-side layer (`Assets/Scripts/Services`, scenes) —
-  there is no Unity Editor in this environment. This is stated plainly rather than glossed over.
-- **Not started:** 3D/2D art assets, recorded audio, Firebase/AdMob SDK integration
-  (requires credentials and a store account).
+- **Implemented and verified here:** 22 data tables and schemas, the TypeScript reference
+  rules, level/save/balance tooling, a playable browser prototype, 202 tests and per-PR CI gates.
+- **Approved 2D art:** 244 sprites / 3.98 MB WebP, covering all 16 foods and 7 restaurant
+  backgrounds; registry state is 244 approved, 0 pending and 1 superseded.
+- **Compiled and partially parity-checked in CI:** the engine-free C# core
+  (`Assets/Scripts/Core`). Economy and 12 complete-turn vectors still await their C# ports.
+- **Known technical debt:** `docs/23-AUDITORIA_TECNICA.md` records 47 findings, including
+  9 high-severity rule/prototype defects. Green gates describe current behaviour; they do not
+  prove those design defects are fixed.
+- **Not yet a Unity game:** there are no `Packages/`, `ProjectSettings/`, scenes, prefabs,
+  APK or AAB. Unity services are stubs and have not been compiled against real SDKs.
+- **Audio and store material exist**, but still need Unity integration, device validation,
+  final mixing, signed builds and real Play Console/Firebase/AdMob test projects.
 
 ## Legal / IP
 

@@ -31,7 +31,7 @@ a seguir, a resposta está em "Próximo passo imediato" (§8).
 | Fase | Objetivo | Sai de | Chega em | Doc-mãe |
 |---|---|---|---|---|
 | **0** | Consolidar a base | estado atual | V0.1 fechado de verdade, snapshot atualizado | 18 |
-| **1** | Arte 2D completa | lotes 01–04 | lotes 05–07 aprovados e integrados no protótipo | 22 |
+| **1** | Arte 2D completa | lotes 01–04 | lotes 05–11 aprovados; 244 sprites integrados no protótipo | 22 |
 | **2** | Paridade C# completa | 139 checks, 17 vetores órfãos | 100% dos golden vectors verdes no CI | 03, 18 §7.2 |
 | **3** | Unity V0.2 — Core Loop | sem projeto Unity | turno jogável no Editor a 60 FPS | 14 (V0.2) |
 | **4** | V0.3 — Vertical Slice | core funcional | 1 experiência em qualidade final | 14 (V0.3) |
@@ -44,21 +44,12 @@ Dependências: 1 e 2 são independentes entre si e podem intercalar; 3 precisa d
 
 ## 2. Fase 0 — Consolidar a base (V0.1 fechado de verdade)
 
-- [ ] **0.1 — Decisões de aprovação pendentes (dono).**
-  Ações: aprovar ou pedir refação do **lote 03** — fundos (3, sem veredito), maminha
-  (`warn`); ícones e contra-filé avaliados `ok`; grills marcados `redo` (refeitos e
-  aprovados no lote 04). Lotes 04 e 05: aprovados em 2026-09-26.
-  Verifica: `set-status` aplicado conforme a decisão.
-  Pronto quando: todo asset do lote 03 tem veredito final (`approved`/`rejected`/`superseded`).
+- [x] **0.1 — Decisões de aprovação pendentes (dono).** (2026-09-26: os 33 pending do lote 03 foram substituídos e aprovados nos lotes 08–11; registro final 244 approved, 0 pending, 1 superseded.)
 - [x] **0.2 — Gates verdes neste checkout.** (2026-09-26: 13/14 verdes, `check-csharp` SKIP sem dotnet — CI executa; FTUE inalterado, 148 sprites no runtime.)
   Ações: `npm install` → `npm run gates` → corrigir o que quebrar.
   Verifica: `npm run gates` (14 gates) + `npm run sim:long`.
   Pronto quando: tudo verde (exceto `check-csharp` SKIP local, verde no CI).
-- [ ] **0.3 — Integrar aprovações e fechar o snapshot.**
-  Ações: `build-runtime` com os lotes aprovados; atualizar `18-STATUS.md`
-  (novo snapshot, §7) e este documento.
-  Verifica: `npm run check-shots` (funil do FTUE inalterado).
-  Pronto quando: status reflete fielmente o repositório.
+- [x] **0.3 — Integrar aprovações e fechar o snapshot.** (2026-09-26: runtime 244 sprites / 3,98 MB, 16 comidas, 7 fundos; `docs/18-STATUS.md` e README atualizados; FTUE inalterado no `check-shots`.)
 
 ## 3. Fase 1 — Arte 2D completa (docs/22)
 
@@ -82,13 +73,12 @@ aprovação do dono → `set-status` → `build-runtime`.
   Escopo conforme `art/lote-07.json` e docs/22 §6.7 (não os conceitos de store, que ficam para lote futuro). O mapa tem divisões internas não cartográficas; inox da coleção sem manivela. O dono aprovou o lote completo ciente das ressalvas.
   **Limite:** inclusão dos assets no bundle não implementa as telas/fluxos de coleção, eventos, IAP, passe, mapa ou conquistas. A montagem não é screenshot do jogo; ver §7.1 de docs/22.
   Verifica: `set-status` (34/34 approved) → `build-runtime` (211 sprites) → gates locais 13/14; `check-csharp` SKIP por ausência de dotnet no sandbox. CI remoto ainda não registrado para esta branch; validar em CI/ambiente .NET antes de merge.
-- [ ] **1.3-A — Substituir os 33 sprites pending do lote 03 em 4 rodadas individuais (10 + 10 + 10 + 3).**
-  - Lote 08: **10/10 aprovados pelo dono em 2026-09-26 e integrados**. Abrange os 9 ícones centrais de UI + `ic_grill_size`; runtime aprovado 211 → 221 sprites / 3,49 MB.
-  - Lote 09: **10/10 aprovados e integrados**, 8 upgrades + fundos Espetinho de Rua e Trailer. O dono aceitou os dois carrinhos espelhados; runtime 221 → 231 sprites / 3,81 MB.
-  - Lote 10: **10/10 aprovados e integrados**, cinco estados de grelha de contra-filé + cinco de maminha; tela/pivô comuns e 0,01% de variação de área alfa. Runtime 231 → **241 sprites / 3,88 MB**.
-  - Lote 11: **3/3 imagens geradas, processadas e tecnicamente `ok`, ainda `pending`** — dois pratos `served` + fundo Churrascaria de Bairro. As 33 substituições já foram produzidas.
-  Verifica: `art/review/lote-11-preview.jpg`, `art/review/lote-11.jpg` e `art/review/lote-11-checks.json`; lote 11 fora do runtime.
-  Pronto quando: o lote 11 tiver decisão final e só os aprovados estiverem no runtime. Nenhum merge será feito antes dessa decisão e de instrução explícita do dono.
+- [x] **1.3-A — Substituir os 33 sprites pending do lote 03 em 4 rodadas individuais (10 + 10 + 10 + 3).**
+  - Lote 08: 10/10 aprovados; runtime 211 → 221 sprites / 3,49 MB.
+  - Lote 09: 10/10 aprovados; runtime 221 → 231 sprites / 3,81 MB.
+  - Lote 10: 10/10 aprovados; runtime 231 → 241 sprites / 3,88 MB.
+  - Lote 11: 3/3 aprovados; runtime final **244 sprites / 3,98 MB**, 16 comidas e 7 fundos.
+  - Registro final: **244 approved, 0 pending, 1 superseded**. As 33 substituições e o merge completo foram autorizados pelo dono em 2026-09-26.
 - [ ] **1.4 — Gate `check-art-registry` no CI.**
   Ações: todo arquivo em `Assets/Art` tem linha no registro; toda linha aponta para um
   arquivo existente; o runtime só contém `approved` (promessa de docs/04 §11).
@@ -165,11 +155,12 @@ Cada passo, ao ser aberto, ganha sub-passos próprios neste documento (mesmo for
 
 ## 8. Próximo passo imediato
 
-👉 **Revisar o lote 11 e registrar a decisão final do dono** sobre os dois pratos servidos e o
-fundo Churrascaria de Bairro. As 33 substituições já foram geradas; 30 estão aprovadas nos
-lotes 08–10. O runtime contém 241 sprites / 3,88 MB e exclui as três linhas `pending` do lote
-11. Nenhum merge será feito antes dessa decisão e de instrução explícita. Depois do fechamento,
-retomar `check-art-registry` e o snapshot de `18-STATUS.md`. Prompt de retomada:
+👉 **Iniciar a correção dos nove achados altos da auditoria técnica** antes de congelar as
+regras para a porta C#. A arte está encerrada: 244 sprites aprovados, 0 pending, 16 comidas e
+7 fundos. Ordem operacional: (1) corrigir A-01–A-09 com testes negativos; (2) regenerar vetores
+e revalidar economia; (3) implementar `check-art-registry`; (4) atualizar dependências do
+tooling; (5) concluir `TurnSimulation`, economia e save em C#; (6) criar o projeto Unity V0.2.
+Revisar/encerrar os PRs antigos #7 e #8 sem merge direto. Prompt detalhado de retomada:
 `docs/24-PROMPT_PROXIMA_SESSAO.md`.
 
 **Registro de progresso:**
@@ -186,4 +177,4 @@ retomar `check-art-registry` e o snapshot de `18-STATUS.md`. Prompt de retomada:
 | 2026-09-26 | 1.3-A (lote 08) | 10/10 aprovados e integrados | `arena/01a0e001-game-churrasqueiro` | 9 ícones centrais + `ic_grill_size`; runtime 211 → 221 sprites / 3,49 MB; dono pediu seguir e fazer merge só após as 33 imagens |
 | 2026-09-26 | 1.3-A (lote 09) | 10/10 aprovados e integrados | `arena/01a0e001-game-churrasqueiro` | dono pediu o próximo lote e aceitou os dois carrinhos; runtime 221 → 231 sprites / 3,81 MB |
 | 2026-09-26 | 1.3-A (lote 10) | 10/10 aprovados e integrados | `arena/01a0e001-game-churrasqueiro` | cinco estados de contra-filé + cinco de maminha; runtime 231 → 241 sprites / 3,88 MB |
-| 2026-09-26 | 1.3-A (lote 11) | 3 imagens finais entregues; 3 sprites `pending` | `arena/01a0e001-game-churrasqueiro` | pratos servidos distintos + fundo Bairro na segunda passada; 3/3 técnico `ok`, 0 avisos; as 33 substituições foram geradas |
+| 2026-09-26 | 0.1 + 0.3 + 1.3-A (lote 11) | 3/3 aprovados, sequência encerrada e merge autorizado | `arena/01a0e001-game-churrasqueiro` | registro 244 approved / 0 pending / 1 superseded; runtime 244 sprites / 3,98 MB, 16 comidas, 7 fundos; docs e snapshot atualizados |
