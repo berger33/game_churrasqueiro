@@ -385,3 +385,29 @@ sim longo 18/18, saída integral idêntica; vetores 98+44 e FTUE/sprites inalter
 turnos não portados. Avisos do runner: actions v4 usam Node 20 e são executadas sob Node 24;
 ubuntu-latest migrará para Ubuntu 26. Triar actions/imagem junto do tooling na F6, sem
 confundir com o Node 22 configurado para npm. PR #14 aberto, merge não autorizado.
+
+### 9.9 F3 / A-01 — decisão confirmada e execução iniciada
+
+O dono selecionou **“Exigir virada”** na pergunta de produto desta continuação.
+Decisão vigente: costela/cupim continuam `sides:2`, passam a `flipNeeded:true`.
+A recomendação anterior de `sides:1` foi **rejeitada**, não será aplicada.
+Cortes lentos mantêm zona baixa, tempos, janelas, preços e recompensas; a virada garante
+cozimento das duas faces e usa o gesto já ensinado no FTUE, sem roteiro introdutório novo.
+
+Baseline reexecutado em `ec8ce1b`: árvore limpa, mesma branch, PR #14 aberto sem merge;
+Node 22.22.3/npm 10.9.8; npm ci; 272 testes; gates 14/15 (C# SKIP); sim longo 18/18.
+
+Plano deste checkpoint: reproduzir cru→queimado sem virada; testes vermelhos de contrato,
+janela perfeita seguindo os dados e bot em restaurantes avançados. Alterar só os dois flags
++ versão de ingredients; sincronizar Assets/Data. A fórmula do bot já lê flipNeeded e não
+precisa de tuning. UI deve usar a dica contextual de virada já ensinada no FTUE e textos
+localizados. Dependência localizada descoberta: C-06 `.slice(0,8)` esconde ambos os cortes
+na bancada. Resolver só esse bloqueio com paginação de oito itens, desenho e hitbox juntos,
+sem antecipar A-02 (gating por nível) ou A-03 (prep). Verificar gesto real em harness.
+
+Revisar drift de schemas/levels/vetores antes de regenerar. Os 12 turnos golden atuais só
+cobrem restaurantes 0/1; podem mudar apenas metadados de versão. Adicionar regressões
+avançadas explícitas e relatar janelas/curva de habilidade em vez de presumir cobertura.
+Depois gates+sim longo, screenshots, economia/documentação/handoff e CI no mesmo PR.
+Se guardrails econômicos falharem, manter os alvos/preços e registrar o desvio/bloqueio;
+não desfazer a correção funcional nem mascarar o efeito com tuning oportunista.
