@@ -1,0 +1,84 @@
+// The shell wraps a web export; everything interesting is in MainActivity.java.
+//
+// Release builds are signed with the debug key on purpose: this APK is a tester
+// artifact, sideloaded by QR code, and never uploaded anywhere. When the Unity
+// client ships, real signing lives in CI secrets (docs/12-BUILD.md §3) — this
+// file must not grow a release keystore.
+plugins {
+    id 'com.android.application'
+}
+
+// `-PchurrascoVersionName=x -PchurrascoVersionCode=n` from the workflow so a tester
+// can tell two builds apart in Android's app info screen.
+def versionName_ = project.findProperty('churrascoVersionName') ?: '0.1.0-playtest'
+def versionCode_ = (project.findProperty('churrascoVersionCode') ?: '1').toString().toInteger()
+
+android {
+    namespace 'br.com.churrasco.playtest'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'br.com.churrasco.playtest'
+        minSdk 24
+        targetSdk 34
+        versionCode versionCode_
+        versionName versionName_
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            shrinkResources false
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+
+    // The web export is copied in by `npm run export:android`; keeping it out of
+    // the source tree is what stops a stale bundle from being committed.
+    sourceSets {
+        main {
+            assets.srcDirs = ['src/main/assets']
+        }
+    }
+}
+
+/** Fails with an instruction instead of shipping an APK with no game inside it. */
+def checkWebAssets = tasks.register('checkWebAssets') {
+    doFirst {
+        def index = file('src/main/assets/index.html')
+        def bundle = file('src/main/assets/bundle.js')
+        if (!index.exists() || !bundle.exists()) {
+            throw new GradleException(
+                    "The web export is missing from src/main/assets/.\n" +
+                    "Run, from the repository root:\n" +
+                    "  npm run export:android\n" +
+                    "  cp -r build/android-webapp/. android-shell/app/src/main/assets/\n" +
+                    "or just `./gradlew stageWeb` (needs node_modules installed).")
+        }
+    }
+}
+
+/** Convenience for local builds: rebuild the export and stage it into assets/. */
+tasks.register('exportWeb', Exec) {
+    workingDir rootProject.projectDir.parentFile
+    commandLine 'npm', 'run', 'export:android'
+}
+
+tasks.register('stageWeb', Copy) {
+    dependsOn 'exportWeb'
+    from "${rootProject.projectDir.parentFile}/build/android-webapp"
+    into "${projectDir}/src/main/assets"
+    doLast { logger.lifecycle("staged web export into ${projectDir}/src/main/assets") }
+}
+
+tasks.named('preBuild') { dependsOn checkWebAssets }

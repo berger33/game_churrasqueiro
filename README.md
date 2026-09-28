@@ -26,6 +26,7 @@ Mobile cooking + skill + management + idle + collection + live-service game.
 | `Assets/` | Approved art/audio and data, engine-free C# core, Unity runtime scaffolding, scenes/prefabs and simulated services. Unity integration is not release-ready. |
 | `Packages/`, `ProjectSettings/` | Unity 6 project configuration exists; full Editor/runtime compilation and Android validation remain blocked (see current audit). |
 | `prototype/` | Design-verification prototype (playable in a browser) that runs the real `sim-core` rules. |
+| `android-shell/` | Real-device playtest APK: the prototype in a full-screen, offline WebView. Published to a stable release URL by [Android playtest](.github/workflows/android-playtest.yml) — see [docs/27](docs/27-TESTE_ANDROID.md). |
 | `docs/` | Full documentation set — see below. |
 | `store-assets/` | Store icons, feature graphic, screenshots, ASO copy, privacy copy and test material. |
 
@@ -65,6 +66,10 @@ npm run sim:long          # 1,500-turn multi-month pacing projection
 npm run balance-report    # human-readable tuning tables
 npm run sync-data         # copy shared/data → Assets/Data for Unity
 npm run proto             # design-verification prototype on http://0.0.0.0:5173
+
+# Real-device playtest (Android). The export is self-contained: no server, no CDN.
+npm run export:android    # → build/android-webapp (bundle, data, art, audio, fonts)
+npm run serve:android     # serve that export on http://0.0.0.0:8080 for a phone
 ```
 
 ## Documentation
@@ -98,6 +103,7 @@ npm run proto             # design-verification prototype on http://0.0.0.0:5173
 | [23-AUDITORIA_TECNICA.md](docs/23-AUDITORIA_TECNICA.md) | Technical audit: bugs, errors and data/code/doc inconsistencies, with evidence and repro scripts (pt-BR) |
 | [24-PROMPT_PROXIMA_SESSAO.md](docs/24-PROMPT_PROXIMA_SESSAO.md) | Historical handoff, with a current audit override (pt-BR) |
 | [26-MERGE_PR7_PR8.md](docs/26-MERGE_PR7_PR8.md) | Real merge, conflict decisions, recovered tools and validation (pt-BR) |
+| [27-TESTE_ANDROID.md](docs/27-TESTE_ANDROID.md) | Installing the playtest APK on a real phone: QR, sideload steps, test script, limitations (pt-BR) |
 | [25-AUDITORIA_STATUS_E_BRANCHES.md](docs/25-AUDITORIA_STATUS_E_BRANCHES.md) | Verified status, conflicting branches, release blockers and ordered delivery plan (pt-BR) |
 
 ## Current status

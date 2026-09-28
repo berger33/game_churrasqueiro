@@ -1,0 +1,184 @@
+# Android playtest build — a real APK a tester can install from a QR code.
+#
+# Why this exists: the Unity client is not buildable (docs/25-AUDITORIA_STATUS_E_BRANCHES.md),
+# but the rules the CI gates validate are playable today through the
+# design-verification prototype. This job wraps that prototype in a real Android
+# app (android-shell, full-screen WebView, everything bundled offline) and
+# publishes the APK to a stable release URL:
+#
+#   https://github.com/berger33/game_churrasqueiro/releases/download/playtest-android/churrasco-playtest.apk
+#
+# The tag and the asset name never change, so a QR code printed once keeps
+# working after every rebuild. Runs by hand (Actions → Android playtest → Run
+# workflow) and automatically on playtest-relevant pushes to the session branch.
+#
+# This is a device-feel harness, not a release pipeline: it is signed with the
+# debug key and it publishes no store artifact.
+
+name: Android playtest
+
+on:
+  workflow_dispatch:
+    inputs:
+      note:
+        description: 'What changed in this build (shown in the release)'
+        required: false
+        default: 'Rebuild of the current prototype'
+  push:
+    branches:
+      - arena/01a0e57a-game-churrasqueiro
+    paths:
+      - 'prototype/**'
+      - 'shared/**'
+      - 'Assets/**'
+      - 'tools/android/**'
+      - 'android-shell/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/android-playtest.yml'
+
+concurrency:
+  group: android-playtest-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write # publish the APK to a release
+
+jobs:
+  apk:
+    name: Build and publish the playtest APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TAG: playtest-android
+      APK_NAME: churrasco-playtest.apk
+      RELEASE_URL: https://github.com/berger33/game_churrasqueiro/releases/download/playtest-android/churrasco-playtest.apk
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # Pinned: AGP 8.5.2 needs Gradle 8.7+. Same pin as android-shell/build.gradle.
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Install
+        run: npm ci
+
+      # Fails the job when the bundle asks for a file the export does not have, so
+      # a build that would lose its art or audio never reaches a tester's phone.
+      - name: Export the offline web app
+        run: npm run export:android
+
+      - name: Stage the export into the APK assets
+        run: |
+          mkdir -p android-shell/app/src/main/assets
+          cp -r build/android-webapp/. android-shell/app/src/main/assets/
+          du -sh android-shell/app/src/main/assets
+          ls android-shell/app/src/main/assets
+
+      - name: Android SDK components
+        run: |
+          SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          yes | "$SDK/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
+          "$SDK/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Build the APK
+        working-directory: android-shell
+        run: |
+          gradle --no-daemon assembleRelease \
+            -PchurrascoVersionCode=${{ github.run_number }} \
+            -PchurrascoVersionName=0.1.0-playtest.${{ github.run_number }}
+
+      - name: Verify the APK
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          cp android-shell/app/build/outputs/apk/release/app-release.apk "build/${APK_NAME}"
+          ls -l "build/${APK_NAME}"
+          # The APK has to carry the game, not just the shell.
+          unzip -l "build/${APK_NAME}" | grep -q 'assets/index.html'
+          unzip -l "build/${APK_NAME}" | grep -q 'assets/bundle.js'
+          unzip -l "build/${APK_NAME}" | grep -q 'assets/data/levels.json'
+          test "$(unzip -l "build/${APK_NAME}" | grep -c 'assets/assets/art/.*\.webp')" -gt 200
+          test "$(unzip -l "build/${APK_NAME}" | grep -c 'assets/audio/.*\.wav')" -gt 20
+          sha256sum "build/${APK_NAME}"
+
+      # The install card, not a bare code: the tool decodes its own PNG with jsQR
+      # and fails the job if the pixels do not read back as this exact URL.
+      - name: Install QR card for the download URL
+        run: |
+          npm run qr -- "${RELEASE_URL}" build/qr-playtest.png \
+            --card --build "#${{ github.run_number }}" \
+            --label "CHURRASCO! Teste no celular"
+
+      - name: Release notes
+        run: |
+          cat > build/release-notes.md <<EOF
+          ## CHURRASCO! O Mestre da Brasa — build de teste para celular
+
+          Instala direto no Android, sem loja e sem servidor:
+
+          1. Aponte a câmera do celular para o QR abaixo (ou abra o link).
+          2. Baixe o \`${APK_NAME}\` e toque em instalar. O Android vai pedir para
+             permitir instalação de apps desconhecidos — é o Play Protect avisando
+             de um app fora da Play Store, não um erro do jogo.
+          3. Abra **CHURRASCO! Teste** no menu de apps. O jogo abre em tela cheia,
+             travado em retrato, e funciona em modo avião.
+
+          ![QR code](${RELEASE_URL%/*}/qr-playtest.png)
+
+          Download direto: ${RELEASE_URL}
+
+          Cartão para imprimir/compartilhar: ${RELEASE_URL%/*}/qr-playtest.png
+
+          - Build: \`0.1.0-playtest.${{ github.run_number }}\` (run [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))
+          - Commit: \`${{ github.sha }}\`
+          - Nota: ${{ github.event.inputs.note || 'Rebuild do protótipo atual' }}
+          - Conteúdo: protótipo de design-verification (as mesmas regras que a suíte de testes valida),
+            empacotado offline. Sem anúncios, sem cobrança, sem envio de dados.
+          - Este é um artefato de teste assinado com a chave de debug; não é a versão de loja.
+          EOF
+          cat build/release-notes.md
+
+      - name: Publish to the stable release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh release view "$TAG" > /dev/null 2>&1 \
+            || gh release create "$TAG" --title "CHURRASCO! — build de teste Android" --notes "build de teste"
+          gh release upload "$TAG" "build/${APK_NAME}" build/qr-playtest.png build/qr-playtest.txt --clobber
+          gh release edit "$TAG" --title "CHURRASCO! — build de teste Android" --notes-file build/release-notes.md
+
+      - name: Summary
+        run: |
+          {
+            echo "### APK pronto para instalar"
+            echo
+            echo "- Download: ${RELEASE_URL}"
+            echo "- Build: \`0.1.0-playtest.${{ github.run_number }}\`"
+            echo "- Tamanho: $(du -h "build/${APK_NAME}" | cut -f1)"
+            echo
+            echo "O QR code está anexado ao release (\`qr-playtest.png\`)."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Belt and braces: the release is the QR target, the artifact survives a
+      # release failure and is downloadable by anyone signed in.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: churrasco-playtest-apk
+          path: |
+            build/churrasco-playtest.apk
+            build/qr-playtest.png
+          if-no-files-found: error
+          retention-days: 30
