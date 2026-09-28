@@ -113,8 +113,13 @@ jobs:
           test "$(unzip -l "build/${APK_NAME}" | grep -c 'assets/audio/.*\.wav')" -gt 20
           sha256sum "build/${APK_NAME}"
 
-      - name: QR code for the download URL
-        run: npm run qr -- "${RELEASE_URL}" build/qr-playtest.png --label "CHURRASCO! Teste no celular"
+      # The install card, not a bare code: the tool decodes its own PNG with jsQR
+      # and fails the job if the pixels do not read back as this exact URL.
+      - name: Install QR card for the download URL
+        run: |
+          npm run qr -- "${RELEASE_URL}" build/qr-playtest.png \
+            --card --build "#${{ github.run_number }}" \
+            --label "CHURRASCO! Teste no celular"
 
       - name: Release notes
         run: |
@@ -133,6 +138,8 @@ jobs:
           ![QR code](${RELEASE_URL%/*}/qr-playtest.png)
 
           Download direto: ${RELEASE_URL}
+
+          Cartão para imprimir/compartilhar: ${RELEASE_URL%/*}/qr-playtest.png
 
           - Build: \`0.1.0-playtest.${{ github.run_number }}\` (run [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))
           - Commit: \`${{ github.sha }}\`
