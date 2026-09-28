@@ -1,0 +1,3 @@
+CHURRASCO! Teste no celular
+https://github.com/berger33/game_churrasqueiro/releases/download/playtest-android/churrasco-playtest.apk
+QR verified: decodes to the URL above
