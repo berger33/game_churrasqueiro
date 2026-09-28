@@ -1,12 +1,14 @@
 import { expect, it } from 'vitest';
-import { BENCH_PAGER, prepSlotRects, PREP_PAGER, prepPageCount } from '../../../prototype/src/cooking-ui.ts';
+import { BENCH_PAGER, prepSlotRects, PREP_PAGER, prepPageCount, CHARCOAL_REFILL } from '../../../prototype/src/cooking-ui.ts';
 it('A-03: every prep slot is reachable at >=48px without overlapping stock or either pager', () => {
   for (const count of [1, 2, 5, 6, 10]) {
     const all = Array.from({ length: prepPageCount(count) }, (_, page) => prepSlotRects(count, page)).flat();
     expect(all.map(r => r.slot)).toEqual(Array.from({ length: count }, (_, i) => i));
     for (const r of all) {
       expect(r.w).toBeGreaterThanOrEqual(48); expect(r.h).toBeGreaterThanOrEqual(48);
-      expect(r.y).toBeGreaterThanOrEqual(714); expect(r.y + r.h).toBeLessThanOrEqual(780);
+      // Between the stock row and the resource buttons that now own the last row.
+      expect(r.y).toBeGreaterThanOrEqual(BENCH_PAGER.y + BENCH_PAGER.h);
+      expect(r.y + r.h).toBeLessThanOrEqual(CHARCOAL_REFILL.y);
       expect(r.x + r.w).toBeLessThanOrEqual(PREP_PAGER.x);
       expect(r.y).toBeGreaterThanOrEqual(BENCH_PAGER.y + BENCH_PAGER.h);
     }

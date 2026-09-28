@@ -33,9 +33,7 @@ Abstract panels are only used where a 3D affordance would be slower.
 
 ```
 ┌───────────────────────────────────────┐
-│  [order] [order] [order]        🪙 1 240│   top: active orders + coin counter
-│                                        │
-│                                        │
+│  🪙 1 240        ⏱ 1:20      COMBO ×4 🔥│   top: HUD only
 │           ╔══════════════╗             │
 │           ║   ZONA ALTA  ║             │   centre: the grill
 │           ║  ▓▓  ▓▓  ▓▓  ║             │
@@ -43,11 +41,18 @@ Abstract panels are only used where a 3D affordance would be slower.
 │           ║  ▓▓  ▓▓  ▓▓  ║             │
 │           ║   ZONA BAIXA ║             │
 │           ╚══════════════╝             │
-│  carvão ▮▮▮▮▯▯        COMBO ×4 🔥      │
-│                                        │
-│  [🥩][🍞][🧀][🍗][🌽]  ── bancada ──    │   base: raw stock to drag from
+│  carvão ▮▮▮▮▯▯                         │
+│  [order] [order] [order]               │   thumb zone: the queue sits right
+│  ‹   14 pedidos · página 1/5        ›  │   under the coals
+│  [🥩][🍞][🧀][🍗][🌽] [1/4→] bancada    │   base: raw stock to drag from
+│  [vaga][vaga][vaga][vaga][vaga] [1/2→] │   prep station (once unlocked)
+│  [  Repor carvão  ] [ Repor estoque ]  │   last row: cheapest to reach
 └───────────────────────────────────────┘
 ```
+
+The order cards used to live at the top of the screen. On a phone that made every serve a
+full-height drag — thumb off the coals, up to the status bar, back down — so the queue now sits
+between the charcoal gauge and the bench, and the two resource buttons own the last row.
 
 Nothing else. No pause button in the play area (system gesture), no minimap, no timers other
 than the charcoal bar and per-order patience rings.
@@ -82,6 +87,40 @@ Total target: **under 60 seconds**. No store, no ads, no pass, no more than one 
 If the player abandons, `tutorial_abandon{step}` fires with the step index so the exact drop
 point is visible in the funnel.
 
+### 4.0 Escola da Brasa — the lesson deck (first impression)
+
+The six steps teach three *gestures*. They cannot teach why the grill has rows, what the bar
+under an order means, where charcoal goes, or what XP buys — and a player who does not know
+those quits in session 2. So the guided turn is wrapped in a lesson deck, authored in
+`shared/data/tutorial.json` (`school`) and drawn by `prototype/src/school-ui.ts`:
+
+| card | icon | shown during | teaches |
+|---|---|---|---|
+| `brasa` | bench | step 1 `place` | the bench is stock; each grill row is a different heat |
+| `ponto` | flame | step 2 `flip` | wait for the browning, flip once, that is the PERFEITO |
+| `servir` | customer | step 3 `serve` | drag the plate to the card; the bar is the customer's patience |
+| `combo` | coin | step 4 `perfect` | PERFEITO pays more, back-to-back serves light the combo |
+| `reposicao` | charcoal | — | both refills are free: charcoal 2.2 s, stock 3 s |
+| `progresso` | xp | — | every turn pays XP; levels unlock cuts and bigger grills |
+
+A card with a `step` also renders as a two-line banner (`shortKey`) in the free band above the
+grill (y 72–132) **after** the FTUE scrim, so the explanation is never the dimmed part of the
+screen; the serve prompt moved to `GRILL_TOP − 4` to sit under it. The full deck plays right
+after the result card's `CONTINUAR`, one card per tap (`PRÓXIMO`, dots, `PULAR` = jump to the
+last card — reading is optional, the reward is not).
+
+**The payout.** The last card pays `school.rewardXp` (60 XP) through the same `grantXp` path
+as a turn, emits `currency_earned{currency:xp, source:tutorial_school}` and celebrates the
+level-up by name: on a fresh save it lands level 2, which puts **Pão de Alho** on the bench.
+That is the point — session 1 ends with something new to cook, not just a purchased upgrade.
+`npm run validate` fails if `rewardXp` ever drops below the XP the economy curve needs for
+level 2, and `meta.schoolDone` guards the grant so re-reading pays nothing.
+
+**Re-entry.** Home carries a `COMO JOGAR` pill in the free band under the daily strip
+(y 204–254; a 46 px `?` at the right edge when the late-game income strip takes that band).
+It shows a `+60 XP` badge while the reward is unclaimed — a player who hit `PULAR` during the
+scripted turn can still learn the game and still collect.
+
 ### 4.1 How it is built
 
 The script is data (`shared/data/tutorial.json`), the rules are engine-free and tested
@@ -94,7 +133,8 @@ recorded FTUE runs). Only `TutorialTurn`'s glue is not ported: it owns a `TurnSi
 which has no C# port yet.
 
 **Path.** First launch: splash → title (`JOGAR`) → steps 1–5 as **one scripted turn** →
-a simplified result card (`CONTINUAR` only) → Home, where step 6 waits. Relaunch: splash →
+a simplified result card (`CONTINUAR` only) → the Escola da Brasa deck (§4.0) → Home, where
+step 6 waits. Relaunch: splash →
 Home. The scripted turn *is* `level_001`'s first clear, on the free 1-zone `lata_valente`.
 
 **One variable at a time.** One linguiça on the bench; scripted customers (`comum`, then

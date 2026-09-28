@@ -9,7 +9,8 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { DATA_DIR, loadAndValidate, readJson } from './load-data.ts';
 import { costFor } from '../sim-core/src/economy.ts';
-import { TUTORIAL_EVENT_PARAMS, TUTORIAL_TRIGGERS, type TutorialTable } from '../sim-core/src/tutorial.ts';
+import { xpForLevel } from '../sim-core/src/data.ts';
+import { SCHOOL_ICONS, TUTORIAL_EVENT_PARAMS, TUTORIAL_TRIGGERS, type TutorialTable } from '../sim-core/src/tutorial.ts';
 import { generateLevels } from './gen-levels.ts';
 
 type Problem = { file: string; message: string };
@@ -324,6 +325,31 @@ const tut = readJson('tutorial.json') as TutorialTable;
   }
   if (turn.customerPatienceSec <= turn.safetyLimitSec) fail(T, 'turn.customerPatienceSec must outlast turn.safetyLimitSec — nobody may leave during the FTUE');
   if (tut.skip.hitSizePx < 44) fail(T, `skip.hitSizePx ${tut.skip.hitSizePx} < 44 (docs/21: the 36x28 X was found by only 60%)`);
+
+  // The lesson deck: every card must point at a real step and pay a reward that
+  // actually moves the player, or the promise "finish the tutorial, unlock a new
+  // cut" quietly stops being true when the XP curve is retuned.
+  {
+    const school = tut.school;
+    const lessons = school?.lessons ?? [];
+    if (lessons.length === 0) fail(T, 'school.lessons is empty — the first run would explain nothing');
+    if (new Set(lessons.map((l) => l.id)).size !== lessons.length) fail(T, 'school.lessons: duplicate lesson id');
+    for (const l of lessons) {
+      if (!(SCHOOL_ICONS as readonly string[]).includes(l.icon)) fail(T, `lesson "${l.id}": icon "${l.icon}" is not drawable (${SCHOOL_ICONS.join(', ')})`);
+      if (l.step !== undefined && !steps.some((st) => st.id === l.step && st.screen === 'play')) {
+        fail(T, `lesson "${l.id}": step "${l.step}" is not a play step of this script`);
+      }
+      if (l.step !== undefined && !l.shortKey) fail(T, `lesson "${l.id}": a lesson tied to a step needs a shortKey — the full body does not fit the in-turn banner`);
+    }
+    const perStep = lessons.filter((l) => l.step).map((l) => l.step);
+    if (new Set(perStep).size !== perStep.length) fail(T, 'school.lessons: two lessons claim the same step — only one card fits on screen');
+    const { a, exponent, minPerLevel } = db.economy.xp.formula;
+    const toLevel2 = xpForLevel(1, a, exponent, minPerLevel);
+    if (!(school?.rewardXp > 0)) fail(T, 'school.rewardXp must pay something for finishing the tutorial');
+    else if (school.rewardXp < toLevel2) {
+      fail(T, `school.rewardXp ${school.rewardXp} < ${toLevel2} XP: finishing the tutorial would not reach level 2, so no new ingredient unlocks (docs/05 §4)`);
+    }
+  }
 
   // Step 6 must be affordable from a fresh install. Guaranteed income of the
   // scripted turn, counting nothing a player could miss: level reward + first

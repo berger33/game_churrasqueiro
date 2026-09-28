@@ -6,6 +6,7 @@
   "type": "object",
   "required": [
     "coach",
+    "school",
     "skip",
     "steps",
     "targetDurationSec",
@@ -23,6 +24,9 @@
       "type": "string"
     },
     "_comment": {
+      "type": "string"
+    },
+    "_school": {
       "type": "string"
     },
     "coach": {
@@ -50,6 +54,69 @@
         "holdBelowWindowHi",
         "idleHintSec",
         "serveReadyMinDoneness"
+      ]
+    },
+    "school": {
+      "type": "object",
+      "properties": {
+        "lessons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "bodyKey": {
+                "type": "string"
+              },
+              "icon": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "shortKey": {
+                "enum": [
+                  "ui.school.brasa.short",
+                  "ui.school.combo.short",
+                  "ui.school.ponto.short",
+                  "ui.school.servir.short"
+                ]
+              },
+              "step": {
+                "enum": [
+                  "flip",
+                  "perfect",
+                  "place",
+                  "serve"
+                ]
+              },
+              "titleKey": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "bodyKey",
+              "icon",
+              "id",
+              "titleKey"
+            ]
+          }
+        },
+        "openKey": {
+          "type": "string"
+        },
+        "rewardXp": {
+          "type": "integer"
+        },
+        "titleKey": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "lessons",
+        "openKey",
+        "rewardXp",
+        "titleKey"
       ]
     },
     "skip": {

@@ -16,6 +16,7 @@ namespace Churrasco.Core.Generated
     public sealed class TutorialTable
     {
         public TutorialCoach Coach { get; set; }
+        public TutorialSchool School { get; set; }
         public TutorialSkip Skip { get; set; }
         public List<TutorialSteps> Steps { get; set; }
         public int TargetDurationSec { get; set; }
@@ -58,6 +59,24 @@ namespace Churrasco.Core.Generated
         public int HitSizePx { get; set; }
         public string LabelKey { get; set; }
         public int ShowAfterSec { get; set; }
+    }
+
+    public sealed class TutorialSchool
+    {
+        public List<TutorialSchoolLessons> Lessons { get; set; }
+        public string OpenKey { get; set; }
+        public int RewardXp { get; set; }
+        public string TitleKey { get; set; }
+    }
+
+    public sealed class TutorialSchoolLessons
+    {
+        public string BodyKey { get; set; }
+        public string Icon { get; set; }
+        public string Id { get; set; }
+        public string ShortKey { get; set; }
+        public string Step { get; set; }
+        public string TitleKey { get; set; }
     }
 
     public sealed class TutorialCoach

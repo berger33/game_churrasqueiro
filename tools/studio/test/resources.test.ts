@@ -156,8 +156,13 @@ describe('A-06.2 shared resource purchases/UI geometry',()=>{
     const q=quoteUpgrade(db,p,id);expect(q.canBuy).toBe(true);expect(q.phase).toBe('active');
     expect(buyUpgrade(db,p,id)).not.toBeNull();expect(p.coins).toBe(100000-q.cost);expect(p.upgradeLevels[id]).toBe(2);
   });
-  it('resource controls meet minimum targets without intersecting each other or prep',()=>{
-    for(const r of [CHARCOAL_REFILL,STOCK_REFILL]){expect(r.h).toBeGreaterThanOrEqual(48);expect(r.w).toBeGreaterThanOrEqual(48);expect(r.y+r.h).toBeLessThan(PREP_AREA.y);}
+  it('resource controls sit on the last row, still touch-sized and clear of prep',()=>{
+    for(const r of [CHARCOAL_REFILL,STOCK_REFILL]){
+      expect(r.h).toBeGreaterThanOrEqual(48);expect(r.w).toBeGreaterThanOrEqual(48);
+      expect(r.y).toBeGreaterThanOrEqual(PREP_AREA.y+PREP_AREA.h); // below the prep station, not over it
+      expect(r.y+r.h).toBeLessThanOrEqual(780);                    // and inside the 420x780 screen
+      expect(r.y+r.h).toBeGreaterThan(770);                        // as low as the screen allows
+    }
     expect(CHARCOAL_REFILL.x+CHARCOAL_REFILL.w).toBeLessThan(STOCK_REFILL.x);
   });
 });

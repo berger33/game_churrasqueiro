@@ -51,6 +51,35 @@ export interface TutorialStepDef {
   hintKey?: string;
 }
 
+/** Emblems the lesson deck can draw (prototype/src/school-ui.ts). */
+export const SCHOOL_ICONS = ['bench', 'flame', 'customer', 'coin', 'charcoal', 'xp'] as const;
+export type SchoolIcon = (typeof SCHOOL_ICONS)[number];
+
+/**
+ * One lesson of the "Escola da Brasa" deck. With `step`, the same lesson also
+ * appears as a one-line card while that guided step is on screen, so the player
+ * reads *why* while doing it; the deck then recaps everything at the end.
+ */
+export interface TutorialLesson {
+  id: string;
+  icon: SchoolIcon;
+  /** Id of the FTUE step this lesson explains. Absent = deck only. */
+  step?: string;
+  titleKey: string;
+  bodyKey: string;
+  /** Two-line version for the in-turn banner. Required when `step` is set. */
+  shortKey?: string;
+}
+
+export interface TutorialSchool {
+  /** Paid once, when the deck is finished. Enough to reach level 2 on a fresh save. */
+  rewardXp: number;
+  titleKey: string;
+  /** Label of the Home entry that replays the deck (no second payout). */
+  openKey: string;
+  lessons: TutorialLesson[];
+}
+
 export interface TutorialTable {
   version: number;
   variant: string;
@@ -79,8 +108,15 @@ export interface TutorialTable {
     handLoopSec: number;
   };
   skip: { showAfterSec: number; hitSizePx: number; labelKey: string };
+  school: TutorialSchool;
   upgradeTrackId: string;
   steps: TutorialStepDef[];
+}
+
+/** The lesson shown while `stepId` is on screen, if the deck has one for it. */
+export function lessonForStep(table: TutorialTable, stepId: string | null | undefined): TutorialLesson | null {
+  if (!stepId) return null;
+  return table.school.lessons.find((l) => l.step === stepId) ?? null;
 }
 
 // ── Persisted state ──────────────────────────────────────────────────────────
