@@ -29,6 +29,20 @@
     "hitSizePx": 48,
     "labelKey": "ui.tut.skip"
   },
+  "_school": "Escola da Brasa — the first-impression lesson deck. A lesson with a `step` also shows as a two-line card (`shortKey`) while that guided step is on screen; the full deck plays once right after the scripted turn and pays `rewardXp`, which is enough to reach level 2 on a fresh save (the second cut unlocks, so session 1 ends with something new to cook). Re-openable from Home, where it never pays again. Geometry/drawing: prototype/src/school-ui.ts.",
+  "school": {
+    "rewardXp": 60,
+    "titleKey": "ui.school.title",
+    "openKey": "ui.school.open",
+    "lessons": [
+      { "id": "brasa", "icon": "bench", "step": "place", "titleKey": "ui.school.brasa.title", "bodyKey": "ui.school.brasa.body", "shortKey": "ui.school.brasa.short" },
+      { "id": "ponto", "icon": "flame", "step": "flip", "titleKey": "ui.school.ponto.title", "bodyKey": "ui.school.ponto.body", "shortKey": "ui.school.ponto.short" },
+      { "id": "servir", "icon": "customer", "step": "serve", "titleKey": "ui.school.servir.title", "bodyKey": "ui.school.servir.body", "shortKey": "ui.school.servir.short" },
+      { "id": "combo", "icon": "coin", "step": "perfect", "titleKey": "ui.school.combo.title", "bodyKey": "ui.school.combo.body", "shortKey": "ui.school.combo.short" },
+      { "id": "reposicao", "icon": "charcoal", "titleKey": "ui.school.reposicao.title", "bodyKey": "ui.school.reposicao.body" },
+      { "id": "progresso", "icon": "xp", "titleKey": "ui.school.progresso.title", "bodyKey": "ui.school.progresso.body" }
+    ]
+  },
   "upgradeTrackId": "grill_size",
   "steps": [
     { "id": "place", "index": 1, "screen": "play", "gesture": "drag", "completesOn": "placed", "event": "tutorial_step" },

@@ -38,8 +38,8 @@ import type { GameDatabase, Ingredient, RawDataBundle } from '../../tools/sim-co
 import { createL10n, type L10n, type L10nTable } from '../../tools/sim-core/src/l10n.ts';
 import { checkAnalyticsEvent, type AnalyticsEvent, type AnalyticsTaxonomy, type AnalyticsValue } from '../../tools/sim-core/src/analytics.ts';
 import {
-  TutorialDirector, TutorialTurn, flipReady, restoreTutorialState,
-  type CoachAction, type TutorialState, type TutorialTable
+  TutorialDirector, TutorialTurn, flipReady, lessonForStep, restoreTutorialState,
+  type CoachAction, type TutorialLesson, type TutorialState, type TutorialTable
 } from '../../tools/sim-core/src/tutorial.ts';
 import {
   arcPoint, contains, dragLoop, drawHand, drawHoleRing, drawProgressRing, drawPrompt, drawScrim,
@@ -57,25 +57,42 @@ import {
 } from './sprites.ts';
 import { audio } from './audio.ts';
 import { STOCK_REFILL, CHARCOAL_REFILL, PREP_AREA, PREP_PAGER, prepPageCount, prepSlotRects, BENCH_PAGER, grilledFoodHit, benchPage, benchPageCount, cookingFlipHint } from './cooking-ui.ts';
+import {
+  SCHOOL_BACK, SCHOOL_DOTS, SCHOOL_NEXT, SCHOOL_SKIP, SCHOOL_WIDE, drawLessonBanner, drawSchoolButtons, drawSchoolCard,
+  drawSchoolEntry, drawSchoolReward, drawSchoolTitle, schoolEntryRect
+} from './school-ui.ts';
 
 const W = 420;
 const H = 780;
 const CHIMNEY_H = 62;
 const COUNTER_H = 12;
-const GRILL_TOP = 224;
-const GRILL_BOTTOM = 472;
-const BENCH_TOP = 552;
+/**
+ * Vertical layout of the turn screen (portrait 420×780), top to bottom:
+ *
+ *   8–60    HUD
+ *   86–408  churrasqueira (chimney starts at GRILL_TOP − CHIMNEY_H − 12)
+ *   416     charcoal gauge
+ *   436–558 order cards + their pager — the queue sits in the thumb zone, not at the top edge:
+ *           serving is a short drag down from the coals instead of a stretch to the status bar.
+ *   562–780 bench (one paged row of stock), prep station, and the resource buttons on the last row
+ */
+const GRILL_TOP = 160;
+const GRILL_BOTTOM = 408;
+const ORDERS_TOP = 436;
+const BENCH_TOP = 578;
 const CHIMNEY_W = 68;
 const GRILL_BODY_W = W - 40;
 /** Painted grills (docs/22 §7.1): the opening's width on screen and where its centre sits. */
 const GRILL_ART_BED_W = 330;
-const GRILL_ART_HOLE_Y = 342;
+const GRILL_ART_HOLE_Y = 278;
 
 /** A painted grill placed on screen: the sprite rect and its cooking opening (screen coords). */
 interface GrillArt { img: CanvasImageSource; x: number; y: number; w: number; h: number; quad: Quad }
 
 // ── Screens ───────────────────────────────────────────────────────────────────
-type Screen = 'splash' | 'title' | 'home' | 'play' | 'result' | 'bonus_frenzy' | 'bonus_wheel' | 'bonus_chef';
+type Screen = 'splash' | 'title' | 'home' | 'play' | 'result' | 'school' | 'bonus_frenzy' | 'bonus_wheel' | 'bonus_chef';
+/** What a `grantXp` call changed — the deck shows it, endTurn ignores it. */
+interface SchoolReward { xp: number; level: number; leveledUp: boolean; ingredients: Ingredient[] }
 type HomeTab = 'home' | 'shop' | 'missions' | 'collection' | 'route';
 type BonusType = 'frenzy' | 'wheel' | 'chef' | 'rush';
 
@@ -104,8 +121,6 @@ interface CoinFlight {
   ftueLast: boolean;
 }
 interface AnalyticsRecord { name: string; params: Record<string, AnalyticsValue>; atMs: number; valid: boolean }
-/** docs/20: order cards drop 40 px during the FTUE so the thumb does not cover the drag target. */
-const FTUE_ORDER_DROP = 40;
 /** HUD coin counter — where flying coins land. */
 const HUD_COIN = { x: 28, y: 30 };
 
@@ -162,6 +177,8 @@ interface Meta {
   ftueDone: boolean;
   /** Mirrors `tutorial.step` (99 = done) for tools that read the old field. */
   ftueStep: number;
+  /** True once the Escola da Brasa deck paid its XP. Guards the one-time reward. */
+  schoolDone: boolean;
   /** TutorialDirector state (tools/sim-core/src/tutorial.ts). */
   tutorial?: TutorialState;
   /** Levels whose first-clear bonus has been paid (run-sim's `cleared_<id>` counters). */
@@ -192,7 +209,7 @@ function loadMeta(): Meta {
     coins: 0, embers: 0, xp: 0, level: 1, streak: 1, longestStreak: 1,
     lastLoginISO: todayISO(), lastClaimDay: 0, lastClaimISO: '', turnsPlayed: 0, bestCombo: 0,
     totalPerfect: 0, collection: [], ftueDone: false,
-    ftueStep: 0, clearedLevels: [], bonusReady: null, bonusExpiresAt: 0, wheelSpins: 1, lastWheelSpinISO: '',
+    ftueStep: 0, schoolDone: false, clearedLevels: [], bonusReady: null, bonusExpiresAt: 0, wheelSpins: 1, lastWheelSpinISO: '',
     upgrades: { grill_size: 0 }, graceUsed: false,
     churrasqueiraId: 'lata_valente', churrasqueiraLv: { lata_valente: 1 }
   };
@@ -272,6 +289,8 @@ class Game {
     vipReward: {coins:number;embers:number};
     /** The FTUE's scripted turn: a simplified card — no ads, no bonus, no share (docs/05 §4). */
     ftue: boolean;
+    /** The rewarded "DOBRAR 2×" pays this result exactly once — it used to compound on every tap. */
+    doubled: boolean;
   } | null = null;
   private flash = 0;
   private comboPulse = 0;
@@ -318,11 +337,15 @@ class Game {
   private ftueNudge = 0;         // 1 → 0 after a blocked action (ring shake)
   private ftueHintKey = '';      // the hand's current target, for the prompt ping
   private ftueHintSince = 0;     // when that target appeared (animation phase)
+  private ftueLessonStep = '';   // step whose lesson banner is on screen
+  private ftueLessonSince = 0;   // when that banner appeared (fade-in phase)
   private ftueRewardWait = 0;    // step-4 fallback timer when no coin flight carries the reward
   private coinFlights: CoinFlight[] = [];
   private hudCoinsLanded = 0;    // turn coins that already reached the HUD counter
   private coinPulse = 0;
   private lastServePos: Pt | null = null;
+  /** Escola da Brasa deck (shared/data/tutorial.json `school`) while it is open. */
+  private school: { index: number; t: number; reward: SchoolReward | null } | null = null;
   private analyticsTax: AnalyticsTaxonomy | null = null;
   private readonly analyticsLog: AnalyticsRecord[] = [];
 
@@ -791,6 +814,145 @@ class Game {
     }
   }
 
+  /**
+   * Single place XP is paid. The turn-end loop used to own it; the Escola da
+   * Brasa reward has to level the player up exactly the same way (same curve,
+   * same confetti, same churrasqueira banner), and callers need to know what
+   * the level-up opened so they can name it.
+   */
+  private grantXp(amount: number, source: string | null): SchoolReward {
+    const before = this.meta.level;
+    this.meta.xp += Math.max(0, Math.round(amount));
+    while (levelProgress(this.meta.xp, this.meta.level) >= 1) {
+      this.meta.xp -= xpForLevel(this.meta.level);
+      this.meta.level++;
+      this.confettiBurst(W/2, 200, 30);
+      audio.play('levelUp');
+    }
+    const leveledUp = this.meta.level > before;
+    // churrasqueira unlock notification on level up (1F → 2F → 3F → Fornalha)
+    if (leveledUp && this.churrasqueiras.length>0) {
+      const ownedIdx = this.activeChurr()?.index ?? -1;
+      const candidate = [...this.churrasqueiras].sort((a,b)=>a.index-b.index).find(c=> c.index>ownedIdx && this.meta.level >= c.unlockLevel);
+      if (candidate) {
+        // show banner next frame via banner stored? we set a hint for result screen
+        this.churrasqueiraHintT = 3.5; // used in drawResult to show card
+        // also bump coins a tiny gift for progression feel
+        this.banner(`${this.l10n.t(candidate.nameKey).toUpperCase()} desbloqueou!`);
+      }
+    }
+    // Ingredients the new level put on the bench, in unlock order.
+    const restaurantIndex = this.vipRestaurant();
+    const ingredients = this.db.ingredients.items.filter(i =>
+      i.unlock.level > before && i.unlock.level <= this.meta.level && i.unlock.restaurantIndex <= restaurantIndex
+    );
+    if (source) {
+      this.track({name:'currency_earned',params:{currency:'xp',amount:Math.max(0,Math.round(amount)),source,balance:this.meta.xp}});
+    }
+    return { xp: Math.max(0, Math.round(amount)), level: this.meta.level, leveledUp, ingredients };
+  }
+
+  // ── Escola da Brasa (the lesson deck) ─────────────────────────────────────
+  private schoolLessons(): TutorialLesson[] { return this.tutorialTable.school.lessons; }
+  /** The deck still owes its XP (finished the FTUE, or skipped it and came back). */
+  private schoolRewardPending(): boolean { return !this.meta.schoolDone; }
+
+  private openSchool(): void {
+    this.school = { index: 0, t: 0, reward: null };
+    this.screen = 'school';
+    audio.play('uiTap');
+  }
+
+  private closeSchool(): void {
+    this.school = null;
+    this.screen = 'home';
+    this.homeTab = 'home';
+    audio.play('uiTap');
+  }
+
+  /** Forward button: next card, then claim, then out. */
+  private advanceSchool(): void {
+    const st = this.school;
+    if (!st) return;
+    if (st.reward) { this.closeSchool(); return; }
+    const last = this.schoolLessons().length - 1;
+    if (st.index < last) { st.index++; st.t = 0; audio.play('uiTap'); return; }
+    if (this.schoolRewardPending()) {
+      const reward = this.grantXp(this.tutorialTable.school.rewardXp, 'tutorial_school');
+      this.meta.schoolDone = true;
+      saveMeta(this.meta);
+      st.reward = reward;
+      st.t = 0;
+      this.confettiBurst(W/2, 300, 34);
+      audio.play('levelUp');
+      return;
+    }
+    this.closeSchool();
+  }
+
+  private hitSchool(p: Pt): 'back' | 'next' | 'skip' | null {
+    // The reward card has one wide button where BACK + NEXT usually sit.
+    if (this.school?.reward) return contains(SCHOOL_WIDE, p, 6) ? 'next' : null;
+    if (contains(SCHOOL_NEXT, p, 6)) return 'next';
+    if (contains(SCHOOL_BACK, p, 6)) return 'back';
+    if (contains(SCHOOL_SKIP, p, 6)) return 'skip';
+    return null;
+  }
+
+  private drawSchool(ctx: CanvasRenderingContext2D): void {
+    const st = this.school;
+    if (!st) return;
+    const lessons = this.schoolLessons();
+    const total = lessons.length;
+    const lesson = lessons[Math.min(st.index, total - 1)]!;
+    const rewardXp = this.tutorialTable.school.rewardXp;
+    ctx.fillStyle = 'rgba(10,6,4,0.72)';
+    ctx.fillRect(0, 0, W, H);
+    this.drawParticles(ctx);
+    drawSchoolTitle(ctx, this.l10n.t(this.tutorialTable.school.titleKey),
+      this.l10n.t('ui.school.progress', { current: Math.min(st.index + 1, total), total }));
+    if (st.reward) {
+      const names = st.reward.ingredients.map(i => this.l10n.t(i.nameKey));
+      drawSchoolReward(ctx, {
+        xpLine: this.l10n.t('ui.school.reward', { xp: st.reward.xp }),
+        levelLine: st.reward.leveledUp ? this.l10n.t('ui.school.levelUp', { level: st.reward.level }) : null,
+        unlockLine: names.length
+          ? this.l10n.t('ui.school.unlocked', { name: names.join(', ') })
+          : this.l10n.t('ui.school.noUnlock'),
+        t: st.t
+      });
+      drawSchoolButtons(ctx, { backLabel: null, nextLabel: this.l10n.t('ui.school.close'),
+        skipLabel: null, canBack: false, final: false, t: st.t });
+      return;
+    }
+    drawSchoolCard(ctx, { icon: lesson.icon, title: this.l10n.t(lesson.titleKey), body: this.l10n.t(lesson.bodyKey), t: st.t });
+    drawStepDots(ctx, SCHOOL_DOTS.x, SCHOOL_DOTS.y, total, st.index + 1, this.now);
+    const last = st.index === total - 1;
+    drawSchoolButtons(ctx, {
+      backLabel: this.l10n.t('ui.school.back'),
+      nextLabel: last
+        ? (this.schoolRewardPending() ? this.l10n.t('ui.school.claim', { xp: rewardXp }) : this.l10n.t('ui.school.close'))
+        : this.l10n.t('ui.school.next'),
+      skipLabel: last ? null : this.l10n.t('ui.tut.skip'),
+      canBack: st.index > 0,
+      final: last && this.schoolRewardPending(),
+      t: st.t
+    });
+  }
+
+  /** Read-only view for harnesses: the deck, its cards and its buttons. */
+  private publishSchool(): void {
+    const g = globalThis as unknown as { __churrascoSchool?: unknown };
+    const st = this.school;
+    g.__churrascoSchool = st ? {
+      index: st.index, total: this.schoolLessons().length,
+      lesson: this.schoolLessons()[Math.min(st.index, this.schoolLessons().length - 1)]?.id ?? null,
+      rewardPending: this.schoolRewardPending(), rewardXp: this.tutorialTable.school.rewardXp,
+      reward: st.reward ? { ...st.reward, ingredients: st.reward.ingredients.map(i => i.id) } : null,
+      back: SCHOOL_BACK, next: SCHOOL_NEXT, wide: SCHOOL_WIDE, skip: SCHOOL_SKIP
+    } : null;
+  }
+
   /** Read-only view for harnesses: what the hand points at, in screen space. */
   private publishFtue(hint: CoachAction | null, visible: boolean): void {
     const g = globalThis as unknown as { __churrascoFtue?: unknown };
@@ -818,8 +980,12 @@ class Game {
     this.now += dt;
     // Read-only views for the Node harnesses (shoot.mjs / render-smoke.mjs).
     const dbg = globalThis as unknown as { __churrascoScreen?: Screen; __churrascoFtue?: unknown; __churrascoHome?: unknown; __churrascoCooking?: unknown; __churrascoResult?: unknown };
-    dbg.__churrascoResult = this.screen==='result' && this.lastResult ? {vipReward:{...this.lastResult.vipReward}} : null;
+    dbg.__churrascoResult = this.screen==='result' && this.lastResult
+      ? {vipReward:{...this.lastResult.vipReward}, coins:this.lastResult.coins, doubled:this.lastResult.doubled, layout:this.resultLayout()}
+      : null;
     dbg.__churrascoScreen = this.screen;
+    if (this.school) this.school.t += dt;
+    this.publishSchool();
     dbg.__churrascoCooking = this.screen === 'play' ? {
       activeCoinMultiplier:activeCoinMultiplier(this.db,this.sim.restaurant.index),
       staff: this.sim.staff.snapshot,
@@ -1066,29 +1232,9 @@ class Game {
       this.track({name:'currency_earned',params:{currency:'embers',amount:vipReward.embers,source:'vip_achievement',balance:this.meta.embers}});
     }
     this.meta.coins += r.coins + levelCoins;
-    this.meta.xp += r.xp;
     this.meta.bestCombo = Math.max(this.meta.bestCombo, r.counters.bestCombo);
     this.meta.turnsPlayed++;
-    // level up check
-    let leveledUp = false;
-    while (levelProgress(this.meta.xp, this.meta.level) >= 1) {
-      this.meta.xp -= xpForLevel(this.meta.level);
-      this.meta.level++;
-      leveledUp = true;
-      this.confettiBurst(W/2, 200, 30);
-      audio.play('levelUp');
-    }
-    // churrasqueira unlock notification on level up (1F → 2F → 3F → Fornalha)
-    if (leveledUp && this.churrasqueiras.length>0) {
-      const ownedIdx = this.activeChurr()?.index ?? -1;
-      const candidate = [...this.churrasqueiras].sort((a,b)=>a.index-b.index).find(c=> c.index>ownedIdx && this.meta.level >= c.unlockLevel);
-      if (candidate) {
-        // show banner next frame via banner stored? we set a hint for result screen
-        this.churrasqueiraHintT = 3.5; // used in drawResult to show card
-        // also bump coins a tiny gift for progression feel
-        this.banner(`${this.l10n.t(candidate.nameKey).toUpperCase()} desbloqueou!`);
-      }
-    }
+    this.grantXp(r.xp, null);
     // bonus cadence: every 2 turns
     if (this.meta.turnsPlayed % 2 === 0) {
       const types: BonusType[] = this.meta.level < 4 ? ['frenzy','wheel'] : ['frenzy','wheel','chef'];
@@ -1101,7 +1247,7 @@ class Game {
     this.lastResult = {
       coins: r.coins, xp: r.xp, stars: r.stars,
       perfect: r.counters.perfectCooks, burned: r.counters.burnedFood, combo: r.counters.bestCombo,
-      levelCoins, vipReward, ftue: wasFtue
+      levelCoins, vipReward, ftue: wasFtue, doubled: false
     };
     this.coinFlights = [];
     this.hudCoinsLanded = 0;
@@ -1131,7 +1277,7 @@ class Game {
     this.meta.coins += bonus;
     this.meta.xp += 40;
     saveMeta(this.meta);
-    this.lastResult = { coins: bonus, xp: 40, stars: 3, perfect: this.frenzyScore, burned: 0, combo: Math.min(20, this.frenzyScore), levelCoins: 0, vipReward:{coins:0,embers:0}, ftue: false };
+    this.lastResult = { coins: bonus, xp: 40, stars: 3, perfect: this.frenzyScore, burned: 0, combo: Math.min(20, this.frenzyScore), levelCoins: 0, vipReward:{coins:0,embers:0}, ftue: false, doubled: false };
     this.screen = 'result';
     this.resultT = 0;
     this.banner(`Frenesi: +${bonus} moedas!`);
@@ -1370,15 +1516,21 @@ class Game {
   private hasPrep(): boolean { return !this.ftue && this.unlocked.some(i => i.cookMethod === 'prep'); }
   private prepRects(): ReturnType<typeof prepSlotRects> { return prepSlotRects(this.sim.prepSlots.length, this.prepPageIndex); }
 
+  /** One paged row of five stock tiles; the sixth column is the bench pager (BENCH_PAGER). */
   private benchItemRect(i: number): { x: number; y: number; w: number; h: number } {
-    const w = 74; const gap = 8;
-    return { x: 14 + (i % 5) * (w + gap), y: BENCH_TOP + 22 + Math.floor(i / 5) * 74, w, h: 66 };
+    const w = 64; const gap = 4;
+    return { x: 14 + (i % 5) * (w + gap), y: BENCH_TOP + 18, w, h: 66 };
   }
+  /**
+   * Order cards — three per row, just above the bench. They used to live at the top of the screen
+   * (y 70), which made every serve a full-height drag: on a phone the thumb had to leave the grill
+   * and reach the status bar. Sitting at ORDERS_TOP they are a few pixels below the coals, so the
+   * FTUE no longer needs its 40 px "drop" either.
+   */
   private orderCardRect(i: number): { x: number; y: number; w: number; h: number } {
     if (i < 0) return {x:-1000,y:-1000,w:0,h:0}; // no off-page input target
     const w = 128; const gap = 8;
-    const drop = this.ftue ? FTUE_ORDER_DROP : 0;
-    return { x: 10 + (i % 3) * (w + gap), y: 70 + drop + Math.floor(i / 3) * 64, w, h: 58 };
+    return { x: 10 + (i % 3) * (w + gap), y: ORDERS_TOP + Math.floor(i / 3) * 64, w, h: 58 };
   }
   /** Home upgrade teaser cards — one rect for drawing, hit-testing and the step-6 spotlight. */
   private homeUpgradeRect(id: string): Rect {
@@ -1511,6 +1663,18 @@ class Game {
         else this.screen = 'home';
         return;
       }
+      if (this.screen === 'school') {
+        const hit = this.hitSchool(p);
+        if (hit === 'next') this.advanceSchool();
+        else if (hit === 'back' && this.school && this.school.index > 0 && !this.school.reward) {
+          this.school.index--; this.school.t = 0; audio.play('uiTap');
+        } else if (hit === 'skip' && this.school && !this.school.reward) {
+          // "PULAR" jumps to the last card instead of leaving: the player stops
+          // reading, but still collects the XP the tutorial promised.
+          this.school.index = this.schoolLessons().length - 1; this.school.t = 0; audio.play('uiTap');
+        }
+        return;
+      }
       if (this.screen === 'home' && this.homeFtueActive()) {
         // Step 6: only the spotlit upgrade card (and PULAR) respond.
         if (this.ftueSkipAvailable() && contains(this.skipRect(), p)) { this.skipTutorial(); return; }
@@ -1527,6 +1691,7 @@ class Game {
       }
       if (this.screen === 'home') {
         if(contains(OFFLINE_UI.entry,p)){this.offlinePopup=true;return;}
+        if(this.homeTab==='home' && contains(schoolEntryRect(this.vipRestaurant()>=4),p)) { this.openSchool(); return; }
         if(this.homeTab==='home' && contains(this.vipCard(),p)) {
           const token=beginVipCall(this.db,this.meta.vip,this.vipRestaurant(),Date.now()/1000);
           saveMeta(this.meta);
@@ -1646,7 +1811,11 @@ class Game {
       if (this.screen === 'result') {
         const hit = this.hitResult(p);
         if (hit === 'continue') {
-          // FTUE: the only way out of the first result card is Home, where step 6 waits.
+          // FTUE: the scripted turn taught the three gestures by doing. The deck
+          // now explains the rest of the turn (heat, patience, refills, XP) and
+          // pays the level-up that puts a second cut on the bench; step 6 waits
+          // on Home behind it.
+          if (this.schoolRewardPending()) { this.openSchool(); return; }
           this.screen = 'home';
           this.homeTab = 'home';
           audio.play('uiTap');
@@ -1660,8 +1829,10 @@ class Game {
           return;
         }
         if (hit === 'double') {
-          // simulated rewarded ad: double coins
-          if (this.lastResult) {
+          // Simulated rewarded ad: one grant per result. Without the flag every extra tap paid the
+          // (already doubled) purse again, so holding the button minted coins exponentially.
+          if (this.lastResult && !this.lastResult.doubled) {
+            this.lastResult.doubled = true;
             this.meta.coins += this.lastResult.coins;
             this.float(W/2, H/2, `+${this.lastResult.coins} (2×)`, C.ouroLight, 22);
             this.burst(W/2, H/2, 16, C.ouroLight, 'coin');
@@ -1966,7 +2137,8 @@ class Game {
     const L = this.resultLayout();
     if (this.lastResult?.ftue) return contains(L.cont, p, 6) ? 'continue' : null;
     if (this.meta.bonusReady && this.bonusOfferT < 15 && contains(L.bonus, p)) return 'bonus';
-    if (contains(L.double, p, 6)) return 'double';
+    // Claimed: the button stays on the card as feedback, but it is no longer a hitbox.
+    if (!this.lastResult?.doubled && contains(L.double, p, 6)) return 'double';
     if (contains(L.home, p, 4)) return 'home';
     if (contains(L.next, p, 4)) return 'next';
     if (contains(L.share, p, 6)) return 'share';
@@ -2244,6 +2416,7 @@ class Game {
     else if (this.screen==='title') this.drawTitle(ctx);
     else if (this.screen==='home') this.drawHome(ctx);
     else if (this.screen==='result') this.drawResult(ctx);
+    else if (this.screen==='school') this.drawSchool(ctx);
     else if (this.screen==='bonus_frenzy') this.drawFrenzy(ctx);
     else if (this.screen==='bonus_wheel') this.drawWheel(ctx);
     else this.drawPlay(ctx);
@@ -2295,10 +2468,10 @@ class Game {
     this.drawOrders(ctx);
     const staff=this.sim.staff.snapshot;
     if(!this.ftue&&(staff.serve.level||staff.prep.level||staff.flip.level)){
-      panel(ctx,12,224,W-24,26,{r:8,top:'rgba(30,20,12,.9)',bottom:'rgba(30,20,12,.9)'});
+      panel(ctx,12,GRILL_TOP,W-24,26,{r:8,top:'rgba(30,20,12,.9)',bottom:'rgba(30,20,12,.9)'});
       ctx.font=font(10,800,UI);ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=C.creme;
       ctx.fillText(this.l10n.t('ui.staff.status',{served:staff.serve.used,serveTotal:staff.serve.eligible,
-        flipped:staff.flip.used,flipTotal:staff.flip.eligible,prepped:staff.prep.used}),W/2,237,W-30);
+        flipped:staff.flip.used,flipTotal:staff.flip.eligible,prepped:staff.prep.used}),W/2,GRILL_TOP+13,W-30);
     }
     this.drawParticles(ctx);
     this.drawFloats(ctx);
@@ -2441,6 +2614,18 @@ class Game {
       ctx.fillText(this.l10n.t('ui.income.activeRate',{percent:Math.round(100*activeCoinMultiplier(this.db,this.vipRestaurant()))}),W/2,228);
       ctx.font=font(10,600,UI);ctx.fillStyle=C.perola;ctx.fillText(this.l10n.t('ui.income.unchanged'),W/2,246);
     }
+    // "COMO JOGAR": replays the Escola da Brasa deck. It still pays the XP if the
+    // player skipped the tutorial, so the badge only shows while it is unclaimed.
+    if (!this.homeFtueActive()) {
+      const entry = schoolEntryRect(this.vipRestaurant()>=4);
+      drawSchoolEntry(ctx, entry, {
+        label: this.l10n.t('ui.school.open'),
+        sub: this.l10n.t('ui.school.entrySub', { count: this.schoolLessons().length }),
+        badge: this.schoolRewardPending() ? `+${this.tutorialTable.school.rewardXp} XP` : null,
+        t: this.now
+      });
+    }
+
     // CTA Play card — hero (only on Início) — now shows churrasqueira atual
     const cardY=272;
     const cardH=76;
@@ -3164,9 +3349,9 @@ class Game {
     if(pager){
       for(const [rect,label] of [[pager.prev,'‹'],[pager.next,'›']] as const){premiumButton(ctx,rect.x,rect.y,rect.w,rect.h,{variant:'ghost'});ctx.textAlign='center';ctx.font=font(22,800,UI);ctx.fillStyle=C.perola;ctx.fillText(label,rect.x+rect.w/2,rect.y+26);}
       ctx.textAlign='center';ctx.font=font(11,700,UI);ctx.fillStyle=C.perola;
-      ctx.fillText(this.l10n.t('ui.upgrades.orders',{total:pager.total,page:pager.page+1,pages:pager.pages}),W/2,155);
+      ctx.fillText(this.l10n.t('ui.upgrades.orders',{total:pager.total,page:pager.page+1,pages:pager.pages}),W/2,pager.prev.y+15);
       ctx.fillStyle=pager.urgent?C.telha:C.madeiraPinho;ctx.font=font(10,700,UI);
-      ctx.fillText(this.l10n.t('ui.upgrades.urgent',{count:pager.urgent}),W/2,176);
+      ctx.fillText(this.l10n.t('ui.upgrades.urgent',{count:pager.urgent}),W/2,pager.prev.y+36);
     }
   }
 
@@ -3553,7 +3738,7 @@ class Game {
         : {r:12, top:'rgba(50,35,26,0.95)', bottom:'rgba(26,17,12,0.95)', border: isDragging? C.brasa : 'rgba(255,214,160,0.18)', borderWidth: isDragging?2:1, shadow:8, innerGlow:true});
       if (!drawFoodIconSprite(ctx,ing.id,r.x+r.w/2,r.y+24,32,'raw')) drawFoodIcon(ctx,ing,r.x+r.w/2,r.y+24,32);
       const label=this.l10n.t(ing.nameKey);
-      outlinedText(ctx,label.length>13?label.slice(0,12)+'…':label,r.x+r.w/2,r.y+48,C.perola,10,{weight:800, family:UI, outline:2});
+      outlinedText(ctx,label.length>10?label.slice(0,9)+'…':label,r.x+r.w/2,r.y+48,C.perola,10,{weight:800, family:UI, outline:2});
       ctx.save(); glass(ctx,r.x+r.w/2-22,r.y+r.h-17,44,14,{r:7, alpha:0.18, border:'rgba(231,194,74,0.4)'});
       const remaining=this.sim.stockRemaining(ing.id);
       ctx.font=font(11,900,UI); ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillStyle=remaining>0?C.ouroLight:C.telha;
@@ -3561,10 +3746,13 @@ class Game {
     });
     const pages = benchPageCount(this.unlocked);
     if (!this.ftue && pages > 1) {
+      // A sixth column the size of a stock tile: the label no longer fits on one line, so the
+      // first word carries the meaning and the page counter does the rest.
       const r = BENCH_PAGER;
       panel(ctx, r.x, r.y, r.w, r.h, { r: 12, top: 'rgba(50,35,26,0.95)', bottom: 'rgba(26,17,12,0.95)' });
-      outlinedText(ctx, this.l10n.t('ui.hud.benchMore'), r.x+r.w/2, r.y+20, C.perola, 11, { weight: 800, family: UI });
-      outlinedText(ctx, `${this.benchPageIndex+1}/${pages} →`, r.x+r.w/2, r.y+40, C.ouroLight, 14, { weight: 800, family: UI });
+      outlinedText(ctx, this.l10n.t('ui.hud.benchMore').split(' ')[0]!, r.x+r.w/2, r.y+24, C.perola, 10, { weight: 800, family: UI });
+      outlinedText(ctx, `${this.benchPageIndex+1}/${pages}`, r.x+r.w/2, r.y+42, C.ouroLight, 14, { weight: 800, family: UI });
+      outlinedText(ctx, '→', r.x+r.w/2, r.y+56, C.ouroLight, 12, { weight: 800, family: UI });
     }
   }
 
@@ -3584,7 +3772,7 @@ class Game {
 
   private drawPrep(ctx: CanvasRenderingContext2D): void {
     if (!this.hasPrep()) return;
-    outlinedText(ctx, this.l10n.t('ui.prep.hint'), W/2, 722, C.perola, 10, { weight: 800, family: UI });
+    outlinedText(ctx, this.l10n.t('ui.prep.hint'), W/2, PREP_AREA.y - 2, C.perola, 10, { weight: 800, family: UI });
     for (const r of this.prepRects()) {
       const f = this.sim.prepSlots[r.slot];
       panel(ctx, r.x, r.y, r.w, r.h, { r: 9, top: '#473225', bottom: '#24190f', border: f?.prepProgress === 1 ? C.ouroLight : C.creme });
@@ -3706,6 +3894,14 @@ class Game {
         const holes = this.ftueHoles(step.completesOn, hint);
         drawScrim(ctx, W, H, holes, 0.58);
         holes.forEach((h, i) => drawHoleRing(ctx, h, t + i * 0.4, this.ftueNudge));
+        // The lesson for this step, in the free band above the grill. Drawn after
+        // the scrim so the explanation is never the dimmed part of the screen.
+        const lesson = lessonForStep(this.tutorialTable, step.id);
+        if (lesson) {
+          if (this.ftueLessonStep !== step.id) { this.ftueLessonStep = step.id; this.ftueLessonSince = t; }
+          drawLessonBanner(ctx, { icon: lesson.icon, title: this.l10n.t(lesson.titleKey),
+            body: this.l10n.t(lesson.shortKey ?? lesson.bodyKey), t: t - this.ftueLessonSince });
+        }
         if (hint.kind === 'wait' && hint.food) {
           // Not ready yet: the ring fills instead of a prompt ("espere dourar", docs/20).
           const pos = this.foodScreenPos(hint.food);
@@ -3714,7 +3910,8 @@ class Game {
         if (step.hintKey && path) {
           const text = this.l10n.t(step.hintKey);
           if (hint.kind === 'serve') {
-            drawPrompt(ctx, text, W / 2, GRILL_TOP - 26, 340, t);
+            // Just under the lesson banner (which ends at y 132), over the grill rim.
+            drawPrompt(ctx, text, W / 2, GRILL_TOP - 4, 340, t);
           } else {
             const x = Math.max(130, Math.min(W - 130, path.from.x));
             drawPrompt(ctx, text, x, path.from.y - 76, 300, t);
@@ -3908,9 +4105,10 @@ class Game {
       outlinedText(ctx,this.l10n.t('ui.action.next'),next.x+next.w/2,next.y+next.h/2+2,C.perola,16,{outline:2, weight:900});
       ctx.restore();
       // double button above — gold CTA (P0: comunica valor, sem emoji ☐)
-      ctx.save(); ctx.globalAlpha=btnT;
-      premiumButton(ctx,double.x,double.y,double.w,double.h,{variant:'gold'});
-      outlinedText(ctx,'DOBRAR 2×',W/2,double.y+14,C.perola,12,{outline:2, weight:900});
+      const claimed=!!this.lastResult?.doubled;
+      ctx.save(); ctx.globalAlpha=btnT*(claimed?0.55:1);
+      premiumButton(ctx,double.x,double.y,double.w,double.h,{variant:claimed?'ghost':'gold'});
+      outlinedText(ctx,claimed?this.l10n.t('ui.result.doubled'):this.l10n.t('ui.result.double'),W/2,double.y+14,claimed?C.creme:C.perola,12,{outline:2, weight:900});
       ctx.restore();
       // share — sem emoji
       ctx.save(); ctx.globalAlpha=btnT;

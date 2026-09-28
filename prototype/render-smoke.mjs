@@ -273,16 +273,29 @@ async function main() {
   // Steps 1–5 by following the hand, to the simplified result card …
   await followHand(() => globalThis.__churrascoScreen === 'result', 120);
   await pump(150);
-  await followHand(() => globalThis.__churrascoScreen === 'home', 5); // CONTINUAR
+  await followHand(() => globalThis.__churrascoScreen === 'school', 5); // CONTINUAR
   await pump(10);
-  if (globalThis.__churrascoScreen !== 'home') throw new Error(`CONTINUAR should open Home, got ${globalThis.__churrascoScreen}`);
+  // … the Escola da Brasa deck (the lessons behind the gestures, then its XP) …
+  const deck = () => globalThis.__churrascoSchool;
+  if (!deck()) throw new Error(`CONTINUAR should open the lesson deck, got ${globalThis.__churrascoScreen}`);
+  const tapRect = async (r) => { pointer('pointerdown', r.x + r.w / 2, r.y + r.h / 2); pointer('pointerup', r.x + r.w / 2, r.y + r.h / 2); await pump(6); };
+  for (let i = 1; i < deck().total; i++) {
+    await tapRect(deck().next);
+    if (deck()?.index !== i) throw new Error(`PRÓXIMO should show card ${i + 1}, got ${deck()?.index}`);
+  }
+  await tapRect(deck().next); // GANHAR +XP
+  const paid = deck()?.reward;
+  if (!paid?.leveledUp || paid.level < 2) throw new Error(`the deck must pay a level-up, got ${JSON.stringify(paid)}`);
+  await tapRect(deck().wide); // FECHAR
+  await pump(10);
+  if (globalThis.__churrascoScreen !== 'home') throw new Error(`the deck should close to Home, got ${globalThis.__churrascoScreen}`);
   // … and step 6 on Home.
   await followHand(() => !globalThis.__churrascoFtue, 30);
   await pump(30);
 
   const log = globalThis.__churrascoAnalytics ?? [];
   const names = log.map((e) => (e.name === 'tutorial_step' ? `step:${e.params.step}` : e.name));
-  const expected = ['tutorial_start', 'step:place', 'step:flip', 'step:serve', 'step:perfect', 'tutorial_complete', 'upgrade_purchase', 'step:upgrade'];
+  const expected = ['tutorial_start', 'step:place', 'step:flip', 'step:serve', 'step:perfect', 'tutorial_complete', 'currency_earned', 'upgrade_purchase', 'step:upgrade'];
   if (JSON.stringify(names) !== JSON.stringify(expected)) throw new Error(`FTUE analytics: ${names.join(' → ')}`);
   const invalid = log.filter((e) => !e.valid);
   if (invalid.length) throw new Error(`events outside analytics.json: ${JSON.stringify(invalid)}`);
@@ -297,8 +310,11 @@ async function main() {
   const tapAt = async (x, y) => { pointer('pointerdown', x, y); pointer('pointerup', x, y); await pump(4); };
   const centre = (r) => [r.x + r.w / 2, r.y + r.h / 2];
   const strip = home().strip;
-  await tapAt(strip.x + strip.w / 2, strip.y + strip.h + 30);
+  // The gap right below the strip now holds the COMO JOGAR entry, so the "dead
+  // pixels" probe moved down to the strip between that entry and the play card.
+  await tapAt(strip.x + strip.w / 2, strip.y + strip.h + 66);
   if (home().dailyOpen) throw new Error('the empty gap under the daily strip opened the calendar');
+  if (globalThis.__churrascoScreen !== 'home') throw new Error('the gap above the play card is not inert');
   await tapAt(...centre(strip));
   if (!home().dailyOpen) throw new Error('tapping the daily strip did not open the calendar');
   const coinsBeforeDaily = home().coins;

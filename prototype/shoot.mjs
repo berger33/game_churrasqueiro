@@ -259,6 +259,7 @@ process.on('unhandledRejection', (e) => {
 const wall0 = Date.now();
 const screen = () => globalThis.__churrascoScreen;
 const ftue = () => globalThis.__churrascoFtue;
+const school = () => globalThis.__churrascoSchool;
 const meta = () => JSON.parse(ls.churrasco_meta_v2 ?? '{}');
 function assert(cond, msg) { if (!cond) throw new Error(`[shoot] ${msg}`); }
 
@@ -354,8 +355,41 @@ await followHand(() => screen() === 'result', 60, 'the FTUE result');
 await advance(2.2, { paint: false });
 await shot('08-ftue-result');
 
-// 9. CONTINUAR → Home, step 6: only the upgrade card is lit.
-await followHand(() => screen() === 'home', 5, 'Home');
+// 9. CONTINUAR → Escola da Brasa: the deck that explains the rest of the turn
+// (heat rows, patience, combo, refills, XP) and pays the level-up for it.
+await followHand(() => screen() === 'school', 5, 'the lesson deck');
+await advance(0.4, { paint: false });
+const deck = school();
+assert(deck && deck.index === 0 && deck.total >= 5, `CONTINUAR should open the deck, got ${JSON.stringify(deck)}`);
+assert(deck.rewardPending, 'a fresh install has not claimed the tutorial XP yet');
+const xpBefore = meta().xp ?? 0, levelBefore = meta().level ?? 1;
+await shot('09a-school-card');
+// A player who taps PRÓXIMO through every card.
+const SCHOOL_NEXT = deck.next;
+const tapNext = () => tap(SCHOOL_NEXT.x + SCHOOL_NEXT.w / 2, SCHOOL_NEXT.y + SCHOOL_NEXT.h / 2);
+for (let i = 1; i < deck.total; i++) {
+  tapNext();
+  await advance(0.2, { paint: false });
+  assert(school()?.index === i, `PRÓXIMO should show card ${i + 1}, got ${school()?.index}`);
+}
+await shot('09b-school-last');
+tapNext(); // GANHAR +XP
+await advance(0.4, { paint: false });
+const paid = school()?.reward;
+assert(paid, 'the last card should pay the tutorial XP');
+assert(paid.xp === deck.rewardXp, `the deck paid ${paid.xp}, table says ${deck.rewardXp}`);
+assert(paid.leveledUp && paid.level >= 2, `the tutorial XP must reach level 2, got level ${paid.level}`);
+assert(paid.ingredients.length >= 1, 'level 2 should put a new cut on the bench');
+assert(!school()?.rewardPending, 'the reward must not stay claimable');
+const xpEvent = firstRunLog.filter((e) => e.name === 'currency_earned' && e.params.currency === 'xp');
+assert(xpEvent.length === 1 && xpEvent[0].params.source === 'tutorial_school' && xpEvent[0].valid,
+  `the deck should emit exactly one valid xp currency_earned, got ${JSON.stringify(xpEvent)}`);
+await shot('09c-school-reward');
+tap(school().wide.x + school().wide.w / 2, school().wide.y + school().wide.h / 2); // FECHAR → Home, where step 6 waits
+await advance(0.3, { paint: false });
+assert(screen() === 'home' && meta().schoolDone === true, `the deck should close to Home, got ${screen()}`);
+assert(meta().level > levelBefore || meta().xp > xpBefore, 'the XP reward should be persisted');
+// 9d. Home, step 6: only the upgrade card is lit.
 await advance(0.1, { paint: false });
 assert(screen() === 'home' && ftue()?.step === 'upgrade', `CONTINUAR should open Home at step 6, got ${screen()}/${ftue()?.step}`);
 await advance(0.5, { paint: false });
@@ -363,9 +397,23 @@ await shot('09-ftue-upgrade');
 await followHand(() => !ftue(), 10, 'the end of the FTUE');
 await advance(0.3, { paint: false });
 
+// 9e. COMO JOGAR on Home replays the deck — and pays nothing the second time.
+const xpAfterFtue = meta().xp;
+tap(60, 229); // the entry pill under the daily strip
+await advance(0.3, { paint: false });
+assert(screen() === 'school' && school()?.rewardPending === false, `COMO JOGAR should reopen the deck in review mode, got ${screen()}`);
+const review = school();
+for (let i = 1; i < review.total; i++) { tap(review.next.x + review.next.w / 2, review.next.y + review.next.h / 2); await advance(0.15, { paint: false }); }
+tap(review.next.x + review.next.w / 2, review.next.y + review.next.h / 2); // FECHAR (review mode never pays, so the row keeps both buttons)
+await advance(0.3, { paint: false });
+assert(screen() === 'home' && !school(), 'the review deck should close back to Home');
+assert(meta().xp === xpAfterFtue, `re-reading the deck paid again (${xpAfterFtue} → ${meta().xp})`);
+assert(globalThis.__churrascoAnalytics.filter((e) => e.name === 'currency_earned' && e.params.currency === 'xp').length === 1,
+  'the tutorial XP must be paid exactly once');
+
 // ── The funnel, as analytics saw it ──────────────────────────────────────────
 const names = firstRunLog.map((e) => (e.name === 'tutorial_step' ? `step:${e.params.step}` : e.name));
-const expected = ['tutorial_start', 'step:place', 'step:flip', 'step:serve', 'step:perfect', 'tutorial_complete', 'upgrade_purchase', 'step:upgrade'];
+const expected = ['tutorial_start', 'step:place', 'step:flip', 'step:serve', 'step:perfect', 'tutorial_complete', 'currency_earned', 'upgrade_purchase', 'step:upgrade'];
 assert(JSON.stringify(names) === JSON.stringify(expected), `FTUE analytics: ${names.join(' → ')}`);
 assert(firstRunLog.every((e) => e.valid), `event outside analytics.json: ${JSON.stringify(firstRunLog.filter((e) => !e.valid))}`);
 const complete = firstRunLog.find((e) => e.name === 'tutorial_complete');
@@ -429,6 +477,22 @@ assert(screen() === 'result', `turn should end on the result screen, got ${scree
 await shot('13-result');
 assert(!relaunchLog.some((e) => e.name.startsWith('tutorial_')), 'no tutorial events after the FTUE is done');
 
+// The rewarded "DOBRAR 2x" pays the purse once. It used to be an infinite tap: every extra press
+// credited the already-doubled purse again, minting coins without watching anything.
+{
+  const result = () => globalThis.__churrascoResult;
+  const double = result().layout.double;
+  const purse = meta().coins, earned = result().coins;
+  tap(double.x + double.w/2, double.y + double.h/2);
+  await advance(0.1, { paint: false });
+  assert(meta().coins === purse + earned && result().doubled, `first tap must pay exactly the turn purse once (${meta().coins} vs ${purse + earned})`);
+  const afterClaim = meta().coins;
+  for (let i = 0; i < 5; i++) { tap(double.x + double.w/2, double.y + double.h/2); await advance(0.1, { paint: false }); }
+  assert(meta().coins === afterClaim, `holding DOBRAR cannot mint coins (${meta().coins} vs ${afterClaim})`);
+  await shot('13b-result-doubled');
+  assert(screen() === 'result', 'a spent DOBRAR is inert, not a hidden navigation hitbox');
+}
+
 // ═══ A-01 advanced fixture: real bundle, sprites and pointer input ═══════════
 // Only the authored starting level and saved progression are fixtures. Recipe,
 // heat, flip, input and UI all run unchanged; this is NOT a campaign-unlock proof.
@@ -450,17 +514,34 @@ await advance(0.4, { paint: false });
 assert(screen() === 'home', 'advanced fixture must reach Home');
 tap(210, 310); await advance(0.3, { paint: false });
 const cooking = () => globalThis.__churrascoCooking;
-assert(screen() === 'play' && cooking()?.pages === 2, 'advanced bench must expose two pages');
+/** The stock tile of an ingredient, walking the bench pager when it sits on another page. */
+const benchStock = async (id) => {
+  for (let i = 0; i < (cooking()?.pages ?? 1); i++) {
+    const hit = cooking().bench.find(b => b.id === id);
+    if (hit) return hit;
+    const p = cooking().pager;
+    if (!p) return undefined;
+    tap(p.x + p.w/2, p.y + p.h/2);
+    await advance(0.02, { paint: false });
+  }
+  return cooking().bench.find(b => b.id === id);
+};
+// One row of five tiles since the order queue moved down into the thumb zone: 15 grilled cuts +
+// vinagrete = four pages for the maxed fixture.
+assert(screen() === 'play' && cooking()?.pages === 4, 'advanced bench must expose four pages of five');
 assert(cooking().zones.length === 4, 'A-04 Premium + Fornalha must expose four real zones');
 const pageButton = cooking().pager;
 assert(pageButton && pageButton.w >= 48 && pageButton.h >= 48, 'pager needs a touch-sized hitbox');
 tap(pageButton.x + pageButton.w/2, pageButton.y + pageButton.h/2);
 await advance(0.1, { paint: false });
 assert(cooking().page === 1, 'the DRAWN pager must respond to a tap');
-for (const id of ['costela', 'cupim']) assert(cooking().bench.some(b => b.id === id), `${id} must be reachable on page 2`);
+tap(pageButton.x + pageButton.w/2, pageButton.y + pageButton.h/2);
+await advance(0.1, { paint: false });
+assert(cooking().page === 2, 'the pager keeps walking through the pages');
+for (const id of ['costela', 'cupim']) assert(cooking().bench.some(b => b.id === id), `${id} must be reachable through the pager`);
 await shot('14-advanced-bench');
-// Wrap and come back, to check both directions without adding extra controls.
-for (const expectedPage of [0, 1]) {
+// Wrap all the way around, to check paging without adding extra controls.
+for (const expectedPage of [3, 0, 1, 2]) {
   tap(pageButton.x + pageButton.w/2, pageButton.y + pageButton.h/2);
   await advance(0.1, { paint: false });
   assert(cooking().page === expectedPage, 'pager must wrap without changing the selected recipe');
@@ -516,7 +597,7 @@ for (const playerLevel of [1, 5, 6, 7]) {
     assert(available.some(i => i.id === id), `A-02 level ${playerLevel}: order includes a locked item ${id}`);
   }
   if (playerLevel === 1) {
-    await act({ from: { x: 215, y: 607 }, to: cooking().zones[0] });
+    await act({ from: { x: 182, y: 629 }, to: cooking().zones[0] }); // third stock tile: locked at level 1
     await advance(0.1, { paint: false });
     assert(cooking().foods.length === 0, 'old locked cheese slot must not retain a phantom hitbox');
   }
@@ -542,7 +623,7 @@ for (const playerLevel of [11, 12, 13]) {
   await advance(0.35, { paint: false }); tap(210, 400);
   await advance(0.4, { paint: false }); tap(210, 310);
   await advance(1.5, { paint: false });
-  const prep = cooking().bench.find(i => i.id === 'vinagrete');
+  const prep = await benchStock('vinagrete');
   assert(Boolean(prep) === (playerLevel >= 12), `A-03 level ${playerLevel}: vinagrete must be reachable exactly at 12`);
   if (playerLevel === 11) {
     assert(cooking().prep.length === 0, 'no prep hitbox before unlock');
@@ -581,7 +662,7 @@ for (const playerLevel of [11, 12, 13]) {
   dragNow(station(), centre(early), true); await refresh();
   assert(cooking().prep[0].uid === first.uid && cooking().coins === coinsBefore, 'cancelled drag cannot serve/discard ready food');
   // The gap inside the prep strip is not a discard target.
-  dragNow(station(), { x: 75, y: 750 }); await refresh();
+  dragNow(station(), { x: 75, y: 704 }); await refresh();
   assert(cooking().prep[0].uid === first.uid, 'dropping in prep whitespace must not discard a ready portion');
   if (playerLevel === 13) {
     dragNow(station(), source); await refresh();
@@ -602,7 +683,7 @@ for (const playerLevel of [11, 12, 13]) {
         if (f?.flipHint) { tap(f.x, f.y); await refresh(); }
         else if (f?.perfect) { dragNow(f, centre(c)); await refresh(); }
         else if (!f) {
-          const stock = cooking().bench.find(b => b.id === id);
+          const stock = await benchStock(id); // the single-row bench pages: the cut may be off-page
           if (stock) { dragNow(centre(stock), cooking().zones[0]); await refresh(); }
         }
       }
@@ -635,8 +716,7 @@ for (const playerLevel of [11, 12, 13]) {
   await advance(0.35, { paint: false }); tap(210, 400);
   await advance(0.4, { paint: false }); tap(210, 310);
   await advance(0.2, { paint: false });
-  let prep = cooking().bench.find(i => i.id === 'vinagrete');
-  if (!prep) { const b = cooking().pager; tap(b.x+b.w/2, b.y+b.h/2); await advance(0.02, { paint: false }); prep = cooking().bench.find(i => i.id === 'vinagrete'); }
+  const prep = await benchStock('vinagrete');
   assert(prep && cooking().prepPager, 'prep stock and capacity pager must be reachable');
   for (let i = 0; i < 12; i++) { tap(prep.x+prep.w/2, prep.y+prep.h/2); await advance(0.02, { paint: false }); }
   assert(cooking().activeFoods === 10 && cooking().prep.every(s => s.uid !== null), '10 slots admit exactly 10 portions, not 12');
@@ -866,7 +946,7 @@ console.log('[shoot] A-04: Home/runtime/HUD agree; Fornalha3→4 at Premium, evo
   assert(cooking().orderPager,'overflow must have a real order pager');
   const reached=new Set();
   for(let i=0;i<5;i++){
-    for(const c of cooking().orders.filter(c=>c.visible)){reached.add(c.uid);assert(c.y+c.h<224,'orders cannot cover the grill');}
+    for(const c of cooking().orders.filter(c=>c.visible)){reached.add(c.uid);assert(c.y>408,'orders sit under the grill, in the thumb zone');}
     await click(cooking().orderPager.next);
   }
   assert(reached.size===14,'every active order has a reachable page');

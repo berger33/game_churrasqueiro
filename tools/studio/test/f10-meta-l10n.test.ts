@@ -49,7 +49,8 @@ describe('Phase F10 — Localization Coverage', () => {
   const referenced = collectReferencedKeys();
 
   it('translates 100% of data-referenced keys in en-US and es-419', () => {
-    expect(referenced.size).toBe(381);
+    // 381 + the Escola da Brasa deck (title/open + 6 lessons × title/body + 4 shorts).
+    expect(referenced.size).toBe(394);
 
     const missingEn = [...referenced].filter((k) => !(k in enUS));
     const missingEs = [...referenced].filter((k) => !(k in es419));

@@ -9,8 +9,9 @@ export function upgradeCards(count:number,page:number):{index:number;rect:Rect;b
     index:start+i,rect:{x:14,y:314+i*108,w:392,h:98},buy:{x:310,y:354+i*108,w:84,h:48}
   }));
 }
-/** Large queues use a fixed three-card page for the entire turn, not a layout that jumps at seven arrivals. */
-export const ORDER_PREV:Rect={x:14,y:140,w:64,h:48};
-export const ORDER_NEXT:Rect={x:342,y:140,w:64,h:48};
+/** Large queues use a fixed three-card page for the entire turn, not a layout that jumps at seven arrivals.
+ *  The pager sits under the cards, which now live just above the bench (thumb zone), not at the top. */
+export const ORDER_PREV:Rect={x:14,y:500,w:64,h:48};
+export const ORDER_NEXT:Rect={x:342,y:500,w:64,h:48};
 export function orderPageSize(capacity:number):number{return capacity>6?3:6;}
 export function orderPages(waiting:number,capacity:number):number{return Math.max(1,Math.ceil(waiting/orderPageSize(capacity)));}
