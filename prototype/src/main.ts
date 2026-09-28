@@ -2083,10 +2083,26 @@ class Game {
   private banner(text: string): void { this.bannerText = text; this.bannerLife = 2; }
 
   private resize(canvas: HTMLCanvasElement): void {
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    // Playtest shells (Android WebView / installed PWA) ask for a full-bleed canvas with
+    // `?maxscale=` and can trade sharpness for fill rate with `?dprcap=`. Defaults keep the
+    // browser prototype and every Node harness (which stubs `location`) exactly as before.
+    const fit = ((): { maxScale: number; dprCap: number } => {
+      try {
+        const q = new URLSearchParams(globalThis.location?.search ?? '');
+        const maxScale = Number(q.get('maxscale'));
+        const dprCap = Number(q.get('dprcap'));
+        return {
+          maxScale: Number.isFinite(maxScale) && maxScale > 0 ? maxScale : 1.35,
+          dprCap: Number.isFinite(dprCap) && dprCap > 0 ? dprCap : 2
+        };
+      } catch {
+        return { maxScale: 1.35, dprCap: 2 };
+      }
+    })();
+    const dpr = Math.min(fit.dprCap, window.devicePixelRatio || 1);
     const availW = window.innerWidth;
     const availH = window.innerHeight;
-    const scale = Math.min(availW / W, availH / H, 1.35);
+    const scale = Math.min(availW / W, availH / H, fit.maxScale);
     canvas.style.width = `${Math.floor(W * scale)}px`;
     canvas.style.height = `${Math.floor(H * scale)}px`;
     canvas.width = Math.floor(W * scale * dpr);

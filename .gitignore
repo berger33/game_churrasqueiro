@@ -59,6 +59,13 @@ GoogleService-Info.plist
 .env.*
 !.env.example
 
+# ─── Android playtest shell ─────────────────────────────────────────────────
+# The web export is staged into the APK's assets by `npm run export:android`
+# (locally or in .github/workflows/android-playtest.yml). Generated, never committed:
+# a stale bundle in the source tree is a tester playing last week's build.
+android-shell/local.properties
+android-shell/app/src/main/assets/
+
 # ─── Node / tooling ─────────────────────────────────────────────────────────
 node_modules/
 npm-debug.log*
