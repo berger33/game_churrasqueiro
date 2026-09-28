@@ -14,5 +14,6 @@ it('a paged order queue uses the same stable layout before and after arrivals, w
     expect(size*pages).toBeGreaterThanOrEqual(capacity);
     if(capacity>6)expect(size).toBe(3);
   }
-  for(const r of [ORDER_PREV,ORDER_NEXT]){expect(r.h).toBeGreaterThanOrEqual(48);expect(r.y).toBeGreaterThan(128);expect(r.y+r.h).toBeLessThan(224);}
+  // The queue lives in the thumb zone now: cards under the coals (grill ends at 408), pager under them.
+  for(const r of [ORDER_PREV,ORDER_NEXT]){expect(r.h).toBeGreaterThanOrEqual(48);expect(r.y).toBeGreaterThan(408);expect(r.y+r.h).toBeLessThan(562);}
 });

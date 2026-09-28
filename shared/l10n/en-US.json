@@ -362,6 +362,8 @@
   "ui.result.bestCombo": "Best combo",
   "ui.result.burned": "Burnt",
   "ui.result.coins": "Coins",
+  "ui.result.double": "DOUBLE 2×",
+  "ui.result.doubled": "COINS DOUBLED",
   "ui.result.levelBonus": "Level bonus",
   "ui.result.perfect": "Perfect",
   "ui.result.title": "TURN COMPLETE",

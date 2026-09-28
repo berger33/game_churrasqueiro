@@ -10,28 +10,29 @@ const table = readJson('tutorial.json') as TutorialTable;
 const grilled = db.ingredients.items.filter(i => i.cookMethod === 'grill');
 
 describe('A-01 UI: every grilled recipe is reachable without altering the FTUE', () => {
-  it('makes costela/cupim reachable beyond the old eight-item truncation', () => {
+  it('makes costela/cupim reachable beyond the old truncation', () => {
     const visible = Array.from({ length: benchPageCount(grilled) }, (_, p) => benchPage(grilled, p)).flat();
     expect(visible.map(i => i.id)).toEqual(grilled.map(i => i.id));
-    expect(benchPage(grilled, 1).map(i => i.id)).toEqual(expect.arrayContaining(['costela', 'cupim']));
+    expect(benchPage(grilled, 2).map(i => i.id)).toEqual(expect.arrayContaining(['costela', 'cupim']));
   });
-  it('wraps pages with at most eight items, while the FTUE stays on one page', () => {
-    expect(benchPageCount(grilled)).toBe(2);
+  it('wraps pages with at most one row of five, while the FTUE stays on one page', () => {
+    // The bench is a single row since the order queue moved down into the thumb zone.
+    expect(benchPageCount(grilled)).toBe(3);
     expect(benchPageCount([])).toBe(1);
     expect(benchPage([], 3)).toEqual([]);
-    expect(benchPage(grilled, 2)).toEqual(benchPage(grilled, 0));
-    expect(benchPage(grilled, -1)).toEqual(benchPage(grilled, 1));
-    for (let page = 0; page < 4; page++) expect(benchPage(grilled, page).length).toBeLessThanOrEqual(8);
+    expect(benchPage(grilled, 3)).toEqual(benchPage(grilled, 0));
+    expect(benchPage(grilled, -1)).toEqual(benchPage(grilled, 2));
+    for (let page = 0; page < 5; page++) expect(benchPage(grilled, page).length).toBeLessThanOrEqual(5);
     const ftue = [db.ingredientById.get(table.turn.ingredientId)!];
     expect(benchPageCount(ftue)).toBe(1);
     expect(benchPage(ftue, 99)).toEqual(ftue);
   });
-  it('places the pager in the two unused bench slots with a >=48px target', () => {
+  it('places the pager in the sixth bench column with a >=48px target', () => {
     const r = BENCH_PAGER;
     expect(r.w).toBeGreaterThanOrEqual(48); expect(r.h).toBeGreaterThanOrEqual(48);
     expect(r.x + r.w).toBeLessThanOrEqual(420); expect(r.y + r.h).toBeLessThanOrEqual(780);
-    for (let i = 0; i < 8; i++) {
-      const b = { x: 14 + (i % 5) * 82, y: 574 + Math.floor(i / 5) * 74, w: 74, h: 66 };
+    for (let i = 0; i < 5; i++) {
+      const b = { x: 14 + i * 68, y: 596, w: 64, h: 66 }; // main.ts benchItemRect
       const overlap = r.x < b.x + b.w && r.x + r.w > b.x && r.y < b.y + b.h && r.y + r.h > b.y;
       expect(overlap).toBe(false);
     }

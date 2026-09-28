@@ -33,9 +33,7 @@ Abstract panels are only used where a 3D affordance would be slower.
 
 ```
 ┌───────────────────────────────────────┐
-│  [order] [order] [order]        🪙 1 240│   top: active orders + coin counter
-│                                        │
-│                                        │
+│  🪙 1 240        ⏱ 1:20      COMBO ×4 🔥│   top: HUD only
 │           ╔══════════════╗             │
 │           ║   ZONA ALTA  ║             │   centre: the grill
 │           ║  ▓▓  ▓▓  ▓▓  ║             │
@@ -43,11 +41,18 @@ Abstract panels are only used where a 3D affordance would be slower.
 │           ║  ▓▓  ▓▓  ▓▓  ║             │
 │           ║   ZONA BAIXA ║             │
 │           ╚══════════════╝             │
-│  carvão ▮▮▮▮▯▯        COMBO ×4 🔥      │
-│                                        │
-│  [🥩][🍞][🧀][🍗][🌽]  ── bancada ──    │   base: raw stock to drag from
+│  carvão ▮▮▮▮▯▯                         │
+│  [order] [order] [order]               │   thumb zone: the queue sits right
+│  ‹   14 pedidos · página 1/5        ›  │   under the coals
+│  [🥩][🍞][🧀][🍗][🌽] [1/4→] bancada    │   base: raw stock to drag from
+│  [vaga][vaga][vaga][vaga][vaga] [1/2→] │   prep station (once unlocked)
+│  [  Repor carvão  ] [ Repor estoque ]  │   last row: cheapest to reach
 └───────────────────────────────────────┘
 ```
+
+The order cards used to live at the top of the screen. On a phone that made every serve a
+full-height drag — thumb off the coals, up to the status bar, back down — so the queue now sits
+between the charcoal gauge and the bench, and the two resource buttons own the last row.
 
 Nothing else. No pause button in the play area (system gesture), no minimap, no timers other
 than the charcoal bar and per-order patience rings.

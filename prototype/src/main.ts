@@ -62,14 +62,25 @@ const W = 420;
 const H = 780;
 const CHIMNEY_H = 62;
 const COUNTER_H = 12;
-const GRILL_TOP = 224;
-const GRILL_BOTTOM = 472;
-const BENCH_TOP = 552;
+/**
+ * Vertical layout of the turn screen (portrait 420×780), top to bottom:
+ *
+ *   8–60    HUD
+ *   86–408  churrasqueira (chimney starts at GRILL_TOP − CHIMNEY_H − 12)
+ *   416     charcoal gauge
+ *   436–558 order cards + their pager — the queue sits in the thumb zone, not at the top edge:
+ *           serving is a short drag down from the coals instead of a stretch to the status bar.
+ *   562–780 bench (one paged row of stock), prep station, and the resource buttons on the last row
+ */
+const GRILL_TOP = 160;
+const GRILL_BOTTOM = 408;
+const ORDERS_TOP = 436;
+const BENCH_TOP = 578;
 const CHIMNEY_W = 68;
 const GRILL_BODY_W = W - 40;
 /** Painted grills (docs/22 §7.1): the opening's width on screen and where its centre sits. */
 const GRILL_ART_BED_W = 330;
-const GRILL_ART_HOLE_Y = 342;
+const GRILL_ART_HOLE_Y = 278;
 
 /** A painted grill placed on screen: the sprite rect and its cooking opening (screen coords). */
 interface GrillArt { img: CanvasImageSource; x: number; y: number; w: number; h: number; quad: Quad }
@@ -104,8 +115,6 @@ interface CoinFlight {
   ftueLast: boolean;
 }
 interface AnalyticsRecord { name: string; params: Record<string, AnalyticsValue>; atMs: number; valid: boolean }
-/** docs/20: order cards drop 40 px during the FTUE so the thumb does not cover the drag target. */
-const FTUE_ORDER_DROP = 40;
 /** HUD coin counter — where flying coins land. */
 const HUD_COIN = { x: 28, y: 30 };
 
@@ -272,6 +281,8 @@ class Game {
     vipReward: {coins:number;embers:number};
     /** The FTUE's scripted turn: a simplified card — no ads, no bonus, no share (docs/05 §4). */
     ftue: boolean;
+    /** The rewarded "DOBRAR 2×" pays this result exactly once — it used to compound on every tap. */
+    doubled: boolean;
   } | null = null;
   private flash = 0;
   private comboPulse = 0;
@@ -818,7 +829,9 @@ class Game {
     this.now += dt;
     // Read-only views for the Node harnesses (shoot.mjs / render-smoke.mjs).
     const dbg = globalThis as unknown as { __churrascoScreen?: Screen; __churrascoFtue?: unknown; __churrascoHome?: unknown; __churrascoCooking?: unknown; __churrascoResult?: unknown };
-    dbg.__churrascoResult = this.screen==='result' && this.lastResult ? {vipReward:{...this.lastResult.vipReward}} : null;
+    dbg.__churrascoResult = this.screen==='result' && this.lastResult
+      ? {vipReward:{...this.lastResult.vipReward}, coins:this.lastResult.coins, doubled:this.lastResult.doubled, layout:this.resultLayout()}
+      : null;
     dbg.__churrascoScreen = this.screen;
     dbg.__churrascoCooking = this.screen === 'play' ? {
       activeCoinMultiplier:activeCoinMultiplier(this.db,this.sim.restaurant.index),
@@ -1101,7 +1114,7 @@ class Game {
     this.lastResult = {
       coins: r.coins, xp: r.xp, stars: r.stars,
       perfect: r.counters.perfectCooks, burned: r.counters.burnedFood, combo: r.counters.bestCombo,
-      levelCoins, vipReward, ftue: wasFtue
+      levelCoins, vipReward, ftue: wasFtue, doubled: false
     };
     this.coinFlights = [];
     this.hudCoinsLanded = 0;
@@ -1131,7 +1144,7 @@ class Game {
     this.meta.coins += bonus;
     this.meta.xp += 40;
     saveMeta(this.meta);
-    this.lastResult = { coins: bonus, xp: 40, stars: 3, perfect: this.frenzyScore, burned: 0, combo: Math.min(20, this.frenzyScore), levelCoins: 0, vipReward:{coins:0,embers:0}, ftue: false };
+    this.lastResult = { coins: bonus, xp: 40, stars: 3, perfect: this.frenzyScore, burned: 0, combo: Math.min(20, this.frenzyScore), levelCoins: 0, vipReward:{coins:0,embers:0}, ftue: false, doubled: false };
     this.screen = 'result';
     this.resultT = 0;
     this.banner(`Frenesi: +${bonus} moedas!`);
@@ -1370,15 +1383,21 @@ class Game {
   private hasPrep(): boolean { return !this.ftue && this.unlocked.some(i => i.cookMethod === 'prep'); }
   private prepRects(): ReturnType<typeof prepSlotRects> { return prepSlotRects(this.sim.prepSlots.length, this.prepPageIndex); }
 
+  /** One paged row of five stock tiles; the sixth column is the bench pager (BENCH_PAGER). */
   private benchItemRect(i: number): { x: number; y: number; w: number; h: number } {
-    const w = 74; const gap = 8;
-    return { x: 14 + (i % 5) * (w + gap), y: BENCH_TOP + 22 + Math.floor(i / 5) * 74, w, h: 66 };
+    const w = 64; const gap = 4;
+    return { x: 14 + (i % 5) * (w + gap), y: BENCH_TOP + 18, w, h: 66 };
   }
+  /**
+   * Order cards — three per row, just above the bench. They used to live at the top of the screen
+   * (y 70), which made every serve a full-height drag: on a phone the thumb had to leave the grill
+   * and reach the status bar. Sitting at ORDERS_TOP they are a few pixels below the coals, so the
+   * FTUE no longer needs its 40 px "drop" either.
+   */
   private orderCardRect(i: number): { x: number; y: number; w: number; h: number } {
     if (i < 0) return {x:-1000,y:-1000,w:0,h:0}; // no off-page input target
     const w = 128; const gap = 8;
-    const drop = this.ftue ? FTUE_ORDER_DROP : 0;
-    return { x: 10 + (i % 3) * (w + gap), y: 70 + drop + Math.floor(i / 3) * 64, w, h: 58 };
+    return { x: 10 + (i % 3) * (w + gap), y: ORDERS_TOP + Math.floor(i / 3) * 64, w, h: 58 };
   }
   /** Home upgrade teaser cards — one rect for drawing, hit-testing and the step-6 spotlight. */
   private homeUpgradeRect(id: string): Rect {
@@ -1660,8 +1679,10 @@ class Game {
           return;
         }
         if (hit === 'double') {
-          // simulated rewarded ad: double coins
-          if (this.lastResult) {
+          // Simulated rewarded ad: one grant per result. Without the flag every extra tap paid the
+          // (already doubled) purse again, so holding the button minted coins exponentially.
+          if (this.lastResult && !this.lastResult.doubled) {
+            this.lastResult.doubled = true;
             this.meta.coins += this.lastResult.coins;
             this.float(W/2, H/2, `+${this.lastResult.coins} (2×)`, C.ouroLight, 22);
             this.burst(W/2, H/2, 16, C.ouroLight, 'coin');
@@ -1966,7 +1987,8 @@ class Game {
     const L = this.resultLayout();
     if (this.lastResult?.ftue) return contains(L.cont, p, 6) ? 'continue' : null;
     if (this.meta.bonusReady && this.bonusOfferT < 15 && contains(L.bonus, p)) return 'bonus';
-    if (contains(L.double, p, 6)) return 'double';
+    // Claimed: the button stays on the card as feedback, but it is no longer a hitbox.
+    if (!this.lastResult?.doubled && contains(L.double, p, 6)) return 'double';
     if (contains(L.home, p, 4)) return 'home';
     if (contains(L.next, p, 4)) return 'next';
     if (contains(L.share, p, 6)) return 'share';
@@ -2295,10 +2317,10 @@ class Game {
     this.drawOrders(ctx);
     const staff=this.sim.staff.snapshot;
     if(!this.ftue&&(staff.serve.level||staff.prep.level||staff.flip.level)){
-      panel(ctx,12,224,W-24,26,{r:8,top:'rgba(30,20,12,.9)',bottom:'rgba(30,20,12,.9)'});
+      panel(ctx,12,GRILL_TOP,W-24,26,{r:8,top:'rgba(30,20,12,.9)',bottom:'rgba(30,20,12,.9)'});
       ctx.font=font(10,800,UI);ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=C.creme;
       ctx.fillText(this.l10n.t('ui.staff.status',{served:staff.serve.used,serveTotal:staff.serve.eligible,
-        flipped:staff.flip.used,flipTotal:staff.flip.eligible,prepped:staff.prep.used}),W/2,237,W-30);
+        flipped:staff.flip.used,flipTotal:staff.flip.eligible,prepped:staff.prep.used}),W/2,GRILL_TOP+13,W-30);
     }
     this.drawParticles(ctx);
     this.drawFloats(ctx);
@@ -3164,9 +3186,9 @@ class Game {
     if(pager){
       for(const [rect,label] of [[pager.prev,'‹'],[pager.next,'›']] as const){premiumButton(ctx,rect.x,rect.y,rect.w,rect.h,{variant:'ghost'});ctx.textAlign='center';ctx.font=font(22,800,UI);ctx.fillStyle=C.perola;ctx.fillText(label,rect.x+rect.w/2,rect.y+26);}
       ctx.textAlign='center';ctx.font=font(11,700,UI);ctx.fillStyle=C.perola;
-      ctx.fillText(this.l10n.t('ui.upgrades.orders',{total:pager.total,page:pager.page+1,pages:pager.pages}),W/2,155);
+      ctx.fillText(this.l10n.t('ui.upgrades.orders',{total:pager.total,page:pager.page+1,pages:pager.pages}),W/2,pager.prev.y+15);
       ctx.fillStyle=pager.urgent?C.telha:C.madeiraPinho;ctx.font=font(10,700,UI);
-      ctx.fillText(this.l10n.t('ui.upgrades.urgent',{count:pager.urgent}),W/2,176);
+      ctx.fillText(this.l10n.t('ui.upgrades.urgent',{count:pager.urgent}),W/2,pager.prev.y+36);
     }
   }
 
@@ -3553,7 +3575,7 @@ class Game {
         : {r:12, top:'rgba(50,35,26,0.95)', bottom:'rgba(26,17,12,0.95)', border: isDragging? C.brasa : 'rgba(255,214,160,0.18)', borderWidth: isDragging?2:1, shadow:8, innerGlow:true});
       if (!drawFoodIconSprite(ctx,ing.id,r.x+r.w/2,r.y+24,32,'raw')) drawFoodIcon(ctx,ing,r.x+r.w/2,r.y+24,32);
       const label=this.l10n.t(ing.nameKey);
-      outlinedText(ctx,label.length>13?label.slice(0,12)+'…':label,r.x+r.w/2,r.y+48,C.perola,10,{weight:800, family:UI, outline:2});
+      outlinedText(ctx,label.length>10?label.slice(0,9)+'…':label,r.x+r.w/2,r.y+48,C.perola,10,{weight:800, family:UI, outline:2});
       ctx.save(); glass(ctx,r.x+r.w/2-22,r.y+r.h-17,44,14,{r:7, alpha:0.18, border:'rgba(231,194,74,0.4)'});
       const remaining=this.sim.stockRemaining(ing.id);
       ctx.font=font(11,900,UI); ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillStyle=remaining>0?C.ouroLight:C.telha;
@@ -3561,10 +3583,13 @@ class Game {
     });
     const pages = benchPageCount(this.unlocked);
     if (!this.ftue && pages > 1) {
+      // A sixth column the size of a stock tile: the label no longer fits on one line, so the
+      // first word carries the meaning and the page counter does the rest.
       const r = BENCH_PAGER;
       panel(ctx, r.x, r.y, r.w, r.h, { r: 12, top: 'rgba(50,35,26,0.95)', bottom: 'rgba(26,17,12,0.95)' });
-      outlinedText(ctx, this.l10n.t('ui.hud.benchMore'), r.x+r.w/2, r.y+20, C.perola, 11, { weight: 800, family: UI });
-      outlinedText(ctx, `${this.benchPageIndex+1}/${pages} →`, r.x+r.w/2, r.y+40, C.ouroLight, 14, { weight: 800, family: UI });
+      outlinedText(ctx, this.l10n.t('ui.hud.benchMore').split(' ')[0]!, r.x+r.w/2, r.y+24, C.perola, 10, { weight: 800, family: UI });
+      outlinedText(ctx, `${this.benchPageIndex+1}/${pages}`, r.x+r.w/2, r.y+42, C.ouroLight, 14, { weight: 800, family: UI });
+      outlinedText(ctx, '→', r.x+r.w/2, r.y+56, C.ouroLight, 12, { weight: 800, family: UI });
     }
   }
 
@@ -3584,7 +3609,7 @@ class Game {
 
   private drawPrep(ctx: CanvasRenderingContext2D): void {
     if (!this.hasPrep()) return;
-    outlinedText(ctx, this.l10n.t('ui.prep.hint'), W/2, 722, C.perola, 10, { weight: 800, family: UI });
+    outlinedText(ctx, this.l10n.t('ui.prep.hint'), W/2, PREP_AREA.y - 2, C.perola, 10, { weight: 800, family: UI });
     for (const r of this.prepRects()) {
       const f = this.sim.prepSlots[r.slot];
       panel(ctx, r.x, r.y, r.w, r.h, { r: 9, top: '#473225', bottom: '#24190f', border: f?.prepProgress === 1 ? C.ouroLight : C.creme });
@@ -3908,9 +3933,10 @@ class Game {
       outlinedText(ctx,this.l10n.t('ui.action.next'),next.x+next.w/2,next.y+next.h/2+2,C.perola,16,{outline:2, weight:900});
       ctx.restore();
       // double button above — gold CTA (P0: comunica valor, sem emoji ☐)
-      ctx.save(); ctx.globalAlpha=btnT;
-      premiumButton(ctx,double.x,double.y,double.w,double.h,{variant:'gold'});
-      outlinedText(ctx,'DOBRAR 2×',W/2,double.y+14,C.perola,12,{outline:2, weight:900});
+      const claimed=!!this.lastResult?.doubled;
+      ctx.save(); ctx.globalAlpha=btnT*(claimed?0.55:1);
+      premiumButton(ctx,double.x,double.y,double.w,double.h,{variant:claimed?'ghost':'gold'});
+      outlinedText(ctx,claimed?this.l10n.t('ui.result.doubled'):this.l10n.t('ui.result.double'),W/2,double.y+14,claimed?C.creme:C.perola,12,{outline:2, weight:900});
       ctx.restore();
       // share — sem emoji
       ctx.save(); ctx.globalAlpha=btnT;
